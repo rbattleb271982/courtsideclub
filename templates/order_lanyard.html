@@ -7,19 +7,19 @@
     <div class="col-12 col-lg-8 mx-auto">
         <div class="card">
             <div class="card-header">
-                <h2>Order Your Tennis Fans Lanyard</h2>
+                <h2>Order Your CourtSide Club Lanyard</h2>
             </div>
             <div class="card-body">
                 {% if current_user.lanyard_ordered %}
                 <div class="alert alert-success">
-                    <i data-feather="check-circle"></i> You've already ordered your Tennis Fans lanyard!
+                    <i data-feather="check-circle"></i> You've already ordered your CourtSide Club lanyard!
                 </div>
-                <p>Your lanyard is on its way. Wear it proudly at tournaments to connect with other Tennis Fans members!</p>
+                <p>Your lanyard is on its way. Wear it proudly at tournaments to connect with other CourtSide Club members!</p>
                 <div class="text-center mt-4">
                     <a href="{{ url_for('user.profile') }}" class="btn btn-primary">Back to Profile</a>
                 </div>
                 {% else %}
-                <p class="mb-4">Order your exclusive Tennis Fans lanyard to easily identify other community members at tournaments. The lanyard will be shipped directly to your address.</p>
+                <p class="mb-4">Order your exclusive CourtSide Club lanyard to easily identify other community members at tournaments. The lanyard will be shipped directly to your address.</p>
                 
                 <form action="{{ url_for('user.order_lanyard') }}" method="post" class="needs-validation" novalidate>
                     <div class="form-group">
@@ -85,7 +85,7 @@
                     </div>
                     
                     <div class="alert alert-info mt-3">
-                        <p><strong>Note:</strong> Your lanyard is free for Tennis Fans members. You only pay for shipping ($5.99).</p>
+                        <p><strong>Note:</strong> Your lanyard is free for CourtSide Club members. You only pay for shipping ($5.99).</p>
                     </div>
                     
                     <div class="mt-4">
