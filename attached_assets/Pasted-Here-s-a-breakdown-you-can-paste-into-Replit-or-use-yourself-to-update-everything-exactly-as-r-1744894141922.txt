@@ -1,0 +1,89 @@
+Here's a breakdown you can **paste into Replit** (or use yourself) to update everything exactly as requested — plus an answer to your mobile-first design question at the end.
+
+---
+
+### ✅ TOURNAMENT PAGE CHANGES
+
+1. **Remove “Filter by Date”**  
+   → This filter should no longer appear at the top of the tournament page.
+
+2. **Remove “Filter by Location”**  
+   → Don’t display filters for city or country.
+
+3. **Remove “Filter by Event Type”**  
+   → Only display **Tournament Name** in the dropdown filter (if filtering remains at all).
+
+---
+
+### ✅ PROFILE PAGE CHANGES
+
+4. **“Tournaments I’m Attending” Section**  
+   → Only show tournaments where the user selected specific days/sessions via the tournament page.  
+   → Filter logic: check `raised_hand` or `attending` fields in the user's DB entry.
+
+5. **If No Tournaments Selected**  
+   → Show a message in the “Tournaments I’m Attending” section that says:  
+   `"Click here to select your tournaments"`  
+   → Link that message to the tournament selection page (e.g., `/tournaments` or `/profile#tournaments`)
+
+6. **“Change Password” Section Placement**  
+   → On the profile page, move the entire “Change Password” form **below** the “Order Lanyard” section (or add a separator like `<hr>`).
+
+---
+
+### ✅ MOBILE-FIRST DESIGN STRATEGY
+
+7. **Make It Mobile-First Friendly (Easiest Way):**
+
+In your `/static/style.css`, add these key rules:
+
+```css
+body {
+  font-family: sans-serif;
+  padding: 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+table {
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+td, th {
+  padding: 8px;
+  min-width: 120px;
+}
+
+@media (max-width: 600px) {
+  h1, h2, h3 {
+    font-size: 1.2em;
+  }
+
+  input[type="checkbox"] {
+    transform: scale(1.2);
+  }
+
+  button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px;
+    margin-top: 1rem;
+  }
+
+  .form-section {
+    display: block;
+    width: 100%;
+  }
+}
+```
+
+This ensures:
+- Tables scroll on small screens
+- Fonts and buttons are legible
+- Input fields don’t overflow
+
+---
+
+Let me know if you’d like the updated `profile.html` or `style.css` to reflect this visually — I can generate it for you!

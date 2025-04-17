@@ -18,8 +18,14 @@ def profile():
     # Get user data
     user = User.query.get(current_user.id)
     
-    # Get attending tournaments
-    attending_ids = list(user.attending.keys()) if user.attending else []
+    # Get attending tournaments with specific days/sessions selected
+    attending_ids = []
+    if user.attending:
+        for tournament_id, attendance_data in user.attending.items():
+            # Only include tournaments that have at least one day/session selected
+            if attendance_data and len(attendance_data) > 0:
+                attending_ids.append(tournament_id)
+    
     attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
     
     return render_template('profile.html', 

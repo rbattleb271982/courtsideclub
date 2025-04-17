@@ -10,13 +10,7 @@
     <div class="card-body">
         <form id="filter-form" action="{{ url_for('tournaments.list_tournaments') }}" method="get">
             <div class="row">
-                <div class="col-12 col-md-3">
-                    <div class="form-group">
-                        <label for="date-filter" class="form-label">Filter by date</label>
-                        <input type="date" id="date-filter" name="date" class="form-control" value="{{ date_filter }}">
-                    </div>
-                </div>
-                <div class="col-12 col-md-3">
+                <div class="col-12 col-md-6">
                     <div class="form-group">
                         <label for="name-filter" class="form-label">Tournament Name</label>
                         <select id="name-filter" name="name" class="form-control">
@@ -27,33 +21,11 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-12 col-md-3">
-                    <div class="form-group">
-                        <label for="location-filter" class="form-label">Location</label>
-                        <select id="location-filter" name="location" class="form-control">
-                            <option value="">All Locations</option>
-                            {% for location in locations %}
-                                <option value="{{ location }}" {% if location_filter == location %}selected{% endif %}>{{ location }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3">
-                    <div class="form-group">
-                        <label for="type-filter" class="form-label">Event Type</label>
-                        <select id="type-filter" name="event_type" class="form-control">
-                            <option value="">All Types</option>
-                            <option value="Grand Slam" {% if event_type_filter == "Grand Slam" %}selected{% endif %}>Grand Slam</option>
-                            <option value="1000" {% if event_type_filter == "1000" %}selected{% endif %}>1000</option>
-                            <option value="500" {% if event_type_filter == "500" %}selected{% endif %}>500</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-12 mt-3">
-                    <div class="form-group d-flex">
-                        <button type="submit" class="btn btn-primary">Apply Filters</button>
-                        {% if date_filter or name_filter or location_filter or event_type_filter %}
-                        <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-outline ml-2">Clear Filters</a>
+                <div class="col-12 col-md-6">
+                    <div class="form-group mt-3 mt-md-0 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        {% if name_filter %}
+                        <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-outline ml-2">Clear Filter</a>
                         {% endif %}
                     </div>
                 </div>
@@ -167,8 +139,8 @@
                     {% if not tournaments %}
                     <tr>
                         <td colspan="7" class="text-center p-4">
-                            <p>No tournaments found for the selected filters.</p>
-                            {% if date_filter or name_filter or location_filter or event_type_filter %}
+                            <p>No tournaments found for the selected filter.</p>
+                            {% if name_filter %}
                             <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary">View All Tournaments</a>
                             {% endif %}
                         </td>

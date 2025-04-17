@@ -65,7 +65,27 @@
             </div>
         </div>
         
+        {% if attending %}
         <div class="card mb-4">
+            <div class="card-header">
+                <h3>Your Lanyard</h3>
+            </div>
+            <div class="card-body">
+                {% if user.lanyard_ordered %}
+                <div class="alert alert-success">
+                    <i data-feather="check-circle"></i> You've ordered your CourtSide Club lanyard!
+                </div>
+                {% else %}
+                <p>Order your CourtSide Club lanyard to easily identify other community members at tournaments.</p>
+                <div class="mt-3">
+                    <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-primary">Order Lanyard</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="card">
             <div class="card-header">
                 <h3>Change Password</h3>
             </div>
@@ -90,26 +110,6 @@
                 </form>
             </div>
         </div>
-        
-        {% if user.attending and user.attending.keys()|list|length > 0 %}
-        <div class="card">
-            <div class="card-header">
-                <h3>Your Lanyard</h3>
-            </div>
-            <div class="card-body">
-                {% if user.lanyard_ordered %}
-                <div class="alert alert-success">
-                    <i data-feather="check-circle"></i> You've ordered your CourtSide Club lanyard!
-                </div>
-                {% else %}
-                <p>Order your CourtSide Club lanyard to easily identify other community members at tournaments.</p>
-                <div class="mt-3">
-                    <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-primary">Order Lanyard</a>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
     </div>
     
     <div class="col-12 col-lg-6">
@@ -118,31 +118,8 @@
                 <h3>Tournaments You're Attending</h3>
             </div>
             <div class="card-body">
-                <form action="{{ url_for('user.update_attending') }}" method="post">
-                    {% for tournament in all_tournaments %}
-                    <div class="form-group">
-                        <label class="form-check">
-                            <input type="checkbox" class="form-check-input" name="attending" value="{{ tournament.id }}" 
-                                   {% if user.attending and tournament.id in user.attending.keys() %}checked{% endif %}>
-                            <span class="form-check-label">{{ tournament.name }} ({{ tournament.start_date }})</span>
-                            <span class="checkmark"></span>
-                        </label>
-                    </div>
-                    {% endfor %}
-                    
-                    {% if not all_tournaments %}
-                    <p>No tournaments available.</p>
-                    {% endif %}
-                    
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-primary">Update Preferences</button>
-                    </div>
-                </form>
-                
                 {% if attending %}
-                <div class="mt-4">
-                    <h4>Your Upcoming Tournaments</h4>
-                    
+                <div class="mt-2 mb-4">
                     {% for tournament in attending %}
                     <div class="tournament-card attending mt-3">
                         <div class="card-body">
@@ -151,7 +128,7 @@
                                 <span class="badge badge-secondary">Attending</span>
                             </div>
                             <div class="tournament-date">
-                                {{ tournament.start_date }} to {{ tournament.end_date }}
+                                {{ tournament.start_date.strftime('%b %d, %Y') }} to {{ tournament.end_date.strftime('%b %d, %Y') }}
                             </div>
                             <div class="tournament-location">
                                 <i data-feather="map-pin" width="14"></i> {{ tournament.city }}, {{ tournament.country }}
@@ -162,6 +139,11 @@
                         </div>
                     </div>
                     {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <p>You haven't selected any tournaments to attend yet.</p>
+                    <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary mt-2">Click here to select your tournaments</a>
                 </div>
                 {% endif %}
             </div>

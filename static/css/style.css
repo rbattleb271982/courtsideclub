@@ -1,5 +1,46 @@
 /* CourtSide Club - Main Stylesheet */
 
+/* Mobile-First Styles */
+body {
+  font-family: sans-serif;
+  padding: 1rem;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+table {
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+td, th {
+  padding: 8px;
+  min-width: 120px;
+}
+
+@media (max-width: 600px) {
+  h1, h2, h3 {
+    font-size: 1.2em;
+  }
+
+  input[type="checkbox"] {
+    transform: scale(1.2);
+  }
+
+  button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px;
+    margin-top: 1rem;
+  }
+
+  .form-section {
+    display: block;
+    width: 100%;
+  }
+}
+
 :root {
   /* Color Palette */
   --primary: #27ae60;       /* Tennis court green */
