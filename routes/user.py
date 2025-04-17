@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Tournament
+from models import db, User, Tournament, UserTournament
 from services.sendgrid_service import send_email
 import json
 import logging
@@ -15,37 +15,49 @@ def home():
     # Get user data
     user = User.query.get(current_user.id)
     
-    # Get attending tournaments with specific days/sessions selected
-    attending_ids = []
-    if user.attending:
-        for tournament_id, attendance_data in user.attending.items():
-            attending_ids.append(tournament_id)
-    
     # Get future tournaments (after today's date)
     from datetime import datetime
     today = datetime.now().date()
     
+    # Get all attending tournaments using the new UserTournament model
+    user_tournaments = UserTournament.query.filter_by(user_id=user.id).all()
+    attending_ids = [ut.tournament_id for ut in user_tournaments]
+    
+    # Also include tournaments from legacy JSON field for backward compatibility during migration
+    if user.attending:
+        for tournament_id in user.attending.keys():
+            if tournament_id not in attending_ids:
+                attending_ids.append(tournament_id)
+    
     # Get all attending tournaments
     all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
     
-    # Get all the user's past tournaments (from past_tournaments field)
-    past_tournament_ids = user.past_tournaments if user.past_tournaments else []
+    # Get all the user's past tournaments
+    # Combine data from both the relationship and the legacy JSON field
+    past_tournaments_from_rel = user.attended_tournaments
+    past_tournament_ids_legacy = user.past_tournaments_json if hasattr(user, 'past_tournaments_json') else []
+    
+    # Combine past tournament IDs
+    past_tournament_ids = [t.id for t in past_tournaments_from_rel]
+    for t_id in past_tournament_ids_legacy:
+        if t_id not in past_tournament_ids:
+            past_tournament_ids.append(t_id)
+    
     past_tournaments_attended = Tournament.query.filter(Tournament.id.in_(past_tournament_ids)).all() if past_tournament_ids else []
     
     # Get current tournament list (not past)
     current_tournaments = [t for t in all_attending if t.end_date >= today]
     
-    # Calculate attendance counts for each tournament
+    # Calculate attendance counts for each tournament using new model
     attendance_counts = {}
     for tournament in current_tournaments:
         # Count users attending this tournament
-        attending_count = User.query.filter(
-            User.attending.contains({tournament.id: {}})
-        ).count()
+        attending_count = UserTournament.query.filter_by(tournament_id=tournament.id).count()
         
         # Count users open to meeting at this tournament
-        meeting_count = User.query.filter(
-            User.raised_hand.contains({tournament.id: {}})
+        meeting_count = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            open_to_meet=True
         ).count()
         
         attendance_counts[tournament.id] = {
@@ -102,25 +114,55 @@ def update_attending():
     # Update user in database
     user = User.query.get(current_user.id)
     
+    # Get current UserTournament registrations
+    current_registrations = UserTournament.query.filter_by(user_id=user.id).all()
+    current_tournament_ids = [reg.tournament_id for reg in current_registrations]
+    
+    # Identify tournaments to remove and add
+    to_remove = [t_id for t_id in current_tournament_ids if t_id not in attending_ids]
+    to_add = [t_id for t_id in attending_ids if t_id not in current_tournament_ids]
+    
+    # Remove tournaments no longer selected
+    for t_id in to_remove:
+        # Find the UserTournament record and delete it
+        registration = UserTournament.query.filter_by(
+            user_id=user.id,
+            tournament_id=t_id
+        ).first()
+        if registration:
+            db.session.delete(registration)
+    
+    # Add newly selected tournaments with default settings
+    for t_id in to_add:
+        # Create a new UserTournament record
+        new_registration = UserTournament(
+            user_id=user.id,
+            tournament_id=t_id,
+            dates=[],
+            sessions=[],
+            open_to_meet=True  # Default to being open to meeting
+        )
+        db.session.add(new_registration)
+    
+    # For backward compatibility during migration, also update JSON fields
     # Get the current attending data (dictionary)
     current_attending = dict(user.attending) if user.attending else {}
     
-    # Get all previously selected tournaments that are no longer selected
-    to_remove = [t_id for t_id in current_attending.keys() if t_id not in attending_ids]
-    
-    # Remove tournaments no longer selected
+    # Remove tournaments no longer selected from JSON field
     for t_id in to_remove:
         if t_id in current_attending:
             del current_attending[t_id]
     
-    # Add newly selected tournaments with empty day/session structure
-    for t_id in attending_ids:
+    # Add newly selected tournaments to JSON field
+    for t_id in to_add:
         if t_id not in current_attending:
             # Initialize with an empty structure for days/sessions
             current_attending[t_id] = {}
     
-    # Update the user's attending information
+    # Update the user's JSON attending field for backward compatibility
     user.attending = current_attending
+    
+    # Commit all changes
     db.session.commit()
     
     flash('Tournament preferences updated!', 'success')
@@ -187,20 +229,28 @@ def change_password():
 @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
 @login_required
 def order_lanyard():
-    # Check if user is attending any tournaments with raised_hand
+    # Check if user is attending any tournaments with open_to_meet=True
     user = User.query.get(current_user.id)
     
     # If lanyard already ordered, just show the confirmation page
     if user.lanyard_ordered:
         return render_template('order_lanyard.html', lanyard_ordered=True)
     
-    # Check if the user has raised their hand for any tournament
-    has_selected_sessions = False
-    if user.raised_hand and len(user.raised_hand) > 0:
-        has_selected_sessions = True
+    # Check if the user has any tournament registrations with open_to_meet=True
+    open_to_meet_count = UserTournament.query.filter_by(
+        user_id=user.id, 
+        open_to_meet=True
+    ).count()
+    
+    # For backward compatibility, also check the legacy raised_hand JSON field
+    legacy_check = False
+    if hasattr(user, 'raised_hand') and user.raised_hand and len(user.raised_hand) > 0:
+        legacy_check = True
+    
+    has_selected_sessions = open_to_meet_count > 0 or legacy_check
     
     if not has_selected_sessions:
-        flash('You must select tournament sessions before ordering your lanyard.', 'warning')
+        flash('You must select tournament sessions and be open to meeting before ordering your lanyard.', 'warning')
         return redirect(url_for('user.home'))
     
     if request.method == 'POST':
