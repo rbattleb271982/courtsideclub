@@ -1,4 +1,6 @@
 import os
+import secrets
+import string
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -38,9 +40,13 @@ def register():
     
     if request.method == 'POST':
         email = request.form['email'].lower()
-        name = request.form['name']
-        password = request.form['password']
-        confirm_password = request.form['confirm_password']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        
+        # Generate a secure random password for the user
+        # Complex password with letters, numbers, and symbols
+        alphabet = string.ascii_letters + string.digits + string.punctuation
+        password = ''.join(secrets.choice(alphabet) for _ in range(12))
         
         # Form validation
         existing_user = User.query.filter_by(email=email).first()
@@ -48,14 +54,11 @@ def register():
             flash('Email already registered.', 'danger')
             return render_template('register.html')
         
-        if password != confirm_password:
-            flash('Passwords do not match.', 'danger')
-            return render_template('register.html')
-        
         # Create and store user
         new_user = User(
             email=email,
-            name=name,
+            first_name=first_name,
+            last_name=last_name,
             password_hash=generate_password_hash(password)
         )
         
