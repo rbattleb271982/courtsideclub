@@ -153,10 +153,20 @@ init_db()
 from routes.auth import auth_bp
 from routes.tournaments import tournaments_bp
 from routes.user import user_bp
+from routes.debug import debug_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(tournaments_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(debug_bp)
+
+# Add global error handler
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Global error handler for all exceptions"""
+    logging.error(f"Unhandled exception: {str(e)}", exc_info=True)
+    # Return a generic error page
+    return render_template('error.html', error=str(e)), 500
 
 # Run the app
 if __name__ == '__main__':
