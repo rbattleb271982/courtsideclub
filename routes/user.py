@@ -39,6 +39,11 @@ def update_profile():
         user.first_name = first_name
     if last_name:
         user.last_name = last_name
+    
+    # Also update the name field for backward compatibility
+    if first_name and last_name:
+        user.name = f"{first_name} {last_name}"
+    
     user.notifications = notifications
     db.session.commit()
     
