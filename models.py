@@ -58,6 +58,7 @@ class User(UserMixin, db.Model):
     # Format: {'tournament_id': {'dates': ['2025-05-25', '2025-05-26'], 'sessions': ['Day', 'Night']}}
     attending = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
+    past_tournaments = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     lanyard_ordered = db.Column(db.Boolean, default=False)
     notifications = db.Column(db.Boolean, default=True)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)

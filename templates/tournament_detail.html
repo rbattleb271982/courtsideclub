@@ -144,11 +144,7 @@
                         {% endfor %}
                     </ul>
                 </div>
-                {% set user_ids = [] %}
-                {% for r in raised_hands %}
-                    {% do user_ids.append(r.user_id) %}
-                {% endfor %}
-                {% if raised_hands|length <= 1 and current_user.id in user_ids %}
+                {% if raised_hands|length <= 1 and raised_hands|selectattr('user_id', 'equalto', current_user.id)|list|length > 0 %}
                 <div class="card-footer bg-light">
                     <p class="text-muted mb-0 small">You're currently the only person open to meeting. Check back later!</p>
                 </div>

@@ -185,11 +185,16 @@ def attend_tournament(tournament_id):
                 del raised_hand[tournament_id]
                 user.raised_hand = raised_hand
             
+            # Update user record before returning
+            user.attending = attending
+            db.session.commit()
+            
             message = f"You're no longer attending {tournament.name}."
             if is_ajax:
                 return jsonify({'success': True, 'message': message})
             else:
                 flash(message, 'info')
+                return redirect(url_for('tournaments.list_tournaments'))
     else:
         # Handle simple "I'm attending" checkbox from tournaments list
         attending_checkbox = request.form.get('attending') == 'true'
@@ -285,6 +290,42 @@ def attend_tournament(tournament_id):
         return jsonify({'success': True})
     else:
         return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
+
+@tournaments_bp.route('/tournaments/past', methods=['GET', 'POST'])
+@login_required
+def past_tournaments():
+    # Get all tournaments for the list
+    all_tournaments = Tournament.query.all()
+    
+    # Get the user's past tournaments list
+    user = User.query.get(current_user.id)
+    past_tournaments = list(user.past_tournaments) if user.past_tournaments else []
+    
+    # Handle form submission
+    if request.method == 'POST':
+        # Reset the past_tournaments list
+        past_tournaments = []
+        
+        # Process checked tournaments
+        for field_name, value in request.form.items():
+            if field_name.startswith('tournament_'):
+                # Extract tournament_id from field name (format: tournament_<id>)
+                tournament_id = field_name.split('_', 1)[1]
+                
+                # Add to the list if checked
+                if value == 'on':
+                    past_tournaments.append(tournament_id)
+        
+        # Update user's past_tournaments
+        user.past_tournaments = past_tournaments
+        db.session.commit()
+        
+        flash("Your past tournament selections have been saved.", 'success')
+        return redirect(url_for('user.home'))
+    
+    return render_template('past_tournaments.html', 
+                          all_tournaments=all_tournaments,
+                          past_tournaments=past_tournaments)
 
 @tournaments_bp.route('/tournaments/<tournament_id>/raise_hand', methods=['POST'])
 @login_required

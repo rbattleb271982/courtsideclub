@@ -19,9 +19,7 @@ def home():
     attending_ids = []
     if user.attending:
         for tournament_id, attendance_data in user.attending.items():
-            # Only include tournaments that have at least one day/session selected
-            if attendance_data and len(attendance_data) > 0:
-                attending_ids.append(tournament_id)
+            attending_ids.append(tournament_id)
     
     # Get future tournaments (after today's date)
     from datetime import datetime
@@ -30,14 +28,17 @@ def home():
     # Get all attending tournaments
     all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
     
-    # Split into past and upcoming tournaments
+    # Get all the user's past tournaments (from past_tournaments field)
+    past_tournament_ids = user.past_tournaments if user.past_tournaments else []
+    past_tournaments_attended = Tournament.query.filter(Tournament.id.in_(past_tournament_ids)).all() if past_tournament_ids else []
+    
+    # Split attending tournaments into past and upcoming
     upcoming_tournaments = [t for t in all_attending if t.end_date >= today]
-    past_tournaments = [t for t in all_attending if t.end_date < today]
     
     return render_template('home.html', 
                           user=user, 
                           upcoming_tournaments=upcoming_tournaments,
-                          past_tournaments=past_tournaments)
+                          past_tournaments=past_tournaments_attended)
 
 # Keep the profile route for backward compatibility, redirecting to home
 @user_bp.route('/profile')
