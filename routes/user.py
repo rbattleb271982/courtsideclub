@@ -108,7 +108,7 @@ def order_lanyard():
             if user.notifications:
                 send_email(
                     to_email=user.email,
-                    subject="Your Tennis Fans Lanyard Order",
+                    subject="Your CourtSide Club Lanyard Order",
                     html_content=render_template('email/notification.html', 
                                                 name=user.name,
                                                 message="Your lanyard order has been placed! You'll receive it soon.")
