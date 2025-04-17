@@ -19,6 +19,57 @@ td, th {
   min-width: 120px;
 }
 
+/* Session selection styles */
+.day-sessions-container {
+  margin-top: 1rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.day-session-group {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.day-session-group:last-child {
+  border-bottom: none;
+}
+
+.day-label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.session-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.session-checkbox {
+  min-width: 100px;
+}
+
+.sessions-select-container .form-check {
+  margin-bottom: 0;
+  padding-left: 30px;
+}
+
+.sessions-select-container .checkmark {
+  height: 22px;
+  width: 22px;
+}
+
+.attending-summary {
+  margin-top: 0.5rem;
+}
+
+.attending-day, .raised-hand-day {
+  padding: 0.25rem 0;
+}
+
 @media (max-width: 600px) {
   h1, h2, h3 {
     font-size: 1.2em;
@@ -38,6 +89,18 @@ td, th {
   .form-section {
     display: block;
     width: 100%;
+  }
+  
+  .session-checkboxes {
+    gap: 0.5rem;
+  }
+  
+  .sessions-select-container .form-check {
+    padding-left: 26px;
+  }
+  
+  .card-body {
+    padding: var(--spacing-sm);
   }
 }
 

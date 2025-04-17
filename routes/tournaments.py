@@ -107,18 +107,16 @@ def attend_tournament(tournament_id):
             else:
                 flash(message, 'info')
     else:
-        # Get attendance information from the new table format
-        attendance_data = request.form.getlist('attendance[' + tournament_id + ']')
-        
-        # New format: attendance[tournament_id][Day X][] = [Day, Night]
+        # The new format: raised_hand[tournament_id][Day X][] = [Day, Night]
         attendance = {}
         
         # Process the form data
         for field_name, value in request.form.items():
-            # Check if this is an attendance field for this tournament
-            if field_name.startswith(f'attendance[{tournament_id}]'):
+            # Check if this is a raised_hand field for this tournament
+            # Note: The form uses raised_hand name but we're storing in the attending dictionary
+            if field_name.startswith(f'raised_hand[{tournament_id}]'):
                 # Extract the day key from the field name
-                # Format: attendance[tournament_id][Day X][]
+                # Format: raised_hand[tournament_id][Day X][]
                 parts = field_name.split('[')
                 if len(parts) >= 3:
                     day_key = parts[2].rstrip(']')
@@ -137,7 +135,7 @@ def attend_tournament(tournament_id):
                 return jsonify({'success': False, 'message': 'Please select at least one day and session.'})
             else:
                 flash('Please select at least one day and session.', 'warning')
-                return redirect(url_for('tournaments.list_tournaments'))
+                return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
         
         # Store attendance info with the new format
         attending[tournament_id] = attendance
@@ -162,7 +160,7 @@ def attend_tournament(tournament_id):
     if is_ajax:
         return jsonify({'success': True})
     else:
-        return redirect(url_for('tournaments.list_tournaments'))
+        return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
 
 @tournaments_bp.route('/tournaments/<tournament_id>/raise_hand', methods=['POST'])
 @login_required

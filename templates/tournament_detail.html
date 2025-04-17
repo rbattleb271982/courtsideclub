@@ -30,41 +30,100 @@
             </div>
             
             <div class="col-12 col-md-6">
-                <div class="mb-3">
-                    <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post">
-                        <!-- If attending, we need to show the date and session they're attending -->
-                        {% if user_attending %}
-                        <div class="alert alert-success mb-3">
-                            <strong>You're attending this tournament</strong><br>
-                            <div class="attending-summary">
-                                {% for day, sessions in current_user.attending[tournament.id].items() %}
-                                    <div class="attending-day">
-                                        <strong>{{ day }}:</strong> 
-                                        {% for session in sessions %}
-                                            {{ session }}{% if not loop.last %}, {% endif %}
-                                        {% endfor %}
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Select which sessions you're attending</h3>
+                    </div>
+                    <div class="card-body sessions-select-container">
+                        <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post">
+                            <!-- Parse tournament sessions into days -->
+                            {% set days = {} %}
+                            {% for session_str in tournament.sessions %}
+                                {% set parts = session_str.split(' - ') %}
+                                {% set day = parts[0] %}
+                                {% set session_type = parts[1] %}
+                                {% if day not in days %}
+                                    {% if days.update({day: []}) %}{% endif %}
+                                {% endif %}
+                                {% if days[day].append(session_type) %}{% endif %}
+                            {% endfor %}
+                            
+                            <!-- Display sessions selection in a vertical, mobile-friendly layout -->
+                            <div class="day-sessions-container">
+                                {% for day, available_sessions in days.items() %}
+                                <div class="day-session-group">
+                                    <h4 class="day-label">{{ day }}:</h4>
+                                    <div class="session-checkboxes">
+                                        {% if 'Day' in available_sessions %}
+                                        <div class="session-checkbox">
+                                            <label class="form-check">
+                                                <input type="checkbox" class="form-check-input" 
+                                                       name="raised_hand[{{ tournament.id }}][{{ day }}][]" 
+                                                       value="Day"
+                                                       {% if user_attending and tournament.id in current_user.attending and day in current_user.attending[tournament.id] and 'Day' in current_user.attending[tournament.id][day] %}checked{% endif %}>
+                                                <span class="form-check-label">Day</span>
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if 'Night' in available_sessions %}
+                                        <div class="session-checkbox">
+                                            <label class="form-check">
+                                                <input type="checkbox" class="form-check-input" 
+                                                       name="raised_hand[{{ tournament.id }}][{{ day }}][]" 
+                                                       value="Night"
+                                                       {% if user_attending and tournament.id in current_user.attending and day in current_user.attending[tournament.id] and 'Night' in current_user.attending[tournament.id][day] %}checked{% endif %}>
+                                                <span class="form-check-label">Night</span>
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </div>
+                                        {% endif %}
                                     </div>
+                                </div>
                                 {% endfor %}
                             </div>
-                        </div>
-                        <input type="hidden" name="remove" value="true">
-                        <button type="submit" class="btn btn-outline btn-block">
-                            I'm not attending
-                        </button>
-                        {% else %}
-                        <button type="submit" class="btn btn-primary btn-block">
-                            I'm attending this tournament
-                        </button>
-                        {% endif %}
-                    </form>
+                            
+                            <!-- Show current selections if user is attending -->
+                            {% if user_attending and tournament.id in current_user.attending and current_user.attending[tournament.id]|length > 0 %}
+                            <div class="alert alert-success mt-3 mb-3">
+                                <strong>You're attending these sessions:</strong>
+                                <div class="attending-summary">
+                                    {% for day, sessions in current_user.attending[tournament.id].items() %}
+                                        <div class="attending-day">
+                                            <strong>{{ day }}:</strong> 
+                                            {% for session in sessions %}
+                                                {{ session }}{% if not loop.last %}, {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    {% if user_attending %}Update My Sessions{% else %}Confirm My Sessions{% endif %}
+                                </button>
+                            </div>
+                            
+                            {% if user_attending %}
+                            <div class="mt-2">
+                                <button type="submit" name="remove" value="true" class="btn btn-outline btn-block">
+                                    I'm not attending
+                                </button>
+                            </div>
+                            {% endif %}
+                        </form>
+                    </div>
                 </div>
                 
-                {% if user_attending %}
+                {% if user_attending and tournament.id in current_user.attending and current_user.attending[tournament.id]|length > 0 %}
                 <div class="card mt-3">
+                    <div class="card-header">
+                        <h3>Let other fans know you're open to meeting</h3>
+                    </div>
                     <div class="card-body">
-                        <h4>Raise your hand</h4>
-                        <p>Let other fans know you're open to meeting during this tournament.</p>
-                        
                         {% if user_raised_hand %}
                         <div class="alert alert-success mb-3">
                             <strong>Your hand is raised!</strong><br>
@@ -86,28 +145,12 @@
                             <button type="submit" id="lower-hand-btn" class="btn btn-outline btn-block">Lower your hand</button>
                         </form>
                         {% else %}
-                        <form id="raise-hand-form" action="{{ url_for('tournaments.raise_hand', tournament_id=tournament.id) }}" method="post">
-                            <div class="form-group">
-                                <label for="day-select" class="form-label">Which day?</label>
-                                <select id="day-select" name="day" class="form-control" required>
-                                    <option value="">Select a day</option>
-                                    {% for day_info in tournament.sessions %}
-                                    <option value="{{ day_info.day }}">Day {{ day_info.day }} ({{ day_info.date }})</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="session-select" class="form-label">Which session?</label>
-                                <select id="session-select" name="session" class="form-control" required>
-                                    <option value="">Select a session</option>
-                                    <option value="Day">Day Session</option>
-                                    <option value="Night">Night Session</option>
-                                </select>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary btn-block">Raise your hand</button>
-                        </form>
+                        <p>Raise your hand to let other fans know you're open to meeting during this tournament.</p>
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-primary btn-block" id="copy-attendance-btn">
+                                Copy from my attendance
+                            </a>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
