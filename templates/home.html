@@ -160,24 +160,11 @@
             </div>
             <div class="card-body">
                 {% if past_tournaments %}
-                <div class="mt-2 mb-4">
+                <div class="past-tournaments-list mt-2 mb-4">
                     {% for tournament in past_tournaments %}
-                    <div class="tournament-card past mt-3">
-                        <div class="card-body">
-                            <div class="tournament-card-header">
-                                <h5>{{ tournament.name }}</h5>
-                                <span class="badge badge-secondary">Past</span>
-                            </div>
-                            <div class="tournament-date">
-                                {{ tournament.start_date.strftime('%b %d, %Y') }} to {{ tournament.end_date.strftime('%b %d, %Y') }}
-                            </div>
-                            <div class="tournament-location">
-                                <i data-feather="map-pin" width="14"></i> {{ tournament.city }}, {{ tournament.country }}
-                            </div>
-                            <div class="mt-2">
-                                <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-outline btn-sm">View Details</a>
-                            </div>
-                        </div>
+                    <div class="past-tournament-item">
+                        <i data-feather="check" width="14" class="text-success mr-2"></i>
+                        <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}">{{ tournament.name }}</a>
                     </div>
                     {% endfor %}
                 </div>

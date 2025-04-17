@@ -35,23 +35,23 @@
             <ul class="navbar-nav">
                 {% if current_user.is_authenticated %}
                 <li class="navbar-item">
-                    <a href="{{ url_for('tournaments.list_tournaments') }}" class="navbar-link">
-                        <i data-feather="calendar"></i> Tournaments
-                    </a>
-                </li>
-                <li class="navbar-item">
                     <a href="{{ url_for('user.home') }}" class="navbar-link">
                         <i data-feather="home"></i> Home
                     </a>
                 </li>
                 <li class="navbar-item">
-                    <a href="{{ url_for('user.settings') }}" class="navbar-link">
-                        <i data-feather="settings"></i> Settings
+                    <a href="{{ url_for('tournaments.list_tournaments') }}" class="navbar-link">
+                        <i data-feather="calendar"></i> Tournaments
                     </a>
                 </li>
                 <li class="navbar-item">
                     <a href="{{ url_for('user.order_lanyard') }}" class="navbar-link">
                         <i data-feather="tag"></i> Get Lanyard
+                    </a>
+                </li>
+                <li class="navbar-item">
+                    <a href="{{ url_for('user.settings') }}" class="navbar-link">
+                        <i data-feather="settings"></i> Settings
                     </a>
                 </li>
                 <li class="navbar-item">
@@ -108,11 +108,11 @@
                 <div class="footer-section">
                     <h3 class="footer-title">Quick Links</h3>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('tournaments.list_tournaments') }}">Tournaments</a></li>
                         {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('user.home') }}">Home</a></li>
+                        <li><a href="{{ url_for('tournaments.list_tournaments') }}">Tournaments</a></li>
+                        <li><a href="{{ url_for('user.order_lanyard') }}">Get Lanyard</a></li>
                         <li><a href="{{ url_for('user.settings') }}">Settings</a></li>
-                        <li><a href="{{ url_for('user.order_lanyard') }}">Order Lanyard</a></li>
                         {% else %}
                         <li><a href="{{ url_for('auth.login') }}">Login</a></li>
                         <li><a href="{{ url_for('auth.register') }}">Register</a></li>

@@ -20,12 +20,17 @@ def list_tournaments():
     # Initialize query
     query = Tournament.query
     
-    # Get name filter parameter
+    # Get filter parameters
     name_filter = request.args.get('name')
+    country_filter = request.args.get('country')
     
     # Apply name filter if provided
     if name_filter:
         query = query.filter(Tournament.id == name_filter)
+        
+    # Apply country filter if provided
+    if country_filter:
+        query = query.filter(Tournament.country == country_filter)
     
     # Get the filtered tournaments
     tournaments = query.all()
@@ -54,6 +59,7 @@ def list_tournaments():
                           all_tournaments=all_tournaments,
                           today=today,
                           name_filter=name_filter,
+                          country_filter=country_filter,
                           attendance_counts=attendance_counts)
 
 @tournaments_bp.route('/tournaments/<tournament_id>')
