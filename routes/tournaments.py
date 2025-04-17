@@ -96,8 +96,15 @@ def tournament_detail(tournament_id):
                 })
     
     # Calculate overall attendance and meetup counts
-    attending_count = len(users_with_raised_hands)
-    meeting_count = attending_count  # For now, all users with raised_hand are counted as open to meeting
+    # Count any user with the tournament in their attending field
+    attending_count = User.query.filter(
+        User.attending.contains({tournament_id: {}})
+    ).count()
+    
+    # Count any user with the tournament in their raised_hand field
+    meeting_count = User.query.filter(
+        User.raised_hand.contains({tournament_id: {}})
+    ).count()
     
     # Parse tournament sessions into days for the template and calculate calendar dates
     from datetime import timedelta
@@ -372,8 +379,10 @@ def raise_hand(tournament_id):
     
     # If open to meeting ("Yes")
     if meeting_pref == 'Yes':
-        # Use tournament_id as key with empty dict as value to indicate open to meeting
-        raised_hand[tournament_id] = {}
+        # Copy the attendance data from the attending field to the raised_hand field
+        # This will either have day/session data or be an empty dict
+        attending_data = user.attending.get(tournament_id, {})
+        raised_hand[tournament_id] = attending_data
         flash("You're now visible as open to meeting other fans at this tournament!", 'success')
     # If not open to meeting ("No") or reset
     else:
