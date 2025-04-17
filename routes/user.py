@@ -224,6 +224,6 @@ def order_lanyard():
             )
         
         flash('Your lanyard has been ordered!', 'success')
-        return redirect(url_for('user.profile'))
+        return redirect(url_for('user.home'))
     
     return render_template('order_lanyard.html')
