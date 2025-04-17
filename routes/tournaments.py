@@ -97,14 +97,29 @@ def tournament_detail(tournament_id):
     
     # Calculate overall attendance and meetup counts
     # Count any user with the tournament in their attending field
-    attending_count = User.query.filter(
-        User.attending.contains({tournament_id: {}})
-    ).count()
+    # Don't include the current user unless they've already saved preferences
+    if tournament_id not in current_user.attending:
+        # Current user isn't counted yet since they haven't saved
+        attending_count = User.query.filter(
+            User.attending.contains({tournament_id: {}})
+        ).count()
+    else:
+        # Include all users with this tournament in their attending field
+        attending_count = User.query.filter(
+            User.attending.contains({tournament_id: {}})
+        ).count()
     
     # Count any user with the tournament in their raised_hand field
-    meeting_count = User.query.filter(
-        User.raised_hand.contains({tournament_id: {}})
-    ).count()
+    # Don't include the current user unless they've already set preferences
+    if tournament_id not in current_user.raised_hand:
+        # Current user isn't counted yet since they haven't saved
+        meeting_count = User.query.filter(
+            User.raised_hand.contains({tournament_id: {}})
+        ).count()
+    else:
+        meeting_count = User.query.filter(
+            User.raised_hand.contains({tournament_id: {}})
+        ).count()
     
     # Parse tournament sessions into days for the template and calculate calendar dates
     from datetime import timedelta
