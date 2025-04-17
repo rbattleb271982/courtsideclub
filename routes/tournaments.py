@@ -176,7 +176,15 @@ def attend_tournament(tournament_id):
     
     if remove:
         if tournament_id in attending:
+            # Remove from attending dictionary
             del attending[tournament_id]
+            
+            # Also remove from raised_hand if present
+            raised_hand = dict(user.raised_hand) if user.raised_hand else {}
+            if tournament_id in raised_hand:
+                del raised_hand[tournament_id]
+                user.raised_hand = raised_hand
+            
             message = f"You're no longer attending {tournament.name}."
             if is_ajax:
                 return jsonify({'success': True, 'message': message})
@@ -199,11 +207,11 @@ def attend_tournament(tournament_id):
             flash(message, 'success')
             return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
             
-        # Handle detailed session selections from tournament detail page
+        # Handle session selections and meeting preferences from the session form
         elif 'sessions' in request.form:
             attendance = {}
             
-            # Process the detailed session form data
+            # Process the session form data
             for field_name, value in request.form.items():
                 if field_name.startswith('sessions['):
                     # Extract the day key from the field name
@@ -219,21 +227,47 @@ def attend_tournament(tournament_id):
                                 attendance[day_key] = []
                             attendance[day_key].append(session_type)
             
+            # Check for meeting preference in the same form
+            meeting_preference = request.form.get('meeting_preference')
+            
+            # Update raised_hand status based on meeting preference
+            raised_hand = dict(user.raised_hand) if user.raised_hand else {}
+            
             # Store attendance info
+            # If sessions were selected, update both attending and raised_hand
             if attendance:
                 attending[tournament_id] = attendance
-                message = f"Your session selections for {tournament.name} have been saved!"
+                
+                # Also update raised_hand with same session data if "Yes" to meeting
+                if meeting_preference == 'Yes':
+                    raised_hand[tournament_id] = attendance
+                else:
+                    # If "No" to meeting but previously raised hand, remove it
+                    if tournament_id in raised_hand:
+                        del raised_hand[tournament_id]
+                        
+                message = f"Your selections for {tournament.name} have been saved!"
             else:
-                # If no sessions were selected but form was submitted from detail page,
-                # keep the user as attending with empty details
-                if tournament_id not in attending:
+                # No sessions were selected
+                # Either remove attendance or keep empty based on preference
+                if meeting_preference:  # If form included meeting preference
+                    if tournament_id in attending:
+                        del attending[tournament_id]
+                    if tournament_id in raised_hand:
+                        del raised_hand[tournament_id]
+                    message = f"You're no longer attending {tournament.name}."
+                else:
+                    # Just keep as attending with no sessions
                     attending[tournament_id] = {}
-                message = f"You're attending {tournament.name}!"
+                    message = f"You're attending {tournament.name}!"
                 
             if is_ajax:
                 return jsonify({'success': True, 'message': message})
             else:
                 flash(message, 'success')
+                
+            # Save raised_hand changes
+            user.raised_hand = raised_hand
         else:
             # Default behavior - just mark them as attending
             attending[tournament_id] = {}

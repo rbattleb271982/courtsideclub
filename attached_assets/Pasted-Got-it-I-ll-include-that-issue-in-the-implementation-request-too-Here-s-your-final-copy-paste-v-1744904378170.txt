@@ -1,0 +1,76 @@
+Got it — I’ll include that issue in the implementation request too. Here's your **final copy-paste version for Replit** with everything included:
+
+---
+
+### 📋 COURTSIDECLUB – TOURNAMENT FLOW (FINAL IMPLEMENTATION REQUEST FOR REPLIT)
+
+---
+
+#### ✅ 1. Update the `/tournaments` Page
+
+- Each tournament should display a **button** instead of a checkbox:
+  - If user is **not attending**, show:  
+    **`"I’m attending"`**
+  - If user **is already attending**, show:  
+    **`"Cancel attendance"`**
+
+- When clicked:
+  - Toggle the user's attendance status for that tournament in the DB (e.g., `attending[tournament_id] = True/False`)
+  - If marked as attending → **redirect to `/tournament/<tournament_id>`**
+  - If toggled off → remove from:
+    - `attending[tournament_id]`
+    - `raised_hand[tournament_id]`
+    - `meeting_pref[tournament_id]`
+
+- ✅ No save button required — the button itself triggers the action
+
+---
+
+#### ✅ 2. Fix the Internal Error After Selecting a Tournament
+
+- After marking “I’m attending” and being redirected to `/tournament/<id>`, the app currently throws an **internal error**
+- Please debug this flow and ensure:
+  - Tournament ID is passed correctly
+  - Redirect works even if `raised_hand` or `meeting_pref` do not yet exist for that user
+
+---
+
+#### ✅ 3. On `/tournament/<tournament_id>` Page:
+
+- Only allow access if the user is marked as attending that tournament
+- If not, display this message:  
+  `"You must first mark yourself as attending from the tournaments page to select sessions."`  
+  Include a link to return to `/tournaments`
+
+---
+
+#### ✅ 4. Session & Meeting Preferences
+
+- Show checkboxes for sessions (from the `tournament.sessions` list)
+- Below sessions, display:
+
+```html
+Open to meeting?
+( ) Yes    ( ) No
+```
+
+- This is **required** to save
+- If the user had previously selected “Yes” or “No,” it should be **pre-selected** when they return
+
+---
+
+#### ✅ 5. Save Button Behavior
+
+- Clicking the Save button should:
+  - Save selected sessions to:  
+    `raised_hand[tournament_id][day] = ["Day", "Night"]`
+  - Save meeting preference to:  
+    `meeting_pref[tournament_id] = "Yes"` or `"No"`
+
+- If all session checkboxes are unchecked and Save is clicked:
+  - Remove `raised_hand[tournament_id]` and `meeting_pref[tournament_id]`
+  - Also update `attending[tournament_id] = False`
+
+---
+
+Let me know when you're ready for me to help you rebuild or update the Flask + HTML side to match all of this!

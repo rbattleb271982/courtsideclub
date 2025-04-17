@@ -89,21 +89,21 @@
                         </td>
                         <td>
                             <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="attendance-form">
-                                <div class="attendance-checkbox-container">
-                                    {% if tournament.id in current_user.attending or tournament.id in current_user.raised_hand %}
-                                        <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-success btn-sm">
-                                            <i data-feather="check" class="attendance-check-icon"></i> View Sessions
-                                        </a>
-                                    {% else %}
-                                        <div class="form-group mb-0">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input attending-checkbox" 
-                                                       id="attending-{{ tournament.id }}" name="attending" value="true"
-                                                       {% if tournament.id in current_user.attending %}checked{% endif %}>
-                                                <label class="custom-control-label" for="attending-{{ tournament.id }}">I'm attending</label>
-                                            </div>
+                                <div class="attendance-action-container">
+                                    {% if tournament.id in current_user.attending %}
+                                        <div class="d-flex flex-column">
+                                            <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-success btn-sm mb-2">
+                                                <i data-feather="check" class="attendance-check-icon"></i> View Sessions
+                                            </a>
+                                            <button type="submit" name="remove" value="true" class="btn btn-outline-danger btn-sm">
+                                                <i data-feather="x" class="attendance-check-icon"></i> Cancel Attendance
+                                            </button>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Save</button>
+                                    {% else %}
+                                        <input type="hidden" name="attending" value="true">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i data-feather="plus" class="attendance-check-icon"></i> I'm Attending
+                                        </button>
                                     {% endif %}
                                 </div>
                             </form>
