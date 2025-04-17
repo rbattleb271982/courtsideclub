@@ -2,9 +2,13 @@ import os
 import secrets
 import string
 import logging
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
+try:
+    from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+    from flask_login import login_user, logout_user, login_required, current_user
+    from werkzeug.security import generate_password_hash, check_password_hash
+except ImportError:
+    pass  # Imports will be available at runtime
+    
 from models import db, User
 
 # Initialize blueprint
@@ -13,7 +17,7 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('tournaments.index'))
+        return redirect(url_for('user.home'))
     
     if request.method == 'POST':
         email = request.form['email'].lower()
@@ -37,7 +41,7 @@ def login():
                 next_page = request.args.get('next', '')
                 if next_page:
                     return redirect(next_page)
-                return redirect(url_for('tournaments.index'))
+                return redirect(url_for('user.home'))
         
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
@@ -47,7 +51,7 @@ def login():
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('tournaments.index'))
+        return redirect(url_for('user.home'))
     
     if request.method == 'POST':
         try:
@@ -101,7 +105,7 @@ def register():
                 # Show success message
                 flash('Registration successful! Welcome to CourtSide Club.', 'success')
                                 
-                return redirect(url_for('tournaments.index'))
+                return redirect(url_for('user.home'))
             except Exception as e:
                 db.session.rollback()
                 logging.error(f"Error creating new user: {str(e)}")
@@ -124,7 +128,7 @@ def logout():
 @auth_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
-        return redirect(url_for('tournaments.index'))
+        return redirect(url_for('user.home'))
     
     if request.method == 'POST':
         email = request.form.get('email', '').lower()

@@ -1,8 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
-from flask_login import login_required, current_user
-from models import db, User, Tournament
 import datetime
 import json
+try:
+    from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+    from flask_login import login_required, current_user
+except ImportError:
+    pass  # Imports will be available at runtime
+    
+from models import db, User, Tournament
 
 # Initialize blueprint
 tournaments_bp = Blueprint('tournaments', __name__)
