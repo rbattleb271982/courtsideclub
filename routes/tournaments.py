@@ -46,13 +46,16 @@ def list_tournaments():
     # Calculate attendance and meetup counts for each tournament
     attendance_counts = {}
     for tournament in tournaments:
-        # Count users who have selected any day/session for this tournament
-        attending_users = User.query.filter(
-            User.raised_hand.contains({tournament.id: {}})
+        # Count users who have registered for this tournament
+        attending_users = UserTournament.query.filter_by(
+            tournament_id=tournament.id
         ).count()
         
-        # For now, all users with raised_hand are counted as open to meeting
-        meeting_users = attending_users
+        # Count users who are open to meeting
+        meeting_users = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            open_to_meet=True
+        ).count()
         
         attendance_counts[tournament.id] = {
             'attending': attending_users,
@@ -77,50 +80,45 @@ def tournament_detail(tournament_id):
         flash('Tournament not found.', 'danger')
         return redirect(url_for('tournaments.list_tournaments'))
     
-    # Get users who raised hands for this tournament
+    # Get users who are open to meeting for this tournament
     raised_hands = []
-    users_with_raised_hands = User.query.filter(
-        User.raised_hand.contains({tournament_id: {}})
+    user_tournaments = UserTournament.query.filter_by(
+        tournament_id=tournament_id,
+        open_to_meet=True
     ).all()
     
-    for user in users_with_raised_hands:
-        if tournament_id in user.raised_hand:
-            # Format each day and session for display
-            for day, sessions in user.raised_hand[tournament_id].items():
-                sessions_str = ", ".join(sessions)
-                raised_hands.append({
-                    'name': user.get_full_name(),
-                    'email': user.email,
-                    'day': day,
-                    'sessions': sessions_str,
-                    'user_id': user.id
-                })
+    for user_tournament in user_tournaments:
+        user = user_tournament.user
+        for day in user_tournament.dates:
+            sessions_str = ", ".join(user_tournament.sessions)
+            raised_hands.append({
+                'name': user.get_full_name(),
+                'email': user.email,
+                'day': day,
+                'sessions': sessions_str,
+                'user_id': user.id
+            })
     
-    # Calculate overall attendance and meetup counts
-    # Count any user with the tournament in their attending field
-    # Don't include the current user unless they've already saved preferences
-    if tournament_id not in current_user.attending:
-        # Current user isn't counted yet since they haven't saved
-        attending_count = User.query.filter(
-            User.attending.contains({tournament_id: {}})
-        ).count()
-    else:
-        # Include all users with this tournament in their attending field
-        attending_count = User.query.filter(
-            User.attending.contains({tournament_id: {}})
-        ).count()
+    # Calculate overall attendance count
+    attending_count = UserTournament.query.filter_by(
+        tournament_id=tournament_id
+    ).count()
     
-    # Count any user with the tournament in their raised_hand field
-    # Don't include the current user unless they've already set preferences
-    if tournament_id not in current_user.raised_hand:
-        # Current user isn't counted yet since they haven't saved
-        meeting_count = User.query.filter(
-            User.raised_hand.contains({tournament_id: {}})
-        ).count()
-    else:
-        meeting_count = User.query.filter(
-            User.raised_hand.contains({tournament_id: {}})
-        ).count()
+    # Calculate meeting count
+    meeting_count = UserTournament.query.filter_by(
+        tournament_id=tournament_id,
+        open_to_meet=True
+    ).count()
+    
+    # For backward compatibility during migration
+    # Check if current user has a UserTournament record or is in the legacy fields
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament_id
+    ).first()
+    
+    user_attending = user_tournament is not None or tournament_id in current_user.attending
+    user_raised_hand = (user_tournament and user_tournament.open_to_meet) or tournament_id in current_user.raised_hand
     
     # Parse tournament sessions into days for the template and calculate calendar dates
     from datetime import timedelta
@@ -159,26 +157,25 @@ def tournament_detail(tournament_id):
                 'meeting': 0
             }
     
-    # Count attendance per day and session
-    for user in users_with_raised_hands:
-        if tournament_id in user.raised_hand:
-            for day, sessions in user.raised_hand[tournament_id].items():
-                if day in day_attendance:
-                    # Increment day counter
-                    day_attendance[day]['attending'] += 1
-                    day_attendance[day]['meeting'] += 1  # All raisedHand users count as meeting for now
-                    
-                    # Increment session counters
-                    for session in sessions:
-                        if session in day_attendance[day]['sessions']:
-                            day_attendance[day]['sessions'][session]['attending'] += 1
+    # Count attendance per day and session using the UserTournament model
+    all_user_tournaments = UserTournament.query.filter_by(
+        tournament_id=tournament_id
+    ).all()
+    
+    for user_tournament in all_user_tournaments:
+        for day in user_tournament.dates:
+            if day in day_attendance:
+                # Increment day counter
+                day_attendance[day]['attending'] += 1
+                if user_tournament.open_to_meet:
+                    day_attendance[day]['meeting'] += 1
+                
+                # Increment session counters
+                for session in user_tournament.sessions:
+                    if session in day_attendance[day]['sessions']:
+                        day_attendance[day]['sessions'][session]['attending'] += 1
+                        if user_tournament.open_to_meet:
                             day_attendance[day]['sessions'][session]['meeting'] += 1
-    
-    # Check if current user is attending
-    user_attending = tournament_id in current_user.attending
-    
-    # Check if current user has raised hand
-    user_raised_hand = tournament_id in current_user.raised_hand
     
     return render_template('tournament_detail.html',
                           tournament=tournament,
