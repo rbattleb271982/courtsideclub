@@ -1,0 +1,60 @@
+Here’s a clear, structured message you can **copy and paste into Replit AI** (or send to a dev) to explain everything that needs to be updated:
+
+---
+
+### 🛠️ COURTSIDECLUB: TOURNAMENT & PROFILE PAGE CHANGES
+
+---
+
+#### ✅ 1. **Tournament Table Display & Filters**
+- The **Start Date** and **End Date** should each have their **own columns** in the tournament table.
+- The **Location** column (currently wrapping city and country) should be widened or separated into two columns: **City** and **Country**.
+- Add a **filter dropdown** above the tournament table with these filter options:
+  - Tournament Name
+  - Location
+  - Event Type (Grand Slam, 1000, 500)
+
+---
+
+#### ✅ 2. **“Save Selection” Button Placement**
+- On the tournament selection table (where users choose days/sessions):
+  - Move the **“Save Selection”** button so it appears **to the right of the last day/session column**, on the same row as the tournament.
+
+---
+
+#### ✅ 3. **Scrolling and Multi-Day Tournament Layout**
+- Currently, if there are too many days, the table overflows without a scroll option.
+- Solution:
+  - Allow **horizontal scrolling**, **or**
+  - If many days exist, render **additional days on a second row** directly underneath the first for that tournament (stacked grid layout).
+
+---
+
+#### ✅ 4. **Lanyard Ordering Fixes**
+- The “Get Lanyard” button currently returns an internal error.
+- Please make sure:
+  - **Address fields are required** when placing a lanyard order.
+  - Once submitted, redirect the user to their **profile page**.
+  - On the profile page, update the lanyard section with:
+    - `"Your lanyard order has been placed."`
+
+---
+
+#### ✅ 5. **Login Bug (Session Persistence)**
+- When logging in via Replit, login doesn’t work in the same browser tab — but works if I open a new tab.
+- Please investigate session/cookie behavior and ensure proper session persistence across Replit preview windows.
+
+---
+
+#### ✅ 6. **Add “Change Password” Section**
+- In the **profile page**, add a section for users to change their password.
+- Include:
+  - Current password field (optional)
+  - New password field
+  - Confirm new password
+  - A “Save” button
+- Validate matching and update the stored password in Replit DB (or whatever storage is being used).
+
+---
+
+Let me know if you’d like me to mock up the new tournament layout visually or write the backend code for any of these changes.

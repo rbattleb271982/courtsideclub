@@ -1,0 +1,131 @@
+from flask import Flask, render_template, request, redirect, session, url_for, flash
+from replit import db
+import datetime
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+# Sample tournament data for example purposes
+tournaments = [...]  # You should load this from a JSON file or define it externally for maintainability
+
+@app.route('/')
+def index():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user_data = db.get(session['user'], {})
+    return render_template('index.html', user=user_data, tournaments=tournaments)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email'].lower()
+        name = request.form['name']
+        password = request.form['password']
+        user = db.get(email)
+
+        if user:
+            if user['password'] == password:
+                session['user'] = email
+                return redirect(url_for('profile'))
+            else:
+                flash("Incorrect password")
+        else:
+            flash("User not found")
+
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+    user = db[user_id]
+
+    if request.method == 'POST':
+        attending = request.form.getlist('attending')
+        address = request.form.get('address')
+        db[user_id]['attending'] = attending
+        if address:
+            db[user_id]['address'] = address
+        if attending and not db[user_id].get('lanyard_ordered'):
+            db[user_id]['prompt_lanyard'] = True
+        return redirect(url_for('profile'))
+
+    return render_template('profile.html', user=user, tournaments=tournaments)
+
+@app.route('/raise_hand_bulk', methods=['POST'])
+def raise_hand_bulk():
+    from collections import defaultdict
+
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+
+    raised_hand = defaultdict(dict)
+
+    for key in request.form:
+        if key.startswith('raised_hand['):
+            parts = key.split('[')
+            if len(parts) >= 3:
+                tournament_id = parts[1][:-1]
+                day = parts[2][:-1]
+                sessions = request.form.getlist(key)
+                raised_hand[tournament_id][day] = sessions
+
+    db[user_id]['raised_hand'] = dict(raised_hand)
+    return redirect(url_for('profile'))
+
+@app.route('/order_lanyard', methods=['POST'])
+def order_lanyard():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+
+    address = request.form.get('address')
+    if not address:
+        flash("Address is required to place a lanyard order.")
+        return redirect(url_for('profile'))
+
+    db[user_id]['address'] = address
+    db[user_id]['lanyard_ordered'] = True
+    flash("Your lanyard order has been placed.")
+    return redirect(url_for('profile'))
+
+@app.route('/toggle_notifications')
+def toggle_notifications():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+    db[user_id]['notifications'] = not db[user_id].get('notifications', True)
+    return redirect(url_for('profile'))
+
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+
+    current_pw = request.form.get('current_password')
+    new_pw = request.form.get('new_password')
+    confirm_pw = request.form.get('confirm_password')
+
+    if new_pw != confirm_pw:
+        flash("New passwords do not match.")
+        return redirect(url_for('profile'))
+
+    user = db.get(user_id)
+    if 'password' in user and user['password'] != current_pw:
+        flash("Current password is incorrect.")
+        return redirect(url_for('profile'))
+
+    db[user_id]['password'] = new_pw
+    flash("Password updated successfully.")
+    return redirect(url_for('profile'))
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=81)

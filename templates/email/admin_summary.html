@@ -53,13 +53,18 @@
             
             <div class="order-details">
                 <h3>Order Details</h3>
+                {% if order_id %}
                 <p><strong>Order ID:</strong> {{ order_id }}</p>
+                {% endif %}
+                {% if shipping_details %}
+                <p><strong>Shipping Details:</strong> {{ shipping_details }}</p>
+                {% endif %}
                 <p><strong>User:</strong> {{ user_name }}</p>
                 <p><strong>Email:</strong> {{ user_email }}</p>
-                <p><strong>Date:</strong> {{ now().strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <p><strong>Date:</strong> {{ '%Y-%m-%d'|today }}</p>
             </div>
             
-            <p>Please check the Printful dashboard for complete shipping details.</p>
+            <p>Please coordinate with the fulfillment team to process this lanyard order.</p>
         </div>
         <div class="footer">
             <p>&copy; 2023 CourtSide Club. All rights reserved.</p>

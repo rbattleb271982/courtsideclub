@@ -22,6 +22,11 @@ def timedelta_filter(n):
     """Add a number of days to a date"""
     return datetime.timedelta(days=n)
 
+@app.template_filter('today')
+def format_today(format_string):
+    """Format today's date with the given format string"""
+    return datetime.datetime.utcnow().strftime(format_string)
+
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

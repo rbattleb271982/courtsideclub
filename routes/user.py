@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Tournament
 from services.sendgrid_service import send_email
 import json
+import logging
 
 # Initialize blueprint
 user_bp = Blueprint('user', __name__)
@@ -96,6 +98,44 @@ def toggle_notifications():
     
     status = "enabled" if user.notifications else "disabled"
     flash(f'Notifications {status}!', 'success')
+    return redirect(url_for('user.profile'))
+
+@user_bp.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+    
+    # Check if new password and confirmation match
+    if new_password != confirm_password:
+        flash('New passwords do not match.', 'danger')
+        return redirect(url_for('user.profile'))
+    
+    # Get the current user
+    user = User.query.get(current_user.id)
+    
+    # If a current password was provided, verify it
+    if current_password and user.password_hash:
+        if not check_password_hash(user.password_hash, current_password):
+            flash('Current password is incorrect.', 'danger')
+            return redirect(url_for('user.profile'))
+    
+    # Update the password hash
+    try:
+        user.password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+        db.session.commit()
+        
+        # Clear temporary password after successful password change (if exists)
+        if 'temp_password' in session:
+            del session['temp_password']
+        
+        flash('Password updated successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error updating password: {str(e)}")
+        flash('An error occurred while updating your password.', 'danger')
+    
     return redirect(url_for('user.profile'))
 
 @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
