@@ -99,14 +99,25 @@ def tournament_detail(tournament_id):
     attending_count = len(users_with_raised_hands)
     meeting_count = attending_count  # For now, all users with raised_hand are counted as open to meeting
     
-    # Parse tournament sessions into days for the template
+    # Parse tournament sessions into days for the template and calculate calendar dates
+    from datetime import timedelta
+    
     days = {}
+    day_dates = {}  # Maps day names to actual calendar dates
+    
     for session_str in tournament.sessions:
         parts = session_str.split(' - ')
         day = parts[0]
         session_type = parts[1]
+        
         if day not in days:
             days[day] = []
+            
+            # Extract day number and calculate calendar date
+            day_number = int(day.split(' ')[1])  # e.g., "Day 1" -> 1
+            calendar_date = tournament.start_date + timedelta(days=day_number - 1)
+            day_dates[day] = calendar_date
+            
         if session_type not in days[day]:
             days[day].append(session_type)
     
@@ -154,6 +165,7 @@ def tournament_detail(tournament_id):
                           attending_count=attending_count,
                           meeting_count=meeting_count,
                           days=days,
+                          day_dates=day_dates,
                           day_attendance=day_attendance)
 
 @tournaments_bp.route('/tournaments/<tournament_id>/attend', methods=['POST'])

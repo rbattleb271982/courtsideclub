@@ -42,7 +42,7 @@
                                 {% for day_name, day_sessions in days.items() %}
                                 <div class="day-card mb-3">
                                     <div class="day-header bg-light p-2 rounded">
-                                        <h5 class="day-title mb-0">{{ day_name }}</h5>
+                                        <h5 class="day-title mb-0">{{ day_name }} – {{ day_dates[day_name].strftime('%B %d') }}</h5>
                                     </div>
                                     <div class="session-options p-3">
                                         {% for session in day_sessions %}
