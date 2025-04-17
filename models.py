@@ -54,7 +54,9 @@ class User(UserMixin, db.Model):
             return self.name
         else:
             return self.email.split('@')[0]  # Fallback to username from email
-    attending = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
+    # Store attendance with session information
+    # Format: {'tournament_id': {'date': '2025-05-25', 'session': 'Day'}}
+    attending = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     lanyard_ordered = db.Column(db.Boolean, default=False)
     notifications = db.Column(db.Boolean, default=True)

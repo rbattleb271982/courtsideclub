@@ -16,6 +16,12 @@ logging.basicConfig(
 app = Flask(__name__)
 app.config.from_object('config.Config')
 
+# Add custom Jinja2 filters
+@app.template_filter('timedelta')
+def timedelta_filter(n):
+    """Add a number of days to a date"""
+    return datetime.timedelta(days=n)
+
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

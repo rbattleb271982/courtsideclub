@@ -45,39 +45,71 @@
                         <th>Date</th>
                         <th>Location</th>
                         <th>Type</th>
-                        <th>Actions</th>
+                        <th>Attendance</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for tournament in tournaments %}
                     <tr class="{% if tournament.id in current_user.attending %}table-success{% endif %}">
                         <td>
-                            <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}">
-                                {{ tournament.name }}
-                            </a>
+                            {{ tournament.name }}
                             {% if tournament.id in current_user.attending %}
                             <span class="badge badge-secondary ml-2">Attending</span>
                             {% endif %}
                         </td>
                         <td>{{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}</td>
-                        <td><i data-feather="map-pin" width="14"></i> {{ tournament.city }}, {{ tournament.country }}</td>
+                        <td>{{ tournament.city }}, {{ tournament.country }}</td>
                         <td>
                             <span class="tournament-type">{{ tournament.event_type }}</span>
                             <small>{{ tournament.tour_type }}</small>
                         </td>
                         <td>
-                            <div class="btn-group" role="group">
-                                <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-sm btn-primary">
-                                    <i data-feather="info" width="14"></i> Details
-                                </a>
-                                <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" style="display: inline-block;">
-                                    <button type="submit" class="btn btn-sm btn-{% if tournament.id in current_user.attending %}outline{% else %}secondary{% endif %}">
+                            <div class="attendance-toggle">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input attendance-checkbox" 
+                                        id="attend-{{ tournament.id }}" 
+                                        data-tournament-id="{{ tournament.id }}" 
+                                        data-tournament-name="{{ tournament.name }}"
+                                        {% if tournament.id in current_user.attending %}checked{% endif %}>
+                                    <label class="custom-control-label" for="attend-{{ tournament.id }}">
                                         {% if tournament.id in current_user.attending %}
-                                        <i data-feather="x" width="14"></i> Not Attending
+                                        Attending
                                         {% else %}
-                                        <i data-feather="check" width="14"></i> Attending
+                                        Not Attending
                                         {% endif %}
-                                    </button>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="session-options mt-2 collapse {% if tournament.id in current_user.attending %}show{% endif %}" id="sessions-{{ tournament.id }}">
+                                <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="session-selection-form">
+                                    <div class="form-group">
+                                        <label for="day-{{ tournament.id }}" class="small">Day</label>
+                                        <select id="day-{{ tournament.id }}" name="day" class="form-control form-control-sm day-select" required>
+                                            <option value="">Select a day</option>
+                                            {% for day_num in range((tournament.end_date - tournament.start_date).days + 1) %}
+                                                {% set current_day = tournament.start_date + day_num|timedelta %}
+                                                <option value="{{ current_day.strftime('%Y-%m-%d') }}"
+                                                    {% if current_user.attending.get(tournament.id, {}).get('date') == current_day.strftime('%Y-%m-%d') %}selected{% endif %}>
+                                                    {{ current_day.strftime('%b %d, %Y') }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="session-{{ tournament.id }}" class="small">Session</label>
+                                        <select id="session-{{ tournament.id }}" name="session" class="form-control form-control-sm" required>
+                                            <option value="">Select a session</option>
+                                            <option value="Day" {% if current_user.attending.get(tournament.id, {}).get('session') == 'Day' %}selected{% endif %}>Day Session</option>
+                                            <option value="Night" {% if current_user.attending.get(tournament.id, {}).get('session') == 'Night' %}selected{% endif %}>Night Session</option>
+                                            <option value="Both" {% if current_user.attending.get(tournament.id, {}).get('session') == 'Both' %}selected{% endif %}>Both Sessions</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="text-right">
+                                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                    </div>
                                 </form>
                             </div>
                         </td>
@@ -104,16 +136,58 @@
 .tournament-list a {
     color: var(--primary);
     text-decoration: none;
+}
+.tournament-type {
     font-weight: 500;
 }
-.tournament-list a:hover {
-    text-decoration: underline;
+.attendance-toggle {
+    margin-bottom: 5px;
 }
-.tournament-list .badge {
-    vertical-align: middle;
-}
-.tournament-list .feather {
-    vertical-align: text-bottom;
+.session-options {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle session options when the checkbox is clicked
+    const attendanceCheckboxes = document.querySelectorAll('.attendance-checkbox');
+    
+    attendanceCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const tournamentId = this.dataset.tournamentId;
+            const tournamentName = this.dataset.tournamentName;
+            const sessionOptions = document.getElementById(`sessions-${tournamentId}`);
+            
+            if (this.checked) {
+                // Show session options
+                sessionOptions.classList.add('show');
+            } else {
+                // Remove attendance and hide session options
+                sessionOptions.classList.remove('show');
+                
+                // Post to the server to remove attendance
+                fetch(`/tournaments/${tournamentId}/attend`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: 'remove=true'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.parentElement.querySelector('label').textContent = 'Not Attending';
+                        this.closest('tr').classList.remove('table-success');
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

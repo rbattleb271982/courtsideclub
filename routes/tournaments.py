@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from models import db, User, Tournament
 import datetime
+import json
 
 # Initialize blueprint
 tournaments_bp = Blueprint('tournaments', __name__)
@@ -92,21 +93,54 @@ def attend_tournament(tournament_id):
         flash('Tournament not found.', 'danger')
         return redirect(url_for('tournaments.list_tournaments'))
     
-    # Update user's attending list
+    # Update user's attending information
     user = User.query.get(current_user.id)
-    attending = list(user.attending) if user.attending else []
+    attending = dict(user.attending) if user.attending else {}
     
-    if tournament_id in attending:
-        attending.remove(tournament_id)
-        flash(f"You're no longer attending {tournament.name}.", 'info')
+    # Check if this is a removal request
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    remove = request.form.get('remove') == 'true'
+    
+    if remove:
+        if tournament_id in attending:
+            del attending[tournament_id]
+            message = f"You're no longer attending {tournament.name}."
+            if is_ajax:
+                return {'success': True, 'message': message}
+            else:
+                flash(message, 'info')
     else:
-        attending.append(tournament_id)
-        flash(f"You're now attending {tournament.name}!", 'success')
+        # Get session information
+        day = request.form.get('day')
+        session_type = request.form.get('session')
+        
+        if not day or not session_type:
+            if is_ajax:
+                return {'success': False, 'message': 'Please select a day and session.'}
+            else:
+                flash('Please select a day and session.', 'warning')
+                return redirect(url_for('tournaments.list_tournaments'))
+        
+        # Store attendance info
+        attending[tournament_id] = {
+            'date': day,
+            'session': session_type
+        }
+        
+        message = f"You're attending {tournament.name} on {day} for the {session_type} session!"
+        if is_ajax:
+            return {'success': True, 'message': message}
+        else:
+            flash(message, 'success')
     
+    # Update user record
     user.attending = attending
     db.session.commit()
     
-    return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
+    if is_ajax:
+        return {'success': True}
+    else:
+        return redirect(url_for('tournaments.list_tournaments'))
 
 @tournaments_bp.route('/tournaments/<tournament_id>/raise_hand', methods=['POST'])
 @login_required
