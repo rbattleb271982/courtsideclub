@@ -4,6 +4,10 @@ class Config:
     # Flask configuration
     SECRET_KEY = os.environ.get('SESSION_SECRET', 'dev_secret_key')
     
+    # Database configuration
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
     # Google OAuth configuration
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
     GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_OAUTH_CLIENT_SECRET')

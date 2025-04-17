@@ -2,8 +2,7 @@ import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from replit import db
-from models import User
+from models import db, User
 
 # Initialize blueprint
 auth_bp = Blueprint('auth', __name__)
@@ -17,24 +16,16 @@ def login():
         email = request.form['email'].lower()
         password = request.form['password']
         
+        # Find user by email
+        user = User.query.filter_by(email=email).first()
+        
         # Check if user exists and password is correct
-        if email in db and 'password' in db[email]:
-            stored_password = db[email]['password']
-            if check_password_hash(stored_password, password):
-                user = User(
-                    email,
-                    db[email].get('email'),
-                    db[email].get('name'),
-                    db[email].get('attending', []),
-                    db[email].get('raised_hand', {}),
-                    db[email].get('lanyard_ordered', False),
-                    db[email].get('notifications', True)
-                )
-                login_user(user)
-                next_page = request.args.get('next', '')
-                if next_page:
-                    return redirect(next_page)
-                return redirect(url_for('tournaments.index'))
+        if user and user.password_hash and check_password_hash(user.password_hash, password):
+            login_user(user)
+            next_page = request.args.get('next', '')
+            if next_page:
+                return redirect(next_page)
+            return redirect(url_for('tournaments.index'))
         
         flash('Invalid email or password', 'danger')
     
@@ -52,7 +43,8 @@ def register():
         confirm_password = request.form['confirm_password']
         
         # Form validation
-        if email in db:
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
             flash('Email already registered.', 'danger')
             return render_template('register.html')
         
@@ -60,20 +52,18 @@ def register():
             flash('Passwords do not match.', 'danger')
             return render_template('register.html')
         
-        # Store user in database
-        db[email] = {
-            'email': email,
-            'name': name,
-            'password': generate_password_hash(password),
-            'attending': [],
-            'raised_hand': {},
-            'lanyard_ordered': False,
-            'notifications': True
-        }
+        # Create and store user
+        new_user = User(
+            email=email,
+            name=name,
+            password_hash=generate_password_hash(password)
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
         
         # Log the user in
-        user = User(email, email, name)
-        login_user(user)
+        login_user(new_user)
         flash('Registration successful!', 'success')
         return redirect(url_for('tournaments.index'))
     

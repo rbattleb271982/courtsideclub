@@ -1,34 +1,73 @@
 from flask_login import UserMixin
-from replit import db
+from flask_sqlalchemy import SQLAlchemy
+import json
+from sqlalchemy.ext.mutable import MutableList, MutableDict
+from sqlalchemy import types
+from datetime import datetime
 
-class User(UserMixin):
-    def __init__(self, id, email, name, attending=None, raised_hand=None, 
-                 lanyard_ordered=False, notifications=True):
-        self.id = id
-        self.email = email
-        self.name = name
-        self.attending = attending or []
-        self.raised_hand = raised_hand or {}
-        self.lanyard_ordered = lanyard_ordered
-        self.notifications = notifications
-        self.is_authenticated = True
-        self.is_active = True
-        self.is_anonymous = False
+db = SQLAlchemy()
+
+# Custom field types to store JSON data
+class JsonEncodedList(types.TypeDecorator):
+    impl = types.Text
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return '[]'
+        return json.dumps(value)
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return []
+        return json.loads(value)
+
+class JsonEncodedDict(types.TypeDecorator):
+    impl = types.Text
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return '{}'
+        return json.dumps(value)
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return {}
+        return json.loads(value)
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    password_hash = db.Column(db.String(256))
+    attending = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
+    raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
+    lanyard_ordered = db.Column(db.Boolean, default=False)
+    notifications = db.Column(db.Boolean, default=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     
     def get_id(self):
-        return self.id
+        return str(self.id)
     
+    def __repr__(self):
+        return f'<User {self.email}>'
+
+class Tournament(db.Model):
+    __tablename__ = 'tournaments'
+    
+    id = db.Column(db.String(50), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    city = db.Column(db.String(100), nullable=False)
+    country = db.Column(db.String(100), nullable=False)
+    event_type = db.Column(db.String(50), nullable=False)
+    tour_type = db.Column(db.String(50), nullable=False)
+    sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
+    
+    def __repr__(self):
+        return f'<Tournament {self.name}>'
+
 def load_user(user_id):
-    user_data = db.get(user_id)
-    if not user_data:
-        return None
-    
-    return User(
-        user_id,
-        user_data.get('email'),
-        user_data.get('name'),
-        user_data.get('attending', []),
-        user_data.get('raised_hand', {}),
-        user_data.get('lanyard_ordered', False),
-        user_data.get('notifications', True)
-    )
+    return User.query.get(int(user_id))
