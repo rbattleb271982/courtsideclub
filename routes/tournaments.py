@@ -56,7 +56,7 @@ def tournament_detail(tournament_id):
     for user in users_with_raised_hands:
         if tournament_id in user.raised_hand:
             raised_hands.append({
-                'name': user.name,
+                'name': user.get_full_name(),
                 'email': user.email,
                 'day': user.raised_hand[tournament_id].get('day'),
                 'session': user.raised_hand[tournament_id].get('session')

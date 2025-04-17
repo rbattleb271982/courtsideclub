@@ -117,7 +117,7 @@ def order_lanyard():
                     to_email=user.email,
                     subject="Your CourtSide Club Lanyard Order",
                     html_content=render_template('email/notification.html', 
-                                                name=f"{user.first_name} {user.last_name}",
+                                                name=user.get_full_name(),
                                                 message="Your lanyard order has been placed! You'll receive it soon.")
                 )
             
@@ -129,7 +129,7 @@ def order_lanyard():
                     subject="New Lanyard Order",
                     html_content=render_template('email/admin_summary.html',
                                                 user_email=user.email,
-                                                user_name=f"{user.first_name} {user.last_name}",
+                                                user_name=user.get_full_name(),
                                                 order_id=order_id)
                 )
             

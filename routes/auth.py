@@ -71,6 +71,7 @@ def register():
                     email=email,
                     first_name=first_name,
                     last_name=last_name,
+                    name=f"{first_name} {last_name}",  # Also set the name field for compatibility
                     password_hash=generate_password_hash(password)
                 )
                 
