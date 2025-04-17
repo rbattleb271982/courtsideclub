@@ -6,7 +6,8 @@ try:
 except ImportError:
     pass  # Imports will be available at runtime
     
-from models import db, User, Tournament
+from models import db, User, Tournament, UserTournament
+from sqlalchemy import and_, or_
 
 # Initialize blueprint
 tournaments_bp = Blueprint('tournaments', __name__)
