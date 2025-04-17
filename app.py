@@ -15,6 +15,13 @@ app.config.from_object('config.Config')
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_recycle': 300,  # Recycle connections after 5 minutes
+    'pool_pre_ping': True,  # Check connection validity before use
+    'pool_timeout': 30,  # Timeout after 30 seconds
+    'pool_size': 10,  # Maximum number of connections
+    'max_overflow': 5  # Maximum number of connections above pool_size
+}
 
 # Initialize the database
 db.init_app(app)
@@ -88,31 +95,41 @@ tournament_data = [
 # Initialize the database tables and seed data
 def init_db():
     with app.app_context():
-        # Create all tables
-        db.create_all()
-        
-        # Check if tournaments table is empty and seed initial data
-        if Tournament.query.count() == 0:
-            for t_data in tournament_data:
-                # Convert date strings to date objects
-                start_date = datetime.datetime.strptime(t_data['start_date'], '%Y-%m-%d').date()
-                end_date = datetime.datetime.strptime(t_data['end_date'], '%Y-%m-%d').date()
-                
-                tournament = Tournament(
-                    id=t_data['id'],
-                    name=t_data['name'],
-                    start_date=start_date,
-                    end_date=end_date,
-                    city=t_data['city'],
-                    country=t_data['country'],
-                    event_type=t_data['event_type'],
-                    tour_type=t_data['tour_type'],
-                    sessions=t_data['sessions']
-                )
-                db.session.add(tournament)
+        try:
+            # Create all tables
+            db.create_all()
             
-            db.session.commit()
-            print("Database initialized with tournament data.")
+            # Check if tournaments table is empty and seed initial data
+            try:
+                tournament_count = Tournament.query.count()
+                if tournament_count == 0:
+                    for t_data in tournament_data:
+                        # Convert date strings to date objects
+                        start_date = datetime.datetime.strptime(t_data['start_date'], '%Y-%m-%d').date()
+                        end_date = datetime.datetime.strptime(t_data['end_date'], '%Y-%m-%d').date()
+                        
+                        tournament = Tournament(
+                            id=t_data['id'],
+                            name=t_data['name'],
+                            start_date=start_date,
+                            end_date=end_date,
+                            city=t_data['city'],
+                            country=t_data['country'],
+                            event_type=t_data['event_type'],
+                            tour_type=t_data['tour_type'],
+                            sessions=t_data['sessions']
+                        )
+                        db.session.add(tournament)
+                    
+                    db.session.commit()
+                    print("Database initialized with tournament data.")
+                else:
+                    print(f"Database already contains {tournament_count} tournaments. Skipping seed data.")
+            except Exception as e:
+                db.session.rollback()
+                print(f"Error seeding tournament data: {str(e)}")
+        except Exception as e:
+            print(f"Error initializing database: {str(e)}")
 
 # Initialize the database
 init_db()
