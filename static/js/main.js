@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize raise hand action
   initRaiseHandForm();
   
+  // Initialize copy attendance button
+  initCopyAttendanceButton();
+  
   // Initialize flash message dismissal
   initFlashMessages();
 });
@@ -179,6 +182,63 @@ function updateProfileAvatar() {
   
   if (profileAvatar && userName && userName.textContent) {
     profileAvatar.textContent = getInitial(userName.textContent.trim());
+  }
+}
+
+// Initialize copy attendance button functionality
+function initCopyAttendanceButton() {
+  const copyBtn = document.getElementById('copy-attendance-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Create a form to submit the copy action
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = window.location.pathname + '/raise_hand';
+      
+      // Get all selected session checkboxes
+      const checkedBoxes = document.querySelectorAll('input[type="checkbox"][name^="raised_hand"]:checked');
+      
+      if (checkedBoxes.length === 0) {
+        alert('Please select at least one session to attend first.');
+        return;
+      }
+      
+      // For each checked box, create hidden inputs to copy attendance to raised_hand
+      checkedBoxes.forEach(checkbox => {
+        // Parse the name to get the day and session information
+        // Format: raised_hand[tournament_id][Day X][]
+        const nameParts = checkbox.name.match(/raised_hand\[(.*?)\]\[(.*?)\]/);
+        if (nameParts && nameParts.length >= 3) {
+          const tournamentId = nameParts[1];
+          const day = nameParts[2];
+          const session = checkbox.value;
+          
+          // Add day input
+          const dayInput = document.createElement('input');
+          dayInput.type = 'hidden';
+          dayInput.name = 'day';
+          dayInput.value = day.replace('Day ', ''); // Remove 'Day ' prefix for the API
+          
+          // Add session input
+          const sessionInput = document.createElement('input');
+          sessionInput.type = 'hidden';
+          sessionInput.name = 'session';
+          sessionInput.value = session;
+          
+          form.appendChild(dayInput);
+          form.appendChild(sessionInput);
+          
+          // We only need the first one since our API only accepts one day/session at a time
+          return false;
+        }
+      });
+      
+      // Submit the form
+      document.body.appendChild(form);
+      form.submit();
+    });
   }
 }
 
