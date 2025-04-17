@@ -82,7 +82,7 @@ def register():
                     flash('Email already registered.', 'danger')
                     return render_template('register.html')
             except Exception as e:
-                logging.error(f"Error checking existing user: {str(e)}")
+                logging.error(f"Error checking existing user: {str(e)}", exc_info=True)
                 flash('An error occurred while checking user information.', 'danger')
                 return render_template('register.html')
             
@@ -108,12 +108,12 @@ def register():
                 return redirect(url_for('user.home'))
             except Exception as e:
                 db.session.rollback()
-                logging.error(f"Error creating new user: {str(e)}")
+                logging.error(f"Error creating new user: {str(e)}", exc_info=True)
                 flash('An error occurred during registration. Please try again.', 'danger')
                 return render_template('register.html')
                 
         except Exception as e:
-            logging.error(f"Registration error: {str(e)}")
+            logging.error(f"Registration error: {str(e)}", exc_info=True)
             flash('An error occurred during registration. Please try again.', 'danger')
             return render_template('register.html')
     
