@@ -52,7 +52,10 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h2>Tennis Tournaments</h2>
-        <div>
+        <div class="d-flex align-items-center">
+            <a href="{{ url_for('tournaments.past_tournaments') }}" class="btn btn-sm btn-outline-primary mr-3">
+                <i data-feather="clipboard" class="icon-sm"></i> Choose past tournaments you've attended
+            </a>
             <span class="badge badge-info">{{ tournaments|length }} tournaments</span>
         </div>
     </div>
