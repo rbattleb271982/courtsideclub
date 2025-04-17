@@ -14,10 +14,10 @@ class Config:
     
     # SendGrid configuration
     SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
-    FROM_EMAIL = os.environ.get('FROM_EMAIL', 'noreply@tennisfans.app')
+    FROM_EMAIL = os.environ.get('FROM_EMAIL', 'noreply@courtsideclub.app')
     
     # Printful configuration
     PRINTFUL_API_KEY = os.environ.get('PRINTFUL_API_KEY')
     
     # Admin email for notifications
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@tennisfans.app')
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@courtsideclub.app')
