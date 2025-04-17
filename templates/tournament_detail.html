@@ -71,12 +71,12 @@
                                 <div class="form-group mb-0">
                                     <div class="custom-control custom-radio custom-control-inline">
                                         <input type="radio" id="meeting-yes" name="meeting_preference" value="Yes" class="custom-control-input" required
-                                               {% if tournament.id in current_user.raised_hand or tournament.id not in current_user.attending %}checked{% endif %}>
+                                               {% if tournament.id in current_user.raised_hand or tournament.id not in current_user.attending or (tournament.id not in current_user.raised_hand and tournament.id not in current_user.attending) %}checked{% endif %}>
                                         <label class="custom-control-label" for="meeting-yes">Yes</label>
                                     </div>
                                     <div class="custom-control custom-radio custom-control-inline">
                                         <input type="radio" id="meeting-no" name="meeting_preference" value="No" class="custom-control-input" required
-                                               {% if tournament.id not in current_user.raised_hand and tournament.id in current_user.attending %}checked{% endif %}>
+                                               {% if tournament.id not in current_user.raised_hand and tournament.id in current_user.attending and tournament.id not in current_user.raised_hand %}checked{% endif %}>
                                         <label class="custom-control-label" for="meeting-no">No</label>
                                     </div>
                                 </div>

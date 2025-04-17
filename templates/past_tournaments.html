@@ -31,7 +31,7 @@
                                        name="tournament_{{ tournament.id }}"
                                        {% if tournament.id in past_tournaments %}checked{% endif %}>
                                 <label class="custom-control-label d-flex align-items-center" for="tournament_{{ tournament.id }}">
-                                    {{ tournament.name }} · {{ tournament.city }}, {{ tournament.country }} · {{ tournament.event_type }}
+                                    <span class="tournament-name">{{ tournament.name }} · {{ tournament.city }}, {{ tournament.country }} · {{ tournament.event_type }}</span>
                                 </label>
                             </div>
                             {% endfor %}
