@@ -10,13 +10,13 @@
                 <h2>Order Your CourtSide Club Lanyard</h2>
             </div>
             <div class="card-body">
-                {% if current_user.lanyard_ordered %}
+                {% if lanyard_ordered %}
                 <div class="alert alert-success">
                     <i data-feather="check-circle"></i> You've already ordered your CourtSide Club lanyard!
                 </div>
                 <p>Your lanyard is on its way. Wear it proudly at tournaments to connect with other CourtSide Club members!</p>
                 <div class="text-center mt-4">
-                    <a href="{{ url_for('user.profile') }}" class="btn btn-primary">Back to Profile</a>
+                    <a href="{{ url_for('user.home') }}" class="btn btn-primary">Back to Home</a>
                 </div>
                 {% else %}
                 <p class="mb-4">Order your exclusive CourtSide Club lanyard to easily identify other community members at tournaments. The lanyard will be shipped directly to your address.</p>

@@ -125,7 +125,7 @@
             <div class="card-body">
                 {% if user.lanyard_ordered %}
                 <div class="alert alert-success">
-                    <i data-feather="check-circle"></i> Your lanyard has been ordered and will be shipped soon.
+                    <i data-feather="check-circle"></i> ✅ Your lanyard has been ordered and will be shipped soon.
                 </div>
                 {% else %}
                 <p>Order your CourtSide Club lanyard to easily identify other community members at tournaments.</p>
@@ -140,9 +140,9 @@
                     {% endif %}
                     
                     {% if has_selected_sessions %}
-                        <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-primary">🪪 Order your lanyard</a>
+                        <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-primary">🎾 Get Free Lanyard</a>
                     {% else %}
-                        <button type="button" class="btn btn-primary" onclick="showLanyardWarning()">🪪 Order your lanyard</button>
+                        <button type="button" class="btn btn-primary" onclick="showLanyardWarning()">🎾 Get Free Lanyard</button>
                         <script>
                             function showLanyardWarning() {
                                 alert('You must select tournament sessions before ordering your lanyard.');
@@ -219,6 +219,33 @@
 
 .tournament-card.past {
     opacity: 0.8;
+}
+
+.past-tournaments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.past-tournament-item {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.past-tournament-item:last-child {
+    border-bottom: none;
+}
+
+.past-tournament-item a {
+    color: #333;
+    text-decoration: none;
+}
+
+.past-tournament-item a:hover {
+    color: #28a745;
+    text-decoration: underline;
 }
 </style>
 {% endblock %}

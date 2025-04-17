@@ -170,6 +170,10 @@ def order_lanyard():
     # Check if user is attending any tournaments with raised_hand
     user = User.query.get(current_user.id)
     
+    # If lanyard already ordered, just show the confirmation page
+    if user.lanyard_ordered:
+        return render_template('order_lanyard.html', lanyard_ordered=True)
+    
     # Check if the user has selected any tournament sessions (raised_hand)
     has_selected_sessions = False
     if user.raised_hand:
@@ -195,7 +199,7 @@ def order_lanyard():
         # Form validation
         if not all([name, address1, city, zip_code, country]):
             flash('Please fill out all required fields.', 'danger')
-            return render_template('order_lanyard.html')
+            return render_template('order_lanyard.html', lanyard_ordered=False)
         
         # Update user in database to mark lanyard as ordered
         user.lanyard_ordered = True
@@ -223,7 +227,7 @@ def order_lanyard():
                                             shipping_details=f"{name}, {address1}, {city}, {country}")
             )
         
-        flash('Your lanyard has been ordered!', 'success')
-        return redirect(url_for('user.home'))
+        # Reload the page with the confirmation message
+        return redirect(url_for('user.order_lanyard'))
     
-    return render_template('order_lanyard.html')
+    return render_template('order_lanyard.html', lanyard_ordered=False)
