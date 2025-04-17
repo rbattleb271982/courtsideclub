@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Error - CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Oops! Something went wrong</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i data-feather="alert-triangle" width="64" height="64" class="text-danger"></i>
+                    </div>
+                    
+                    <p class="lead text-center">We're sorry, but we encountered an unexpected error while processing your request.</p>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="/" class="btn btn-primary">Go to Homepage</a>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary ml-2">Go Back</a>
+                    </div>
+                    
+                    {% if error %}
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <details>
+                            <summary class="text-muted">Technical details (for support)</summary>
+                            <pre class="text-danger mt-2">{{ error }}</pre>
+                        </details>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+});
+</script>
+{% endblock %}

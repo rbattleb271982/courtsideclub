@@ -93,7 +93,12 @@ def register():
                     first_name=first_name,
                     last_name=last_name,
                     name=f"{first_name} {last_name}",  # Also set the name field for compatibility
-                    password_hash=generate_password_hash(password, method='pbkdf2:sha256')
+                    password_hash=generate_password_hash(password),
+                    attending={},
+                    raised_hand={},
+                    past_tournaments=[],
+                    lanyard_ordered=False,
+                    notifications=True
                 )
                 
                 db.session.add(new_user)
@@ -194,7 +199,7 @@ def reset_password_confirm():
     
     try:
         # Update the user's password
-        user.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+        user.password_hash = generate_password_hash(password)
         db.session.commit()
         
         # Show success message

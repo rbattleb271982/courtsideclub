@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from flask_login import LoginManager
 import logging
 from models import db, User, load_user, Tournament
