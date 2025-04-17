@@ -106,7 +106,7 @@ def attend_tournament(tournament_id):
             del attending[tournament_id]
             message = f"You're no longer attending {tournament.name}."
             if is_ajax:
-                return {'success': True, 'message': message}
+                return jsonify({'success': True, 'message': message})
             else:
                 flash(message, 'info')
     else:
@@ -116,7 +116,7 @@ def attend_tournament(tournament_id):
         
         if not day or not session_type:
             if is_ajax:
-                return {'success': False, 'message': 'Please select a day and session.'}
+                return jsonify({'success': False, 'message': 'Please select a day and session.'})
             else:
                 flash('Please select a day and session.', 'warning')
                 return redirect(url_for('tournaments.list_tournaments'))
@@ -129,7 +129,7 @@ def attend_tournament(tournament_id):
         
         message = f"You're attending {tournament.name} on {day} for the {session_type} session!"
         if is_ajax:
-            return {'success': True, 'message': message}
+            return jsonify({'success': True, 'message': message})
         else:
             flash(message, 'success')
     
@@ -138,7 +138,7 @@ def attend_tournament(tournament_id):
     db.session.commit()
     
     if is_ajax:
-        return {'success': True}
+        return jsonify({'success': True})
     else:
         return redirect(url_for('tournaments.list_tournaments'))
 
