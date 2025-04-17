@@ -22,14 +22,24 @@ def login():
         # Find user by email
         user = User.query.filter_by(email=email).first()
         
-        # Check if user exists and password is correct
-        if user and user.password_hash and check_password_hash(user.password_hash, password):
-            login_user(user)
-            next_page = request.args.get('next', '')
-            if next_page:
-                return redirect(next_page)
-            return redirect(url_for('tournaments.index'))
+        # Check if user exists and has a password hash
+        if user and user.password_hash:
+            # Debug logging
+            logging.info(f"Login attempt for user: {email}")
+            logging.info(f"Password hash in DB: {user.password_hash[:20]}...")
+            
+            # Try to verify the password
+            is_valid = check_password_hash(user.password_hash, password)
+            logging.info(f"Password check result: {is_valid}")
+            
+            if is_valid:
+                login_user(user)
+                next_page = request.args.get('next', '')
+                if next_page:
+                    return redirect(next_page)
+                return redirect(url_for('tournaments.index'))
         
+        # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
     
     return render_template('login.html', google_enabled=False)
