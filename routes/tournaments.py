@@ -18,11 +18,11 @@ def index():
 @tournaments_bp.route('/tournaments')
 @login_required
 def list_tournaments():
-    # Get all tournaments for dropdown options
-    all_tournaments = Tournament.query.all()
+    # Get all tournaments for dropdown options, sorted by name for the filter dropdown
+    all_tournaments = Tournament.query.order_by(Tournament.name).all()
     
-    # Initialize query
-    query = Tournament.query
+    # Initialize query with chronological sorting by start date
+    query = Tournament.query.order_by(Tournament.start_date)
     
     # Get filter parameters
     name_filter = request.args.get('name')
@@ -36,7 +36,7 @@ def list_tournaments():
     if country_filter:
         query = query.filter(Tournament.country == country_filter)
     
-    # Get the filtered tournaments
+    # Get the filtered tournaments, in chronological order by start date
     tournaments = query.all()
     
     # Get today's date for highlighting current tournaments
@@ -337,8 +337,8 @@ def attend_tournament(tournament_id):
 @tournaments_bp.route('/tournaments/past', methods=['GET', 'POST'])
 @login_required
 def past_tournaments():
-    # Get all tournaments for the list
-    all_tournaments = Tournament.query.all()
+    # Get all tournaments for the list, sorted alphabetically by name
+    all_tournaments = Tournament.query.order_by(Tournament.name).all()
     
     # Get the user's past tournaments list
     user = User.query.get(current_user.id)
