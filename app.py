@@ -6,7 +6,11 @@ from models import db, User, load_user, Tournament
 import datetime
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.StreamHandler()]
+)
 
 # Initialize Flask app
 app = Flask(__name__)

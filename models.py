@@ -39,14 +39,21 @@ class User(UserMixin, db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
+    # These fields were added in a migration
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    # Original name field still exists in the database
+    name = db.Column(db.String(100))
     password_hash = db.Column(db.String(256))
     
-    @property
-    def name(self):
-        """Legacy support for templates that use user.name"""
-        return f"{self.first_name} {self.last_name}"
+    def get_full_name(self):
+        """Get the user's full name, preferring first_name/last_name if available"""
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        elif self.name:
+            return self.name
+        else:
+            return self.email.split('@')[0]  # Fallback to username from email
     attending = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     lanyard_ordered = db.Column(db.Boolean, default=False)
