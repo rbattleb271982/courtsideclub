@@ -83,73 +83,42 @@
                             
                             <div class="session-options mt-2 collapse {% if tournament.id in current_user.attending %}show{% endif %}" id="sessions-{{ tournament.id }}">
                                 <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="session-selection-form">
-                                    <div class="attendance-row">
-                                        <div class="card horizontal-selection">
-                                            <div class="card-body p-2">
-                                                <div class="d-flex flex-wrap align-items-center">
-                                                    <!-- Day selection (dropdown) -->
-                                                    <div class="day-selector mr-3">
-                                                        <label class="selection-label"><i class="fas fa-calendar-day"></i> Day</label>
-                                                        <select class="form-control form-control-sm" id="day-dropdown-{{ tournament.id }}" onchange="updateSelectedDays('{{ tournament.id }}')">
-                                                            <option value="">Select day</option>
-                                                            {% for day_num in range((tournament.end_date - tournament.start_date).days + 1) %}
-                                                                {% set current_day = tournament.start_date + day_num|timedelta %}
-                                                                <option value="{{ current_day.strftime('%Y-%m-%d') }}">
-                                                                    {{ current_day.strftime('%b %d') }}
-                                                                </option>
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                    
-                                                    <!-- Selected days chips -->
-                                                    <div class="selected-days-container mr-3">
-                                                        <label class="selection-label"><i class="fas fa-check-circle"></i> Selected Days</label>
-                                                        <div class="selected-days-chips" id="selected-days-{{ tournament.id }}">
-                                                            {% if current_user.attending.get(tournament.id, {}).get('dates') %}
-                                                                {% for date in current_user.attending.get(tournament.id, {}).get('dates') %}
-                                                                    <span class="day-chip">
-                                                                        {{ date }}
-                                                                        <button type="button" class="chip-remove" onclick="removeDay('{{ tournament.id }}', '{{ date }}')">&times;</button>
-                                                                    </span>
-                                                                {% endfor %}
-                                                            {% else %}
-                                                                <span class="text-muted">No days selected</span>
-                                                            {% endif %}
-                                                        </div>
-                                                        <div id="days-storage-{{ tournament.id }}">
-                                                            {% if current_user.attending.get(tournament.id, {}).get('dates') %}
-                                                                {% for date in current_user.attending.get(tournament.id, {}).get('dates') %}
-                                                                    <input type="hidden" name="days[]" value="{{ date }}">
-                                                                {% endfor %}
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <!-- Session selection -->
-                                                    <div class="session-selector mr-3">
-                                                        <label class="selection-label"><i class="fas fa-clock"></i> Sessions</label>
-                                                        <div class="sessions-toggle-group">
-                                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                                                <label class="btn btn-outline-secondary btn-sm {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Day' in current_user.attending.get(tournament.id, {}).get('sessions') %}active{% endif %}">
-                                                                    <input type="checkbox" name="sessions[]" value="Day" 
-                                                                           {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Day' in current_user.attending.get(tournament.id, {}).get('sessions') %}checked{% endif %}>
+                                    <div class="attendance-table-container">
+                                        <table class="attendance-table">
+                                            <thead>
+                                                <tr>
+                                                    {% for day_num in range((tournament.end_date - tournament.start_date).days + 1) %}
+                                                        {% set current_day = tournament.start_date + day_num|timedelta %}
+                                                        <th>{{ current_day.strftime('%b %d') }}</th>
+                                                    {% endfor %}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    {% for day_num in range((tournament.end_date - tournament.start_date).days + 1) %}
+                                                        {% set current_day = tournament.start_date + day_num|timedelta %}
+                                                        {% set day_key = 'Day ' ~ (day_num + 1) %}
+                                                        {% set day_attendance = current_user.attending.get(tournament.id, {}).get(day_key, []) %}
+                                                        <td class="session-cell">
+                                                            <div class="session-checkboxes">
+                                                                <label class="session-label">
+                                                                    <input type="checkbox" name="attendance[{{ tournament.id }}][{{ day_key }}][]" value="Day"
+                                                                           {% if 'Day' in day_attendance %}checked{% endif %}>
                                                                     Day
                                                                 </label>
-                                                                <label class="btn btn-outline-secondary btn-sm {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Night' in current_user.attending.get(tournament.id, {}).get('sessions') %}active{% endif %}">
-                                                                    <input type="checkbox" name="sessions[]" value="Night"
-                                                                           {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Night' in current_user.attending.get(tournament.id, {}).get('sessions') %}checked{% endif %}>
+                                                                <label class="session-label">
+                                                                    <input type="checkbox" name="attendance[{{ tournament.id }}][{{ day_key }}][]" value="Night"
+                                                                           {% if 'Night' in day_attendance %}checked{% endif %}>
                                                                     Night
                                                                 </label>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <!-- Save button -->
-                                                    <div class="save-button-container">
-                                                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                        </td>
+                                                    {% endfor %}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="save-button-container mt-2">
+                                            <button type="submit" class="btn btn-primary btn-sm">Save Selections</button>
                                         </div>
                                     </div>
                                 </form>
@@ -295,6 +264,74 @@ input[type="checkbox"]:checked + .day-label {
     background-color: #28a745 !important;
     border-color: #28a745 !important;
     color: white !important;
+}
+
+/* Table-based attendance styles */
+.attendance-table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.attendance-table th {
+    padding: 8px;
+    text-align: center;
+    background-color: #e9f7ee;
+    border: 1px solid #cddad3;
+    color: #2f5e41;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.session-cell {
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: #f8f9fa;
+    border: 1px solid #e5e7e9;
+    min-width: 100px;
+}
+
+.session-checkboxes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.session-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.session-label:hover {
+    background-color: #f0f0f0;
+}
+
+.session-label input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.session-label input[type="checkbox"]:checked + span {
+    font-weight: 500;
+    color: #28a745;
+}
+
+.session-cell input[type="checkbox"]:checked ~ .session-label {
+    background-color: #e8f7ee;
 }
 </style>
 

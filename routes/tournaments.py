@@ -51,17 +51,21 @@ def tournament_detail(tournament_id):
     # Get users who raised hands for this tournament
     raised_hands = []
     users_with_raised_hands = User.query.filter(
-        User.raised_hand.contains({tournament_id: {'day': lambda d: True}})
+        User.raised_hand.contains({tournament_id: {}})
     ).all()
     
     for user in users_with_raised_hands:
         if tournament_id in user.raised_hand:
-            raised_hands.append({
-                'name': user.get_full_name(),
-                'email': user.email,
-                'day': user.raised_hand[tournament_id].get('day'),
-                'session': user.raised_hand[tournament_id].get('session')
-            })
+            # Format each day and session for display
+            for day, sessions in user.raised_hand[tournament_id].items():
+                sessions_str = ", ".join(sessions)
+                raised_hands.append({
+                    'name': user.get_full_name(),
+                    'email': user.email,
+                    'day': day,
+                    'sessions': sessions_str,
+                    'user_id': user.id
+                })
     
     # Check if current user is attending
     user_attending = tournament_id in current_user.attending
@@ -110,27 +114,49 @@ def attend_tournament(tournament_id):
             else:
                 flash(message, 'info')
     else:
-        # Get session information - now supporting multiple selections
-        days = request.form.getlist('days[]')
-        session_types = request.form.getlist('sessions[]')
+        # Get attendance information from the new table format
+        attendance_data = request.form.getlist('attendance[' + tournament_id + ']')
         
-        if not days or not session_types:
+        # New format: attendance[tournament_id][Day X][] = [Day, Night]
+        attendance = {}
+        
+        # Process the form data
+        for field_name, value in request.form.items():
+            # Check if this is an attendance field for this tournament
+            if field_name.startswith(f'attendance[{tournament_id}]'):
+                # Extract the day key from the field name
+                # Format: attendance[tournament_id][Day X][]
+                parts = field_name.split('[')
+                if len(parts) >= 3:
+                    day_key = parts[2].rstrip(']')
+                    session_value = value
+                    
+                    # Initialize the day entry if it doesn't exist
+                    if day_key not in attendance:
+                        attendance[day_key] = []
+                    
+                    # Add this session to the day
+                    attendance[day_key].append(session_value)
+        
+        # Check if any selections were made
+        if not attendance:
             if is_ajax:
                 return jsonify({'success': False, 'message': 'Please select at least one day and session.'})
             else:
                 flash('Please select at least one day and session.', 'warning')
                 return redirect(url_for('tournaments.list_tournaments'))
         
-        # Store attendance info with multiple dates and sessions
-        attending[tournament_id] = {
-            'dates': days,
-            'sessions': session_types
-        }
+        # Store attendance info with the new format
+        attending[tournament_id] = attendance
         
-        # Format a readable message about the days and sessions
-        days_formatted = ", ".join(days)
-        sessions_formatted = ", ".join(session_types)
-        message = f"You're attending {tournament.name} on {days_formatted} for the {sessions_formatted} session(s)!"
+        # Format a readable message about the selections
+        day_session_parts = []
+        for day, sessions in attendance.items():
+            sessions_str = " and ".join(sessions)
+            day_session_parts.append(f"{day} ({sessions_str})")
+        
+        selections = ", ".join(day_session_parts)
+        message = f"You're attending {tournament.name}: {selections}"
         if is_ajax:
             return jsonify({'success': True, 'message': message})
         else:
@@ -165,7 +191,21 @@ def raise_hand(tournament_id):
     
     # If raising hand
     if day and session_type:
-        raised_hand[tournament_id] = {"day": day, "session": session_type}
+        # Use the 'Day X' format to be consistent with attendance data
+        day_key = f"Day {day}"
+        
+        # Initialize or update this tournament's raised hand data
+        if tournament_id not in raised_hand:
+            raised_hand[tournament_id] = {}
+        
+        # Store the session for this day
+        if day_key not in raised_hand[tournament_id]:
+            raised_hand[tournament_id][day_key] = []
+        
+        # Add the session type
+        if session_type not in raised_hand[tournament_id][day_key]:
+            raised_hand[tournament_id][day_key].append(session_type)
+        
         flash("You've raised your hand for this tournament. Other fans can now see you're open to meet!", 'success')
     # If lowering hand
     else:

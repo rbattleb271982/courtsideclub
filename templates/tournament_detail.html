@@ -36,16 +36,16 @@
                         {% if user_attending %}
                         <div class="alert alert-success mb-3">
                             <strong>You're attending this tournament</strong><br>
-                            {% if current_user.attending[tournament.id].dates %}
-                            <strong>Dates:</strong> 
-                            {% for date in current_user.attending[tournament.id].dates %}
-                                {{ date }}{% if not loop.last %}, {% endif %}
-                            {% endfor %}<br>
-                            {% endif %}
-                            <strong>Sessions:</strong> 
-                            {% for session in current_user.attending[tournament.id].sessions %}
-                                {{ session }}{% if not loop.last %}, {% endif %}
-                            {% endfor %}
+                            <div class="attending-summary">
+                                {% for day, sessions in current_user.attending[tournament.id].items() %}
+                                    <div class="attending-day">
+                                        <strong>{{ day }}:</strong> 
+                                        {% for session in sessions %}
+                                            {{ session }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         <input type="hidden" name="remove" value="true">
                         <button type="submit" class="btn btn-outline btn-block">
@@ -68,7 +68,16 @@
                         {% if user_raised_hand %}
                         <div class="alert alert-success mb-3">
                             <strong>Your hand is raised!</strong><br>
-                            Day {{ user_raised_day }}, {{ user_raised_session }} session
+                            <div class="raised-hand-summary">
+                                {% for day, sessions in current_user.raised_hand[tournament.id].items() %}
+                                    <div class="raised-hand-day">
+                                        <strong>{{ day }}:</strong> 
+                                        {% for session in sessions %}
+                                            {{ session }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         
                         <form id="lower-hand-form" action="{{ url_for('tournaments.raise_hand', tournament_id=tournament.id) }}" method="post">
