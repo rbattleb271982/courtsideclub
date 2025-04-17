@@ -32,12 +32,12 @@ def home():
     past_tournament_ids = user.past_tournaments if user.past_tournaments else []
     past_tournaments_attended = Tournament.query.filter(Tournament.id.in_(past_tournament_ids)).all() if past_tournament_ids else []
     
-    # Split attending tournaments into past and upcoming
-    upcoming_tournaments = [t for t in all_attending if t.end_date >= today]
+    # Get current tournament list (not past)
+    current_tournaments = [t for t in all_attending if t.end_date >= today]
     
     # Calculate attendance counts for each tournament
     attendance_counts = {}
-    for tournament in upcoming_tournaments:
+    for tournament in current_tournaments:
         # Count users attending this tournament
         attending_count = User.query.filter(
             User.attending.contains({tournament.id: {}})
@@ -55,7 +55,7 @@ def home():
     
     return render_template('home.html', 
                           user=user, 
-                          upcoming_tournaments=upcoming_tournaments,
+                          upcoming_tournaments=current_tournaments,
                           past_tournaments=past_tournaments_attended,
                           attendance_counts=attendance_counts)
 
