@@ -72,19 +72,11 @@ def tournament_detail(tournament_id):
     
     # Check if current user has raised hand
     user_raised_hand = tournament_id in current_user.raised_hand
-    if user_raised_hand:
-        user_raised_day = current_user.raised_hand[tournament_id].get('day')
-        user_raised_session = current_user.raised_hand[tournament_id].get('session')
-    else:
-        user_raised_day = None
-        user_raised_session = None
     
     return render_template('tournament_detail.html',
                           tournament=tournament,
                           user_attending=user_attending,
                           user_raised_hand=user_raised_hand,
-                          user_raised_day=user_raised_day,
-                          user_raised_session=user_raised_session,
                           raised_hands=raised_hands)
 
 @tournaments_bp.route('/tournaments/<tournament_id>/attend', methods=['POST'])
