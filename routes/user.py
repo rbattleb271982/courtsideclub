@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_required, current_user
-from replit import db
+from models import db, User, Tournament
 from services.printful import create_lanyard_order
 from services.sendgrid_service import send_email
 import json
@@ -12,17 +12,17 @@ user_bp = Blueprint('user', __name__)
 @login_required
 def profile():
     # Get all tournaments
-    tournaments = db.get('tournaments', [])
+    tournaments = Tournament.query.all()
     
     # Get user data
-    user_data = db.get(current_user.id, {})
+    user = User.query.get(current_user.id)
     
     # Get attending tournaments
-    attending_ids = user_data.get('attending', [])
-    attending = [t for t in tournaments if t['id'] in attending_ids]
+    attending_ids = user.attending if user.attending else []
+    attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
     
     return render_template('profile.html', 
-                          user=current_user,
+                          user=user,
                           attending=attending,
                           all_tournaments=tournaments)
 
@@ -33,11 +33,11 @@ def update_profile():
     notifications = 'notifications' in request.form
     
     # Update user in database
-    user_data = db.get(current_user.id, {})
+    user = User.query.get(current_user.id)
     if name:
-        user_data['name'] = name
-    user_data['notifications'] = notifications
-    db[current_user.id] = user_data
+        user.name = name
+    user.notifications = notifications
+    db.session.commit()
     
     flash('Profile updated successfully!', 'success')
     return redirect(url_for('user.profile'))
@@ -49,9 +49,9 @@ def update_attending():
     attending = request.form.getlist('attending')
     
     # Update user in database
-    user_data = db.get(current_user.id, {})
-    user_data['attending'] = attending
-    db[current_user.id] = user_data
+    user = User.query.get(current_user.id)
+    user.attending = attending
+    db.session.commit()
     
     flash('Tournament preferences updated!', 'success')
     return redirect(url_for('user.profile'))

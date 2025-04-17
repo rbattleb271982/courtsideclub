@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from replit import db
+from models import db, User, Tournament
 import datetime
 
 # Initialize blueprint
@@ -14,18 +14,20 @@ def index():
 @login_required
 def list_tournaments():
     # Get all tournaments
-    tournaments = db.get('tournaments', [])
+    query = Tournament.query
     
     # Filter by date if requested
     date_filter = request.args.get('date')
     if date_filter:
         try:
             filter_date = datetime.datetime.strptime(date_filter, '%Y-%m-%d').date()
-            tournaments = [t for t in tournaments if 
-                          datetime.datetime.strptime(t['start_date'], '%Y-%m-%d').date() <= filter_date <= 
-                          datetime.datetime.strptime(t['end_date'], '%Y-%m-%d').date()]
+            query = query.filter(Tournament.start_date <= filter_date, 
+                                Tournament.end_date >= filter_date)
         except ValueError:
             flash('Invalid date format. Use YYYY-MM-DD.', 'warning')
+    
+    # Get the tournaments
+    tournaments = query.all()
     
     # Get today's date for highlighting current tournaments
     today = datetime.datetime.now().date()
@@ -39,8 +41,7 @@ def list_tournaments():
 @login_required
 def tournament_detail(tournament_id):
     # Find the tournament
-    tournaments = db.get('tournaments', [])
-    tournament = next((t for t in tournaments if t['id'] == tournament_id), None)
+    tournament = Tournament.query.get(tournament_id)
     
     if not tournament:
         flash('Tournament not found.', 'danger')
@@ -48,17 +49,17 @@ def tournament_detail(tournament_id):
     
     # Get users who raised hands for this tournament
     raised_hands = []
-    for user_key in db.keys():
-        user_data = db.get(user_key)
-        if (isinstance(user_data, dict) and 
-            user_data.get('raised_hand') and 
-            tournament_id in user_data.get('raised_hand', {})):
-            
+    users_with_raised_hands = User.query.filter(
+        User.raised_hand.contains({tournament_id: {'day': lambda d: True}})
+    ).all()
+    
+    for user in users_with_raised_hands:
+        if tournament_id in user.raised_hand:
             raised_hands.append({
-                'name': user_data.get('name'),
-                'email': user_data.get('email'),
-                'day': user_data['raised_hand'][tournament_id].get('day'),
-                'session': user_data['raised_hand'][tournament_id].get('session')
+                'name': user.name,
+                'email': user.email,
+                'day': user.raised_hand[tournament_id].get('day'),
+                'session': user.raised_hand[tournament_id].get('session')
             })
     
     # Check if current user is attending
@@ -85,26 +86,25 @@ def tournament_detail(tournament_id):
 @login_required
 def attend_tournament(tournament_id):
     # Validate tournament exists
-    tournaments = db.get('tournaments', [])
-    tournament = next((t for t in tournaments if t['id'] == tournament_id), None)
+    tournament = Tournament.query.get(tournament_id)
     
     if not tournament:
         flash('Tournament not found.', 'danger')
         return redirect(url_for('tournaments.list_tournaments'))
     
     # Update user's attending list
-    user_data = db.get(current_user.id, {})
-    attending = user_data.get('attending', [])
+    user = User.query.get(current_user.id)
+    attending = list(user.attending) if user.attending else []
     
     if tournament_id in attending:
         attending.remove(tournament_id)
-        flash(f"You're no longer attending {tournament['name']}.", 'info')
+        flash(f"You're no longer attending {tournament.name}.", 'info')
     else:
         attending.append(tournament_id)
-        flash(f"You're now attending {tournament['name']}!", 'success')
+        flash(f"You're now attending {tournament.name}!", 'success')
     
-    user_data['attending'] = attending
-    db[current_user.id] = user_data
+    user.attending = attending
+    db.session.commit()
     
     return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
 
@@ -116,16 +116,15 @@ def raise_hand(tournament_id):
     session_type = request.form.get('session')
     
     # Validate tournament exists
-    tournaments = db.get('tournaments', [])
-    tournament = next((t for t in tournaments if t['id'] == tournament_id), None)
+    tournament = Tournament.query.get(tournament_id)
     
     if not tournament:
         flash('Tournament not found.', 'danger')
         return redirect(url_for('tournaments.list_tournaments'))
     
     # Update user's raised hand
-    user_data = db.get(current_user.id, {})
-    raised_hand = user_data.get('raised_hand', {})
+    user = User.query.get(current_user.id)
+    raised_hand = dict(user.raised_hand) if user.raised_hand else {}
     
     # If raising hand
     if day and session_type:
@@ -137,7 +136,7 @@ def raise_hand(tournament_id):
             del raised_hand[tournament_id]
             flash("You've lowered your hand for this tournament.", 'info')
     
-    user_data['raised_hand'] = raised_hand
-    db[current_user.id] = user_data
+    user.raised_hand = raised_hand
+    db.session.commit()
     
     return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
