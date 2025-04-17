@@ -54,8 +54,8 @@ class User(UserMixin, db.Model):
             return self.name
         else:
             return self.email.split('@')[0]  # Fallback to username from email
-    # Store attendance with session information
-    # Format: {'tournament_id': {'date': '2025-05-25', 'session': 'Day'}}
+    # Store attendance with multiple dates and sessions
+    # Format: {'tournament_id': {'dates': ['2025-05-25', '2025-05-26'], 'sessions': ['Day', 'Night']}}
     attending = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     lanyard_ordered = db.Column(db.Boolean, default=False)

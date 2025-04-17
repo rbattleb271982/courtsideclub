@@ -36,10 +36,16 @@
                         {% if user_attending %}
                         <div class="alert alert-success mb-3">
                             <strong>You're attending this tournament</strong><br>
-                            {% if current_user.attending[tournament.id].date %}
-                            Date: {{ current_user.attending[tournament.id].date }}<br>
+                            {% if current_user.attending[tournament.id].dates %}
+                            <strong>Dates:</strong> 
+                            {% for date in current_user.attending[tournament.id].dates %}
+                                {{ date }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}<br>
                             {% endif %}
-                            Session: {{ current_user.attending[tournament.id].session }}
+                            <strong>Sessions:</strong> 
+                            {% for session in current_user.attending[tournament.id].sessions %}
+                                {{ session }}{% if not loop.last %}, {% endif %}
+                            {% endfor %}
                         </div>
                         <input type="hidden" name="remove" value="true">
                         <button type="submit" class="btn btn-outline btn-block">

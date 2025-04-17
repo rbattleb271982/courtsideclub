@@ -110,24 +110,27 @@ def attend_tournament(tournament_id):
             else:
                 flash(message, 'info')
     else:
-        # Get session information
-        day = request.form.get('day')
-        session_type = request.form.get('session')
+        # Get session information - now supporting multiple selections
+        days = request.form.getlist('days[]')
+        session_types = request.form.getlist('sessions[]')
         
-        if not day or not session_type:
+        if not days or not session_types:
             if is_ajax:
-                return jsonify({'success': False, 'message': 'Please select a day and session.'})
+                return jsonify({'success': False, 'message': 'Please select at least one day and session.'})
             else:
-                flash('Please select a day and session.', 'warning')
+                flash('Please select at least one day and session.', 'warning')
                 return redirect(url_for('tournaments.list_tournaments'))
         
-        # Store attendance info
+        # Store attendance info with multiple dates and sessions
         attending[tournament_id] = {
-            'date': day,
-            'session': session_type
+            'dates': days,
+            'sessions': session_types
         }
         
-        message = f"You're attending {tournament.name} on {day} for the {session_type} session!"
+        # Format a readable message about the days and sessions
+        days_formatted = ", ".join(days)
+        sessions_formatted = ", ".join(session_types)
+        message = f"You're attending {tournament.name} on {days_formatted} for the {sessions_formatted} session(s)!"
         if is_ajax:
             return jsonify({'success': True, 'message': message})
         else:
