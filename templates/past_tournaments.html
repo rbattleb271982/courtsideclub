@@ -30,12 +30,8 @@
                                        id="tournament_{{ tournament.id }}" 
                                        name="tournament_{{ tournament.id }}"
                                        {% if tournament.id in past_tournaments %}checked{% endif %}>
-                                <label class="custom-control-label" for="tournament_{{ tournament.id }}">
-                                    <span class="tournament-name">{{ tournament.name }}</span>
-                                    <span class="tournament-meta">
-                                        {{ tournament.city }}, {{ tournament.country }} 
-                                        <span class="tournament-type">({{ tournament.event_type }})</span>
-                                    </span>
+                                <label class="custom-control-label d-flex align-items-center" for="tournament_{{ tournament.id }}">
+                                    {{ tournament.name }} · {{ tournament.city }}, {{ tournament.country }} · {{ tournament.event_type }}
                                 </label>
                             </div>
                             {% endfor %}
