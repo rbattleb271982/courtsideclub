@@ -25,7 +25,7 @@
     <div class="col-12 col-lg-6">
         <div class="card mb-4">
             <div class="card-header">
-                <h3>Upcoming Tournaments</h3>
+                <h3>Tournaments I'm Attending</h3>
             </div>
             <div class="card-body">
                 {% if upcoming_tournaments %}
@@ -34,12 +34,14 @@
                     <div class="tournament-card attending mt-3">
                         <div class="card-body">
                             <div class="tournament-card-header">
-                                <h5>{{ tournament.name }}</h5>
+                                <h5>🎾 {{ tournament.name }}</h5>
                                 <span class="badge badge-success">Upcoming</span>
                             </div>
+                            
                             <div class="tournament-date">
                                 {{ tournament.start_date.strftime('%b %d, %Y') }} to {{ tournament.end_date.strftime('%b %d, %Y') }}
                             </div>
+                            
                             <div class="tournament-location">
                                 <i data-feather="map-pin" width="14"></i> {{ tournament.city }}, {{ tournament.country }}
                             </div>
@@ -58,14 +60,37 @@
                                     {% endfor %}
                                 </ul>
                             </div>
-                            {% endif %}
                             
+                            <div class="tournament-stats mt-3">
+                                <div class="attendance-count">
+                                    {{ attendance_counts.get(tournament.id, {}).get('attending', 0) }} attending · 
+                                    {{ attendance_counts.get(tournament.id, {}).get('meeting', 0) }} open to meet
+                                </div>
+                                
+                                <div class="meeting-status d-flex justify-content-between align-items-center mt-2">
+                                    <span>
+                                        <strong>Open to meeting:</strong> 
+                                        {% if tournament.id in user.raised_hand %}
+                                        <span class="text-success">Yes</span>
+                                        {% else %}
+                                        <span class="text-muted">No</span>
+                                        {% endif %}
+                                    </span>
+                                    <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                </div>
+                            </div>
+                            {% else %}
                             <div class="mt-2">
                                 <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-primary btn-sm">View Details</a>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary">Find More Tournaments</a>
+                    </div>
                 </div>
                 {% else %}
                 <div class="text-center py-4">
@@ -75,39 +100,6 @@
                 {% endif %}
             </div>
         </div>
-        
-        {% if user.raised_hand and user.raised_hand|length > 0 %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h3>Open to Meet Other Fans</h3>
-            </div>
-            <div class="card-body">
-                <p>You're open to meeting others at these tournaments:</p>
-                <ul class="raised-hand-list">
-                    {% for tournament_id, days in user.raised_hand.items() %}
-                    <li>
-                        <strong>
-                            {% set t = namespace(found=false) %}
-                            {% for tournament in upcoming_tournaments %}
-                                {% if tournament.id == tournament_id %}
-                                    {{ tournament.name }}
-                                    {% set t.found = true %}
-                                {% endif %}
-                            {% endfor %}
-                            {% if not t.found %}
-                                {% for tournament in past_tournaments %}
-                                    {% if tournament.id == tournament_id %}
-                                        {{ tournament.name }}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        </strong>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-        {% endif %}
     </div>
     
     <div class="col-12 col-lg-6">
@@ -241,6 +233,25 @@
 .past-tournament-item a:hover {
     color: #28a745;
     text-decoration: underline;
+}
+
+.tournament-stats {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+}
+
+.attendance-count {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.meeting-status {
+    padding: 6px 0;
+    border-radius: 4px;
+}
+
+.meeting-status .text-success {
+    font-weight: 500;
 }
 </style>
 {% endblock %}

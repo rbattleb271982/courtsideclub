@@ -35,10 +35,29 @@ def home():
     # Split attending tournaments into past and upcoming
     upcoming_tournaments = [t for t in all_attending if t.end_date >= today]
     
+    # Calculate attendance counts for each tournament
+    attendance_counts = {}
+    for tournament in upcoming_tournaments:
+        # Count users attending this tournament
+        attending_count = User.query.filter(
+            User.attending.has_key(tournament.id)
+        ).count()
+        
+        # Count users open to meeting at this tournament
+        meeting_count = User.query.filter(
+            User.raised_hand.has_key(tournament.id)
+        ).count()
+        
+        attendance_counts[tournament.id] = {
+            'attending': attending_count,
+            'meeting': meeting_count
+        }
+    
     return render_template('home.html', 
                           user=user, 
                           upcoming_tournaments=upcoming_tournaments,
-                          past_tournaments=past_tournaments_attended)
+                          past_tournaments=past_tournaments_attended,
+                          attendance_counts=attendance_counts)
 
 # Keep the profile route for backward compatibility, redirecting to home
 @user_bp.route('/profile')
@@ -175,13 +194,10 @@ def order_lanyard():
     if user.lanyard_ordered:
         return render_template('order_lanyard.html', lanyard_ordered=True)
     
-    # Check if the user has selected any tournament sessions (raised_hand)
+    # Check if the user has raised their hand for any tournament
     has_selected_sessions = False
-    if user.raised_hand:
-        for tournament_id, days in user.raised_hand.items():
-            if days and len(days) > 0:
-                has_selected_sessions = True
-                break
+    if user.raised_hand and len(user.raised_hand) > 0:
+        has_selected_sessions = True
     
     if not has_selected_sessions:
         flash('You must select tournament sessions before ordering your lanyard.', 'warning')
