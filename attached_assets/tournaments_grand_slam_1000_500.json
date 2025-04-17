@@ -1,0 +1,146 @@
+[
+  {
+    "id": "aus_open",
+    "name": "Australian Open",
+    "start_date": "2025-01-19",
+    "end_date": "2025-02-01",
+    "city": "Melbourne",
+    "country": "Australia",
+    "event_type": "Grand Slam",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 1 - Night",
+      "Day 2 - Day",
+      "Day 2 - Night"
+    ]
+  },
+  {
+    "id": "indian_wells",
+    "name": "Indian Wells",
+    "start_date": "2025-03-10",
+    "end_date": "2025-03-23",
+    "city": "Indian Wells",
+    "country": "USA",
+    "event_type": "1000",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "miami_open",
+    "name": "Miami Open",
+    "start_date": "2025-03-24",
+    "end_date": "2025-04-06",
+    "city": "Miami",
+    "country": "USA",
+    "event_type": "1000",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night"
+    ]
+  },
+  {
+    "id": "monte_carlo",
+    "name": "Monte Carlo Masters",
+    "start_date": "2025-04-14",
+    "end_date": "2025-04-20",
+    "city": "Monte Carlo",
+    "country": "Monaco",
+    "event_type": "1000",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day"
+    ]
+  },
+  {
+    "id": "madrid_open",
+    "name": "Madrid Open",
+    "start_date": "2025-04-24",
+    "end_date": "2025-05-05",
+    "city": "Madrid",
+    "country": "Spain",
+    "event_type": "1000",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night"
+    ]
+  },
+  {
+    "id": "italian_open",
+    "name": "Italian Open",
+    "start_date": "2025-05-08",
+    "end_date": "2025-05-19",
+    "city": "Rome",
+    "country": "Italy",
+    "event_type": "1000",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day"
+    ]
+  },
+  {
+    "id": "roland_garros",
+    "name": "Roland Garros",
+    "start_date": "2025-05-26",
+    "end_date": "2025-06-08",
+    "city": "Paris",
+    "country": "France",
+    "event_type": "Grand Slam",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 1 - Night",
+      "Day 2 - Day"
+    ]
+  },
+  {
+    "id": "queens_club",
+    "name": "Queen's Club Championships",
+    "start_date": "2025-06-16",
+    "end_date": "2025-06-22",
+    "city": "London",
+    "country": "UK",
+    "event_type": "500",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day"
+    ]
+  },
+  {
+    "id": "halle_open",
+    "name": "Halle Open",
+    "start_date": "2025-06-16",
+    "end_date": "2025-06-22",
+    "city": "Halle",
+    "country": "Germany",
+    "event_type": "500",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day"
+    ]
+  },
+  {
+    "id": "wimbledon",
+    "name": "Wimbledon",
+    "start_date": "2025-06-30",
+    "end_date": "2025-07-13",
+    "city": "London",
+    "country": "UK",
+    "event_type": "Grand Slam",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night"
+    ]
+  }
+]
