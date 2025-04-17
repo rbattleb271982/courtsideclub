@@ -79,13 +79,12 @@
         {% if user.raised_hand and user.raised_hand|length > 0 %}
         <div class="card mb-4">
             <div class="card-header">
-                <h3>Open to Meeting</h3>
+                <h3>Open to Meet Other Fans</h3>
             </div>
             <div class="card-body">
-                <p>You've raised your hand for these tournaments:</p>
+                <p>You're open to meeting others at these tournaments:</p>
                 <ul class="raised-hand-list">
                     {% for tournament_id, days in user.raised_hand.items() %}
-                    {% if days and days|length > 0 %}
                     <li>
                         <strong>
                             {% set t = namespace(found=false) %}
@@ -103,13 +102,7 @@
                                 {% endfor %}
                             {% endif %}
                         </strong>
-                        <ul>
-                            {% for day, sessions in days.items() %}
-                            <li>{{ day }}: {% for session in sessions %}{{ session }}{% if not loop.last %}, {% endif %}{% endfor %}</li>
-                            {% endfor %}
-                        </ul>
                     </li>
-                    {% endif %}
                     {% endfor %}
                 </ul>
             </div>
@@ -131,12 +124,8 @@
                 <p>Order your CourtSide Club lanyard to easily identify other community members at tournaments.</p>
                 <div class="mt-3">
                     {% set has_selected_sessions = false %}
-                    {% if user.raised_hand %}
-                        {% for tournament_id, days in user.raised_hand.items() %}
-                            {% if days and days.keys()|list|length > 0 %}
-                                {% set has_selected_sessions = true %}
-                            {% endif %}
-                        {% endfor %}
+                    {% if user.raised_hand and user.raised_hand|length > 0 %}
+                        {% set has_selected_sessions = true %}
                     {% endif %}
                     
                     {% if has_selected_sessions %}

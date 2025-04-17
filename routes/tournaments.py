@@ -271,8 +271,17 @@ def attend_tournament(tournament_id):
             else:
                 flash(message, 'success')
                 
-            # Save raised_hand changes
-            user.raised_hand = raised_hand
+                # Save the changes and redirect to home page after saving sessions
+                user.raised_hand = raised_hand
+                # Update user record
+                user.attending = attending
+                db.session.commit()
+                
+                if is_ajax:
+                    return jsonify({'success': True, 'message': message})
+                else:
+                    # Redirect to home page after saving sessions
+                    return redirect(url_for('user.home'))
         else:
             # Default behavior - just mark them as attending
             attending[tournament_id] = {}
