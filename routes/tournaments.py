@@ -179,51 +179,65 @@ def attend_tournament(tournament_id):
             else:
                 flash(message, 'info')
     else:
-        # The new format: raised_hand[tournament_id][Day X][] = [Day, Night]
-        attendance = {}
+        # Handle simple "I'm attending" checkbox from tournaments list
+        attending_checkbox = request.form.get('attending') == 'true'
         
-        # Process the form data
-        for field_name, value in request.form.items():
-            # Check if this is a raised_hand field for this tournament
-            # Note: The form uses raised_hand name but we're storing in the attending dictionary
-            if field_name.startswith(f'raised_hand[{tournament_id}]'):
-                # Extract the day key from the field name
-                # Format: raised_hand[tournament_id][Day X][]
-                parts = field_name.split('[')
-                if len(parts) >= 3:
-                    day_key = parts[2].rstrip(']')
-                    session_value = value
-                    
-                    # Initialize the day entry if it doesn't exist
-                    if day_key not in attendance:
-                        attendance[day_key] = []
-                    
-                    # Add this session to the day
-                    attendance[day_key].append(session_value)
-        
-        # Check if any selections were made
-        if not attendance:
-            if is_ajax:
-                return jsonify({'success': False, 'message': 'Please select at least one day and session.'})
-            else:
-                flash('Please select at least one day and session.', 'warning')
-                return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
-        
-        # Store attendance info with the new format
-        attending[tournament_id] = attendance
-        
-        # Format a readable message about the selections
-        day_session_parts = []
-        for day, sessions in attendance.items():
-            sessions_str = " and ".join(sessions)
-            day_session_parts.append(f"{day} ({sessions_str})")
-        
-        selections = ", ".join(day_session_parts)
-        message = f"You're attending {tournament.name}: {selections}"
-        if is_ajax:
-            return jsonify({'success': True, 'message': message})
-        else:
+        if attending_checkbox:
+            # Mark as attending with empty session details
+            # Sessions will be selected on the tournament detail page
+            attending[tournament_id] = {}
+            message = f"You're attending {tournament.name}! Please select your sessions."
+            
+            user.attending = attending
+            db.session.commit()
+            
+            # Redirect to tournament detail page to select sessions
             flash(message, 'success')
+            return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
+            
+        # Handle detailed session selections from tournament detail page
+        elif 'sessions' in request.form:
+            attendance = {}
+            
+            # Process the detailed session form data
+            for field_name, value in request.form.items():
+                if field_name.startswith('sessions['):
+                    # Extract the day key from the field name
+                    # Format: sessions[Day X][Day|Night]
+                    parts = field_name.split('[')
+                    if len(parts) >= 3:
+                        day_key = parts[1].rstrip(']')
+                        session_type = parts[2].rstrip(']')
+                        
+                        # Check if the checkbox is checked
+                        if value == 'on':
+                            if day_key not in attendance:
+                                attendance[day_key] = []
+                            attendance[day_key].append(session_type)
+            
+            # Store attendance info
+            if attendance:
+                attending[tournament_id] = attendance
+                message = f"Your session selections for {tournament.name} have been saved!"
+            else:
+                # If no sessions were selected but form was submitted from detail page,
+                # keep the user as attending with empty details
+                if tournament_id not in attending:
+                    attending[tournament_id] = {}
+                message = f"You're attending {tournament.name}!"
+                
+            if is_ajax:
+                return jsonify({'success': True, 'message': message})
+            else:
+                flash(message, 'success')
+        else:
+            # Default behavior - just mark them as attending
+            attending[tournament_id] = {}
+            message = f"You're attending {tournament.name}!"
+            if is_ajax:
+                return jsonify({'success': True, 'message': message})
+            else:
+                flash(message, 'success')
     
     # Update user record
     user.attending = attending
@@ -237,9 +251,8 @@ def attend_tournament(tournament_id):
 @tournaments_bp.route('/tournaments/<tournament_id>/raise_hand', methods=['POST'])
 @login_required
 def raise_hand(tournament_id):
-    # Get form data
-    day = request.form.get('day')
-    session_type = request.form.get('session')
+    # Get form data - simplified to just "Yes" or "No" for meeting preference
+    meeting_pref = request.form.get('meeting_preference')
     
     # Validate tournament exists
     tournament = Tournament.query.get(tournament_id)
@@ -248,33 +261,28 @@ def raise_hand(tournament_id):
         flash('Tournament not found.', 'danger')
         return redirect(url_for('tournaments.list_tournaments'))
     
-    # Update user's raised hand
+    # Check if the user is attending this tournament
     user = User.query.get(current_user.id)
+    if tournament_id not in user.attending:
+        flash("You need to mark yourself as attending this tournament before setting meeting preferences.", 'warning')
+        return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
+    
+    # Update user's raised hand status
     raised_hand = dict(user.raised_hand) if user.raised_hand else {}
     
-    # If raising hand
-    if day and session_type:
-        # Use the 'Day X' format to be consistent with attendance data
-        day_key = f"Day {day}"
-        
-        # Initialize or update this tournament's raised hand data
-        if tournament_id not in raised_hand:
-            raised_hand[tournament_id] = {}
-        
-        # Store the session for this day
-        if day_key not in raised_hand[tournament_id]:
-            raised_hand[tournament_id][day_key] = []
-        
-        # Add the session type
-        if session_type not in raised_hand[tournament_id][day_key]:
-            raised_hand[tournament_id][day_key].append(session_type)
-        
-        flash("You've raised your hand for this tournament. Other fans can now see you're open to meet!", 'success')
-    # If lowering hand
+    # If open to meeting ("Yes")
+    if meeting_pref == 'Yes':
+        # Use tournament_id as key with empty dict as value to indicate open to meeting
+        raised_hand[tournament_id] = {}
+        flash("You're now visible as open to meeting other fans at this tournament!", 'success')
+    # If not open to meeting ("No") or reset
     else:
         if tournament_id in raised_hand:
             del raised_hand[tournament_id]
-            flash("You've lowered your hand for this tournament.", 'info')
+            if meeting_pref == 'No':
+                flash("You're marked as not open to meeting at this tournament.", 'info')
+            else:
+                flash("Your meeting preference has been reset.", 'info')
     
     user.raised_hand = raised_hand
     db.session.commit()
