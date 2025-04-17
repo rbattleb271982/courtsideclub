@@ -1,0 +1,103 @@
+from flask import Flask, render_template, request, redirect, session, url_for
+from replit import db
+import datetime
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+# Sample tournament data
+tournaments = [
+    {
+        "id": "aus_open",
+        "name": "Australian Open",
+        "start_date": "2025-01-19",
+        "end_date": "2025-02-01",
+        "city": "Melbourne",
+        "country": "Australia",
+        "event_type": "Grand Slam",
+        "tour_type": "ATP/WTA"
+    },
+    {
+        "id": "indian_wells",
+        "name": "Indian Wells",
+        "start_date": "2025-03-10",
+        "end_date": "2025-03-23",
+        "city": "Indian Wells",
+        "country": "USA",
+        "event_type": "1000",
+        "tour_type": "ATP/WTA"
+    }
+]
+
+@app.route('/')
+def index():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user_data = db.get(session['user'], {})
+    return render_template('index.html', user=user_data, tournaments=tournaments)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email'].lower()
+        name = request.form['name']
+        if email not in db:
+            db[email] = {
+                'email': email,
+                'name': name,
+                'attending': [],
+                'raised_hand': {},
+                'lanyard_ordered': False,
+                'notifications': True
+            }
+        session['user'] = email
+        return redirect(url_for('profile'))
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+    user = db[user_id]
+    if request.method == 'POST':
+        attending = request.form.getlist('attending')
+        db[user_id]['attending'] = attending
+        return redirect(url_for('profile'))
+    return render_template('profile.html', user=user, tournaments=tournaments)
+
+@app.route('/raise_hand/<tournament_id>', methods=['POST'])
+def raise_hand(tournament_id):
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+    day = request.form['day']
+    session_type = request.form['session']
+    raised = db[user_id].get('raised_hand', {})
+    raised[tournament_id] = {"day": day, "session": session_type}
+    db[user_id]['raised_hand'] = raised
+    return redirect(url_for('profile'))
+
+@app.route('/order_lanyard', methods=['POST'])
+def order_lanyard():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+    db[user_id]['lanyard_ordered'] = True
+    return redirect(url_for('profile'))
+
+@app.route('/toggle_notifications')
+def toggle_notifications():
+    user_id = session.get('user')
+    if not user_id:
+        return redirect(url_for('login'))
+    db[user_id]['notifications'] = not db[user_id].get('notifications', True)
+    return redirect(url_for('profile'))
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=81)
