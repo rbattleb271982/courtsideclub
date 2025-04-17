@@ -88,49 +88,25 @@
                             <small>{{ tournament.tour_type }}</small>
                         </td>
                         <td>
-
-                            <div class="session-options mt-2" id="sessions-{{ tournament.id }}">
-                                <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="session-selection-form">
-                                    <div class="attendance-table-container">
-                                        <table class="attendance-table">
-                                            <thead>
-                                                <tr>
-                                                    {% for day_num in range((tournament.end_date - tournament.start_date).days + 1) %}
-                                                        {% set current_day = tournament.start_date + day_num|timedelta %}
-                                                        <th>{{ current_day.strftime('%b %d') }}</th>
-                                                    {% endfor %}
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    {% for day_num in range((tournament.end_date - tournament.start_date).days + 1) %}
-                                                        {% set current_day = tournament.start_date + day_num|timedelta %}
-                                                        {% set day_key = 'Day ' ~ (day_num + 1) %}
-                                                        {% set day_attendance = current_user.attending.get(tournament.id, {}).get(day_key, []) %}
-                                                        <td class="session-cell">
-                                                            <div class="session-checkboxes">
-                                                                <label class="session-label">
-                                                                    <input type="checkbox" name="attendance[{{ tournament.id }}][{{ day_key }}][]" value="Day"
-                                                                           {% if 'Day' in day_attendance %}checked{% endif %}>
-                                                                    Day
-                                                                </label>
-                                                                <label class="session-label">
-                                                                    <input type="checkbox" name="attendance[{{ tournament.id }}][{{ day_key }}][]" value="Night"
-                                                                           {% if 'Night' in day_attendance %}checked{% endif %}>
-                                                                    Night
-                                                                </label>
-                                                            </div>
-                                                        </td>
-                                                    {% endfor %}
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="save-button-container mt-2">
-                                            <button type="submit" class="btn btn-primary btn-sm">Save Selections</button>
+                            <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="attendance-form">
+                                <div class="attendance-checkbox-container">
+                                    {% if tournament.id in current_user.attending or tournament.id in current_user.raised_hand %}
+                                        <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-success btn-sm">
+                                            <i data-feather="check" class="attendance-check-icon"></i> View Sessions
+                                        </a>
+                                    {% else %}
+                                        <div class="form-group mb-0">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input attending-checkbox" 
+                                                       id="attending-{{ tournament.id }}" name="attending" value="true"
+                                                       {% if tournament.id in current_user.attending %}checked{% endif %}>
+                                                <label class="custom-control-label" for="attending-{{ tournament.id }}">I'm attending</label>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
-                            </div>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Save</button>
+                                    {% endif %}
+                                </div>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}

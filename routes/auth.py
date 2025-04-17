@@ -54,15 +54,22 @@ def register():
             email = request.form['email'].lower()
             first_name = request.form['first_name']
             last_name = request.form['last_name']
+            password = request.form['password']
+            confirm_password = request.form['confirm_password']
             
             # Log for debugging
             logging.info(f"Registration attempt with email: {email}")
             logging.info(f"First name: {first_name}, Last name: {last_name}")
             
-            # For debugging purposes, use a fixed test password
-            # We'll switch back to random passwords after fixing the login issues
-            password = "TestPassword123!"
-            logging.info(f"Setting fixed password for testing: {password}")
+            # Validate that passwords match
+            if password != confirm_password:
+                flash('Passwords do not match.', 'danger')
+                return render_template('register.html')
+                
+            # Validate password requirements (should also be checked by frontend)
+            if len(password) < 8:
+                flash('Password must be at least 8 characters long.', 'danger')
+                return render_template('register.html')
             
             # Form validation
             try:
@@ -91,14 +98,10 @@ def register():
                 # Log the user in
                 login_user(new_user)
                 
-                # Display the generated password to the user (only once)
-                flash(f'Registration successful! Your generated password is: {password}', 'success')
-                flash('Please save this password now. It will not be shown again.', 'warning')
-                
-                # Store the password in the session temporarily to show on the next page
-                session['temp_password'] = password
-                
-                return redirect(url_for('user.profile'))
+                # Show success message
+                flash('Registration successful! Welcome to CourtSide Club.', 'success')
+                                
+                return redirect(url_for('tournaments.index'))
             except Exception as e:
                 db.session.rollback()
                 logging.error(f"Error creating new user: {str(e)}")
@@ -131,38 +134,75 @@ def reset_password_request():
         
         if user:
             try:
-                # For debugging purposes, use a fixed test password
-                new_password = "TestPassword123!"
-                logging.info(f"Setting fixed password for reset: {new_password}")
+                # Generate a secure token
+                reset_token = secrets.token_urlsafe(32)
                 
-                # Update the user's password
-                user.password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-                logging.info(f"Reset password hash: {user.password_hash[:20]}...")
-                db.session.commit()
+                # In a real app, we would send an email with a reset link
+                # For this app, we'll show a link directly in the UI
                 
-                # Show the new password to the user
-                flash(f'Your password has been reset. Your new password is: {new_password}', 'success')
-                flash('Please save this password now. It will not be shown again.', 'warning')
+                flash('Password reset instructions have been sent to your email. Please check your inbox.', 'info')
                 
-                # Store the password in the session temporarily
-                session['temp_password'] = new_password
+                # Instead of actually sending an email, we'll just redirect to a page where they can set a new password
+                # In a real application, this would be sent via email with a secure token
                 
-                # Log the user in
-                login_user(user)
-                
-                return redirect(url_for('user.profile'))
+                # For this demo, we'll directly go to the reset page
+                return render_template('reset_password.html', email=email, token=reset_token)
                 
             except Exception as e:
-                logging.error(f"Error resetting password: {str(e)}")
-                db.session.rollback()
-                flash('An error occurred while resetting your password. Please try again.', 'danger')
+                logging.error(f"Error initiating password reset: {str(e)}")
+                flash('An error occurred while processing your request. Please try again.', 'danger')
         else:
             # We don't want to reveal that the email doesn't exist
-            flash('If your email is registered, you will receive a password reset link. Please check your email.', 'info')
+            flash('If your email is registered, you will receive password reset instructions. Please check your email.', 'info')
             
             # But we log it for debugging
             logging.info(f"Password reset requested for non-existent email: {email}")
     
     return render_template('reset_password_request.html')
+
+@auth_bp.route('/reset_password/confirm', methods=['POST'])
+def reset_password_confirm():
+    email = request.form.get('email')
+    token = request.form.get('token')
+    password = request.form.get('password')
+    confirm_password = request.form.get('confirm_password')
+    
+    # Validate inputs
+    if not all([email, token, password, confirm_password]):
+        flash('Invalid request. Please try again.', 'danger')
+        return redirect(url_for('auth.reset_password_request'))
+    
+    # Check if passwords match
+    if password != confirm_password:
+        flash('Passwords do not match. Please try again.', 'danger')
+        return render_template('reset_password.html', email=email, token=token)
+    
+    # Validate password requirements
+    if len(password) < 8:
+        flash('Password must be at least 8 characters long.', 'danger')
+        return render_template('reset_password.html', email=email, token=token)
+    
+    # Find the user
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash('Invalid request. Please try again.', 'danger')
+        return redirect(url_for('auth.reset_password_request'))
+    
+    try:
+        # Update the user's password
+        user.password_hash = generate_password_hash(password, method='pbkdf2:sha256')
+        db.session.commit()
+        
+        # Show success message
+        flash('Your password has been updated successfully. You can now log in with your new password.', 'success')
+        
+        # Redirect to login page
+        return redirect(url_for('auth.login'))
+        
+    except Exception as e:
+        logging.error(f"Error updating password: {str(e)}")
+        db.session.rollback()
+        flash('An error occurred while updating your password. Please try again.', 'danger')
+        return render_template('reset_password.html', email=email, token=token)
 
 
