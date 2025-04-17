@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
 from models import db, User, Tournament
-from services.printful import create_lanyard_order
 from services.sendgrid_service import send_email
 import json
 
@@ -18,7 +17,7 @@ def profile():
     user = User.query.get(current_user.id)
     
     # Get attending tournaments
-    attending_ids = user.attending if user.attending else []
+    attending_ids = list(user.attending.keys()) if user.attending else []
     attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
     
     return render_template('profile.html', 
@@ -58,11 +57,30 @@ def update_profile():
 @login_required
 def update_attending():
     # Get the tournaments the user wants to attend
-    attending = request.form.getlist('attending')
+    attending_ids = request.form.getlist('attending')
     
     # Update user in database
     user = User.query.get(current_user.id)
-    user.attending = attending
+    
+    # Get the current attending data (dictionary)
+    current_attending = dict(user.attending) if user.attending else {}
+    
+    # Get all previously selected tournaments that are no longer selected
+    to_remove = [t_id for t_id in current_attending.keys() if t_id not in attending_ids]
+    
+    # Remove tournaments no longer selected
+    for t_id in to_remove:
+        if t_id in current_attending:
+            del current_attending[t_id]
+    
+    # Add newly selected tournaments with empty day/session structure
+    for t_id in attending_ids:
+        if t_id not in current_attending:
+            # Initialize with an empty structure for days/sessions
+            current_attending[t_id] = {}
+    
+    # Update the user's attending information
+    user.attending = current_attending
     db.session.commit()
     
     flash('Tournament preferences updated!', 'success')
@@ -83,6 +101,12 @@ def toggle_notifications():
 @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
 @login_required
 def order_lanyard():
+    # Check if user is attending any tournaments
+    user = User.query.get(current_user.id)
+    if not user.attending:
+        flash('You need to be attending at least one tournament to order a lanyard.', 'warning')
+        return redirect(url_for('user.profile'))
+    
     if request.method == 'POST':
         # Get form data
         name = request.form.get('name')
@@ -98,51 +122,33 @@ def order_lanyard():
             flash('Please fill out all required fields.', 'danger')
             return render_template('order_lanyard.html')
         
-        # Create order through Printful
-        try:
-            order_id = create_lanyard_order({
-                'name': name,
-                'address1': address1,
-                'address2': address2,
-                'city': city,
-                'state': state,
-                'zip': zip_code,
-                'country': country,
-                'email': current_user.email
-            })
-            
-            # Update user in database
-            user = User.query.get(current_user.id)
-            user.lanyard_ordered = True
-            db.session.commit()
-            
-            # Send confirmation email to user
-            if user.notifications:
-                send_email(
-                    to_email=user.email,
-                    subject="Your CourtSide Club Lanyard Order",
-                    html_content=render_template('email/notification.html', 
-                                                name=user.get_full_name(),
-                                                message="Your lanyard order has been placed! You'll receive it soon.")
-                )
-            
-            # Send admin notification
-            admin_email = current_app.config.get('ADMIN_EMAIL')
-            if admin_email:
-                send_email(
-                    to_email=admin_email,
-                    subject="New Lanyard Order",
-                    html_content=render_template('email/admin_summary.html',
-                                                user_email=user.email,
-                                                user_name=user.get_full_name(),
-                                                order_id=order_id)
-                )
-            
-            flash('Your lanyard has been ordered!', 'success')
-            return redirect(url_for('user.profile'))
+        # Update user in database to mark lanyard as ordered
+        user.lanyard_ordered = True
+        db.session.commit()
         
-        except Exception as e:
-            flash(f'There was a problem ordering your lanyard: {str(e)}', 'danger')
-            return render_template('order_lanyard.html')
+        # Send confirmation email to user
+        if user.notifications:
+            send_email(
+                to_email=user.email,
+                subject="Your CourtSide Club Lanyard Order",
+                html_content=render_template('email/notification.html', 
+                                            name=user.get_full_name(),
+                                            message="Your lanyard order has been placed! You'll receive it soon.")
+            )
+        
+        # Send admin notification
+        admin_email = current_app.config.get('ADMIN_EMAIL')
+        if admin_email:
+            send_email(
+                to_email=admin_email,
+                subject="New Lanyard Order",
+                html_content=render_template('email/admin_summary.html',
+                                            user_email=user.email,
+                                            user_name=user.get_full_name(),
+                                            shipping_details=f"{name}, {address1}, {city}, {country}")
+            )
+        
+        flash('Your lanyard has been ordered!', 'success')
+        return redirect(url_for('user.profile'))
     
     return render_template('order_lanyard.html')

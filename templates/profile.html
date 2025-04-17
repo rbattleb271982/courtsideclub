@@ -65,6 +65,7 @@
             </div>
         </div>
         
+        {% if user.attending and user.attending.keys()|list|length > 0 %}
         <div class="card">
             <div class="card-header">
                 <h3>Your Lanyard</h3>
@@ -82,6 +83,7 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
     </div>
     
     <div class="col-12 col-lg-6">
@@ -95,7 +97,7 @@
                     <div class="form-group">
                         <label class="form-check">
                             <input type="checkbox" class="form-check-input" name="attending" value="{{ tournament.id }}" 
-                                   {% if tournament.id in user.attending %}checked{% endif %}>
+                                   {% if user.attending and tournament.id in user.attending.keys() %}checked{% endif %}>
                             <span class="form-check-label">{{ tournament.name }} ({{ tournament.start_date }})</span>
                             <span class="checkmark"></span>
                         </label>
