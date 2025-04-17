@@ -99,16 +99,31 @@ def tournament_detail(tournament_id):
                 'user_id': user.id
             })
     
-    # Calculate overall attendance count
-    attending_count = UserTournament.query.filter_by(
+    # Calculate overall attendance count (excluding current user unless they have saved sessions)
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
         tournament_id=tournament_id
+    ).first()
+    
+    attending_count = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament_id,
+        UserTournament.user_id != current_user.id
     ).count()
     
-    # Calculate meeting count
-    meeting_count = UserTournament.query.filter_by(
-        tournament_id=tournament_id,
-        open_to_meet=True
+    # Add current user to count only if they have saved sessions
+    if user_tournament and (user_tournament.dates or user_tournament.sessions):
+        attending_count += 1
+    
+    # Calculate meeting count (excluding current user unless they have saved sessions)
+    meeting_count = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament_id,
+        UserTournament.open_to_meet == True,
+        UserTournament.user_id != current_user.id
     ).count()
+    
+    # Add current user to meeting count only if they have saved sessions and are open to meeting
+    if user_tournament and (user_tournament.dates or user_tournament.sessions) and user_tournament.open_to_meet:
+        meeting_count += 1
     
     # For backward compatibility during migration
     # Check if current user has a UserTournament record or is in the legacy fields
@@ -164,6 +179,10 @@ def tournament_detail(tournament_id):
     
     # Count attendance per day and session using the user_tournaments
     for user_tournament in user_tournaments:
+        # Skip current user unless they have saved sessions
+        if user_tournament.user_id == current_user.id and not (user_tournament.dates or user_tournament.sessions):
+            continue
+            
         for day in user_tournament.dates:
             if day in day_attendance:
                 # Increment day counter
@@ -223,7 +242,8 @@ def attend_tournament(tournament_id):
                 return jsonify({'success': True, 'message': message})
             else:
                 flash(message, 'info')
-                return redirect(url_for('tournaments.list_tournaments'))
+                # Redirect to home instead of tournament list when canceling attendance
+                return redirect(url_for('user.home'))
     else:
         # Handle simple "I'm attending" checkbox from tournaments list
         attending_checkbox = request.form.get('attending') == 'true'
@@ -303,6 +323,7 @@ def attend_tournament(tournament_id):
                 return jsonify({'success': True, 'message': message})
             else:
                 flash(message, 'success')
+                # Redirect to home page after saving, not back to tournament detail
                 return redirect(url_for('user.home'))
         else:
             # Default behavior - just mark them as attending with default settings
@@ -411,4 +432,5 @@ def raise_hand(tournament_id):
     
     db.session.commit()
     
-    return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
+    # Redirect to home instead of tournament detail after updating meeting preferences
+    return redirect(url_for('user.home'))
