@@ -40,12 +40,12 @@ def home():
     for tournament in upcoming_tournaments:
         # Count users attending this tournament
         attending_count = User.query.filter(
-            User.attending.has_key(tournament.id)
+            User.attending.contains({tournament.id: {}})
         ).count()
         
         # Count users open to meeting at this tournament
         meeting_count = User.query.filter(
-            User.raised_hand.has_key(tournament.id)
+            User.raised_hand.contains({tournament.id: {}})
         ).count()
         
         attendance_counts[tournament.id] = {
