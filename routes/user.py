@@ -9,12 +9,9 @@ import logging
 # Initialize blueprint
 user_bp = Blueprint('user', __name__)
 
-@user_bp.route('/profile')
+@user_bp.route('/home')
 @login_required
-def profile():
-    # Get all tournaments
-    tournaments = Tournament.query.all()
-    
+def home():
     # Get user data
     user = User.query.get(current_user.id)
     
@@ -26,12 +23,27 @@ def profile():
             if attendance_data and len(attendance_data) > 0:
                 attending_ids.append(tournament_id)
     
-    attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
+    # Get future tournaments (after today's date)
+    from datetime import datetime
+    today = datetime.now().date()
     
-    return render_template('profile.html', 
-                          user=user,
-                          attending=attending,
-                          all_tournaments=tournaments)
+    # Get all attending tournaments
+    all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
+    
+    # Split into past and upcoming tournaments
+    upcoming_tournaments = [t for t in all_attending if t.end_date >= today]
+    past_tournaments = [t for t in all_attending if t.end_date < today]
+    
+    return render_template('home.html', 
+                          user=user, 
+                          upcoming_tournaments=upcoming_tournaments,
+                          past_tournaments=past_tournaments)
+
+# Keep the profile route for backward compatibility, redirecting to home
+@user_bp.route('/profile')
+@login_required
+def profile():
+    return redirect(url_for('user.home'))
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required
@@ -92,7 +104,15 @@ def update_attending():
     db.session.commit()
     
     flash('Tournament preferences updated!', 'success')
-    return redirect(url_for('user.profile'))
+    return redirect(url_for('user.home'))
+
+@user_bp.route('/settings')
+@login_required
+def settings():
+    # Get user data
+    user = User.query.get(current_user.id)
+    
+    return render_template('settings.html', user=user)
 
 @user_bp.route('/toggle_notifications')
 @login_required
@@ -104,7 +124,7 @@ def toggle_notifications():
     
     status = "enabled" if user.notifications else "disabled"
     flash(f'Notifications {status}!', 'success')
-    return redirect(url_for('user.profile'))
+    return redirect(url_for('user.settings'))
 
 @user_bp.route('/change_password', methods=['POST'])
 @login_required
@@ -116,7 +136,7 @@ def change_password():
     # Check if new password and confirmation match
     if new_password != confirm_password:
         flash('New passwords do not match.', 'danger')
-        return redirect(url_for('user.profile'))
+        return redirect(url_for('user.settings'))
     
     # Get the current user
     user = User.query.get(current_user.id)
@@ -125,7 +145,7 @@ def change_password():
     if current_password and user.password_hash:
         if not check_password_hash(user.password_hash, current_password):
             flash('Current password is incorrect.', 'danger')
-            return redirect(url_for('user.profile'))
+            return redirect(url_for('user.settings'))
     
     # Update the password hash
     try:
@@ -142,7 +162,7 @@ def change_password():
         logging.error(f"Error updating password: {str(e)}")
         flash('An error occurred while updating your password.', 'danger')
     
-    return redirect(url_for('user.profile'))
+    return redirect(url_for('user.settings'))
 
 @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
 @login_required
@@ -160,7 +180,7 @@ def order_lanyard():
     
     if not has_selected_sessions:
         flash('You must select tournament sessions before ordering your lanyard.', 'warning')
-        return redirect(url_for('user.profile'))
+        return redirect(url_for('user.home'))
     
     if request.method == 'POST':
         # Get form data
