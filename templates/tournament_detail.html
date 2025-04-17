@@ -2,6 +2,93 @@
 
 {% block title %}{{ tournament.name }}{% endblock %}
 
+{% block styles %}
+<style>
+.day-session-group {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+/* Attendance stats styles */
+.attendance-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.attendance-stat {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.stat-icon {
+    font-size: 1.2rem;
+    margin-right: 8px;
+}
+
+.stat-count {
+    font-weight: bold;
+    margin-right: 5px;
+    color: #28a745;
+    font-size: 1.1rem;
+}
+
+/* Day stats styles */
+.day-stats-container {
+    margin-top: 10px;
+}
+
+.day-stats-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.day-stats-title {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* Session stats styles */
+.session-stats-container {
+    margin-top: 10px;
+    margin-left: 5px;
+    padding-left: 10px;
+    border-left: 2px solid #eaeaea;
+}
+
+.session-stats {
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 8px 12px;
+    border: 1px solid #e9ecef;
+}
+
+.session-stats-title {
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+.session-stats .attendance-stat.small {
+    font-size: 0.9rem;
+}
+
+.session-stats .stat-icon {
+    font-size: 1rem;
+}
+
+.session-stat-spacer {
+    margin: 0 8px;
+    color: #888;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="card mb-4">
     <div class="card-header">
@@ -30,8 +117,12 @@
                 
                 <div class="attendance-summary mb-4">
                     <div class="card">
+                        <div class="card-header">
+                            <h3>Tournament Attendance</h3>
+                        </div>
                         <div class="card-body">
-                            <div class="attendance-stats">
+                            <!-- Overall stats -->
+                            <div class="attendance-stats mb-3">
                                 <div class="attendance-stat">
                                     <span class="stat-icon">🎾</span>
                                     <span class="stat-count">{{ attending_count }}</span> 
@@ -42,6 +133,47 @@
                                     <span class="stat-count">{{ meeting_count }}</span> 
                                     <span class="stat-label">are open to meeting</span>
                                 </div>
+                            </div>
+                            
+                            <!-- Day-by-day stats -->
+                            <div class="day-stats-container">
+                                {% for day_name, day_data in day_attendance.items() %}
+                                <div class="day-stats-card mb-3">
+                                    <h4 class="day-stats-title">{{ day_name }}:</h4>
+                                    <div class="day-stats">
+                                        <div class="attendance-stat">
+                                            <span class="stat-icon">🎾</span>
+                                            <span class="stat-count">{{ day_data.attending }}</span> 
+                                            <span class="stat-label">people attending</span>
+                                        </div>
+                                        <div class="attendance-stat">
+                                            <span class="stat-icon">🤝</span>
+                                            <span class="stat-count">{{ day_data.meeting }}</span> 
+                                            <span class="stat-label">open to meeting</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Session-level stats -->
+                                    <div class="session-stats-container">
+                                        {% for session_name, session_data in day_data.sessions.items() %}
+                                        <div class="session-stats ps-3 mb-2">
+                                            <div class="session-stats-title">{{ session_name }}:</div>
+                                            <div class="attendance-stat small">
+                                                <span class="stat-icon">🎾</span>
+                                                <span class="stat-count">{{ session_data.attending }}</span>
+                                                <span class="stat-label">attending</span>
+                                                
+                                                <span class="session-stat-spacer">•</span>
+                                                
+                                                <span class="stat-icon">🤝</span>
+                                                <span class="stat-count">{{ session_data.meeting }}</span>
+                                                <span class="stat-label">meeting</span>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

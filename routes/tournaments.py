@@ -85,12 +85,50 @@ def tournament_detail(tournament_id):
                     'user_id': user.id
                 })
     
-    # Calculate attendance and meetup counts
-    # Count users attending (same as users with raised hand for now)
+    # Calculate overall attendance and meetup counts
     attending_count = len(users_with_raised_hands)
+    meeting_count = attending_count  # For now, all users with raised_hand are counted as open to meeting
     
-    # For now, all users with raised_hand are counted as open to meeting
-    meeting_count = attending_count
+    # Parse tournament sessions into days for the template
+    days = {}
+    for session_str in tournament.sessions:
+        parts = session_str.split(' - ')
+        day = parts[0]
+        session_type = parts[1]
+        if day not in days:
+            days[day] = []
+        if session_type not in days[day]:
+            days[day].append(session_type)
+    
+    # Calculate per-day and per-session attendance counts
+    day_attendance = {}
+    for day_name in days.keys():
+        day_attendance[day_name] = {
+            'attending': 0,
+            'meeting': 0,
+            'sessions': {}
+        }
+        # Initialize sessions
+        for session in days[day_name]:
+            day_attendance[day_name]['sessions'][session] = {
+                'attending': 0,
+                'meeting': 0
+            }
+    
+    # Count attendance per day and session
+    for user in users_with_raised_hands:
+        if tournament_id in user.raised_hand:
+            for day, sessions in user.raised_hand[tournament_id].items():
+                if day in day_attendance:
+                    # Increment day counter
+                    day_attendance[day]['attending'] += 1
+                    day_attendance[day]['meeting'] += 1  # All raisedHand users count as meeting for now
+                    
+                    # Increment session counters
+                    for session in sessions:
+                        if session in day_attendance[day]['sessions']:
+                            day_attendance[day]['sessions'][session]['attending'] += 1
+                            day_attendance[day]['sessions'][session]['meeting'] += 1
     
     # Check if current user is attending
     user_attending = tournament_id in current_user.attending
@@ -104,7 +142,9 @@ def tournament_detail(tournament_id):
                           user_raised_hand=user_raised_hand,
                           raised_hands=raised_hands,
                           attending_count=attending_count,
-                          meeting_count=meeting_count)
+                          meeting_count=meeting_count,
+                          days=days,
+                          day_attendance=day_attendance)
 
 @tournaments_bp.route('/tournaments/<tournament_id>/attend', methods=['POST'])
 @login_required
