@@ -83,66 +83,71 @@
                             
                             <div class="session-options mt-2 collapse {% if tournament.id in current_user.attending %}show{% endif %}" id="sessions-{{ tournament.id }}">
                                 <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="session-selection-form">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="row">
-                                                <div class="col-12">
-                                                    <h6 class="mb-3">Which days and sessions are you attending?</h6>
-                                                </div>
-                                                
-                                                <div class="col-md-8">
-                                                    <div class="form-group">
-                                                        <label class="form-label mb-2"><i class="fas fa-calendar-day mr-1"></i> Days</label>
-                                                        <div class="days-container">
+                                    <div class="attendance-row">
+                                        <div class="card horizontal-selection">
+                                            <div class="card-body p-2">
+                                                <div class="d-flex flex-wrap align-items-center">
+                                                    <!-- Day selection (dropdown) -->
+                                                    <div class="day-selector mr-3">
+                                                        <label class="selection-label"><i class="fas fa-calendar-day"></i> Day</label>
+                                                        <select class="form-control form-control-sm" id="day-dropdown-{{ tournament.id }}" onchange="updateSelectedDays('{{ tournament.id }}')">
+                                                            <option value="">Select day</option>
                                                             {% for day_num in range((tournament.end_date - tournament.start_date).days + 1) %}
                                                                 {% set current_day = tournament.start_date + day_num|timedelta %}
-                                                                <div class="form-check form-check-inline mb-2">
-                                                                    <input class="form-check-input" type="checkbox" 
-                                                                           id="day-{{ tournament.id }}-{{ day_num }}" 
-                                                                           name="days[]" 
-                                                                           value="{{ current_day.strftime('%Y-%m-%d') }}"
-                                                                           {% if current_user.attending.get(tournament.id, {}).get('dates') and current_day.strftime('%Y-%m-%d') in current_user.attending.get(tournament.id, {}).get('dates') %}checked{% endif %}>
-                                                                    <label class="form-check-label day-label" for="day-{{ tournament.id }}-{{ day_num }}">
-                                                                        {{ current_day.strftime('%b %d') }}
-                                                                    </label>
-                                                                </div>
+                                                                <option value="{{ current_day.strftime('%Y-%m-%d') }}">
+                                                                    {{ current_day.strftime('%b %d') }}
+                                                                </option>
                                                             {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    
+                                                    <!-- Selected days chips -->
+                                                    <div class="selected-days-container mr-3">
+                                                        <label class="selection-label"><i class="fas fa-check-circle"></i> Selected Days</label>
+                                                        <div class="selected-days-chips" id="selected-days-{{ tournament.id }}">
+                                                            {% if current_user.attending.get(tournament.id, {}).get('dates') %}
+                                                                {% for date in current_user.attending.get(tournament.id, {}).get('dates') %}
+                                                                    <span class="day-chip">
+                                                                        {{ date }}
+                                                                        <button type="button" class="chip-remove" onclick="removeDay('{{ tournament.id }}', '{{ date }}')">&times;</button>
+                                                                    </span>
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <span class="text-muted">No days selected</span>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div id="days-storage-{{ tournament.id }}">
+                                                            {% if current_user.attending.get(tournament.id, {}).get('dates') %}
+                                                                {% for date in current_user.attending.get(tournament.id, {}).get('dates') %}
+                                                                    <input type="hidden" name="days[]" value="{{ date }}">
+                                                                {% endfor %}
+                                                            {% endif %}
                                                         </div>
                                                     </div>
-                                                </div>
-                                                
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label mb-2"><i class="fas fa-clock mr-1"></i> Sessions</label>
-                                                        <div class="sessions-container">
-                                                            <div class="form-check mb-2">
-                                                                <input class="form-check-input" type="checkbox" 
-                                                                       id="day-session-{{ tournament.id }}" 
-                                                                       name="sessions[]" 
-                                                                       value="Day"
-                                                                       {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Day' in current_user.attending.get(tournament.id, {}).get('sessions') %}checked{% endif %}>
-                                                                <label class="form-check-label" for="day-session-{{ tournament.id }}">
-                                                                    Day Session
+                                                    
+                                                    <!-- Session selection -->
+                                                    <div class="session-selector mr-3">
+                                                        <label class="selection-label"><i class="fas fa-clock"></i> Sessions</label>
+                                                        <div class="sessions-toggle-group">
+                                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                                <label class="btn btn-outline-secondary btn-sm {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Day' in current_user.attending.get(tournament.id, {}).get('sessions') %}active{% endif %}">
+                                                                    <input type="checkbox" name="sessions[]" value="Day" 
+                                                                           {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Day' in current_user.attending.get(tournament.id, {}).get('sessions') %}checked{% endif %}>
+                                                                    Day
                                                                 </label>
-                                                            </div>
-                                                            <div class="form-check mb-2">
-                                                                <input class="form-check-input" type="checkbox" 
-                                                                       id="night-session-{{ tournament.id }}" 
-                                                                       name="sessions[]" 
-                                                                       value="Night"
-                                                                       {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Night' in current_user.attending.get(tournament.id, {}).get('sessions') %}checked{% endif %}>
-                                                                <label class="form-check-label" for="night-session-{{ tournament.id }}">
-                                                                    Night Session
+                                                                <label class="btn btn-outline-secondary btn-sm {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Night' in current_user.attending.get(tournament.id, {}).get('sessions') %}active{% endif %}">
+                                                                    <input type="checkbox" name="sessions[]" value="Night"
+                                                                           {% if current_user.attending.get(tournament.id, {}).get('sessions') and 'Night' in current_user.attending.get(tournament.id, {}).get('sessions') %}checked{% endif %}>
+                                                                    Night
                                                                 </label>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="row mt-3">
-                                                <div class="col-12 text-right">
-                                                    <button type="submit" class="btn btn-primary">Save Selections</button>
+                                                    
+                                                    <!-- Save button -->
+                                                    <div class="save-button-container">
+                                                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -226,9 +231,149 @@ input[type="checkbox"]:checked + .day-label {
     background-color: #28a745;
     color: white;
 }
+/* New styles for horizontal layout */
+.horizontal-selection {
+    width: 100%;
+    background-color: #f8fbff;
+    border: 1px solid #e1e7f0;
+}
+.attendance-row {
+    width: 100%;
+}
+.day-selector, .session-selector, .selected-days-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+}
+.selection-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 4px;
+}
+.selected-days-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 32px;
+    align-items: center;
+}
+.day-chip {
+    background-color: #e0ffe0;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #28a745;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+    border: 1px solid #28a745;
+}
+.chip-remove {
+    background: none;
+    border: none;
+    color: #666;
+    margin-left: 5px;
+    padding: 0 3px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.chip-remove:hover {
+    color: #ff5555;
+}
+.sessions-toggle-group {
+    display: flex;
+    align-items: center;
+    height: 32px;
+}
+.save-button-container {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+}
+.btn-group-toggle label.active {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
 </style>
 
 <script>
+// Function to add a day to the selected days for a tournament
+function updateSelectedDays(tournamentId) {
+    const dayDropdown = document.getElementById(`day-dropdown-${tournamentId}`);
+    const selectedDay = dayDropdown.value;
+    const selectedText = dayDropdown.options[dayDropdown.selectedIndex].text;
+    
+    // Skip if no day is selected
+    if (!selectedDay) return;
+    
+    // Check if this day is already selected
+    const existingInputs = document.querySelectorAll(`#days-storage-${tournamentId} input[value="${selectedDay}"]`);
+    if (existingInputs.length > 0) {
+        // Day already selected, reset dropdown
+        dayDropdown.value = '';
+        return;
+    }
+    
+    // Add the selected day as a hidden input
+    const daysStorage = document.getElementById(`days-storage-${tournamentId}`);
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'days[]';
+    hiddenInput.value = selectedDay;
+    daysStorage.appendChild(hiddenInput);
+    
+    // Add the day chip to the visual display
+    const chipsContainer = document.getElementById(`selected-days-${tournamentId}`);
+    
+    // Remove "No days selected" message if it exists
+    const noSelectionMsg = chipsContainer.querySelector('.text-muted');
+    if (noSelectionMsg) {
+        chipsContainer.removeChild(noSelectionMsg);
+    }
+    
+    // Create the chip element
+    const chip = document.createElement('span');
+    chip.className = 'day-chip';
+    chip.innerHTML = `
+        ${selectedText}
+        <button type="button" class="chip-remove" onclick="removeDay('${tournamentId}', '${selectedDay}')">&times;</button>
+    `;
+    chipsContainer.appendChild(chip);
+    
+    // Reset the dropdown
+    dayDropdown.value = '';
+}
+
+// Function to remove a day from the selected days
+function removeDay(tournamentId, day) {
+    // Remove the hidden input
+    const input = document.querySelector(`#days-storage-${tournamentId} input[value="${day}"]`);
+    if (input) {
+        input.parentNode.removeChild(input);
+    }
+    
+    // Find and remove the chip
+    const chipsContainer = document.getElementById(`selected-days-${tournamentId}`);
+    const chips = chipsContainer.querySelectorAll('.day-chip');
+    
+    for (const chip of chips) {
+        if (chip.textContent.trim().includes(day)) {
+            chip.parentNode.removeChild(chip);
+            break;
+        }
+    }
+    
+    // If no days are selected, add the placeholder text
+    if (chipsContainer.querySelectorAll('.day-chip').length === 0) {
+        const placeholder = document.createElement('span');
+        placeholder.className = 'text-muted';
+        placeholder.textContent = 'No days selected';
+        chipsContainer.appendChild(placeholder);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Toggle session options when the checkbox is clicked
     const attendanceCheckboxes = document.querySelectorAll('.attendance-checkbox');
@@ -264,6 +409,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+        });
+    });
+    
+    // Initialize button groups for session selection
+    document.querySelectorAll('.btn-group-toggle .btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.querySelector('input[type="checkbox"]');
+            input.checked = !input.checked;
+            this.classList.toggle('active');
         });
     });
 });
