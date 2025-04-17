@@ -67,8 +67,15 @@ def register():
         
         # Log the user in
         login_user(new_user)
-        flash('Registration successful!', 'success')
-        return redirect(url_for('tournaments.index'))
+        
+        # Display the generated password to the user (only once)
+        flash(f'Registration successful! Your generated password is: {password}', 'success')
+        flash('Please save this password now. It will not be shown again.', 'warning')
+        
+        # Store the password in the session temporarily to show on the next page
+        session['temp_password'] = password
+        
+        return redirect(url_for('user.profile'))
     
     return render_template('register.html')
 

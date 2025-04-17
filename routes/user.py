@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
 from models import db, User, Tournament
 from services.printful import create_lanyard_order
@@ -29,15 +29,22 @@ def profile():
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required
 def update_profile():
-    name = request.form.get('name')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
     notifications = 'notifications' in request.form
     
     # Update user in database
     user = User.query.get(current_user.id)
-    if name:
-        user.name = name
+    if first_name:
+        user.first_name = first_name
+    if last_name:
+        user.last_name = last_name
     user.notifications = notifications
     db.session.commit()
+    
+    # Clear temporary password after profile update (if exists)
+    if 'temp_password' in session:
+        del session['temp_password']
     
     flash('Profile updated successfully!', 'success')
     return redirect(url_for('user.profile'))
