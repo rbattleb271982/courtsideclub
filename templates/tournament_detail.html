@@ -32,13 +32,24 @@
             <div class="col-12 col-md-6">
                 <div class="mb-3">
                     <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post">
-                        <button type="submit" class="btn btn-{% if user_attending %}outline{% else %}primary{% endif %} btn-block">
-                            {% if user_attending %}
-                            I'm not attending
-                            {% else %}
-                            I'm attending this tournament
+                        <!-- If attending, we need to show the date and session they're attending -->
+                        {% if user_attending %}
+                        <div class="alert alert-success mb-3">
+                            <strong>You're attending this tournament</strong><br>
+                            {% if current_user.attending[tournament.id].date %}
+                            Date: {{ current_user.attending[tournament.id].date }}<br>
                             {% endif %}
+                            Session: {{ current_user.attending[tournament.id].session }}
+                        </div>
+                        <input type="hidden" name="remove" value="true">
+                        <button type="submit" class="btn btn-outline btn-block">
+                            I'm not attending
                         </button>
+                        {% else %}
+                        <button type="submit" class="btn btn-primary btn-block">
+                            I'm attending this tournament
+                        </button>
+                        {% endif %}
                     </form>
                 </div>
                 
