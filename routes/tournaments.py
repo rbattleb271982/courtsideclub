@@ -14,11 +14,22 @@ def index():
 @tournaments_bp.route('/tournaments')
 @login_required
 def list_tournaments():
-    # Get all tournaments
+    # Get all tournaments for dropdown options
+    all_tournaments = Tournament.query.all()
+    
+    # Build a list of unique locations
+    locations = sorted(set([f"{t.city}, {t.country}" for t in all_tournaments]))
+    
+    # Initialize query
     query = Tournament.query
     
-    # Filter by date if requested
+    # Get filter parameters
     date_filter = request.args.get('date')
+    name_filter = request.args.get('name')
+    location_filter = request.args.get('location')
+    event_type_filter = request.args.get('event_type')
+    
+    # Apply date filter if provided
     if date_filter:
         try:
             filter_date = datetime.datetime.strptime(date_filter, '%Y-%m-%d').date()
@@ -27,16 +38,34 @@ def list_tournaments():
         except ValueError:
             flash('Invalid date format. Use YYYY-MM-DD.', 'warning')
     
-    # Get the tournaments
+    # Apply name filter if provided
+    if name_filter:
+        query = query.filter(Tournament.id == name_filter)
+    
+    # Apply location filter if provided
+    if location_filter:
+        city, country = location_filter.split(', ', 1)
+        query = query.filter(Tournament.city == city, Tournament.country == country)
+    
+    # Apply event type filter if provided
+    if event_type_filter:
+        query = query.filter(Tournament.event_type == event_type_filter)
+    
+    # Get the filtered tournaments
     tournaments = query.all()
     
     # Get today's date for highlighting current tournaments
     today = datetime.datetime.now().date()
     
     return render_template('tournaments.html', 
-                          tournaments=tournaments, 
+                          tournaments=tournaments,
+                          all_tournaments=all_tournaments,
+                          locations=locations,
                           today=today,
-                          date_filter=date_filter)
+                          date_filter=date_filter,
+                          name_filter=name_filter,
+                          location_filter=location_filter,
+                          event_type_filter=event_type_filter)
 
 @tournaments_bp.route('/tournaments/<tournament_id>')
 @login_required
