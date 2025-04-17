@@ -59,10 +59,10 @@ def register():
             logging.info(f"Registration attempt with email: {email}")
             logging.info(f"First name: {first_name}, Last name: {last_name}")
             
-            # Generate a secure random password for the user
-            # Complex password with letters, numbers, and symbols
-            alphabet = string.ascii_letters + string.digits + '!@#$%^&*()_+-=[]{}|;:,.<>?'
-            password = ''.join(secrets.choice(alphabet) for _ in range(12))
+            # For debugging purposes, use a fixed test password
+            # We'll switch back to random passwords after fixing the login issues
+            password = "TestPassword123!"
+            logging.info(f"Setting fixed password for testing: {password}")
             
             # Form validation
             try:
@@ -82,7 +82,7 @@ def register():
                     first_name=first_name,
                     last_name=last_name,
                     name=f"{first_name} {last_name}",  # Also set the name field for compatibility
-                    password_hash=generate_password_hash(password)
+                    password_hash=generate_password_hash(password, method='pbkdf2:sha256')
                 )
                 
                 db.session.add(new_user)
@@ -131,12 +131,13 @@ def reset_password_request():
         
         if user:
             try:
-                # Generate a new password
-                alphabet = string.ascii_letters + string.digits + '!@#$%^&*()_+-=[]{}|;:,.<>?'
-                new_password = ''.join(secrets.choice(alphabet) for _ in range(12))
+                # For debugging purposes, use a fixed test password
+                new_password = "TestPassword123!"
+                logging.info(f"Setting fixed password for reset: {new_password}")
                 
                 # Update the user's password
-                user.password_hash = generate_password_hash(new_password)
+                user.password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+                logging.info(f"Reset password hash: {user.password_hash[:20]}...")
                 db.session.commit()
                 
                 # Show the new password to the user
