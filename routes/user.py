@@ -60,11 +60,11 @@ def update_attending():
 @login_required
 def toggle_notifications():
     # Toggle notifications setting
-    user_data = db.get(current_user.id, {})
-    user_data['notifications'] = not user_data.get('notifications', True)
-    db[current_user.id] = user_data
+    user = User.query.get(current_user.id)
+    user.notifications = not user.notifications
+    db.session.commit()
     
-    status = "enabled" if user_data['notifications'] else "disabled"
+    status = "enabled" if user.notifications else "disabled"
     flash(f'Notifications {status}!', 'success')
     return redirect(url_for('user.profile'))
 
@@ -100,17 +100,17 @@ def order_lanyard():
             })
             
             # Update user in database
-            user_data = db.get(current_user.id, {})
-            user_data['lanyard_ordered'] = True
-            db[current_user.id] = user_data
+            user = User.query.get(current_user.id)
+            user.lanyard_ordered = True
+            db.session.commit()
             
             # Send confirmation email to user
-            if user_data.get('notifications', True):
+            if user.notifications:
                 send_email(
-                    to_email=current_user.email,
+                    to_email=user.email,
                     subject="Your Tennis Fans Lanyard Order",
                     html_content=render_template('email/notification.html', 
-                                                name=current_user.name,
+                                                name=user.name,
                                                 message="Your lanyard order has been placed! You'll receive it soon.")
                 )
             
@@ -121,8 +121,8 @@ def order_lanyard():
                     to_email=admin_email,
                     subject="New Lanyard Order",
                     html_content=render_template('email/admin_summary.html',
-                                                user_email=current_user.email,
-                                                user_name=current_user.name,
+                                                user_email=user.email,
+                                                user_name=user.name,
                                                 order_id=order_id)
                 )
             
