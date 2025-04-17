@@ -33,11 +33,28 @@ def list_tournaments():
     # Get today's date for highlighting current tournaments
     today = datetime.datetime.now().date()
     
+    # Calculate attendance and meetup counts for each tournament
+    attendance_counts = {}
+    for tournament in tournaments:
+        # Count users who have selected any day/session for this tournament
+        attending_users = User.query.filter(
+            User.raised_hand.contains({tournament.id: {}})
+        ).count()
+        
+        # For now, all users with raised_hand are counted as open to meeting
+        meeting_users = attending_users
+        
+        attendance_counts[tournament.id] = {
+            'attending': attending_users,
+            'meeting': meeting_users
+        }
+    
     return render_template('tournaments.html', 
                           tournaments=tournaments,
                           all_tournaments=all_tournaments,
                           today=today,
-                          name_filter=name_filter)
+                          name_filter=name_filter,
+                          attendance_counts=attendance_counts)
 
 @tournaments_bp.route('/tournaments/<tournament_id>')
 @login_required
@@ -68,6 +85,13 @@ def tournament_detail(tournament_id):
                     'user_id': user.id
                 })
     
+    # Calculate attendance and meetup counts
+    # Count users attending (same as users with raised hand for now)
+    attending_count = len(users_with_raised_hands)
+    
+    # For now, all users with raised_hand are counted as open to meeting
+    meeting_count = attending_count
+    
     # Check if current user is attending
     user_attending = tournament_id in current_user.attending
     
@@ -78,7 +102,9 @@ def tournament_detail(tournament_id):
                           tournament=tournament,
                           user_attending=user_attending,
                           user_raised_hand=user_raised_hand,
-                          raised_hands=raised_hands)
+                          raised_hands=raised_hands,
+                          attending_count=attending_count,
+                          meeting_count=meeting_count)
 
 @tournaments_bp.route('/tournaments/<tournament_id>/attend', methods=['POST'])
 @login_required

@@ -27,6 +27,25 @@
                 <div class="mb-3">
                     <strong>Tour:</strong> {{ tournament.tour_type }}
                 </div>
+                
+                <div class="attendance-summary mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="attendance-stats">
+                                <div class="attendance-stat">
+                                    <span class="stat-icon">🎾</span>
+                                    <span class="stat-count">{{ attending_count }}</span> 
+                                    <span class="stat-label">people are attending</span>
+                                </div>
+                                <div class="attendance-stat">
+                                    <span class="stat-icon">🤝</span>
+                                    <span class="stat-count">{{ meeting_count }}</span> 
+                                    <span class="stat-label">are open to meeting</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="col-12 col-md-6">
