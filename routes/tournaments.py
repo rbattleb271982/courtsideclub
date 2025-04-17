@@ -157,12 +157,13 @@ def tournament_detail(tournament_id):
                 'meeting': 0
             }
     
-    # Count attendance per day and session using the UserTournament model
-    all_user_tournaments = UserTournament.query.filter_by(
+    # Fetch all users with their attendance details for this tournament
+    user_tournaments = UserTournament.query.filter_by(
         tournament_id=tournament_id
     ).all()
     
-    for user_tournament in all_user_tournaments:
+    # Count attendance per day and session using the user_tournaments
+    for user_tournament in user_tournaments:
         for day in user_tournament.dates:
             if day in day_attendance:
                 # Increment day counter
@@ -198,27 +199,23 @@ def attend_tournament(tournament_id):
         flash('Tournament not found.', 'danger')
         return redirect(url_for('tournaments.list_tournaments'))
     
-    # Update user's attending information
+    # Get current user
     user = User.query.get(current_user.id)
-    attending = dict(user.attending) if user.attending else {}
     
     # Check if this is a removal request
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     remove = request.form.get('remove') == 'true'
     
+    # Check if user has existing registration for this tournament
+    user_tournament = UserTournament.query.filter_by(
+        user_id=user.id,
+        tournament_id=tournament_id
+    ).first()
+    
     if remove:
-        if tournament_id in attending:
-            # Remove from attending dictionary
-            del attending[tournament_id]
-            
-            # Also remove from raised_hand if present
-            raised_hand = dict(user.raised_hand) if user.raised_hand else {}
-            if tournament_id in raised_hand:
-                del raised_hand[tournament_id]
-                user.raised_hand = raised_hand
-            
-            # Update user record before returning
-            user.attending = attending
+        # Remove UserTournament if it exists
+        if user_tournament:
+            db.session.delete(user_tournament)
             db.session.commit()
             
             message = f"You're no longer attending {tournament.name}."
@@ -232,23 +229,28 @@ def attend_tournament(tournament_id):
         attending_checkbox = request.form.get('attending') == 'true'
         
         if attending_checkbox:
-            # Mark as attending with empty session details
-            # Sessions will be selected on the tournament detail page
-            attending[tournament_id] = {}
+            # Create a UserTournament if it doesn't exist
+            if not user_tournament:
+                user_tournament = UserTournament(
+                    user_id=user.id,
+                    tournament_id=tournament_id,
+                    dates=[],
+                    sessions=[],
+                    open_to_meet=True
+                )
+                db.session.add(user_tournament)
+                db.session.commit()
+            
             message = f"You're attending {tournament.name}! Please select your sessions."
-            
-            user.attending = attending
-            db.session.commit()
-            
-            # Redirect to tournament detail page to select sessions
             flash(message, 'success')
             return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
             
         # Handle session selections and meeting preferences from the session form
         elif 'sessions' in request.form:
-            attendance = {}
+            selected_days = []
+            selected_sessions = []
             
-            # Process the session form data
+            # Process the session form data to extract days and sessions
             for field_name, value in request.form.items():
                 if field_name.startswith('sessions['):
                     # Extract the day key from the field name
@@ -260,77 +262,70 @@ def attend_tournament(tournament_id):
                         
                         # Check if the checkbox is checked
                         if value == 'on':
-                            if day_key not in attendance:
-                                attendance[day_key] = []
-                            attendance[day_key].append(session_type)
+                            if day_key not in selected_days:
+                                selected_days.append(day_key)
+                            if session_type not in selected_sessions:
+                                selected_sessions.append(session_type)
             
             # Check for meeting preference in the same form
-            meeting_preference = request.form.get('meeting_preference')
+            meeting_preference = request.form.get('meeting_preference', 'Yes')  # Default to 'Yes'
+            open_to_meet = meeting_preference == 'Yes'
             
-            # Update raised_hand status based on meeting preference
-            raised_hand = dict(user.raised_hand) if user.raised_hand else {}
-            
-            # Store attendance info
-            # If sessions were selected, update both attending and raised_hand
-            if attendance:
-                attending[tournament_id] = attendance
-                
-                # Also update raised_hand with same session data if "Yes" to meeting
-                if meeting_preference == 'Yes':
-                    raised_hand[tournament_id] = attendance
+            # If days and sessions were selected, update or create UserTournament
+            if selected_days and selected_sessions:
+                if user_tournament:
+                    # Update existing registration
+                    user_tournament.dates = selected_days
+                    user_tournament.sessions = selected_sessions
+                    user_tournament.open_to_meet = open_to_meet
                 else:
-                    # If "No" to meeting but previously raised hand, remove it
-                    if tournament_id in raised_hand:
-                        del raised_hand[tournament_id]
-                        
+                    # Create new registration
+                    user_tournament = UserTournament(
+                        user_id=user.id,
+                        tournament_id=tournament_id,
+                        dates=selected_days,
+                        sessions=selected_sessions,
+                        open_to_meet=open_to_meet
+                    )
+                    db.session.add(user_tournament)
+                
                 message = f"Your selections for {tournament.name} have been saved!"
             else:
-                # No sessions were selected
-                # Either remove attendance or keep empty based on preference
-                if meeting_preference:  # If form included meeting preference
-                    if tournament_id in attending:
-                        del attending[tournament_id]
-                    if tournament_id in raised_hand:
-                        del raised_hand[tournament_id]
-                    message = f"You're no longer attending {tournament.name}."
-                else:
-                    # Just keep as attending with no sessions
-                    attending[tournament_id] = {}
-                    message = f"You're attending {tournament.name}!"
-                
+                # No sessions were selected - remove registration if it exists
+                if user_tournament:
+                    db.session.delete(user_tournament)
+                message = f"You're no longer attending {tournament.name}."
+            
+            # Save changes and respond
+            db.session.commit()
+            
             if is_ajax:
                 return jsonify({'success': True, 'message': message})
             else:
                 flash(message, 'success')
-                
-                # Save the changes and redirect to home page after saving sessions
-                user.raised_hand = raised_hand
-                # Update user record
-                user.attending = attending
-                db.session.commit()
-                
-                if is_ajax:
-                    return jsonify({'success': True, 'message': message})
-                else:
-                    # Redirect to home page after saving sessions
-                    return redirect(url_for('user.home'))
+                return redirect(url_for('user.home'))
         else:
-            # Default behavior - just mark them as attending
-            attending[tournament_id] = {}
+            # Default behavior - just mark them as attending with default settings
+            if not user_tournament:
+                user_tournament = UserTournament(
+                    user_id=user.id,
+                    tournament_id=tournament_id,
+                    dates=[],
+                    sessions=[],
+                    open_to_meet=True
+                )
+                db.session.add(user_tournament)
+                db.session.commit()
+            
             message = f"You're attending {tournament.name}!"
             if is_ajax:
                 return jsonify({'success': True, 'message': message})
             else:
                 flash(message, 'success')
+                return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
     
-    # Update user record
-    user.attending = attending
-    db.session.commit()
-    
-    if is_ajax:
-        return jsonify({'success': True})
-    else:
-        return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
+    # This is reached only in the default case (not is_ajax and not remove)
+    return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
 
 @tournaments_bp.route('/tournaments/past', methods=['GET', 'POST'])
 @login_required
@@ -340,14 +335,19 @@ def past_tournaments():
     
     # Get the user's past tournaments list
     user = User.query.get(current_user.id)
-    past_tournaments = list(user.past_tournaments) if user.past_tournaments else []
+    
+    # Combine both legacy and new past tournaments data
+    past_tournaments_legacy = list(user.past_tournaments_json) if hasattr(user, 'past_tournaments_json') and user.past_tournaments_json else []
+    attended_tournaments_ids = [t.id for t in user.attended_tournaments]
+    past_tournaments = list(set(past_tournaments_legacy + attended_tournaments_ids))
     
     # Handle form submission
     if request.method == 'POST':
-        # Reset the past_tournaments list
-        past_tournaments = []
+        # Reset the attended_tournaments relationship
+        user.attended_tournaments = []
         
         # Process checked tournaments
+        selected_tournaments = []
         for field_name, value in request.form.items():
             if field_name.startswith('tournament_'):
                 # Extract tournament_id from field name (format: tournament_<id>)
@@ -355,10 +355,16 @@ def past_tournaments():
                 
                 # Add to the list if checked
                 if value == 'on':
-                    past_tournaments.append(tournament_id)
+                    tournament = Tournament.query.get(tournament_id)
+                    if tournament:
+                        selected_tournaments.append(tournament)
         
-        # Update user's past_tournaments
-        user.past_tournaments = past_tournaments
+        # Update user's attended_tournaments relationship
+        user.attended_tournaments = selected_tournaments
+        
+        # For backward compatibility
+        user.past_tournaments_json = [t.id for t in selected_tournaments]
+        
         db.session.commit()
         
         flash("Your past tournament selections have been saved.", 'success')
@@ -381,32 +387,28 @@ def raise_hand(tournament_id):
         flash('Tournament not found.', 'danger')
         return redirect(url_for('tournaments.list_tournaments'))
     
-    # Check if the user is attending this tournament
+    # Check if the user has a registration for this tournament
     user = User.query.get(current_user.id)
-    if tournament_id not in user.attending:
+    user_tournament = UserTournament.query.filter_by(
+        user_id=user.id,
+        tournament_id=tournament_id
+    ).first()
+    
+    if not user_tournament:
         flash("You need to mark yourself as attending this tournament before setting meeting preferences.", 'warning')
         return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
     
-    # Update user's raised hand status
-    raised_hand = dict(user.raised_hand) if user.raised_hand else {}
-    
-    # If open to meeting ("Yes")
+    # Update open_to_meet flag based on meeting preference
     if meeting_pref == 'Yes':
-        # Copy the attendance data from the attending field to the raised_hand field
-        # This will either have day/session data or be an empty dict
-        attending_data = user.attending.get(tournament_id, {})
-        raised_hand[tournament_id] = attending_data
+        user_tournament.open_to_meet = True
         flash("You're now visible as open to meeting other fans at this tournament!", 'success')
-    # If not open to meeting ("No") or reset
     else:
-        if tournament_id in raised_hand:
-            del raised_hand[tournament_id]
-            if meeting_pref == 'No':
-                flash("You're marked as not open to meeting at this tournament.", 'info')
-            else:
-                flash("Your meeting preference has been reset.", 'info')
+        user_tournament.open_to_meet = False
+        if meeting_pref == 'No':
+            flash("You're marked as not open to meeting at this tournament.", 'info')
+        else:
+            flash("Your meeting preference has been reset.", 'info')
     
-    user.raised_hand = raised_hand
     db.session.commit()
     
     return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
