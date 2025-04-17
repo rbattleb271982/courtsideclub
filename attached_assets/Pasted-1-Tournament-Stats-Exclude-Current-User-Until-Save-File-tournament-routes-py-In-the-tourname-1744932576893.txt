@@ -1,0 +1,67 @@
+1. 🛠 Tournament Stats: Exclude Current User Until Save
+
+File: tournament_routes.py
+
+In the tournament_detail GET route:
+Modify attendees and open_meet_count queries to exclude the current user unless they have saved at least one session.
+# Example fix
+UserTournament.query.filter(
+    UserTournament.tournament_id == tournament.id,
+    UserTournament.attending == True,
+    UserTournament.user_id != current_user.id
+).count()
+After saving, redirect to /home to reflect updated data.
+2. 🛠 Save Not Updating Home
+
+File: tournament_routes.py
+
+After saving session selection and open_to_meet, ensure:
+attending = True is set
+Redirect goes to: return redirect(url_for("main_routes.home"))
+Home route correctly repopulates attending_list
+3. 🛠 Past Tournaments Display Fix
+
+File: home.html
+
+In the “Tournaments I’ve Been To” section:
+Show only the tournament name (no city, no links, no sessions)
+Add a button:
+<a href="{{ url_for('user_routes.select_past') }}" class="button">Add Past Tournaments</a>
+Create a new route: /user/select-past
+→ Display a list of tournaments with checkboxes, let user select & save.
+
+4. 🛠 Cancel Attendance Redirect
+
+File: tournament_routes.py
+
+When user cancels attendance:
+# Instead of rendering the detail page:
+return redirect(url_for("main_routes.home"))
+5. 🛠 Nav Logo Link
+
+File: base.html
+
+Update the header link:
+<a href="{{ url_for('main_routes.home') }}">CourtSide Club</a>
+6. 🛠 Lanyard Message Persist on Home
+
+File: home.html
+
+If current_user.lanyard_ordered == True:
+<p>✅ Your lanyard has been ordered and will be shipped soon.</p>
+<p>{{ current_user.address }}</p>
+This should never disappear once submitted.
+7. 🛠 Lanyard Message Persist on /lanyard
+
+File: lanyard.html
+
+Show message always if lanyard ordered:
+<p>✅ You've already ordered your CourtSide Club lanyard!</p>
+<p>It will be sent to:<br>{{ current_user.address }}</p>
+8. 🛠 Address Display: Show Exactly What Was Entered
+
+File: lanyard.html
+
+Do not format or alter the user’s address
+Simply output:
+{{ current_user.address }}
