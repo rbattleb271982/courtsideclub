@@ -65,7 +65,6 @@
             </div>
         </div>
         
-        {% if attending %}
         <div class="card mb-4">
             <div class="card-header">
                 <h3>Your Lanyard</h3>
@@ -73,17 +72,34 @@
             <div class="card-body">
                 {% if user.lanyard_ordered %}
                 <div class="alert alert-success">
-                    <i data-feather="check-circle"></i> You've ordered your CourtSide Club lanyard!
+                    <i data-feather="check-circle"></i> ✅ Your lanyard has been ordered.
                 </div>
                 {% else %}
                 <p>Order your CourtSide Club lanyard to easily identify other community members at tournaments.</p>
                 <div class="mt-3">
-                    <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-primary">Order Lanyard</a>
+                    {% set has_selected_sessions = false %}
+                    {% if user.raised_hand %}
+                        {% for tournament_id, days in user.raised_hand.items() %}
+                            {% if days and days.keys()|list|length > 0 %}
+                                {% set has_selected_sessions = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    {% if has_selected_sessions %}
+                        <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-primary">🪪 Order your lanyard</a>
+                    {% else %}
+                        <button type="button" class="btn btn-primary" onclick="showLanyardWarning()">🪪 Order your lanyard</button>
+                        <script>
+                            function showLanyardWarning() {
+                                alert('You must select tournament sessions before ordering your lanyard.');
+                            }
+                        </script>
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>
         </div>
-        {% endif %}
         
         <div class="card">
             <div class="card-header">

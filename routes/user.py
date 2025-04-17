@@ -147,10 +147,19 @@ def change_password():
 @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
 @login_required
 def order_lanyard():
-    # Check if user is attending any tournaments
+    # Check if user is attending any tournaments with raised_hand
     user = User.query.get(current_user.id)
-    if not user.attending:
-        flash('You need to be attending at least one tournament to order a lanyard.', 'warning')
+    
+    # Check if the user has selected any tournament sessions (raised_hand)
+    has_selected_sessions = False
+    if user.raised_hand:
+        for tournament_id, days in user.raised_hand.items():
+            if days and len(days) > 0:
+                has_selected_sessions = True
+                break
+    
+    if not has_selected_sessions:
+        flash('You must select tournament sessions before ordering your lanyard.', 'warning')
         return redirect(url_for('user.profile'))
     
     if request.method == 'POST':

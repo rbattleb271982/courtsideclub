@@ -73,24 +73,7 @@
                             <small>{{ tournament.tour_type }}</small>
                         </td>
                         <td>
-                            <div class="attendance-toggle">
-                                <div class="custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input attendance-checkbox" 
-                                        id="attend-{{ tournament.id }}" 
-                                        data-tournament-id="{{ tournament.id }}" 
-                                        data-tournament-name="{{ tournament.name }}"
-                                        {% if tournament.id in current_user.attending %}checked{% endif %}>
-                                    <label class="custom-control-label" for="attend-{{ tournament.id }}">
-                                        {% if tournament.id in current_user.attending %}
-                                        Attending
-                                        {% else %}
-                                        Not Attending
-                                        {% endif %}
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="session-options mt-2 collapse {% if tournament.id in current_user.attending %}show{% endif %}" id="sessions-{{ tournament.id }}">
+                            <div class="session-options mt-2" id="sessions-{{ tournament.id }}">
                                 <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="session-selection-form">
                                     <div class="attendance-table-container">
                                         <table class="attendance-table">
