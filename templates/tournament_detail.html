@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ tournament.name }}{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>{{ tournament.name }}</h2>
+            {% if user_attending %}
+            <span class="badge badge-secondary">You're attending</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <div class="mb-3">
+                    <strong>Dates:</strong> {{ tournament.start_date }} to {{ tournament.end_date }}
+                </div>
+                <div class="mb-3">
+                    <strong>Location:</strong> {{ tournament.city }}, {{ tournament.country }}
+                </div>
+                <div class="mb-3">
+                    <strong>Event Type:</strong> {{ tournament.event_type }}
+                </div>
+                <div class="mb-3">
+                    <strong>Tour:</strong> {{ tournament.tour_type }}
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <div class="mb-3">
+                    <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post">
+                        <button type="submit" class="btn btn-{% if user_attending %}outline{% else %}primary{% endif %} btn-block">
+                            {% if user_attending %}
+                            I'm not attending
+                            {% else %}
+                            I'm attending this tournament
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+                
+                {% if user_attending %}
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h4>Raise your hand</h4>
+                        <p>Let other fans know you're open to meeting during this tournament.</p>
+                        
+                        {% if user_raised_hand %}
+                        <div class="alert alert-success mb-3">
+                            <strong>Your hand is raised!</strong><br>
+                            Day {{ user_raised_day }}, {{ user_raised_session }} session
+                        </div>
+                        
+                        <form id="lower-hand-form" action="{{ url_for('tournaments.raise_hand', tournament_id=tournament.id) }}" method="post">
+                            <input type="hidden" name="day" value="">
+                            <input type="hidden" name="session" value="">
+                            <button type="submit" id="lower-hand-btn" class="btn btn-outline btn-block">Lower your hand</button>
+                        </form>
+                        {% else %}
+                        <form id="raise-hand-form" action="{{ url_for('tournaments.raise_hand', tournament_id=tournament.id) }}" method="post">
+                            <div class="form-group">
+                                <label for="day-select" class="form-label">Which day?</label>
+                                <select id="day-select" name="day" class="form-control" required>
+                                    <option value="">Select a day</option>
+                                    {% for day_info in tournament.sessions %}
+                                    <option value="{{ day_info.day }}">Day {{ day_info.day }} ({{ day_info.date }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="session-select" class="form-label">Which session?</label>
+                                <select id="session-select" name="session" class="form-control" required>
+                                    <option value="">Select a session</option>
+                                    <option value="Day">Day Session</option>
+                                    <option value="Night">Night Session</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-block">Raise your hand</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user_attending %}
+<div class="card">
+    <div class="card-header">
+        <h3>Fans looking to connect</h3>
+    </div>
+    <div class="card-body">
+        {% if raised_hands %}
+            {% for fan in raised_hands %}
+            <div class="hand-raised">
+                <i data-feather="user" width="24" height="24"></i>
+                <div class="hand-raised-info">
+                    <div class="hand-raised-name">{{ fan.name }}</div>
+                    <div class="hand-raised-details">Day {{ fan.day }}, {{ fan.session }} session</div>
+                </div>
+                <a href="mailto:{{ fan.email }}" class="btn btn-outline btn-sm">Contact</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No fans have raised their hands for this tournament yet.</p>
+            <p>Be the first to raise your hand and connect with other fans!</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}Tournaments{% endblock %}
+
+{% block content %}
+<h1>Tennis Tournaments</h1>
+<p class="mb-4">Browse upcoming tournaments and connect with other fans</p>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form id="filter-form" action="{{ url_for('tournaments.list_tournaments') }}" method="get">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="date-filter" class="form-label">Filter by date</label>
+                        <input type="date" id="date-filter" name="date" class="form-control" value="{{ date_filter }}">
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 d-flex align-items-end">
+                    <div class="form-group mt-3 mt-md-0" style="width: 100%;">
+                        <button type="submit" class="btn btn-primary">Apply Filter</button>
+                        {% if date_filter %}
+                        <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-outline">Clear Filter</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    {% for tournament in tournaments %}
+    <div class="col-12 col-md-6 mb-4">
+        <div class="card tournament-card {% if tournament.id in current_user.attending %}attending{% endif %}">
+            <div class="card-body">
+                <div class="tournament-card-header">
+                    <h3>{{ tournament.name }}</h3>
+                    {% if tournament.id in current_user.attending %}
+                    <span class="badge badge-secondary">Attending</span>
+                    {% endif %}
+                </div>
+                
+                <div class="tournament-date">
+                    {{ tournament.start_date }} to {{ tournament.end_date }}
+                </div>
+                
+                <div class="tournament-location">
+                    <i data-feather="map-pin" width="14"></i> {{ tournament.city }}, {{ tournament.country }}
+                </div>
+                
+                <div class="mt-2 mb-3">
+                    <span class="tournament-type">{{ tournament.event_type }}</span>
+                    <span class="tournament-type">{{ tournament.tour_type }}</span>
+                </div>
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-primary">View Details</a>
+                    
+                    <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" 
+                          method="post" style="display: inline-block; margin-left: 10px;">
+                        <button type="submit" class="btn btn-{% if tournament.id in current_user.attending %}outline{% else %}secondary{% endif %}">
+                            {% if tournament.id in current_user.attending %}
+                            Not Attending
+                            {% else %}
+                            I'm Attending
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    
+    {% if not tournaments %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <p>No tournaments found for the selected filters.</p>
+                {% if date_filter %}
+                <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary">View All Tournaments</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

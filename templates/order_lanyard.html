@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+
+{% block title %}Order Lanyard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h2>Order Your Tennis Fans Lanyard</h2>
+            </div>
+            <div class="card-body">
+                {% if current_user.lanyard_ordered %}
+                <div class="alert alert-success">
+                    <i data-feather="check-circle"></i> You've already ordered your Tennis Fans lanyard!
+                </div>
+                <p>Your lanyard is on its way. Wear it proudly at tournaments to connect with other Tennis Fans members!</p>
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('user.profile') }}" class="btn btn-primary">Back to Profile</a>
+                </div>
+                {% else %}
+                <p class="mb-4">Order your exclusive Tennis Fans lanyard to easily identify other community members at tournaments. The lanyard will be shipped directly to your address.</p>
+                
+                <form action="{{ url_for('user.order_lanyard') }}" method="post" class="needs-validation" novalidate>
+                    <div class="form-group">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ current_user.name }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address1" class="form-label">Address Line 1</label>
+                        <input type="text" class="form-control" id="address1" name="address1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address2" class="form-label">Address Line 2 (Optional)</label>
+                        <input type="text" class="form-control" id="address2" name="address2">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="state" class="form-label">State/Province</label>
+                                <input type="text" class="form-control" id="state" name="state">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="zip" class="form-label">Zip/Postal Code</label>
+                                <input type="text" class="form-control" id="zip" name="zip" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="country" class="form-label">Country</label>
+                                <select class="form-control" id="country" name="country" required>
+                                    <option value="">Select Country</option>
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="GB">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="FR">France</option>
+                                    <option value="ES">Spain</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="IT">Italy</option>
+                                    <!-- Add more countries as needed -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="{{ current_user.email }}" disabled>
+                        <small class="text-muted">We'll send order confirmation to this email.</small>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <p><strong>Note:</strong> Your lanyard is free for Tennis Fans members. You only pay for shipping ($5.99).</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary btn-block">Order Lanyard</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
