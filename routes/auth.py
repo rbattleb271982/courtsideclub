@@ -108,4 +108,50 @@ def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
+@auth_bp.route('/reset_password', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('tournaments.index'))
+    
+    if request.method == 'POST':
+        email = request.form.get('email', '').lower()
+        
+        # Look up the user by email
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            try:
+                # Generate a new password
+                alphabet = string.ascii_letters + string.digits + '!@#$%^&*()_+-=[]{}|;:,.<>?'
+                new_password = ''.join(secrets.choice(alphabet) for _ in range(12))
+                
+                # Update the user's password
+                user.password_hash = generate_password_hash(new_password)
+                db.session.commit()
+                
+                # Show the new password to the user
+                flash(f'Your password has been reset. Your new password is: {new_password}', 'success')
+                flash('Please save this password now. It will not be shown again.', 'warning')
+                
+                # Store the password in the session temporarily
+                session['temp_password'] = new_password
+                
+                # Log the user in
+                login_user(user)
+                
+                return redirect(url_for('user.profile'))
+                
+            except Exception as e:
+                logging.error(f"Error resetting password: {str(e)}")
+                db.session.rollback()
+                flash('An error occurred while resetting your password. Please try again.', 'danger')
+        else:
+            # We don't want to reveal that the email doesn't exist
+            flash('If your email is registered, you will receive a password reset link. Please check your email.', 'info')
+            
+            # But we log it for debugging
+            logging.info(f"Password reset requested for non-existent email: {email}")
+    
+    return render_template('reset_password_request.html')
+
 
