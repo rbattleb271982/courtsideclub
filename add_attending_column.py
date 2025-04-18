@@ -1,3 +1,4 @@
+
 """
 Database Migration to add 'attending' column to user_tournament table
 
@@ -38,7 +39,7 @@ def add_attending_column():
                 ADD COLUMN attending BOOLEAN DEFAULT FALSE;
             """)
             
-            # Update existing records to have attending=True if they have sessions
+            # Update existing records: mark as attending if they have sessions
             cursor.execute("""
                 UPDATE user_tournament
                 SET attending = TRUE
