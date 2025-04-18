@@ -106,9 +106,9 @@ td, th {
 
 :root {
   /* Color Palette */
-  --primary: #27ae60;       /* Tennis court green */
-  --primary-dark: #219653;  /* Darker green */
-  --primary-light: #6fcf97; /* Lighter green */
+  --primary: #1e8449;       /* Tennis court green */
+  --primary-dark: #196f3d;  /* Darker green */
+  --primary-light: #52be80; /* Lighter green */
   --secondary: #e67e22;     /* Tennis ball orange */
   --accent: #8e44ad;        /* Purple accent */
   --gray-light: #f2f2f2;    /* Light gray */
