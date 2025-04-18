@@ -46,8 +46,13 @@
                             </div>
                             
                             <div class="attendance-count mt-2">
-                                {{ attendance_counts.get(tournament.id, {}).get('attending', 0) }} attending · 
-                                {{ attendance_counts.get(tournament.id, {}).get('meeting', 0) }} open to meet
+                                {% set user_tournament = tournament.user_registrations|selectattr('user_id', 'equalto', user.id)|list|first %}
+                                {% if user_tournament and user_tournament.attending %}
+                                    {{ attendance_counts.get(tournament.id, {}).get('attending', 0) }} attending 🎾 · 
+                                    {{ attendance_counts.get(tournament.id, {}).get('meeting', 0) }} open to meet 🤝
+                                {% else %}
+                                    <span class="text-muted">Select sessions to see who's attending</span>
+                                {% endif %}
                             </div>
                             
                             {% if user.attending and tournament.id in user.attending %}

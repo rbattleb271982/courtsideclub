@@ -99,30 +99,33 @@ def tournament_detail(tournament_id):
                 'user_id': user.id
             })
     
-    # Calculate overall attendance count (excluding current user unless they have saved sessions)
+    # Calculate overall attendance count (excluding current user unless they've saved sessions AND are marked as attending)
     user_tournament = UserTournament.query.filter_by(
         user_id=current_user.id,
         tournament_id=tournament_id
     ).first()
     
+    # Get only users who are marked as attending
     attending_count = UserTournament.query.filter(
         UserTournament.tournament_id == tournament_id,
-        UserTournament.user_id != current_user.id
+        UserTournament.user_id != current_user.id,
+        UserTournament.attending == True
     ).count()
     
-    # Add current user to count only if they have saved sessions
-    if user_tournament and (user_tournament.dates or user_tournament.sessions):
+    # Add current user to count only if they have saved sessions AND are marked as attending
+    if user_tournament and user_tournament.attending:
         attending_count += 1
     
-    # Calculate meeting count (excluding current user unless they have saved sessions)
+    # Calculate meeting count (excluding current user unless they've saved sessions AND are marked as attending)
     meeting_count = UserTournament.query.filter(
         UserTournament.tournament_id == tournament_id,
         UserTournament.open_to_meet == True,
-        UserTournament.user_id != current_user.id
+        UserTournament.user_id != current_user.id,
+        UserTournament.attending == True
     ).count()
     
-    # Add current user to meeting count only if they have saved sessions and are open to meeting
-    if user_tournament and (user_tournament.dates or user_tournament.sessions) and user_tournament.open_to_meet:
+    # Add current user to meeting count only if they have saved sessions, are marked as attending, and are open to meeting
+    if user_tournament and user_tournament.attending and user_tournament.open_to_meet:
         meeting_count += 1
     
     # For backward compatibility during migration
