@@ -22,8 +22,11 @@ def list_tournaments():
     # Get all tournaments for dropdown options, sorted by name for the filter dropdown
     all_tournaments = Tournament.query.order_by(Tournament.name).all()
     
-    # Initialize query with chronological sorting by start date
-    query = Tournament.query.order_by(Tournament.start_date)
+    # Get today's date for filtering
+    today = datetime.datetime.now().date()
+    
+    # Initialize query with chronological sorting by start date and filter out past tournaments
+    query = Tournament.query.filter(Tournament.end_date >= today).order_by(Tournament.start_date)
     
     # Get filter parameters
     name_filter = request.args.get('name')
