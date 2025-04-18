@@ -96,7 +96,7 @@ def register():
                     password_hash=generate_password_hash(password),
                     attending={},
                     raised_hand={},
-                    past_tournaments=[],
+                    past_tournaments_json=[],  # Use the correct attribute name that matches the model
                     lanyard_ordered=False,
                     notifications=True
                 )
