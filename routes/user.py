@@ -271,7 +271,7 @@ def order_lanyard():
         # Form validation
         if not all([name, address1, city, zip_code, country]):
             flash('Please fill out all required fields.', 'danger')
-            return render_template('order_lanyard.html', lanyard_ordered=False)
+            return render_template('order_lanyard.html', lanyard_ordered=False, states=sorted(STATE_ABBRS))
         
         # Update user in database to mark lanyard as ordered
         user.lanyard_ordered = True
@@ -302,4 +302,4 @@ def order_lanyard():
         # Reload the page with the confirmation message
         return redirect(url_for('user.order_lanyard'))
     
-    return render_template('order_lanyard.html', lanyard_ordered=False)
+    return render_template('order_lanyard.html', lanyard_ordered=False, states=sorted(STATE_ABBRS))

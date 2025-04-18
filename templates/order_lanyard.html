@@ -12,9 +12,9 @@
             <div class="card-body">
                 {% if lanyard_ordered %}
                 <div class="alert alert-success">
-                    <i data-feather="check-circle"></i> You've already ordered your CourtSide Club lanyard!
+                    <i data-feather="check-circle"></i> Your CourtSide Club lanyard has been ordered!
                 </div>
-                <p>Your lanyard is on its way. Wear it proudly at tournaments to connect with other CourtSide Club members!</p>
+                <p>Thank you for your order. Your lanyard will be shipped soon and should arrive in 5-7 business days. Wear it proudly at tournaments to connect with other CourtSide Club members!</p>
                 <div class="text-center mt-4">
                     <a href="{{ url_for('user.home') }}" class="btn btn-primary">Back to Home</a>
                 </div>
@@ -47,7 +47,12 @@
                         <div class="col-12 col-md-6">
                             <div class="form-group">
                                 <label for="state" class="form-label">State/Province</label>
-                                <input type="text" class="form-control" id="state" name="state">
+                                <select name="state" id="state" class="form-control">
+                                  <option value="">Select State</option>
+                                  {% for state in states %}
+                                    <option value="{{ state }}">{{ state }}</option>
+                                  {% endfor %}
+                                </select>
                             </div>
                         </div>
                     </div>
