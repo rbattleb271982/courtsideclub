@@ -270,8 +270,6 @@ def attend_tournament(tournament_id):
                 db.session.add(user_tournament)
                 db.session.commit()
             
-            message = f"You're attending {tournament.name}! Please select your sessions."
-            flash(message, 'success')
             return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
             
         # Handle session selections and meeting preferences from the session form
@@ -351,11 +349,9 @@ def attend_tournament(tournament_id):
                 db.session.add(user_tournament)
                 db.session.commit()
             
-            message = f"You're attending {tournament.name}!"
             if is_ajax:
-                return jsonify({'success': True, 'message': message})
+                return jsonify({'success': True})
             else:
-                flash(message, 'success')
                 return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament_id))
     
     # This is reached only in the default case (not is_ajax and not remove)
