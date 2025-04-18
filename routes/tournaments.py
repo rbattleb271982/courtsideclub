@@ -298,6 +298,7 @@ def attend_tournament(tournament_id):
                     user_tournament.dates = selected_days
                     user_tournament.sessions = selected_sessions
                     user_tournament.open_to_meet = open_to_meet
+                    user_tournament.attending = True
                 else:
                     # Create new registration
                     user_tournament = UserTournament(
@@ -305,7 +306,8 @@ def attend_tournament(tournament_id):
                         tournament_id=tournament_id,
                         dates=selected_days,
                         sessions=selected_sessions,
-                        open_to_meet=open_to_meet
+                        open_to_meet=open_to_meet,
+                        attending=True
                     )
                     db.session.add(user_tournament)
                 
@@ -326,14 +328,15 @@ def attend_tournament(tournament_id):
                 # Redirect to home page after saving, not back to tournament detail
                 return redirect(url_for('user.home'))
         else:
-            # Default behavior - just mark them as attending with default settings
+            # Default behavior - create registration but don't mark as attending until sessions are selected
             if not user_tournament:
                 user_tournament = UserTournament(
                     user_id=user.id,
                     tournament_id=tournament_id,
                     dates=[],
                     sessions=[],
-                    open_to_meet=True
+                    open_to_meet=True,
+                    attending=False
                 )
                 db.session.add(user_tournament)
                 db.session.commit()

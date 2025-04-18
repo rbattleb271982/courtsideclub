@@ -1,0 +1,88 @@
+1. 🛠 Only Mark User as “Attending” After Selecting At Least One Session AND Saving
+
+Where: tournament_routes.py (POST on /tournament/<id>)
+
+Fix:
+
+Only set attending = True if the user selects at least one Day or Night session and clicks Save.
+Sample logic:
+
+selected_sessions = {}
+for key in request.form:
+    if key.startswith("session_"):
+        day = key.split("_", 1)[1]
+        selected_sessions.setdefault(day, []).append(request.form[key])
+
+if selected_sessions:
+    if not user_tournament:
+        user_tournament = UserTournament(user_id=user.id, tournament_id=tournament.id)
+
+    user_tournament.sessions = selected_sessions
+    user_tournament.attending = True
+    user_tournament.open_to_meet = request.form.get("open_to_meet") == "yes"
+
+    db.session.add(user_tournament)
+    db.session.commit()
+
+    return redirect(url_for("main_routes.home"))
+else:
+    flash("Please select at least one Day or Night session before saving.")
+    return redirect(url_for("tournament_routes.tournament_detail", tournament_id=tournament.id))
+Also:
+
+In home.html → only list tournaments where:
+user_tournament.attending == True and user_tournament.sessions != {}
+On the tournament detail page:
+❌ Do not display “You’re attending this tournament” if no sessions are selected
+✅ 2. 🛠 Lanyard Page Should Not Block If Sessions Already Selected
+
+Where: lanyard_routes.py
+
+Fix:
+
+Only flash error if the user truly hasn’t selected any sessions:
+existing = UserTournament.query.filter_by(user_id=current_user.id, attending=True).first()
+if not existing or not existing.sessions:
+    flash("You must select tournament sessions before ordering your lanyard.")
+✅ 3. 🛠 Fix Past Tournaments UI
+
+Where: past_tournaments.html
+
+Fixes:
+
+Move checkbox to the left of the tournament name:
+<label><input type="checkbox" name="past_{{ t.id }}"> {{ t.name }}</label>
+Reduce vertical spacing in list:
+li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+}
+✅ 4. 🛠 Canceling Attendance Logs User Out
+
+Where: tournament_routes.py
+
+Fix:
+
+When canceling attendance:
+Do not delete the user session
+Either:
+Delete the UserTournament record
+Or set:
+user_tournament.attending = False
+user_tournament.sessions = {}
+db.session.commit()
+Redirect:
+return redirect(url_for("main_routes.home"))
+✅ 5. 🛠 Fix “Get Lanyard” Link in Top Nav
+
+Where: base.html
+
+Fix:
+
+Ensure the nav link is:
+<a href="{{ url_for('lanyard_routes.order_lanyard') }}">Get Lanyard</a>
+Ensure:
+lanyard_routes.py has this route registered
+The route is protected with @login_required
+The template lanyard.html exists
+If the user is logged out when clicking it, redirect to login

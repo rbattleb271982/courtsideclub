@@ -119,6 +119,9 @@ class UserTournament(db.Model):
     dates = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     
+    # Whether the user is actually attending this tournament
+    attending = db.Column(db.Boolean, default=False)
+    
     # Whether the user is open to meeting
     open_to_meet = db.Column(db.Boolean, default=True)
     
