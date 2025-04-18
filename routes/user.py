@@ -241,15 +241,20 @@ def order_lanyard():
         "WI", "WV", "WY"
     ]
     
-    # Check if user is attending any tournaments with open_to_meet=True
     user = User.query.get(current_user.id)
     
     # If lanyard already ordered, just show the confirmation page
     if user.lanyard_ordered:
         return render_template('order_lanyard.html', lanyard_ordered=True, states=sorted(STATE_ABBRS))
     
-    # Check if the user has any tournament registrations marked as attending
-    existing = UserTournament.query.filter_by(user_id=user.id, attending=True).first()
+    # Check if user has selected and saved sessions for any tournament
+    valid_attendance = UserTournament.query.filter_by(
+        user_id=current_user.id, 
+        attending=True
+    ).filter(UserTournament.sessions.cast(db.String) != '[]').first()
+
+    if not valid_attendance:
+        return render_template('order_lanyard.html', no_sessions=True)
     
     # For backward compatibility, also check the legacy raised_hand JSON field
     legacy_check = False

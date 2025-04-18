@@ -16,7 +16,12 @@
                      class="mb-4">
             </div>
             <div class="card-body">
-                {% if lanyard_ordered %}
+                {% if no_sessions %}
+                <div class="alert alert-info">
+                    <p>🎾 You need to select at least one tournament and session before ordering your lanyard.</p>
+                    <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary mt-3">View Tournaments</a>
+                </div>
+                {% elif lanyard_ordered %}
                 <div class="alert alert-success">
                     <i data-feather="check-circle"></i> Your CourtSide Club lanyard has been ordered!
                 </div>
