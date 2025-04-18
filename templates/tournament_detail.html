@@ -4,11 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <div class="back-navigation mb-4">
-        <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-sm btn-outline-secondary">
-            <i data-feather="arrow-left" class="icon-sm"></i> Back to Tournaments
-        </a>
-    </div>
+    
 
     <div class="tournament-header">
         <h1 class="tournament-title">{{ tournament.name }}</h1>
@@ -21,6 +17,11 @@
 
     <div class="row mt-4">
         <div class="col-md-8">
+            {% if current_user.lanyard_ordered %}
+            <div class="alert alert-success mb-4">
+                <i data-feather="package" class="icon-sm"></i> Your lanyard is on its way!
+            </div>
+            {% endif %}
             <!-- Tournament Attendance Section -->
             <div class="card mb-4">
                 <div class="card-header">
