@@ -1,0 +1,92 @@
+1. Only Mark as “Attending” After Selecting Session AND Saving
+In tournament_routes.py → /tournament/<id> (POST route):
+Only set attending = True if the user selects at least one Day or Night session and clicks Save
+Otherwise flash: "Please select at least one Day or Night session before saving."
+In main_routes.py → /home:
+Only show tournaments where attending = True and sessions is not empty
+2. Lanyard Page Should Not Block If Sessions Already Selected
+In lanyard_routes.py, before flashing the “select sessions” warning:
+valid_attendance = UserTournament.query.filter(
+    UserTournament.user_id == current_user.id,
+    UserTournament.attending == True,
+    UserTournament.sessions.isnot(None)
+).first()
+
+if not valid_attendance:
+    flash("You must select tournament sessions before ordering your lanyard.")
+    return redirect(url_for("tournament_routes.list_tournaments"))
+3. Past Tournaments List: Checkbox on Left, Tighten Spacing
+In past_tournaments.html:
+<label><input type="checkbox" name="past_{{ t.id }}"> {{ t.name }}</label>
+Update CSS for .li to reduce vertical spacing:
+li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+}
+4. Cancel Attendance Should NOT Log Out User
+In tournament_routes.py:
+After cancel:
+user_tournament.attending = False
+user_tournament.sessions = {}
+db.session.commit()
+return redirect(url_for("main_routes.home"))
+5. Fix “Get Lanyard” Link in Nav
+In base.html:
+<a href="{{ url_for('lanyard_routes.order_lanyard') }}">Get Lanyard</a>
+Make sure:
+Route is protected by @login_required
+Template exists: lanyard.html
+6. Alphabetize Past Tournament List
+In user_routes.py or wherever /user/select-past is queried:
+tournaments = Tournament.query.order_by(Tournament.name.asc()).all()
+7. Update Message After “I’m Attending” Click
+In tournament_routes.py (GET route):
+if not user_tournament or not user_tournament.sessions:
+    flash("Please select the sessions you're attending and click save at the bottom.", "success")
+8. After Saving, Tournament Should Appear on Home
+After Save in tournament_routes.py:
+return redirect(url_for("main_routes.home"))
+On /home, show tournaments if:
+attending == True and sessions != None and sessions != {}
+9. Fix Lanyard Blocker If Tournament Already on Home
+Use same check as item 2 to verify valid attendance before showing the lanyard blocker
+10. CourtSide Club Logo Should Link to Home
+In base.html:
+<a href="{{ url_for('main_routes.home') }}">CourtSide Club</a>
+11. Persistent Welcome Message (Shown Once Per User)
+In models.py → Add:
+welcome_seen = db.Column(db.Boolean, default=False)
+In login or registration logic:
+if not current_user.welcome_seen:
+    flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
+    current_user.welcome_seen = True
+    db.session.commit()
+Run migration:
+flask db migrate -m "Add welcome_seen to User"
+flask db upgrade
+12. Add Lanyard Image on Get Lanyard Page
+Upload lanyard.png to /static
+In lanyard.html, add:
+<div class="lanyard-wrapper">
+  <div class="lanyard-content">...form...</div>
+  <div class="lanyard-image">
+    <img src="{{ url_for('static', filename='lanyard.png') }}" alt="CourtSide Club Lanyard">
+  </div>
+</div>
+In style.css:
+.lanyard-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.lanyard-content { flex: 1; min-width: 250px; }
+.lanyard-image {
+  flex: 1;
+  text-align: center;
+}
+.lanyard-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}

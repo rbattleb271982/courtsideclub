@@ -38,6 +38,13 @@ def login():
             
             if is_valid:
                 login_user(user)
+                
+                # Show welcome message if user hasn't seen it before
+                if not user.welcome_seen:
+                    flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
+                    user.welcome_seen = True
+                    db.session.commit()
+                
                 next_page = request.args.get('next', '')
                 if next_page:
                     return redirect(next_page)
@@ -98,7 +105,8 @@ def register():
                     raised_hand={},
                     past_tournaments_json=[],  # Use the correct attribute name that matches the model
                     lanyard_ordered=False,
-                    notifications=True
+                    notifications=True,
+                    welcome_seen=True  # Set to True since we'll show the welcome message directly
                 )
                 
                 db.session.add(new_user)
@@ -107,8 +115,8 @@ def register():
                 # Log the user in
                 login_user(new_user)
                 
-                # Show success message
-                flash('Registration successful! Welcome to CourtSide Club.', 'success')
+                # Show welcome message
+                flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
                                 
                 return redirect(url_for('user.home'))
             except Exception as e:
