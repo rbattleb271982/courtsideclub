@@ -173,14 +173,16 @@ def tournament_detail(tournament_id):
             }
     
     # Fetch all users with their attendance details for this tournament
+    # Only count users marked as attending=True
     user_tournaments = UserTournament.query.filter_by(
-        tournament_id=tournament_id
+        tournament_id=tournament_id,
+        attending=True
     ).all()
     
     # Count attendance per day and session using the user_tournaments
     for user_tournament in user_tournaments:
-        # Skip current user unless they have saved sessions
-        if user_tournament.user_id == current_user.id and not (user_tournament.dates or user_tournament.sessions):
+        # Skip current user unless they have saved sessions and are marked as attending
+        if user_tournament.user_id == current_user.id and not user_tournament.attending:
             continue
             
         for day in user_tournament.dates:
@@ -232,9 +234,10 @@ def attend_tournament(tournament_id):
     ).first()
     
     if remove:
-        # Remove UserTournament if it exists
+        # Set attending=False instead of deleting the record
         if user_tournament:
-            db.session.delete(user_tournament)
+            user_tournament.attending = False
+            user_tournament.sessions = []
             db.session.commit()
             
             message = f"You're no longer attending {tournament.name}."
@@ -313,10 +316,11 @@ def attend_tournament(tournament_id):
                 
                 message = f"Your selections for {tournament.name} have been saved!"
             else:
-                # No sessions were selected - remove registration if it exists
+                # No sessions were selected - set attending to false
                 if user_tournament:
-                    db.session.delete(user_tournament)
-                message = f"You're no longer attending {tournament.name}."
+                    user_tournament.attending = False
+                    user_tournament.sessions = []
+                message = f"Please select at least one session to confirm your attendance at {tournament.name}."
             
             # Save changes and respond
             db.session.commit()

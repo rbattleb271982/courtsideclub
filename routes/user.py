@@ -51,12 +51,16 @@ def home():
     # Calculate attendance counts for each tournament using new model
     attendance_counts = {}
     for tournament in current_tournaments:
-        # Count users attending this tournament
-        attending_count = UserTournament.query.filter_by(tournament_id=tournament.id).count()
+        # Count users attending this tournament - only count those marked with attending=True
+        attending_count = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            attending=True
+        ).count()
         
-        # Count users open to meeting at this tournament
+        # Count users open to meeting at this tournament - only those attending and open to meet
         meeting_count = UserTournament.query.filter_by(
             tournament_id=tournament.id,
+            attending=True,
             open_to_meet=True
         ).count()
         
@@ -244,7 +248,7 @@ def order_lanyard():
     if user.lanyard_ordered:
         return render_template('order_lanyard.html', lanyard_ordered=True, states=sorted(STATE_ABBRS))
     
-    # Check if the user has any tournament registrations with sessions selected
+    # Check if the user has any tournament registrations marked as attending
     existing = UserTournament.query.filter_by(user_id=user.id, attending=True).first()
     
     # For backward compatibility, also check the legacy raised_hand JSON field
@@ -252,10 +256,10 @@ def order_lanyard():
     if hasattr(user, 'raised_hand') and user.raised_hand and len(user.raised_hand) > 0:
         legacy_check = True
     
-    has_selected_sessions = (existing and existing.sessions) or legacy_check
+    is_attending = existing or legacy_check
     
-    if not has_selected_sessions:
-        flash('You must select tournament sessions before ordering your lanyard.', 'warning')
+    if not is_attending:
+        flash('You must select tournament sessions and save your preferences before ordering your lanyard.', 'warning')
         return redirect(url_for('user.home'))
     
     if request.method == 'POST':
