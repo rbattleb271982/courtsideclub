@@ -4,11 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <div class="back-navigation mb-4">
-        <a href="{{ url_for('user.home') }}" class="btn btn-sm btn-outline-secondary">
-            <i data-feather="arrow-left" class="icon-sm"></i> Back to Home
-        </a>
-    </div>
+    <!-- Removed "Back to Home" link per request -->
 
     <div class="row justify-content-center">
         <div class="col-12 col-lg-8">
@@ -25,13 +21,13 @@
                     <form method="post" action="{{ url_for('tournaments.past_tournaments') }}">
                         <div class="past-tournaments-list">
                             {% for tournament in all_tournaments %}
-                            <div class="custom-control custom-checkbox past-tournament-item">
-                                <input type="checkbox" class="custom-control-input" 
-                                       id="tournament_{{ tournament.id }}" 
-                                       name="tournament_{{ tournament.id }}"
-                                       {% if tournament.id in past_tournaments %}checked{% endif %}>
-                                <label class="custom-control-label d-flex align-items-center" for="tournament_{{ tournament.id }}">
-                                    <span class="tournament-name">{{ tournament.name }} · {{ tournament.city }}, {{ tournament.country }} · {{ tournament.event_type }}</span>
+                            <div class="past-tournament-item">
+                                <label>
+                                    <input type="checkbox" 
+                                           id="tournament_{{ tournament.id }}" 
+                                           name="tournament_{{ tournament.id }}"
+                                           {% if tournament.id in past_tournaments %}checked{% endif %}>
+                                    {{ tournament.name }}
                                 </label>
                             </div>
                             {% endfor %}
@@ -59,9 +55,9 @@
 }
 
 .past-tournament-item {
-    padding: 10px;
+    padding: 0.5rem;
     border-bottom: 1px solid #f0f0f0;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
 }
 
 .past-tournament-item:last-child {

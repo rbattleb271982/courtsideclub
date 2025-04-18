@@ -229,28 +229,33 @@ def change_password():
 @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
 @login_required
 def order_lanyard():
+    # List of U.S. state abbreviations
+    STATE_ABBRS = [
+        "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN",
+        "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ",
+        "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA",
+        "WI", "WV", "WY"
+    ]
+    
     # Check if user is attending any tournaments with open_to_meet=True
     user = User.query.get(current_user.id)
     
     # If lanyard already ordered, just show the confirmation page
     if user.lanyard_ordered:
-        return render_template('order_lanyard.html', lanyard_ordered=True)
+        return render_template('order_lanyard.html', lanyard_ordered=True, states=sorted(STATE_ABBRS))
     
-    # Check if the user has any tournament registrations with open_to_meet=True
-    open_to_meet_count = UserTournament.query.filter_by(
-        user_id=user.id, 
-        open_to_meet=True
-    ).count()
+    # Check if the user has any tournament registrations with sessions selected
+    existing = UserTournament.query.filter_by(user_id=user.id, attending=True).first()
     
     # For backward compatibility, also check the legacy raised_hand JSON field
     legacy_check = False
     if hasattr(user, 'raised_hand') and user.raised_hand and len(user.raised_hand) > 0:
         legacy_check = True
     
-    has_selected_sessions = open_to_meet_count > 0 or legacy_check
+    has_selected_sessions = (existing and existing.sessions) or legacy_check
     
     if not has_selected_sessions:
-        flash('You must select tournament sessions and be open to meeting before ordering your lanyard.', 'warning')
+        flash('You must select tournament sessions before ordering your lanyard.', 'warning')
         return redirect(url_for('user.home'))
     
     if request.method == 'POST':
