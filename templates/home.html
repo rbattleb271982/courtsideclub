@@ -45,6 +45,11 @@
                                 <i data-feather="map-pin" width="14"></i> {{ tournament.city }}, {{ tournament.country }}
                             </div>
                             
+                            <div class="attendance-count mt-2">
+                                {{ attendance_counts.get(tournament.id, {}).get('attending', 0) }} attending · 
+                                {{ attendance_counts.get(tournament.id, {}).get('meeting', 0) }} open to meet
+                            </div>
+                            
                             {% if user.attending and tournament.id in user.attending %}
                             <div class="attending-details mt-2">
                                 <strong>Your sessions:</strong>
@@ -61,11 +66,6 @@
                             </div>
                             
                             <div class="tournament-stats mt-3">
-                                <div class="attendance-count">
-                                    {{ attendance_counts.get(tournament.id, {}).get('attending', 0) }} attending · 
-                                    {{ attendance_counts.get(tournament.id, {}).get('meeting', 0) }} open to meet
-                                </div>
-                                
                                 <div class="meeting-status d-flex justify-content-between align-items-center mt-2">
                                     <span>
                                         <strong>Open to meeting:</strong> 

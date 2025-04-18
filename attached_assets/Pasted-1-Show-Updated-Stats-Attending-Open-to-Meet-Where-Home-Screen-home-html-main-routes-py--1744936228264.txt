@@ -1,0 +1,82 @@
+1. ✅ Show Updated Stats (Attending + Open to Meet)
+
+Where: Home Screen (home.html, main_routes.py)
+
+Fix:
+
+When listing tournaments the user is attending, also show:
+🎾 [Tournament Name]  
+12 attending · 5 open to meet
+These counts should include the current user, as long as they’ve selected sessions and clicked Save.
+Query update:
+
+UserTournament.query.filter_by(tournament_id=tid, attending=True).count()
+UserTournament.query.filter_by(tournament_id=tid, open_to_meet=True).count()
+2. ✅ Lanyard Order Access Check
+
+Where: /lanyard route logic
+
+Bug:
+
+User gets "You must select tournament sessions" message even if they've already selected sessions
+Fix:
+
+In lanyard_routes.py, before flashing error:
+existing = UserTournament.query.filter_by(user_id=current_user.id, attending=True).first()
+if not existing or not existing.sessions:
+    flash("You must select tournament sessions before ordering your lanyard.")
+→ This logic should run only if no sessions are saved.
+
+3. ✅ Past Tournaments Layout Fix
+
+Where: past_tournaments.html
+
+Fixes:
+
+Move checkbox to the left of tournament name
+<label><input type="checkbox" name="past_{{ t.id }}"> {{ t.name }}</label>
+Reduce spacing between items:
+li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+}
+Remove unnecessary visual clutter — make it quick-scan format
+4. ✅ Remove “Back to Home” Link on Past Tournaments Page
+
+Where: past_tournaments.html
+
+Fix:
+
+Delete any <a href="/">Back to Home</a> type link from the top
+5. ✅ U.S. States (Abbreviations Only, Alphabetical)
+
+STATE_ABBRS = [
+    "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN",
+    "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ",
+    "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA",
+    "WI", "WV", "WY"
+]
+Where: lanyard_routes.py → Pass as states=sorted(STATE_ABBRS) In Template: lanyard.html
+
+<select name="state">
+  {% for state in states %}
+    <option value="{{ state }}">{{ state }}</option>
+  {% endfor %}
+</select>
+6. 🤔 Message After Lanyard Is Ordered
+
+Current:
+
+Two separate messages:
+“You’ve already ordered…” (on revisit)
+Something different after initial submit
+Recommendation:
+
+✅ Use one consistent message for both:
+<p>✅ Your CourtSide Club lanyard has been ordered and will be shipped soon.</p>
+<p>{{ current_user.address }}</p>
+Why:
+
+Keeps logic clean
+Avoids flickering or conflicting messages on redirect
+Still reinforces confirmation for user
