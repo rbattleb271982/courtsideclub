@@ -39,8 +39,8 @@ class JsonEncodedDict(types.TypeDecorator):
 past_tournaments = Table(
     'past_tournaments',
     db.metadata,
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('tournament_id', db.String(50), ForeignKey('tournaments.id'))
+    Column('user_id', Integer, ForeignKey('users.id', ondelete='CASCADE')),
+    Column('tournament_id', db.String(50), ForeignKey('tournaments.id', ondelete='CASCADE'))
 )
 
 class User(UserMixin, db.Model):
@@ -67,7 +67,9 @@ class User(UserMixin, db.Model):
         backref=db.backref('attendees', lazy='dynamic')
     )
     
-    tournament_registrations = relationship('UserTournament', back_populates='user')
+    tournament_registrations = relationship('UserTournament', 
+                                           back_populates='user',
+                                           cascade="all, delete-orphan")
     
     lanyard_ordered = db.Column(db.Boolean, default=False)
     notifications = db.Column(db.Boolean, default=True)
@@ -110,8 +112,8 @@ class UserTournament(db.Model):
     __tablename__ = 'user_tournament'
     
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    tournament_id = db.Column(db.String(50), db.ForeignKey('tournaments.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    tournament_id = db.Column(db.String(50), db.ForeignKey('tournaments.id', ondelete='CASCADE'), nullable=False)
     
     # Store selected dates and sessions
     dates = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
@@ -124,7 +126,7 @@ class UserTournament(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    user = relationship('User', back_populates='tournament_registrations')
+    user = relationship('User', back_populates='tournament_registrations', cascade="all, delete")
     tournament = relationship('Tournament', back_populates='user_registrations')
     
     def __repr__(self):
