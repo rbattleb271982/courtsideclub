@@ -1,0 +1,73 @@
+Great set of questions — here’s how I’d recommend answering each one based on what you’ve shared and where *CourtSide Club* is headed:
+
+---
+
+### ✅ **1. Is this intended to be a public-facing tournaments page that anyone can view without logging in?**
+
+**Yes.**
+This `/tournaments` page is intentionally public — it's meant to help *new users see what's going on* before they sign up or log in. The goal is visibility and interest, not gated content.
+
+---
+
+### ✅ **2. Do you want to show all tournaments or only upcoming ones?**
+
+**For now, show all tournaments**, but later we’ll likely filter to **upcoming only** to reduce clutter and highlight relevant events. You could change the heading to just **“Tournaments”** for now to match the query.
+
+If you want to adjust later:
+
+```python
+.filter(Tournament.start_date >= datetime.utcnow())
+```
+
+---
+
+### ✅ **3. Do you want to show how many people are attending each tournament?**
+
+**Yes, eventually — but not personal info.**
+We do want to show **fan interest** (like “23 fans attending”), but not user identities. It helps encourage sign-ups and social momentum without violating privacy.
+
+To do this:
+
+```python
+num_attendees = len(t.attending_users)
+```
+
+And show it in the template like:
+
+```html
+<p>{{ num_attendees }} fans attending</p>
+```
+
+---
+
+### ✅ **4. The navigation link uses `main.public_tournaments_page` but the route decorator is `@main_bp.route` — should we make these consistent?**
+
+Yes — consistency is key.
+As long as `main_bp` is registered as a blueprint under `main`, then `main.public_tournaments_page` is correct in the `url_for()` call. If the blueprint name is different (like `public` or `tournaments`), you should update it to match.
+
+Check your `app.py`:
+
+```python
+app.register_blueprint(main_bp, url_prefix='/')
+```
+
+If you did something like:
+
+```python
+main_bp = Blueprint('main', __name__)
+```
+
+Then `main.public_tournaments_page` is already correct.
+
+---
+
+### ✅ **5. Do you want to keep the current minimal styling or use the card-based design from other templates?**
+
+**Use the card-based design.**
+You’re aiming for a polished, welcoming feel with rounded edges and social vibes. So let’s stay consistent with the card-based layout you've used elsewhere.
+
+If you need help converting the template into card-based design, I can do that for you too.
+
+---
+
+Want me to update the public tournaments template now with fan counts and polished card styling?
