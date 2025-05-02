@@ -1,51 +1,33 @@
-
 {% extends "layout.html" %}
 
-{% block title %}Grand Slam Tournaments - CourtSide Club{% endblock %}
+{% block title %}Tournaments | CourtSide Club{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="card">
-        <div class="card-header">
-            <h1>Upcoming Grand Slams</h1>
-            <p class="text-muted">Connect with tennis fans at major tournaments</p>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                {% for tournament in tournaments %}
-                <div class="col-12 col-md-6 mb-4">
-                    <div class="card tournament-card h-100">
-                        <div class="card-body">
-                            <h2 class="h4">
-                                <a href="{{ url_for('tournaments.public_tournament_page', tournament_id=tournament.id) }}">
-                                    {{ tournament.name }}
-                                </a>
-                            </h2>
-                            <p class="mb-2">
-                                <i data-feather="map-pin" class="icon-sm"></i>
-                                {{ tournament.city }}, {{ tournament.country }}
-                            </p>
-                            <p class="mb-2">
-                                <i data-feather="calendar" class="icon-sm"></i>
-                                {{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%B %d, %Y') }}
-                            </p>
-                            {% set attending = tournament.user_registrations|selectattr('attending')|list|length %}
-                            <p class="mb-0 text-muted">
-                                <i data-feather="users" class="icon-sm"></i>
-                                {{ attending }} attending
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-
-                {% if not tournaments %}
-                <div class="col-12">
-                    <p class="text-center text-muted">No upcoming Grand Slams found.</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
+  <div class="card">
+    <div class="card-header">
+      <h1>Explore Tournaments</h1>
+      <p class="text-muted">Find tennis tournaments and connect with other fans</p>
     </div>
+    <div class="card-body">
+      {% for t in tournaments %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <h2 class="h4">
+              <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}">{{ t.name }}</a>
+            </h2>
+            <p class="mb-2">
+              <i class="fas fa-map-marker-alt"></i>
+              {{ t.city }}, {{ t.country }}
+            </p>
+            <p class="mb-0">
+              <i class="fas fa-calendar"></i>
+              {{ t.start_date.strftime('%B %d') }} – {{ t.end_date.strftime('%B %d, %Y') }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 {% endblock %}

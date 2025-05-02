@@ -447,8 +447,8 @@ def raise_hand(tournament_id):
 
 @tournaments_bp.route("/tournaments")
 def public_tournaments_page():
-    grand_slams = Tournament.query.filter(Tournament.event_type == "Grand Slam").order_by(Tournament.start_date).all()
-    return render_template("tournaments_landing.html", tournaments=grand_slams)
+    tournaments = Tournament.query.filter(Tournament.end_date >= datetime.datetime.now().date()).order_by(Tournament.start_date).all()
+    return render_template("tournaments_landing.html", tournaments=tournaments)
 
 @tournaments_bp.route("/tournaments/<slug>")
 def public_tournament_page(slug):
