@@ -160,12 +160,21 @@ app.register_blueprint(tournaments_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(debug_bp)
 
-# Add global error handler
+# Add context processor for current year
+@app.context_processor
+def inject_now():
+    from datetime import datetime
+    return {'current_year': datetime.now().year}
+
+# Add error handlers
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 @app.errorhandler(Exception)
 def handle_exception(e):
     """Global error handler for all exceptions"""
     logging.error(f"Unhandled exception: {str(e)}", exc_info=True)
-    # Return a generic error page
     return render_template('error.html', error=str(e)), 500
 
 # Run the app

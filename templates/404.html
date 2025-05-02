@@ -1,0 +1,12 @@
+
+{% extends "layout.html" %}
+
+{% block title %}Page Not Found | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <h1 class="error-code">404</h1>
+    <p class="error-message">Oops! That page doesn't exist.</p>
+    <a href="{{ url_for('user.home') }}" class="error-btn">Return Home</a>
+</div>
+{% endblock %}
