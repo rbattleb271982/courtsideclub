@@ -31,6 +31,7 @@
             | <a href="{{ url_for('user.profile') }}">My Profile</a>
             | <a href="{{ url_for('auth.logout') }}">Log Out</a>
         {% else %}
+            | <a href="{{ url_for('tournaments.public_tournaments_page') }}">Tournaments</a>
             | <a href="{{ url_for('auth.login') }}">Log In</a>
             | <a href="{{ url_for('auth.register') }}">Sign Up</a>
         {% endif %}
