@@ -1,0 +1,150 @@
+✅ 1. layout.html (or base.html) — Update the layout and navigation
+
+Path: /templates/layout.html
+
+Inside <head>, ensure you have:
+
+<title>{% block title %}CourtSide Club{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="icon" href="{{ url_for('static', filename='tennis-ball.png') }}" type="image/png">
+Inside <body>, right after <body> tag, replace the old nav with:
+
+<header class="nav-container">
+  <nav class="nav">
+    <div class="nav-left">
+      <a class="nav-logo" href="{{ url_for('main.index') }}">CourtSide Club 🎾</a>
+    </div>
+    <div class="nav-right">
+      <a class="nav-link" href="{{ url_for('main.public_tournaments_page') }}">Tournaments</a>
+      {% if current_user.is_authenticated %}
+        <a class="nav-link" href="{{ url_for('main.profile') }}">My Profile</a>
+        <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
+      {% else %}
+        <a class="nav-link" href="{{ url_for('auth.signup') }}">Register</a>
+        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+      {% endif %}
+    </div>
+  </nav>
+</header>
+Also add this optional footer (if not already present):
+
+<footer style="padding: 1rem; text-align: center; font-size: 0.9rem; color: #888;">
+  &copy; {{ current_year }} CourtSide Club. All rights reserved.
+</footer>
+✅ 2. app.py — Add 404 handler and year injection
+
+At the bottom of the file (or inside create_app() if using factory):
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+@app.context_processor
+def inject_now():
+    from datetime import datetime
+    return {'current_year': datetime.now().year}
+✅ 3. 404.html — Create the custom error page
+
+Path: /templates/404.html
+
+Paste this:
+
+{% extends "layout.html" %}
+
+{% block title %}Page Not Found | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="error-container">
+  <h1 class="error-code">404</h1>
+  <p class="error-message">Oops! That page doesn't exist.</p>
+  <a href="{{ url_for('main.index') }}" class="error-btn">Return Home</a>
+</div>
+{% endblock %}
+✅ 4. styles.css — Add mobile nav + 404 styles
+
+Path: /static/styles.css
+
+Append at the end of your file:
+
+.nav-container {
+  background-color: #ffffff;
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-left .nav-logo {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-right {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.nav-link {
+  background-color: #e6f2e6;
+  color: #2c5f2d;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.95rem;
+  transition: background 0.2s ease;
+}
+
+.nav-link:hover {
+  background-color: #cde8cd;
+}
+
+@media (max-width: 600px) {
+  .nav-right {
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+/* 404 styles */
+.error-container {
+  text-align: center;
+  padding: 4rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error-code {
+  font-size: 6rem;
+  font-weight: bold;
+  color: #2c5f2d;
+  margin-bottom: 0.5rem;
+}
+
+.error-message {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.error-btn {
+  background-color: #e6f2e6;
+  color: #2c5f2d;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.error-btn:hover {
+  background-color: #cde8cd;
+}
