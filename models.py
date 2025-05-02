@@ -95,6 +95,7 @@ class Tournament(db.Model):
     __tablename__ = 'tournaments'
     
     id = db.Column(db.String(50), primary_key=True)
+    slug = db.Column(db.String(100), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)

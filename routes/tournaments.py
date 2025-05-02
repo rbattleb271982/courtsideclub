@@ -453,5 +453,5 @@ def public_tournaments_page():
 @tournaments_bp.route("/tournaments/<slug>")
 def public_tournament_page(slug):
     tournament = Tournament.query.filter_by(slug=slug).first_or_404()
-    attendees = tournament.attendees  # adjust based on your DB relationship
-    return render_template("public_tournament.html", tournament=tournament, attendees=attendees)
+    attending_count = UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count()
+    return render_template("public_tournament.html", tournament=tournament, attending_count=attending_count)
