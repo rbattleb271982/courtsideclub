@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from models import Tournament
+from models import Tournament, UserTournament
 
 tournaments_bp = Blueprint('tournaments', __name__)
 
@@ -26,6 +26,7 @@ from models import db, User, Tournament, UserTournament
 from sqlalchemy import and_, or_
 
 # Initialize blueprint
+
 
 @tournaments_bp.route('/')
 def index():

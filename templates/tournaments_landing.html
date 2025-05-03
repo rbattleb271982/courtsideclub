@@ -14,14 +14,16 @@
       {% if tournament_month != current_month %}
         {% set current_month = tournament_month %}
         <h2 style="margin-top: 2rem; margin-bottom: 0.5rem; color: #2c5f2d; font-size: 1.2rem;">
-          {{ current_month }}
+          {{ tournament_month }}
         </h2>
       {% endif %}
 
-      <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" class="tournament-row">
-        <div class="tournament-name">{{ t.name }}</div>
-        <div class="tournament-meta">
-          {{ t.start_date.strftime('%B %d, %Y') }} — {{ t.city }}, {{ t.country }}
+      <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" style="text-decoration: none; color: inherit;">
+        <div class="tournament-row">
+          <div class="tournament-name">{{ t.name }}</div>
+          <div class="tournament-meta">
+            {{ t.start_date.strftime('%B %d, %Y') }} — {{ t.city }}, {{ t.country }}
+          </div>
         </div>
       </a>
     {% endfor %}
