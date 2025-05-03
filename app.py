@@ -113,7 +113,7 @@ def init_db():
         try:
             # Create all tables
             db.create_all()
-            
+
             # Check if tournaments table is empty and seed initial data
             try:
                 tournament_count = Tournament.query.count()
@@ -122,7 +122,7 @@ def init_db():
                         # Convert date strings to date objects
                         start_date = datetime.datetime.strptime(t_data['start_date'], '%Y-%m-%d').date()
                         end_date = datetime.datetime.strptime(t_data['end_date'], '%Y-%m-%d').date()
-                        
+
                         tournament = Tournament(
                             id=t_data['id'],
                             name=t_data['name'],
@@ -135,7 +135,7 @@ def init_db():
                             sessions=t_data['sessions']
                         )
                         db.session.add(tournament)
-                    
+
                     db.session.commit()
                     print("Database initialized with tournament data.")
                 else:
@@ -152,13 +152,13 @@ init_db()
 # Import and register blueprints
 from routes.auth import auth_bp
 from routes.tournaments import tournaments_bp
-from routes.user import user_bp
 from routes.debug import debug_bp
+from routes.user import user_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(tournaments_bp)
-app.register_blueprint(user_bp)
 app.register_blueprint(debug_bp)
+app.register_blueprint(user_bp)
 
 # Add context processor for current year
 @app.context_processor
