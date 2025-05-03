@@ -1,43 +1,17 @@
-
 {% extends "layout.html" %}
 
 {% block title %}Tournaments | CourtSide Club{% endblock %}
 
 {% block content %}
-<div class="container">
-  <div class="card">
-    <div class="card-header">
-      <h1>Tournaments</h1>
-      <p class="text-muted">Find tennis tournaments and connect with other fans</p>
+<div style="max-width: 700px; margin: 0 auto; padding: 2rem 1rem;">
+  <h1>Tournaments</h1>
+
+  {% for t in tournaments %}
+    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 1rem; margin-bottom: 1rem;">
+      <strong>{{ t.name }}</strong><br>
+      {{ t.city }}, {{ t.country }}<br>
+      {{ t.start_date.strftime('%B %d, %Y') }}
     </div>
-    <div class="card-body">
-      <div class="row">
-        {% for t in tournaments %}
-          <div class="col-12 col-md-6 mb-3">
-            <div class="card h-100">
-              <div class="card-body">
-                <h2 class="h4">
-                  <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}">{{ t.name }}</a>
-                </h2>
-                <p class="mb-2">
-                  <i class="fas fa-map-marker-alt"></i>
-                  {{ t.city }}, {{ t.country }}
-                </p>
-                <p class="mb-2">
-                  <i class="fas fa-calendar"></i>
-                  {{ t.start_date.strftime('%B %d') }} – {{ t.end_date.strftime('%B %d, %Y') }}
-                </p>
-                {% set attending_count = t.user_registrations|selectattr('attending')|list|length %}
-                <p class="mb-0 text-muted">
-                  <i class="fas fa-users"></i>
-                  {{ attending_count }} fan{{ 's' if attending_count != 1 }} attending
-                </p>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
+  {% endfor %}
 </div>
 {% endblock %}
