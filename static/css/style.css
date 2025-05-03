@@ -134,6 +134,35 @@
     }
 }
 
+/* Tournament Listing */
+.tournament-row {
+  display: block;
+  text-decoration: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 1rem;
+  padding: 1rem;
+  transition: all 0.2s ease;
+  color: inherit;
+}
+
+.tournament-row:hover {
+  background-color: #f5fdf5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tournament-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #2c5f2d;
+  margin-bottom: 0.25rem;
+}
+
+.tournament-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
 /* Mobile-First Styles */
 body {
   font-family: sans-serif;

@@ -5,14 +5,26 @@
 
 {% block content %}
 <div style="max-width: 700px; margin: 0 auto; padding: 2rem 1rem;">
-  <h1>Tournaments</h1>
+  <h1 style="margin-bottom: 1rem;">Tournaments</h1>
 
-  {% for t in tournaments %}
-    <div style="padding: 1rem; border: 1px solid #eee; border-radius: 1rem; margin-bottom: 1rem;">
-      <strong>{{ t.name }}</strong><br>
-      {{ t.city }}, {{ t.country }}<br>
-      {{ t.start_date.strftime('%B %d, %Y') }}
-    </div>
-  {% endfor %}
+  {% set current_month = None %}
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% for t in tournaments %}
+      {% set tournament_month = t.start_date.strftime('%B %Y') %}
+      {% if tournament_month != current_month %}
+        {% set current_month = tournament_month %}
+        <h2 style="margin-top: 2rem; margin-bottom: 0.5rem; color: #2c5f2d; font-size: 1.2rem;">
+          {{ current_month }}
+        </h2>
+      {% endif %}
+
+      <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" class="tournament-row">
+        <div class="tournament-name">{{ t.name }}</div>
+        <div class="tournament-meta">
+          {{ t.start_date.strftime('%B %d, %Y') }} — {{ t.city }}, {{ t.country }}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}
