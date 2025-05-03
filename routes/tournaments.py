@@ -1,3 +1,19 @@
+from flask import Blueprint, render_template
+from models import Tournament
+
+tournaments_bp = Blueprint('tournaments', __name__)
+
+@tournaments_bp.route("/tournaments")
+def public_tournaments_page():
+    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    return render_template("tournaments_landing.html", tournaments=tournaments)
+
+@tournaments_bp.route("/tournaments/<slug>")
+def public_tournament_page(slug):
+    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
+    attending_count = UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count()
+    return render_template("public_tournament.html", tournament=tournament, attending_count=attending_count)
+
 import datetime
 import json
 try:
@@ -10,7 +26,6 @@ from models import db, User, Tournament, UserTournament
 from sqlalchemy import and_, or_
 
 # Initialize blueprint
-tournaments_bp = Blueprint('tournaments', __name__)
 
 @tournaments_bp.route('/')
 def index():
@@ -443,15 +458,3 @@ def raise_hand(tournament_id):
 
     # Redirect to home instead of tournament detail after updating meeting preferences
     return redirect(url_for('user.home'))
-
-
-@tournaments_bp.route("/tournaments")
-def public_tournaments_page():
-    tournaments = Tournament.query.order_by(Tournament.start_date).all()
-    return render_template("tournaments_landing.html", tournaments=tournaments)
-
-@tournaments_bp.route("/tournaments/<slug>")
-def public_tournament_page(slug):
-    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
-    attending_count = UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count()
-    return render_template("public_tournament.html", tournament=tournament, attending_count=attending_count)
