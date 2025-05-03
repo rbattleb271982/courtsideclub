@@ -163,6 +163,14 @@
   font-size: 0.9rem;
 }
 
+.tournament-type {
+  font-size: 0.8rem;
+  color: #2c5f2d;
+  opacity: 0.8;
+  margin-left: 0.5rem;
+  font-weight: normal;
+}
+
 /* Mobile-First Styles */
 body {
   font-family: sans-serif;
