@@ -1,3 +1,4 @@
+
 {% extends "layout.html" %}
 
 {% block title %}All Tournaments | Admin | CourtSide Club{% endblock %}
@@ -25,20 +26,15 @@
           <td style="padding: 8px;">{{ t.city }}, {{ t.country }}</td>
           <td style="padding: 8px;">
             {% if t.draw_url %}
-              <a href="{{ t.draw_url }}" target="_blank" style="color: #FF9800; text-decoration: none; display: block; margin-bottom: 3px;">Draw</a>
+              <a href="{{ t.draw_url }}" target="_blank">Draw</a><br>
             {% endif %}
             {% if t.schedule_url %}
-              <a href="{{ t.schedule_url }}" target="_blank" style="color: #FF9800; text-decoration: none; display: block;">Schedule</a>
-            {% endif %}
-            {% if not t.draw_url and not t.schedule_url %}
-              <span style="color: #999; font-style: italic;">None</span>
+              <a href="{{ t.schedule_url }}" target="_blank">Schedule</a>
             {% endif %}
           </td>
           <td style="padding: 8px;">
-            <a href="{{ url_for('admin.edit_tournament', tournament_id=t.id) }}" 
-               style="color: #4CAF50; text-decoration: none; font-weight: bold;">Edit</a>
-            <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" 
-               style="color: #2196F3; text-decoration: none; margin-left: 10px;">View</a>
+            <a href="{{ url_for('admin.edit_tournament', tournament_id=t.id) }}">Edit</a>
+            <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" style="margin-left: 10px;">View</a>
           </td>
         </tr>
       {% endfor %}
