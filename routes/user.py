@@ -261,7 +261,7 @@ def order_lanyard():
     if hasattr(user, 'raised_hand') and user.raised_hand and len(user.raised_hand) > 0:
         legacy_check = True
     
-    is_attending = existing or legacy_check
+    is_attending = valid_attendance is not None or legacy_check
     
     if not is_attending:
         flash('You must select tournament sessions and save your preferences before ordering your lanyard.', 'warning')
