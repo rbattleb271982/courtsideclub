@@ -103,6 +103,9 @@ class Tournament(db.Model):
     country = db.Column(db.String(100), nullable=False)
     event_type = db.Column(db.String(50), nullable=False)
     tour_type = db.Column(db.String(50), nullable=False)
+    about = db.Column(db.Text)
+    draw_url = db.Column(db.String(255))
+    schedule_url = db.Column(db.String(255))
     sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     
     user_registrations = relationship('UserTournament', back_populates='tournament')

@@ -15,6 +15,3 @@ def homepage():
 def ping():
     return "✅ App is running"
 
-@main_bp.route("/test-home")
-def test_home():
-    return render_template("homepage.html", tournaments=[])
