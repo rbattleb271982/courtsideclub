@@ -16,17 +16,10 @@ def public_tournament_page(slug):
 
 import datetime
 import json
-try:
-    from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
-    from flask_login import login_required, current_user
-except ImportError:
-    pass  # Imports will be available at runtime
-
+from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask_login import login_required, current_user
 from models import db, User, Tournament, UserTournament
 from sqlalchemy import and_, or_
-
-# Initialize blueprint
-
 
 @tournaments_bp.route('/')
 def index():

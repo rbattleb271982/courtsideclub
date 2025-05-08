@@ -135,11 +135,6 @@ def error_simulation():
             'error': str(e),
             'traceback': traceback.format_exc()
         }), 500
-from flask import Blueprint, jsonify
-from models import Tournament
-
-debug_bp = Blueprint('debug', __name__)
-
 @debug_bp.route('/debug/tournament-dates')
 def tournament_dates():
     tournaments = Tournament.query.order_by(Tournament.start_date).all()
