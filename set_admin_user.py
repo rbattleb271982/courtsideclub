@@ -65,3 +65,23 @@ if __name__ == "__main__":
     else:
         print(f"❌ Failed to set {email} as admin. See logs for details.")
         sys.exit(1)
+from app import app, db
+from models import User
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def set_admin_user(email):
+    """Set admin status for a user by email"""
+    with app.app_context():
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.is_admin = True
+            db.session.commit()
+            logger.info(f"Successfully set admin status for user: {email}")
+        else:
+            logger.error(f"User not found with email: {email}")
+
+if __name__ == "__main__":
+    set_admin_user('richardbattlebaxter@gmail.com')
