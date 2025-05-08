@@ -1,87 +1,59 @@
-"""
-Script to set a user as admin
-
-Usage:
-    python set_admin_user.py email@example.com
-
-This will set the is_admin flag to True for the specified user.
-"""
-import sys
+"""Script to add is_admin column and set admin user"""
 import logging
 import os
+import sys
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-# Create a minimal Flask app for the script
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Create minimal Flask app for the script
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-def set_admin(email):
-    """
-    Set the is_admin flag to True for the user with the given email
-    
-    Args:
-        email: The email address of the user to make admin
-        
-    Returns:
-        bool: True if successful, False otherwise
-    """
+def add_admin_column_and_set_admin(email):
+    """Add is_admin column if needed and set specified user as admin"""
     try:
         with app.app_context():
-            # Get the User model dynamically to avoid import issues
-            from models import User
-            
-            # Find the user by email
-            user = User.query.filter_by(email=email).first()
-            
-            if not user:
-                logging.error(f"User with email {email} not found.")
-                return False
-                
-            # Set is_admin to True
-            user.is_admin = True
-            db.session.commit()
-            
-            logging.info(f"User {email} is now an admin.")
+            connection = db.engine.connect()
+
+            # Check if column exists
+            inspect_query = """
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name='users' AND column_name='is_admin';
+            """
+            result = connection.execute(db.text(inspect_query))
+            column_exists = result.scalar() is not None
+
+            if not column_exists:
+                # Add the column
+                add_column_query = "ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;"
+                connection.execute(db.text(add_column_query))
+                logger.info("Added is_admin column")
+
+            # Set admin user
+            update_query = "UPDATE users SET is_admin = TRUE WHERE email = :email;"
+            connection.execute(db.text(update_query), {"email": email})
+            connection.commit()
+            logger.info(f"Set {email} as admin")
             return True
+
     except Exception as e:
-        logging.error(f"Error setting admin: {str(e)}")
+        logger.error(f"Error: {str(e)}")
         return False
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    
     if len(sys.argv) < 2:
         print("Usage: python set_admin_user.py email@example.com")
         sys.exit(1)
-        
     email = sys.argv[1]
-    success = set_admin(email)
-    
+    success = add_admin_column_and_set_admin(email)
     if success:
-        print(f"✅ User {email} is now an admin.")
+        logger.info("Migration completed successfully")
     else:
-        print(f"❌ Failed to set {email} as admin. See logs for details.")
+        logger.error("Migration failed")
         sys.exit(1)
-from app import app, db
-from models import User
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-def set_admin_user(email):
-    """Set admin status for a user by email"""
-    with app.app_context():
-        user = User.query.filter_by(email=email).first()
-        if user:
-            user.is_admin = True
-            db.session.commit()
-            logger.info(f"Successfully set admin status for user: {email}")
-        else:
-            logger.error(f"User not found with email: {email}")
-
-if __name__ == "__main__":
-    set_admin_user('richardbattlebaxter@gmail.com')
