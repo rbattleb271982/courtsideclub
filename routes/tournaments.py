@@ -7,7 +7,7 @@ tournaments_bp = Blueprint('tournaments', __name__)
 
 @tournaments_bp.route("/tournaments")
 @login_required
-def view_upcoming_tournaments():
+def list_tournaments():
     # Get all tournaments for dropdown options, sorted by name for the filter dropdown
     all_tournaments = Tournament.query.order_by(Tournament.name).all()
 
