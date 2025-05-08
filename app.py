@@ -181,6 +181,5 @@ def handle_exception(e):
     logging.error(f"Unhandled exception: {str(e)}", exc_info=True)
     return render_template('error.html', error=str(e)), 500
 
-# Run the app
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# Configure debug mode
+app.debug = True

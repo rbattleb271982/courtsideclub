@@ -49,7 +49,7 @@ args = "sleep 2"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "gunicorn --bind 0.0.0.0:5000 --reload --access-logfile - --error-logfile - main:app"
+args = "python main.py"
 
 [[ports]]
 localPort = 5000
