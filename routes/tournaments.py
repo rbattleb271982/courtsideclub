@@ -9,9 +9,13 @@ def public_tournaments_page():
 
 @tournaments_bp.route("/tournaments/<slug>")
 def public_tournament_page(slug):
-    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
-    attending_count = UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count()
-    return render_template("public_tournament.html", tournament=tournament, attending_count=attending_count)
+    try:
+        tournament = Tournament.query.filter_by(slug=slug).first_or_404()
+        attending_count = UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count()
+        return render_template("public_tournament.html", tournament=tournament, attending_count=attending_count)
+    except Exception as e:
+        flash('Tournament not found', 'error')
+        return redirect(url_for('main.homepage'))
 
 import datetime
 import json
