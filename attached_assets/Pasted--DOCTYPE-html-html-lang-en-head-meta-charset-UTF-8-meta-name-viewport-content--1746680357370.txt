@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ tournament.name }} | CourtSide Club</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <header class="nav-container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-logo" href="/">CourtSide Club 🎾</a>
+      </div>
+      <div class="nav-right">
+        <a class="nav-link" href="/signup">Register</a>
+        <a class="nav-link" href="/login">Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- 🎾 Banner Image -->
+    <div class="tournament-banner">
+      <img src="{{ url_for('static', filename='images/banners/' + tournament.slug + '.jpg') }}" alt="{{ tournament.name }} banner" onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/banners/default.jpg') }}';">
+    </div>
+
+    <!-- 🏆 Tournament Info -->
+    <section class="tournament-detail">
+      <h1>{{ tournament.name }}</h1>
+      <p class="tournament-meta">
+        {{ tournament.level }} • {{ tournament.type }}<br>
+        {{ tournament.start_date.strftime('%B %d, %Y') }} — {{ tournament.city }}, {{ tournament.country }}
+      </p>
+
+      <!-- 📝 About -->
+      {% if tournament.about %}
+      <section class="tournament-about">
+        <h2>About the Tournament</h2>
+        <p>{{ tournament.about }}</p>
+      </section>
+      {% endif %}
+
+      <!-- 🔗 Draw + Schedule Links -->
+      {% if tournament.draw_url or tournament.schedule_url %}
+      <section class="tournament-links">
+        <h2>Links</h2>
+        <ul>
+          {% if tournament.draw_url %}
+            <li><a href="{{ tournament.draw_url }}" target="_blank">🎾 Official Draw</a></li>
+          {% endif %}
+          {% if tournament.schedule_url %}
+            <li><a href="{{ tournament.schedule_url }}" target="_blank">📅 Daily Schedule</a></li>
+          {% endif %}
+        </ul>
+      </section>
+      {% endif %}
+
+      <p style="margin-top: 2rem;"><a href="/tournaments">← Back to all tournaments</a></p>
+    </section>
+  </main>
+</body>
+</html>
