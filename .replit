@@ -45,6 +45,10 @@ args = "pkill gunicorn || true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
+args = "sleep 2"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
 args = "gunicorn --bind 0.0.0.0:5000 --reload main:app"
 
 [[ports]]
