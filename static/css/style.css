@@ -1,4 +1,3 @@
-
 .nav-container {
   background-color: #ffffff;
   padding: 1rem;
@@ -261,15 +260,15 @@ td, th {
     display: block;
     width: 100%;
   }
-  
+
   .session-checkboxes {
     gap: 0.5rem;
   }
-  
+
   .sessions-select-container .form-check {
     padding-left: 26px;
   }
-  
+
   .card-body {
     padding: var(--spacing-sm);
   }
@@ -290,7 +289,7 @@ td, th {
   --success: #2ecc71;       /* Success messages */
   --warning: #f39c12;       /* Warning messages */
   --danger: #e74c3c;        /* Error messages */
-  
+
   /* Typography */
   --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --font-size-base: 16px;
@@ -299,7 +298,7 @@ td, th {
   --font-size-lg: 1.25rem;
   --font-size-xl: 1.5rem;
   --font-size-xxl: 2rem;
-  
+
   /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -307,13 +306,13 @@ td, th {
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-xxl: 3rem;
-  
+
   /* Border Radius */
   --border-radius-sm: 0.25rem;
   --border-radius-md: 0.5rem;
   --border-radius-lg: 1rem;
   --border-radius-xl: 1.5rem;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -464,7 +463,7 @@ a:hover {
   .navbar-toggle {
     display: block;
   }
-  
+
   .navbar-nav {
     position: fixed;
     top: 60px;
@@ -476,11 +475,11 @@ a:hover {
     transform: translateY(-150%);
     transition: transform 0.3s ease;
   }
-  
+
   .navbar-nav.show {
     transform: translateY(0);
   }
-  
+
   .navbar-item {
     margin: var(--spacing-sm) 0;
   }
@@ -987,30 +986,68 @@ input:checked + .toggle-slider:before {
   .container {
     padding: 0 var(--spacing-sm);
   }
-  
+
   .card-body {
     padding: var(--spacing-md);
   }
-  
+
   .auth-container {
     margin: var(--spacing-lg) auto;
   }
-  
+
   .btn {
     padding: var(--spacing-sm) var(--spacing-md);
   }
-  
+
   .profile-header {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .profile-avatar {
     margin-right: 0;
     margin-bottom: var(--spacing-sm);
   }
-  
+
   .profile-actions {
     justify-content: center;
   }
+}
+
+/* Tournament styles */
+.tournament-row {
+  border: 1px solid #e0e0e0;
+  border-radius: 1rem;
+  padding: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.tournament-row:hover {
+  background-color: #f5fdf5;
+}
+
+.tournament-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #2c5f2d;
+  margin-bottom: 0.25rem;
+}
+
+.tournament-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.error-btn {
+  background-color: #e6f2e6;
+  color: #2c5f2d;
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.error-btn:hover {
+  background-color: #cde8cd;
 }
