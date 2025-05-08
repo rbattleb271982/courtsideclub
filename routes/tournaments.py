@@ -24,9 +24,10 @@ from flask_login import login_required, current_user
 from models import db, User, Tournament, UserTournament
 from sqlalchemy import and_, or_
 
-@tournaments_bp.route('/')
-def index():
-    return redirect(url_for('tournaments.list_tournaments'))
+# Root route removed to allow main blueprint's homepage to work
+# @tournaments_bp.route('/')
+# def index():
+#     return redirect(url_for('tournaments.list_tournaments'))
 
 @tournaments_bp.route('/tournaments')
 @login_required
