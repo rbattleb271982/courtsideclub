@@ -1,0 +1,94 @@
+ 1. Set the homepage route (/) to include tournament data
+In routes/main.py (or wherever you define /):
+
+@main_bp.route("/")
+def homepage():
+    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    return render_template("homepage.html", tournaments=tournaments)
+✅ This ensures the homepage shows the public tournaments list.
+
+📄 2. Create or update templates/homepage.html with everything in one place:
+{% extends "layout.html" %}
+
+{% block title %}Welcome | CourtSide Club{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
+  <h1 style="margin-bottom: 1rem;">Welcome to CourtSide Club 🎾</h1>
+
+  <p style="margin-bottom: 2rem;">
+    Meet other tennis fans at tournaments around the world. Sign up or log in to join.
+  </p>
+
+  {% if not current_user.is_authenticated %}
+    <div style="margin-bottom: 2rem;">
+      <a href="{{ url_for('auth.signup') }}" class="error-btn">Create Account</a>
+      <a href="{{ url_for('auth.login') }}" class="error-btn" style="margin-left: 1rem;">Log In</a>
+    </div>
+  {% endif %}
+
+  <h2 style="margin-bottom: 1rem;">Upcoming Tournaments</h2>
+
+  {% set ns = namespace(current_month=None) %}
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% for t in tournaments %}
+      {% set tournament_month = t.start_date.strftime('%B %Y') %}
+      {% if tournament_month != ns.current_month %}
+        <h3 style="margin-top: 2rem; margin-bottom: 0.5rem; color: #2c5f2d;">
+          {{ tournament_month }}
+        </h3>
+        {% set ns.current_month = tournament_month %}
+      {% endif %}
+
+      <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" style="text-decoration: none; color: inherit;">
+        <div class="tournament-row">
+          <div class="tournament-name">{{ t.name }}</div>
+          <div class="tournament-meta">
+            {{ t.start_date.strftime('%B %d, %Y') }} — {{ t.city }}, {{ t.country }}
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+🎨 3. Make sure your CSS (static/styles.css) has the styles:
+.tournament-row {
+  border: 1px solid #e0e0e0;
+  border-radius: 1rem;
+  padding: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.tournament-row:hover {
+  background-color: #f5fdf5;
+}
+
+.tournament-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #2c5f2d;
+  margin-bottom: 0.25rem;
+}
+
+.tournament-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.error-btn {
+  background-color: #e6f2e6;
+  color: #2c5f2d;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+📍 4. Make sure / is your landing page
+In your nav (inside layout.html), update the Home link:
+
+<a class="nav-link" href="{{ url_for('main.homepage') }}">Home</a>
+Make sure your blueprint is declared like:
+
+main_bp = Blueprint('main', __name__)
