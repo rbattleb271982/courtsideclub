@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome | CourtSide Club</title>
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"/>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="icon" href="{{ url_for('static', filename='tennis_ball.png') }}" type="image/png" />
+</head>
+
+<body>
+  <header class="nav-container">
+    <nav class="nav">
+      <div class="nav-left">
+        <a class="nav-logo" href="/">CourtSide Club 🎾</a>
+      </div>
+      <div class="nav-right">
+        <a class="nav-link" href="/signup">Register</a>
+        <a class="nav-link" href="/login">Login</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Flash Messages -->
+  <div class="container mt-3">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flashes">
+          {% for message in messages %}
+            <div class="flash-message">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Main Content -->
+  <main class="container py-5">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
+      <!-- Hero Section -->
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome to CourtSide Club 🎾</h1>
+        <p style="color: #555;">Meet other tennis fans at tournaments around the world. Sign up, show up, and connect.</p>
+        <div style="margin-top: 1.5rem;">
+          <a href="/signup" class="error-btn">Create an Account</a>
+          <a href="/login" class="error-btn" style="margin-left: 1rem;">Log In</a>
+        </div>
+      </div>
+
+      <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ccc;"/>
+
+      <!-- Tournament List -->
+      <h2 style="margin-bottom: 1rem;">Explore Upcoming Tournaments</h2>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for month, tournaments_in_month in tournament_groups.items() %}
+          <h3 style="margin-top: 2rem; margin-bottom: 0.5rem; color: #2c5f2d;">{{ month }}</h3>
+          {% for tournament in tournaments_in_month %}
+            <a href="/tournaments/{{ tournament.slug }}" style="text-decoration: none; color: inherit;">
+              <div class="tournament-row">
+                <div class="tournament-name">
+                  {{ tournament.name }}
+                  <span class="tournament-type">{{ tournament.level }} • {{ tournament.type }}</span>
+                </div>
+                <div class="tournament-meta">
+                  {{ tournament.start_date.strftime('%B %d, %Y') }} — {{ tournament.city }}, {{ tournament.country }}
+                </div>
+              </div>
+            </a>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </main>
+
+  <footer style="padding: 1rem; text-align: center; font-size: 0.9rem; color: #888;">
+    &copy; 2025 CourtSide Club. All rights reserved.
+  </footer>
+</body>
+</html>
