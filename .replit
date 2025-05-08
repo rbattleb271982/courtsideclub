@@ -41,7 +41,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pkill gunicorn || true"
+args = "pkill python3 || true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -49,7 +49,7 @@ args = "sleep 2"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python main.py"
+args = "python3 main.py"
 
 [[ports]]
 localPort = 5000
