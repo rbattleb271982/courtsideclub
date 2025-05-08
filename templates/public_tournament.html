@@ -44,12 +44,8 @@
   <section class="tournament-links">
     <h2>Links</h2>
     <ul>
-      {% if tournament.draw_url %}
-        <li><a href="{{ tournament.draw_url }}" target="_blank">🎾 Official Draw</a></li>
-      {% endif %}
-      {% if tournament.schedule_url %}
-        <li><a href="{{ tournament.schedule_url }}" target="_blank">📅 Daily Schedule</a></li>
-      {% endif %}
+      <li><a href="{{ tournament.draw_url or 'http://www.placeholder.com' }}" target="_blank">🎾 Official Draw</a></li>
+      <li><a href="{{ tournament.schedule_url or 'http://www.placeholder.com' }}" target="_blank">📅 Daily Schedule</a></li>
     </ul>
   </section>
   {% endif %}

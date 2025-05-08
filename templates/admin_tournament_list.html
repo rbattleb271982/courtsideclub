@@ -25,12 +25,8 @@
           <td style="padding: 8px;">{{ t.start_date.strftime('%b %d, %Y') }}</td>
           <td style="padding: 8px;">{{ t.city }}, {{ t.country }}</td>
           <td style="padding: 8px;">
-            {% if t.draw_url %}
-              <a href="{{ t.draw_url }}" target="_blank">Draw</a><br>
-            {% endif %}
-            {% if t.schedule_url %}
-              <a href="{{ t.schedule_url }}" target="_blank">Schedule</a>
-            {% endif %}
+            <a href="{{ t.draw_url or 'http://www.placeholder.com' }}" target="_blank">Draw</a><br>
+            <a href="{{ t.schedule_url or 'http://www.placeholder.com' }}" target="_blank">Schedule</a>
           </td>
           <td style="padding: 8px;">
             <a href="{{ url_for('admin.edit_tournament', tournament_id=t.id) }}">Edit</a>
