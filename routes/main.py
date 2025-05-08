@@ -11,3 +11,11 @@ def homepage():
     today = datetime.now().date()
     tournaments = Tournament.query.filter(Tournament.start_date >= today).order_by(Tournament.start_date).all()
     return render_template("homepage.html", tournaments=tournaments)
+
+@main_bp.route("/ping")
+def ping():
+    return "✅ App is running"
+
+@main_bp.route("/test-home")
+def test_home():
+    return render_template("homepage.html", tournaments=[])
