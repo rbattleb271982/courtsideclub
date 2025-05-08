@@ -1,45 +1,10 @@
-
 {% extends "layout.html" %}
 
 {% block title %}Home | CourtSide Club{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-12">
-            <h1>Upcoming Tournaments</h1>
-            
-            {% set ns = namespace(current_month=none) %}
-            {% for tournament in tournaments %}
-                {% set month = tournament.start_date.strftime('%B %Y') %}
-                
-                {% if month != ns.current_month %}
-                    {% set ns.current_month = month %}
-                    <h2 class="mt-4 mb-3">{{ month }}</h2>
-                {% endif %}
-                
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h3 class="card-title mb-1">
-                                    <a href="{{ url_for('tournaments.public_tournament_page', slug=tournament.slug) }}" class="text-decoration-none">
-                                        {{ tournament.name }}
-                                    </a>
-                                </h3>
-                                <p class="card-text text-muted mb-2">
-                                    {{ tournament.event_type }} • {{ tournament.tour_type }}
-                                </p>
-                                <p class="card-text">
-                                    {{ tournament.start_date.strftime('%d %b') }} - {{ tournament.end_date.strftime('%d %b') }} • 
-                                    {{ tournament.city }}, {{ tournament.country }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
+<div style="padding: 2rem;">
+  <h1>✅ Homepage is rendering</h1>
+  <p>If you're seeing this, the app is working. We just need to reconnect templates and fix preview logic.</p>
 </div>
 {% endblock %}
