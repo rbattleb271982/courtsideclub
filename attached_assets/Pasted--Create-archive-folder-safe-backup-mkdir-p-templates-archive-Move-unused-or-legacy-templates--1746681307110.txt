@@ -1,0 +1,121 @@
+# Create archive folder (safe backup)
+mkdir -p templates/archive
+
+# Move unused or legacy templates to archive
+mv templates/home.html templates/index.html templates/tournaments_landing.html templates/tournament_detail.html templates/archive/
+
+# Optional: remove debug routes if you’re not using them
+sed -i '/@debug_bp\.route/d' routes/debug.py
+
+routes/
+├── __init__.py
+├── main_routes.py         # homepage, ping
+├── auth_routes.py         # signup/login/logout
+├── tournament_routes.py   # all tournament-related views
+├── user_routes.py         # profile, settings
+├── admin_routes.py        # (new) admin-only views like editing tournaments
+
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask_login import login_required, current_user
+from models import db, Tournament
+
+admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+@admin_bp.route("/tournaments/<int:id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_tournament(id):
+    if not getattr(current_user, "is_admin", False):
+        flash("Access denied.")
+        return redirect(url_for("main.homepage"))
+
+    tournament = Tournament.query.get_or_404(id)
+
+    if request.method == "POST":
+        tournament.about = request.form.get("about", "")
+        tournament.draw_url = request.form.get("draw_url", "")
+        tournament.schedule_url = request.form.get("schedule_url", "")
+        db.session.commit()
+        flash("Tournament updated successfully.")
+        return redirect(url_for("admin.edit_tournament", id=tournament.id))
+
+    return render_template("admin_edit_tournament.html", tournament=tournament)
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Tournament | CourtSide Club</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width: 700px; margin: 2rem auto;">
+    <h1>Edit {{ tournament.name }}</h1>
+    <form method="POST">
+      <label>About</label><br>
+      <textarea name="about" rows="6" style="width: 100%;">{{ tournament.about or '' }}</textarea><br><br>
+
+      <label>Draw URL</label><br>
+      <input type="url" name="draw_url" value="{{ tournament.draw_url or '' }}" style="width: 100%;"><br><br>
+
+      <label>Schedule URL</label><br>
+      <input type="url" name="schedule_url" value="{{ tournament.schedule_url or '' }}" style="width: 100%;"><br><br>
+
+      <button type="submit" class="cta-btn">Save Changes</button>
+    </form>
+
+    <p style="margin-top: 2rem;"><a href="/tournaments/{{ tournament.slug }}">← Back to Tournament Page</a></p>
+  </div>
+</body>
+</html>
+
+is_admin = db.Column(db.Boolean, default=False)
+
+from models import db, User
+user = User.query.filter_by(email="your@email.com").first()
+user.is_admin = True
+db.session.commit()
+
+@admin_bp.route("/tournaments")
+@login_required
+def list_tournaments():
+    if not getattr(current_user, "is_admin", False):
+        flash("Access denied.")
+        return redirect(url_for("main.homepage"))
+
+    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    return render_template("admin_tournament_list.html", tournaments=tournaments)
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Tournaments | Admin | CourtSide Club</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container" style="max-width: 800px; margin: 2rem auto;">
+    <h1>All Tournaments</h1>
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="text-align: left;">Name</th>
+          <th style="text-align: left;">Date</th>
+          <th style="text-align: left;">Location</th>
+          <th style="text-align: left;">Edit</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tournaments %}
+          <tr>
+            <td>{{ t.name }}</td>
+            <td>{{ t.start_date.strftime('%b %d, %Y') }}</td>
+            <td>{{ t.city }}, {{ t.country }}</td>
+            <td><a href="{{ url_for('admin.edit_tournament', id=t.id) }}">Edit</a></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+
+from routes.admin_routes import admin_bp
+app.register_blueprint(admin_bp)

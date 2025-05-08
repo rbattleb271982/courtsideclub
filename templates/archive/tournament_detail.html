@@ -1,0 +1,228 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container">
+    
+
+    <div class="tournament-header">
+        <h1 class="tournament-title">{{ tournament.name }}</h1>
+        <div class="tournament-meta">
+            <span class="tournament-dates">{{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}</span>
+            <span class="tournament-location">{{ tournament.city }}, {{ tournament.country }}</span>
+            <span class="tournament-type">{{ tournament.event_type }} ({{ tournament.tour_type }})</span>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-8">
+            {% if current_user.lanyard_ordered %}
+            <div class="alert alert-success mb-4">
+                <i data-feather="package" class="icon-sm"></i> Your lanyard is on its way!
+            </div>
+            {% endif %}
+            <!-- Tournament Attendance Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Your Tournament Attendance</h3>
+                </div>
+                <div class="card-body">
+                    <!-- User is attending this tournament -->
+                    {% if user_attending %}
+                        <div class="alert alert-success">
+                            <i data-feather="check-circle" class="icon-sm mr-2"></i>
+                            You're attending this tournament!
+                        </div>
+
+                        <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="sessions-form">
+                            <input type="hidden" name="sessions" value="true">
+                            <h4 class="h6 mb-3">Which sessions will you attend?</h4>
+                            
+                            <div class="session-selection-grid">
+                                {% for day_name, day_sessions in days.items() %}
+                                <div class="day-card mb-3">
+                                    <div class="day-header bg-light p-2 rounded">
+                                        <h5 class="day-title mb-0">{{ day_name }} – {{ day_dates[day_name].strftime('%B %d') }}</h5>
+                                    </div>
+                                    <div class="session-options p-3">
+                                        {% for session in day_sessions %}
+                                        <div class="custom-control custom-checkbox mb-2">
+                                            <input type="checkbox" class="custom-control-input" 
+                                                id="sessions-{{ day_name }}-{{ session }}" 
+                                                name="sessions[{{ day_name }}][{{ session }}]"
+                                                {% if tournament.id in current_user.raised_hand and 
+                                                     day_name in current_user.raised_hand.get(tournament.id, {}) and 
+                                                     session in current_user.raised_hand.get(tournament.id, {}).get(day_name, []) %}checked{% endif %}>
+                                            <label class="custom-control-label" for="sessions-{{ day_name }}-{{ session }}">
+                                                {{ session }} Session
+                                            </label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Meeting Preference Section -->
+                            <div class="meeting-preferences mt-4 p-3 border rounded bg-light">
+                                <h4 class="h6 mb-2">Open to meeting other fans?</h4>
+                                <p class="text-muted mb-3 small">Let other attendees know if you're interested in meeting up during the tournament.</p>
+                                
+                                <div class="form-group mb-0">
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="meeting-yes" name="meeting_preference" value="Yes" class="custom-control-input" required
+                                               {% if tournament.id in current_user.raised_hand or tournament.id not in current_user.attending or (tournament.id not in current_user.raised_hand and tournament.id not in current_user.attending) %}checked{% endif %}>
+                                        <label class="custom-control-label" for="meeting-yes">Yes</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" id="meeting-no" name="meeting_preference" value="No" class="custom-control-input" required
+                                               {% if tournament.id not in current_user.raised_hand and tournament.id in current_user.attending and tournament.id not in current_user.raised_hand %}checked{% endif %}>
+                                        <label class="custom-control-label" for="meeting-no">No</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i data-feather="save" class="icon-sm"></i> Save Selections
+                                </button>
+                                
+                                <button type="submit" name="remove" value="true" class="btn btn-outline-danger ml-2">
+                                    <i data-feather="x" class="icon-sm"></i> Cancel Attendance
+                                </button>
+                            </div>
+                        </form>
+                    
+                    <!-- User is not attending this tournament -->
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i data-feather="alert-circle" class="icon-sm mr-2"></i>
+                            You must first mark yourself as attending from the tournaments page to select sessions.
+                        </div>
+                        
+                        <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary">
+                            <i data-feather="arrow-left" class="icon-sm"></i> Return to Tournaments
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Attendance Stats Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Tournament Stats</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stats-item mb-3">
+                        <div class="stats-label">Total Attending</div>
+                        <div class="stats-value">{{ attending_count }}</div>
+                    </div>
+                    <div class="stats-item">
+                        <div class="stats-label">Open to Meeting</div>
+                        <div class="stats-value">{{ meeting_count }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fans Open to Meeting Card -->
+            {% if user_raised_hand and raised_hands %}
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Fans Open to Meeting</h3>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for user in raised_hands %}
+                            {% if user.user_id != current_user.id %}
+                            <li class="list-group-item">
+                                <div class="fan-name">{{ user.name }}</div>
+                                <div class="fan-email"><a href="mailto:{{ user.email }}">{{ user.email }}</a></div>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% if raised_hands|length <= 1 and raised_hands|selectattr('user_id', 'equalto', current_user.id)|list|length > 0 %}
+                <div class="card-footer bg-light">
+                    <p class="text-muted mb-0 small">You're currently the only person open to meeting. Check back later!</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.tournament-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tournament-title {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+}
+
+.tournament-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.session-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.day-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.stats-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.stats-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.stats-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.fan-name {
+    font-weight: 500;
+}
+
+.fan-email {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.icon-sm {
+    width: 1rem;
+    height: 1rem;
+    stroke-width: 2.5;
+    vertical-align: text-bottom;
+}
+</style>
+{% endblock %}

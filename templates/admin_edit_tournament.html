@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Tournament | Admin | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px; margin: 2rem auto; padding: 0 15px;">
+  <h1>Edit Tournament: {{ tournament.name }}</h1>
+  <p>Add additional information to enhance the tournament page.</p>
+
+  <form method="POST" style="margin-top: 2rem;">
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Tournament Description</label>
+      <textarea name="about" rows="6" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit;">{{ tournament.about or '' }}</textarea>
+      <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Provide an overview of the tournament, venue info, or historical context.</p>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Draw URL</label>
+      <input type="url" name="draw_url" value="{{ tournament.draw_url or '' }}" 
+             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+      <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Link to the official tournament draw.</p>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Schedule URL</label>
+      <input type="url" name="schedule_url" value="{{ tournament.schedule_url or '' }}" 
+             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+      <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Link to the official tournament schedule.</p>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Save Changes</button>
+      <a href="{{ url_for('admin.list_tournaments') }}" style="margin-left: 10px; color: #666; text-decoration: none;">Cancel</a>
+    </div>
+  </form>
+
+  <div style="margin-top: 3rem; border-top: 1px solid #eee; padding-top: 1rem;">
+    <a href="{{ url_for('tournaments.public_tournament_page', slug=tournament.slug) }}" style="color: #2196F3; text-decoration: none;">← View Tournament Page</a>
+    <span style="margin: 0 10px; color: #ddd;">|</span>
+    <a href="{{ url_for('admin.list_tournaments') }}" style="color: #666; text-decoration: none;">Back to Tournament List</a>
+  </div>
+</div>
+{% endblock %}

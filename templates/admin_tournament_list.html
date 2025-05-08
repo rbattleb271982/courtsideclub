@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}All Tournaments | Admin | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto;">
+  <h1>Admin: All Tournaments</h1>
+  <p>From here you can edit tournament details that appear on tournament pages.</p>
+  
+  <table class="admin-table" style="width: 100%; border-collapse: collapse; margin-top: 1.5rem;">
+    <thead>
+      <tr style="border-bottom: 2px solid #ddd; text-align: left;">
+        <th style="padding: 8px;">Name</th>
+        <th style="padding: 8px;">Date</th>
+        <th style="padding: 8px;">Location</th>
+        <th style="padding: 8px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tournaments %}
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 8px;">{{ t.name }}</td>
+          <td style="padding: 8px;">{{ t.start_date.strftime('%b %d, %Y') }}</td>
+          <td style="padding: 8px;">{{ t.city }}, {{ t.country }}</td>
+          <td style="padding: 8px;">
+            <a href="{{ url_for('admin.edit_tournament', tournament_id=t.id) }}" 
+               style="color: #4CAF50; text-decoration: none; font-weight: bold;">Edit</a>
+            <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" 
+               style="color: #2196F3; text-decoration: none; margin-left: 10px;">View</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <div style="margin-top: 2rem;">
+    <a href="{{ url_for('main.homepage') }}" class="btn" style="text-decoration: none; padding: 8px 16px; background-color: #f0f0f0; color: #333; border-radius: 4px;">← Back to Homepage</a>
+  </div>
+</div>
+{% endblock %}
