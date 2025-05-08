@@ -4,8 +4,61 @@ from models import Tournament, UserTournament
 tournaments_bp = Blueprint('tournaments', __name__)
 
 @tournaments_bp.route("/tournaments")
-def public_tournaments_page():
-    return redirect(url_for('main.homepage'))
+@login_required
+def list_tournaments():
+    # Get all tournaments for dropdown options, sorted by name for the filter dropdown
+    all_tournaments = Tournament.query.order_by(Tournament.name).all()
+
+    # Get today's date for filtering
+    today = datetime.datetime.now().date()
+
+    # Initialize query with chronological sorting by start date and filter out past tournaments
+    query = Tournament.query.filter(Tournament.end_date >= today).order_by(Tournament.start_date)
+
+    # Get filter parameters
+    name_filter = request.args.get('name')
+    country_filter = request.args.get('country')
+
+    # Apply name filter if provided
+    if name_filter:
+        query = query.filter(Tournament.id == name_filter)
+
+    # Apply country filter if provided
+    if country_filter:
+        query = query.filter(Tournament.country == country_filter)
+
+    # Get the filtered tournaments, in chronological order by start date
+    tournaments = query.all()
+
+    # Get today's date for highlighting current tournaments
+    today = datetime.datetime.now().date()
+
+    # Calculate attendance and meetup counts for each tournament
+    attendance_counts = {}
+    for tournament in tournaments:
+        # Count users who have registered for this tournament
+        attending_users = UserTournament.query.filter_by(
+            tournament_id=tournament.id
+        ).count()
+
+        # Count users who are open to meeting
+        meeting_users = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            open_to_meet=True
+        ).count()
+
+        attendance_counts[tournament.id] = {
+            'attending': attending_users,
+            'meeting': meeting_users
+        }
+
+    return render_template('tournaments.html', 
+                          tournaments=tournaments,
+                          all_tournaments=all_tournaments,
+                          today=today,
+                          name_filter=name_filter,
+                          country_filter=country_filter,
+                          attendance_counts=attendance_counts)
 
 @tournaments_bp.route("/tournaments/<slug>")
 def public_tournament_page(slug):
