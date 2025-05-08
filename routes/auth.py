@@ -55,8 +55,8 @@ def login():
     
     return render_template('login.html', google_enabled=False)
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
+@auth_bp.route('/signup', methods=['GET', 'POST'])
+def signup():
     if current_user.is_authenticated:
         return redirect(url_for('user.home'))
     
