@@ -10,9 +10,7 @@
   <p><strong>Event Type:</strong> {{ tournament.event_type }}</p>
   <p><strong>Fans attending:</strong> {{ attending_count }}</p>
 
-  <img src="{{ url_for('static', filename='images/banners/' + tournament.slug + '.jpg') }}" 
-     alt="{{ tournament.name }} banner"
-     onerror="this.onerror=null;this.src='{{ url_for('static', filename='images/banners/default.jpg') }}';">
+  
 
   {% if not current_user.is_authenticated %}
     <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Join CourtSide Club →</a>
