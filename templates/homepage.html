@@ -35,7 +35,10 @@
 
       <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" style="text-decoration: none; color: inherit;">
         <div class="tournament-row">
-          <div class="tournament-name">{{ t.name }}</div>
+          <div class="tournament-name">
+            {{ t.name }}
+            <span class="tournament-type">{{ t.event_type }} • {{ t.tour_type }}</span>
+          </div>
           <div class="tournament-meta">
             {{ t.start_date.strftime('%B %d, %Y') }} — {{ t.city }}, {{ t.country }}
           </div>

@@ -7,5 +7,7 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route("/")
 def homepage():
-    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    from datetime import datetime
+    today = datetime.now().date()
+    tournaments = Tournament.query.filter(Tournament.start_date >= today).order_by(Tournament.start_date).all()
     return render_template("homepage.html", tournaments=tournaments)
