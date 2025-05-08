@@ -1,21 +1,25 @@
-
 {% extends "layout.html" %}
 
 {% block title %}Welcome | CourtSide Club{% endblock %}
 
 {% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flashes">
+        {% for message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
   <!-- Hero section -->
   <div style="text-align: center; margin-bottom: 2rem;">
     <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome to CourtSide Club 🎾</h1>
     <p style="color: #555;">Meet other tennis fans at tournaments around the world. Sign up, show up, and connect.</p>
 
-    {% if not current_user.is_authenticated %}
-      <div style="margin-top: 1.5rem;">
-        <a href="{{ url_for('auth.signup') }}" class="error-btn">Create an Account</a>
-        <a href="{{ url_for('auth.login') }}" class="error-btn" style="margin-left: 1rem;">Log In</a>
-      </div>
-    {% endif %}
+    
   </div>
 
   <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ccc;">

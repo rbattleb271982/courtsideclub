@@ -88,6 +88,20 @@
     background-color: #cde8cd;
 }
 
+/* Flash Messages */
+.flashes {
+  margin: 1rem 0;
+}
+
+.flash-message {
+  background: #e0ffe0;
+  border-left: 5px solid #2c5f2d;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  color: #2c5f2d;
+}
+
 /* Error Pages */
 .error-container {
     text-align: center;
