@@ -5,8 +5,7 @@ tournaments_bp = Blueprint('tournaments', __name__)
 
 @tournaments_bp.route("/tournaments")
 def public_tournaments_page():
-    tournaments = Tournament.query.order_by(Tournament.start_date).all()
-    return render_template("tournaments_landing.html", tournaments=tournaments)
+    return redirect(url_for('main.homepage'))
 
 @tournaments_bp.route("/tournaments/<slug>")
 def public_tournament_page(slug):
