@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template
+from flask_login import login_required
 from models import Tournament, UserTournament
 
 tournaments_bp = Blueprint('tournaments', __name__)
