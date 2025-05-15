@@ -168,3 +168,38 @@ def export_lanyards():
         mimetype="text/csv",
         headers={"Content-Disposition": "attachment;filename=lanyard_orders.csv"}
     )
+
+@admin_bp.route('/export-lanyards')
+@login_required 
+def export_lanyards():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.homepage"))
+
+    # Get users who submitted a shipping address AND selected a session
+    results = (
+        db.session.query(User, ShippingAddress)
+        .join(ShippingAddress, User.id == ShippingAddress.user_id)
+        .join(UserTournament, User.id == UserTournament.user_id)
+        .distinct(User.id)
+        .all()
+    )
+
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Name', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country', 'Email'])
+
+    for user, address in results:
+        writer.writerow([
+            address.name,
+            address.address1,
+            address.address2 or '',
+            address.city,
+            address.state,
+            address.zip_code,
+            address.country,
+            user.email
+        ])
+
+    output.seek(0)
+    return Response(output, mimetype="text/csv", headers={"Content-Disposition": "attachment;filename=lanyard_orders.csv"})
