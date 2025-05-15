@@ -1,4 +1,3 @@
-
 from flask import Blueprint, render_template, abort
 from models import Tournament
 
@@ -35,10 +34,6 @@ def faqs():
 @main_bp.route('/about')
 def about():
     return render_template('public/about.html')
-
-@main_bp.route('/faqs')
-def faqs():
-    return render_template('public/faqs.html')
 
 @main_bp.route('/blog')
 def blog():
