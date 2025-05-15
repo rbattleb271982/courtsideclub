@@ -8,7 +8,7 @@ deploymentTarget = "autoscale"
 run = ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 
 [workflows]
-runButton = "Flask Debug"
+runButton = "Flask Run"
 
 [[workflows.workflow]]
 name = "Project"
@@ -84,6 +84,23 @@ args = "sleep 2"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "FLASK_DEBUG=1 python3 -u main.py"
+
+[[workflows.workflow]]
+name = "Flask Run"
+author = 41157766
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pkill python3 || true"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "sleep 2"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "FLASK_APP=main.py FLASK_ENV=development flask run --host=0.0.0.0 --port=5000"
 
 [[ports]]
 localPort = 5000
