@@ -1,0 +1,16 @@
+
+{% extends "public/base.html" %}
+{% block title %}Tennis Tournaments - CourtSide Club{% endblock %}
+{% block meta_description %}Browse upcoming ATP and WTA tennis tournaments. Find fans attending the same sessions.{% endblock %}
+{% block content %}
+<h1>Tennis Tournaments</h1>
+<div class="tournaments-grid">
+    {% for tournament in tournaments %}
+    <div class="tournament-card">
+        <h2>{{ tournament.name }}</h2>
+        <p>{{ tournament.start_date.strftime('%B %d, %Y') }}</p>
+        <p>{{ tournament.city }}, {{ tournament.country }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

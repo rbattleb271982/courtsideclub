@@ -1,0 +1,12 @@
+
+{% extends "public/base.html" %}
+{% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
+{% block meta_description %}Meet tennis fans at {{ tournament.name }} in {{ tournament.city }}. Find people attending the same sessions.{% endblock %}
+{% block content %}
+<h1>{{ tournament.name }}</h1>
+<div class="tournament-details">
+    <p>{{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
+    <p>{{ tournament.city }}, {{ tournament.country }}</p>
+    <p>{{ tournament.event_type }} • {{ tournament.tour_type }}</p>
+</div>
+{% endblock %}
