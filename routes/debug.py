@@ -218,7 +218,7 @@ def send_welcome_email(user_id):
       <li>🗓 Queen's Club – June 17</li>
     </ul>
 
-    <p>→ <a href="https://courtsideclub.app/login">Log in to pick your tournaments</a></p>
+    <p>→ <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to pick your tournaments</a></p>
 
     <p>Glad to have you here,<br>
     – The CourtSideClub Team</p>
