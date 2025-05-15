@@ -60,12 +60,7 @@ class User(UserMixin, db.Model):
     # raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     # past_tournaments_json = db.Column('past_tournaments', MutableList.as_mutable(JsonEncodedList), default=[])
     
-    # We're keeping this relationship for now
-    attended_tournaments = relationship(
-        'Tournament',
-        secondary=past_tournaments,
-        backref=db.backref('attendees', lazy='dynamic')
-    )
+    # This relationship has been removed per cleanup request
     
     tournament_registrations = relationship('UserTournament', 
                                            back_populates='user',

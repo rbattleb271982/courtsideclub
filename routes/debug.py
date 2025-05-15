@@ -265,25 +265,23 @@ def send_reminder(user_id, tournament_slug):
         attending=True
     ).first()
 
-    # Build session list with meetup counts
+    # Build session info with meetup counts
     session_lines = ""
-    if user_tournament and user_tournament.sessions:
-        for session in user_tournament.sessions:
-            # Count others who are attending this session and open to meeting
-            count = db.session.query(UserTournament).filter(
-                UserTournament.tournament_id == tournament.id,
-                UserTournament.sessions.contains([session]),
-                UserTournament.open_to_meet == True,
-                UserTournament.user_id != user.id,
-                UserTournament.attending == True
-            ).count()
+    if user_tournament and user_tournament.session_label:
+        # Count others who are attending this tournament and open to meeting
+        count = db.session.query(UserTournament).filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.open_to_meet == True,
+            UserTournament.user_id != user.id,
+            UserTournament.attending == True
+        ).count()
 
-            count_line = (
-                f"– <strong>{count} other fan{'s' if count != 1 else ''}</strong> who are open to meeting up"
-                if count > 0 else
-                "– you're the first to raise your hand for this one!"
-            )
-            session_lines += f"<li>✅ {session} {count_line}</li>"
+        count_line = (
+            f"– <strong>{count} other fan{'s' if count != 1 else ''}</strong> who are open to meeting up"
+            if count > 0 else
+            "– you're the first to raise your hand for this one!"
+        )
+        session_lines += f"<li>✅ {user_tournament.session_label} {count_line}</li>"
 
     # Final HTML for session summary
     session_summary_html = (

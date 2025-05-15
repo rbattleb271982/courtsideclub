@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from models import db, Tournament, UserTournament
+from models import db, Tournament, UserTournament, User, past_tournaments
 import datetime
 
 tournaments_bp = Blueprint('tournaments', __name__)
@@ -415,7 +415,7 @@ def attend_tournament(tournament_id):
                 # No sessions were selected - set attending to false
                 if user_tournament:
                     user_tournament.attending = False
-                    user_tournament.sessions = []
+                    user_tournament.session_label = None
                 message = f"Please select at least one session to confirm your attendance at {tournament.name}."
 
             # Save changes and respond
@@ -455,21 +455,24 @@ def past_tournaments():
     # Get all tournaments for the list, sorted alphabetically by name
     all_tournaments = Tournament.query.order_by(Tournament.name).all()
 
-    # Get the user's past tournaments list
+    # Get the user's past tournaments from the many-to-many relationship
     user = User.query.get(current_user.id)
-
-    # Combine both legacy and new past tournaments data
-    past_tournaments_legacy = list(user.past_tournaments_json) if hasattr(user, 'past_tournaments_json') and user.past_tournaments_json else []
-    attended_tournaments_ids = [t.id for t in user.attended_tournaments]
-    past_tournaments = list(set(past_tournaments_legacy + attended_tournaments_ids))
+    
+    # Get past tournament IDs from the past_tournaments table
+    past_tournaments_query = db.session.query(past_tournaments.c.tournament_id).filter(
+        past_tournaments.c.user_id == user.id
+    ).all()
+    past_tournaments = [t[0] for t in past_tournaments_query]
 
     # Handle form submission
     if request.method == 'POST':
-        # Reset the attended_tournaments relationship
-        user.attended_tournaments = []
-
+        # First, delete all current past tournament entries for this user
+        db.session.execute(
+            db.delete(past_tournaments).where(past_tournaments.c.user_id == user.id)
+        )
+        
         # Process checked tournaments
-        selected_tournaments = []
+        selected_tournament_ids = []
         for field_name, value in request.form.items():
             if field_name.startswith('tournament_'):
                 # Extract tournament_id from field name (format: tournament_<id>)
@@ -477,16 +480,17 @@ def past_tournaments():
 
                 # Add to the list if checked
                 if value == 'on':
-                    tournament = Tournament.query.get(tournament_id)
-                    if tournament:
-                        selected_tournaments.append(tournament)
-
-        # Update user's attended_tournaments relationship
-        user.attended_tournaments = selected_tournaments
-
-        # For backward compatibility
-        user.past_tournaments_json = [t.id for t in selected_tournaments]
-
+                    selected_tournament_ids.append(tournament_id)
+        
+        # Add new entries to past_tournaments table
+        for tournament_id in selected_tournament_ids:
+            db.session.execute(
+                db.insert(past_tournaments).values(
+                    user_id=user.id,
+                    tournament_id=tournament_id
+                )
+            )
+            
         db.session.commit()
 
         flash("Your past tournament selections have been saved.", 'success')
