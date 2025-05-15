@@ -253,11 +253,12 @@ def order_lanyard():
         "WI", "WV", "WY"
     ]
 
-    # ✅ Only allow access if user has selected at least one session
-    has_session = db.session.query(UserTournament).filter_by(
+    # ✅ Only allow access if user has selected at least one session and is marked as attending
+    user_sessions = UserTournament.query.filter_by(
         user_id=current_user.id,
         attending=True
-    ).count() > 0
+    ).all()
+    has_session = any(ut.session_label for ut in user_sessions)
 
     if not has_session:
         flash("You must select at least one tournament session before ordering a lanyard.")
