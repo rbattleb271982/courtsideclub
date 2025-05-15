@@ -304,19 +304,21 @@ def send_reminder(user_id, tournament_slug):
     reminder_html = f"""
     <p>Hi {user.first_name},</p>
 
-    <p>Thanks for being part of CourtSideClub — we're glad to have you. Your next tournament is coming up, and we want to make sure you're ready.</p>
-
-    <p>🎾 You're just two weeks away from <strong>{tournament.name}</strong>.</p>
+    <p>We're two weeks away from <strong>{tournament.name}</strong>, and we want to make sure you're ready.</p>
 
     {session_summary_html}
 
-    {meetup_msg}
-
     {lanyard_msg}
 
-    <p>Need to make a change? You can <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">log into your account</a> anytime to update your selections.</p>
+    <p>🗓 Want to plan your day? <a href="{tournament.schedule_url}">Check the official tournament schedule</a>.</p>
 
-    <p>See you courtside,<br>
+    <p>📍 The tournament takes place in <strong>{tournament.city}, {tournament.country}</strong>. Make sure to plan ahead for entry and transport.</p>
+
+    <p>🎒 Pro tip: bring sunscreen, a refillable water bottle, and your lanyard. The courtside energy is real — stay ready.</p>
+
+    <p>Need to make a change? You can <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">log into your account</a> anytime to update your session or raise your hand.</p>
+
+    <p>Thanks for being part of CourtSideClub — we can't wait to see you there!<br>
     – The CourtSideClub Team</p>
     """
 
