@@ -27,6 +27,14 @@ def format_today(format_string):
     """Format today's date with the given format string"""
     return datetime.datetime.utcnow().strftime(format_string)
 
+@app.template_filter('pluralize')
+def pluralize(count, singular='', plural='s'):
+    """Return singular or plural suffix based on count"""
+    if int(count) == 1:
+        return singular
+    else:
+        return plural
+
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
