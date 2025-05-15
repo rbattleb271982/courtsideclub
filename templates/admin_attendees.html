@@ -1,0 +1,27 @@
+
+{% extends "layout.html" %}
+{% block title %}Tournament Attendees | Admin | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 2rem auto;">
+  <h2>👥 Attendees – {{ tournament.name }}</h2>
+
+  <div class="list-group mt-4">
+    {% for ut in user_tourneys %}
+      <div class="list-group-item">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ ut.user.get_full_name() }}</strong>
+            <div class="text-muted">Sessions: {{ ut.session_label or "N/A" }}</div>
+          </div>
+          {% if ut.wants_to_meet %}
+            <span class="badge badge-primary">👋 Open to Meet</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-link mt-4">← Back to Dashboard</a>
+</div>
+{% endblock %}
