@@ -9,7 +9,6 @@
             <div class="card-header">
                 <h2>Order Your CourtSide Club Lanyard</h2>
             </div>
-            
             <div class="card-body">
                 {% if no_sessions %}
                 <div class="alert alert-info">
@@ -26,23 +25,23 @@
                 </div>
                 {% else %}
                 <p class="mb-4">Order your exclusive CourtSide Club lanyard to easily identify other community members at tournaments. The lanyard will be shipped directly to your address.</p>
-                
+
                 <form action="{{ url_for('user.order_lanyard') }}" method="post" class="needs-validation" novalidate>
                     <div class="form-group">
                         <label for="name" class="form-label">Full Name</label>
                         <input type="text" class="form-control" id="name" name="name" value="{{ current_user.get_full_name() }}" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="address1" class="form-label">Address Line 1</label>
                         <input type="text" class="form-control" id="address1" name="address1" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="address2" class="form-label">Address Line 2 (Optional)</label>
                         <input type="text" class="form-control" id="address2" name="address2">
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <div class="form-group">
@@ -62,7 +61,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <div class="form-group">
@@ -88,17 +87,17 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" value="{{ current_user.email }}" disabled>
                         <small class="text-muted">We'll send order confirmation to this email.</small>
                     </div>
-                    
+
                     <div class="alert alert-info mt-3">
                         <p><strong>Note:</strong> Your lanyard is free for CourtSide Club members. You only pay for shipping ($5.99).</p>
                     </div>
-                    
+
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary btn-block">Order Lanyard</button>
                     </div>
