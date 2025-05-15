@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, render_template
 from models import db, User, Tournament
+from services.sendgrid_service import send_email
 import logging
 import os
 import sys
@@ -191,3 +192,42 @@ def test_email(email=None):
         </ul>
         """
         return message
+@debug_bp.route('/debug/send-welcome/<int:user_id>')
+def send_welcome_email(user_id):
+    user = db.session.get(User, user_id)
+    if not user:
+        return f"User with ID {user_id} not found", 404
+
+    welcome_email_html = f"""
+    <p>Hi {user.first_name},</p>
+
+    <p>Welcome to <strong>CourtSideClub</strong> – the home for tennis fans who want to do more than just watch.</p>
+
+    <p>Here's what you can do inside:</p>
+    <ul>
+      <li>🎾 Select which tournaments you're attending</li>
+      <li>📅 See who else is going</li>
+      <li>👋 Raise your hand to meet other fans</li>
+      <li>📬 Get your free lanyard to signal you're open to connecting</li>
+    </ul>
+
+    <p>Coming up soon:</p>
+    <ul>
+      <li>🗓 Rome Masters – May 20</li>
+      <li>🗓 Roland-Garros – May 26</li>
+      <li>🗓 Queen's Club – June 17</li>
+    </ul>
+
+    <p>→ <a href="https://courtsideclub.app/login">Log in to pick your tournaments</a></p>
+
+    <p>Glad to have you here,<br>
+    – The CourtSideClub Team</p>
+    """
+
+    send_email(
+        to_email=user.email,
+        subject="Welcome to CourtSideClub 🎾 Here's what's next",
+        content_html=welcome_email_html
+    )
+
+    return f"Welcome email sent to {user.email}"
