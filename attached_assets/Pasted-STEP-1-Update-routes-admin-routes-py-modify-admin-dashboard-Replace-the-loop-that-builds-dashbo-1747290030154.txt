@@ -1,0 +1,55 @@
+STEP 1: Update routes/admin_routes.py – modify admin_dashboard()
+Replace the loop that builds dashboard_data with this:
+
+dashboard_data = []
+for t in tournaments:
+    registrations = db.session.query(UserTournament).filter_by(tournament_id=t.id).all()
+
+    session_counts = {}
+    for reg in registrations:
+        sessions = (reg.session_label or "").split(", ")
+        for session in sessions:
+            if session:
+                session_counts[session] = session_counts.get(session, 0) + 1
+
+    total_attending = len(registrations)
+    total_meetups = sum(1 for r in registrations if r.wants_to_meet)
+
+    dashboard_data.append({
+        "tournament": t,
+        "total_attending": total_attending,
+        "total_meetups": total_meetups,
+        "session_counts": session_counts
+    })
+📋 STEP 2: Update admin_dashboard.html
+Replace each dashboard card with:
+
+<div style="margin-bottom: 2em; padding: 1em; border: 1px solid #ccc; border-radius: 6px;">
+  <h3>{{ row.tournament.name }} ({{ row.tournament.start_date.strftime('%b %d') }})</h3>
+  <p><strong>👥 Total Attending:</strong> {{ row.total_attending }}</p>
+  <p><strong>🙋 Open to Meet-ups:</strong> {{ row.total_meetups }}</p>
+
+  <h4 style="margin-top: 1em;">📊 Session Attendance:</h4>
+  <ul>
+    {% for label, count in row.session_counts.items() %}
+      <li>{{ label }} – {{ count }} attendee{{ "s" if count > 1 else "" }}</li>
+    {% endfor %}
+  </ul>
+
+  <p>
+    <a href="{{ url_for('admin.view_attendees', tournament_slug=row.tournament.id) }}">View Attendees</a> |
+    <a href="{{ url_for('admin.export_lanyards') }}">Export Lanyards</a>
+  </p>
+
+  <form method="GET" action="{{ url_for('debug.send_reminder', user_id=current_user.id, tournament_slug=row.tournament.id) }}" style="display:inline;">
+    <button type="submit">📬 Test Reminder</button>
+  </form>
+
+  <form method="GET" action="{{ url_for('debug.send_welcome_email', user_id=current_user.id) }}" style="display:inline;">
+    <button type="submit">✉️ Test Welcome</button>
+  </form>
+</div>
+Then at the top of the page (before the loop), add:
+
+<h2>🎾 Admin Dashboard <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
+<hr style="margin-bottom: 2em;">
