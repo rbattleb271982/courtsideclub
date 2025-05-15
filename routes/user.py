@@ -12,11 +12,20 @@ user_bp = Blueprint('user', __name__)
 @user_bp.route('/home')
 @login_required
 def home():
-    # Get user data
-    user = User.query.get(current_user.id)
-    
-    # Get future tournaments (after today's date)
-    from datetime import datetime
+    try:
+        # Verify user is authenticated
+        if not current_user.is_authenticated:
+            flash("Please log in to view your profile", "warning")
+            return redirect(url_for('auth.login'))
+        
+        # Get user data with error handling
+        user = User.query.get(current_user.id)
+        if not user:
+            flash("User profile not found", "error")
+            return redirect(url_for('auth.login'))
+            
+        # Get future tournaments (after today's date)
+        from datetime import datetime
     today = datetime.now().date()
     
     # Get all attending tournaments using the new UserTournament model
