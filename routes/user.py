@@ -78,7 +78,7 @@ def home():
                 'meeting': meeting_count
             }
         
-        return render_template('home.html', 
+        return render_template('profile.html', 
                             user=user, 
                             upcoming_tournaments=current_tournaments,
                             past_tournaments=past_tournaments_attended,
