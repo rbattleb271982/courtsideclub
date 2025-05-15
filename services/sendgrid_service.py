@@ -27,8 +27,17 @@ def send_email(to_email, subject, content_html):
     )
     
     try:
+        # Get API key from environment
+        api_key = os.environ.get('SENDGRID_API_KEY')
+        
+        # Debug logging
+        if not api_key:
+            print("WARNING: SENDGRID_API_KEY environment variable is not set or empty")
+        else:
+            print(f"Using SendGrid API key: {api_key[:5]}...{api_key[-4:] if len(api_key) > 9 else ''}")
+        
         # Initialize SendGrid client with API key
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        sg = SendGridAPIClient(api_key)
         
         # Send the email
         response = sg.send(message)

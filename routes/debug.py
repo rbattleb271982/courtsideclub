@@ -146,17 +146,48 @@ def tournament_dates():
 def test_email(email=None):
     """Test sending an email via SendGrid"""
     from services.sendgrid_service import send_email
+    import os
     
     # Use provided email or default
     recipient_email = email if email else 'your_email@example.com'
     
+    # Get API key (for debugging purposes)
+    api_key = os.environ.get('SENDGRID_API_KEY')
+    api_key_status = "Not provided" if not api_key else f"Provided (length: {len(api_key)})"
+    
+    # Get FROM_EMAIL from config
+    from flask import current_app
+    from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
+    
+    # Send the email
     status_code = send_email(
         to_email=recipient_email,
         subject='CourtSideClub Test Email',
         content_html='<p>This is a test email from CourtSideClub 🎾</p>'
     )
     
+    # Prepare the result message
     if status_code:
-        return f"Test email sent to {recipient_email} with status code: {status_code}"
+        message = f"""
+        <h1>Email Test Successful</h1>
+        <p><strong>Status Code:</strong> {status_code}</p>
+        <p><strong>Sent to:</strong> {recipient_email}</p>
+        <p><strong>From:</strong> {from_email}</p>
+        <p><strong>API Key Status:</strong> {api_key_status}</p>
+        <p>Check your inbox for the test email!</p>
+        """
+        return message
     else:
-        return "Failed to send email. Check server logs for details."
+        message = f"""
+        <h1>Email Test Failed</h1>
+        <p><strong>Recipient:</strong> {recipient_email}</p>
+        <p><strong>From:</strong> {from_email}</p>
+        <p><strong>API Key Status:</strong> {api_key_status}</p>
+        <p>Please check the server logs for details. Errors are usually related to:</p>
+        <ul>
+            <li>Invalid API key</li>
+            <li>Unverified sender domain/email</li>
+            <li>SendGrid account restrictions</li>
+        </ul>
+        """
+        return message
