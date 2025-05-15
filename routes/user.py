@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Tournament, UserTournament
+from models import db, User, Tournament, UserTournament, past_tournaments
 from services.sendgrid_service import send_email
 import json
 import logging
@@ -36,7 +36,14 @@ def home():
         all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
 
         # Get user's past tournaments
-        past_tournaments_attended = user.attended_tournaments
+        # Query the past_tournaments table directly
+        past_tournaments_query = db.session.query(Tournament).join(
+            past_tournaments,
+            Tournament.id == past_tournaments.c.tournament_id
+        ).filter(
+            past_tournaments.c.user_id == user.id
+        ).all()
+        past_tournaments_attended = past_tournaments_query
 
         # Get current tournament list (not past)
         current_tournaments = [t for t in all_attending if t.end_date >= today]
@@ -163,7 +170,7 @@ def toggle_notifications():
     db.session.commit()
     status = "enabled" if current_user.notifications else "disabled"
     flash(f'Notifications {status}!', 'success')
-    return redirect(url_for('user.settings'))
+    return redirect(url_for('user.profile'))
 
 @user_bp.route('/change_password', methods=['POST','GET'])
 @login_required

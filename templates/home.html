@@ -79,7 +79,7 @@
                 <div class="mt-3">
                     {% set has_selected_sessions = false %}
                     {% for registration in user.tournament_registrations %}
-                        {% if registration.attending and registration.sessions %}
+                        {% if registration.attending and registration.session_label %}
                             {% set has_selected_sessions = true %}
                         {% endif %}
                     {% endfor %}
