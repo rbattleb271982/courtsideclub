@@ -8,7 +8,7 @@ deploymentTarget = "autoscale"
 run = ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 
 [workflows]
-runButton = "Flask Run"
+runButton = "Flask Dev"
 
 [[workflows.workflow]]
 name = "Project"
