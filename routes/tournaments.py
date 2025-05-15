@@ -68,7 +68,69 @@ def view_tournament(tournament_slug):
     tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
     if not tournament:
         return "Tournament not found", 404
-    return render_template('tournament_detail.html', tournament=tournament)
+
+    user_attending = False
+    selected_sessions = []
+    wants_to_meet = False
+
+    if current_user.is_authenticated:
+        user_tourney = db.session.query(UserTournament).filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
+        if user_tourney:
+            user_attending = True
+            selected_sessions = user_tourney.session_label.split(", ") if user_tourney.session_label else []
+            wants_to_meet = user_tourney.wants_to_meet
+
+    return render_template("tournament_detail.html", tournament=tournament,
+                           user_attending=user_attending,
+                           selected_sessions=selected_sessions,
+                           wants_to_meet=wants_to_meet)
+
+
+@tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
+@login_required
+def attend_tournament_new(tournament_slug):
+    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
+    if not tournament:
+        return "Tournament not found", 404
+
+    user_tourney = UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
+    if not user_tourney:
+        user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
+        db.session.add(user_tourney)
+
+    db.session.commit()
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+
+
+@tournaments_bp.route('/tournaments/<tournament_slug>/unattend', methods=['POST'])
+@login_required
+def unattend_tournament(tournament_slug):
+    UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament_slug).delete()
+    db.session.commit()
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+
+
+@tournaments_bp.route('/tournaments/<tournament_slug>/update', methods=['POST'])
+@login_required
+def update_sessions(tournament_slug):
+    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
+    if not tournament:
+        return "Tournament not found", 404
+
+    selected_sessions = request.form.getlist("sessions")
+    wants_to_meet = bool(request.form.get("wants_to_meet"))
+
+    # update UserTournament entry
+    user_tourney = db.session.query(UserTournament).filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
+    if not user_tourney:
+        user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
+        db.session.add(user_tourney)
+
+    user_tourney.session_label = ", ".join(selected_sessions)
+    user_tourney.wants_to_meet = wants_to_meet
+
+    db.session.commit()
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
 
 

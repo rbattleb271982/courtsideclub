@@ -69,19 +69,19 @@
                     <h3 class="card-title h5 mb-0">Your Tournament Attendance</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post">
-                        {% if user_attending %}
-                        <input type="hidden" name="remove" value="true">
+                    {% if user_attending %}
+                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.id) }}">
                         <button type="submit" class="btn btn-danger mb-3">
-                            <i data-feather="x-circle" class="icon-sm"></i> Cancel My Attendance
+                            <i data-feather="x-circle" class="icon-sm"></i> ❌ I'm no longer attending
                         </button>
-                        {% else %}
-                        <input type="hidden" name="attending" value="true">
-                        <button type="submit" class="btn btn-success mb-3">
-                            <i data-feather="check-circle" class="icon-sm"></i> I'm Attending This Tournament
-                        </button>
-                        {% endif %}
                     </form>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.id) }}">
+                        <button type="submit" class="btn btn-success mb-3">
+                            <i data-feather="check-circle" class="icon-sm"></i> ✅ I'm attending this tournament
+                        </button>
+                    </form>
+                    {% endif %}
 
                     <div class="alert alert-info small">
                         <i data-feather="info" class="icon-sm"></i> 
@@ -91,41 +91,15 @@
 
                     {% if user_attending %}
                     <!-- Sessions Selection Form -->
-                    <form action="{{ url_for('tournaments.attend_tournament', tournament_id=tournament.id) }}" method="post" class="mt-4">
+                    <form method="POST" action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.id) }}" class="mt-4">
                         <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
                         
                         <div class="session-grid">
-                            {% for day, sessions in days.items() %}
-                            <div class="day-card mb-3">
-                                <div class="day-card-header">
-                                    <h5 class="mb-0">{{ day }}</h5>
-                                    <div class="day-date text-muted small">{{ day_dates[day].strftime('%A, %b %d') }}</div>
-                                    
-                                    <div class="day-stats small mt-1">
-                                        <span class="mr-2" title="Fans attending this day">
-                                            🎾 {{ day_attendance[day]['attending'] }}
-                                        </span>
-                                        <span title="Fans open to meeting this day">
-                                            🤝 {{ day_attendance[day]['meeting'] }}
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <div class="day-card-body">
-                                    {% for session in sessions %}
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" name="sessions[{{ day }}][{{ session }}]" id="session-{{ day|replace(' ', '-') }}-{{ session }}" 
-                                            {% if day in user_tournament.dates and session in user_tournament.sessions %}checked{% endif %}>
-                                        <label class="form-check-label" for="session-{{ day|replace(' ', '-') }}-{{ session }}">
-                                            {{ session }} Session
-                                            <span class="text-muted ml-2 small">
-                                                (🎾 {{ day_attendance[day]['sessions'][session]['attending'] }} / 
-                                                🤝 {{ day_attendance[day]['sessions'][session]['meeting'] }})
-                                            </span>
-                                        </label>
-                                    </div>
-                                    {% endfor %}
-                                </div>
+                            {% for session in tournament.sessions %}
+                            <div class="form-check mb-2">
+                                <input type="checkbox" name="sessions" value="{{ session }}" 
+                                   {% if session in selected_sessions %}checked{% endif %}>
+                                <label>{{ session }}</label>
                             </div>
                             {% endfor %}
                         </div>
@@ -133,12 +107,11 @@
                         <div class="form-group mt-4">
                             <label class="font-weight-bold">Are you open to meeting other fans?</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="meeting_preference" id="meeting-yes" value="Yes" {% if user_raised_hand %}checked{% endif %}>
-                                <label class="form-check-label" for="meeting-yes">Yes, I'd like to meet other fans</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="meeting_preference" id="meeting-no" value="No" {% if not user_raised_hand %}checked{% endif %}>
-                                <label class="form-check-label" for="meeting-no">No, I prefer to keep to myself</label>
+                                <input class="form-check-input" type="checkbox" name="wants_to_meet" id="wants-to-meet" 
+                                   {% if wants_to_meet %}checked{% endif %}>
+                                <label class="form-check-label" for="wants-to-meet">
+                                    👋 I'm open to meeting up with other fans
+                                </label>
                             </div>
                         </div>
 

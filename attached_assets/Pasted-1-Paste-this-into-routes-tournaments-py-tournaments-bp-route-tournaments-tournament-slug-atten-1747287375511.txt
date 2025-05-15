@@ -1,0 +1,95 @@
+1. Paste this into routes/tournaments.py
+@tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
+@login_required
+def attend_tournament(tournament_slug):
+    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
+    if not tournament:
+        return "Tournament not found", 404
+
+    user_tourney = UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
+    if not user_tourney:
+        user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
+        db.session.add(user_tourney)
+
+    db.session.commit()
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+
+
+@tournaments_bp.route('/tournaments/<tournament_slug>/unattend', methods=['POST'])
+@login_required
+def unattend_tournament(tournament_slug):
+    UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament_slug).delete()
+    db.session.commit()
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+
+
+@tournaments_bp.route('/tournaments/<tournament_slug>/update', methods=['POST'])
+@login_required
+def update_sessions(tournament_slug):
+    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
+    if not tournament:
+        return "Tournament not found", 404
+
+    selected_sessions = request.form.getlist("sessions")
+    wants_to_meet = bool(request.form.get("wants_to_meet"))
+
+    # update UserTournament entry
+    user_tourney = db.session.query(UserTournament).filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
+    if not user_tourney:
+        user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
+        db.session.add(user_tourney)
+
+    user_tourney.session_label = ", ".join(selected_sessions)
+    user_tourney.wants_to_meet = wants_to_meet
+
+    db.session.commit()
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+✅ 2. Paste this into tournament_detail.html where you show user actions:
+{% if user_attending %}
+  <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.id) }}">
+    <button type="submit">❌ I’m no longer attending</button>
+  </form>
+
+  <h3>Update your sessions:</h3>
+  <form method="POST" action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.id) }}">
+    {% for session in tournament.sessions %}
+      <label>
+        <input type="checkbox" name="sessions" value="{{ session }}" {% if session in selected_sessions %}checked{% endif %}>
+        {{ session }}
+      </label><br>
+    {% endfor %}
+
+    <label>
+      <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
+      👋 I’m open to meeting up with other fans
+    </label><br><br>
+
+    <button type="submit">Update my sessions</button>
+  </form>
+{% else %}
+  <form method="POST" action="{{ url_for('tournaments.attend_tournament', tournament_slug=tournament.id) }}">
+    <button type="submit">✅ I’m attending this tournament</button>
+  </form>
+{% endif %}
+✅ 3. Make sure you pass this context to the template in view_tournament:
+@tournaments_bp.route('/tournaments/<tournament_slug>')
+def view_tournament(tournament_slug):
+    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
+    if not tournament:
+        return "Tournament not found", 404
+
+    user_attending = False
+    selected_sessions = []
+    wants_to_meet = False
+
+    if current_user.is_authenticated:
+        user_tourney = db.session.query(UserTournament).filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
+        if user_tourney:
+            user_attending = True
+            selected_sessions = user_tourney.session_label.split(", ") if user_tourney.session_label else []
+            wants_to_meet = user_tourney.wants_to_meet
+
+    return render_template("tournament_detail.html", tournament=tournament,
+                           user_attending=user_attending,
+                           selected_sessions=selected_sessions,
+                           wants_to_meet=wants_to_meet)

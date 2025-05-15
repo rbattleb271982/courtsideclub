@@ -125,11 +125,17 @@ class UserTournament(db.Model):
     dates = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     
+    # Session label for simpler display (added for new implementation)
+    session_label = db.Column(db.String(255))
+    
     # Whether the user is actually attending this tournament
     attending = db.Column(db.Boolean, default=False)
     
-    # Whether the user is open to meeting
+    # Whether the user is open to meeting (original field)
     open_to_meet = db.Column(db.Boolean, default=True)
+    
+    # Additional field for the new implementation
+    wants_to_meet = db.Column(db.Boolean, default=True)
     
     # When the user registered
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
