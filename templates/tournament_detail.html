@@ -29,7 +29,7 @@
                 <div class="tournament-description">{{ tournament.about }}</div>
             </div>
             {% endif %}
-            
+
             {% if tournament.draw_url or tournament.schedule_url %}
             <div class="tournament-links">
                 <h4 class="h6">Tournament Links</h4>
@@ -41,7 +41,7 @@
                         </a>
                     </li>
                     {% endif %}
-                    
+
                     {% if tournament.schedule_url %}
                     <li>
                         <a href="{{ tournament.schedule_url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
@@ -93,7 +93,7 @@
                     <!-- Sessions Selection Form -->
                     <form method="POST" action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.id) }}" class="mt-4">
                         <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
-                        
+
                         <div class="session-grid">
                             {% for session in tournament.sessions %}
                             <div class="form-check mb-2">
@@ -119,7 +119,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i data-feather="save" class="icon-sm"></i> Save My Preferences
                             </button>
-                            
+
                             {% if not current_user.lanyard_ordered %}
                             <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-outline-success ml-2">
                                 <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard

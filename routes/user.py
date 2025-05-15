@@ -35,13 +35,8 @@ def home():
         # Get all attending tournaments
         all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
 
-        # Get all the user's past tournaments from relationship
-        past_tournaments_from_rel = user.attended_tournaments
-        
-        # Get past tournament IDs
-        past_tournament_ids = [t.id for t in past_tournaments_from_rel]
-
-        past_tournaments_attended = Tournament.query.filter(Tournament.id.in_(past_tournament_ids)).all() if past_tournament_ids else []
+        # Get user's past tournaments
+        past_tournaments_attended = user.attended_tournaments
 
         # Get current tournament list (not past)
         current_tournaments = [t for t in all_attending if t.end_date >= today]
