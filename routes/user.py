@@ -271,9 +271,6 @@ def order_lanyard():
         flash("You need to select at least one tournament session and raise your hand before ordering your lanyard.")
         return redirect(url_for('user.profile'))
 
-    # For backward compatibility, also check the legacy raised_hand JSON field
-    legacy_check = False
-
     if request.method == 'POST':
         # Get form data
         name = request.form.get('name')
