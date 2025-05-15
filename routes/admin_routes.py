@@ -15,14 +15,23 @@ def admin_dashboard():
     dashboard_data = []
     
     for t in tournaments:
-        registrations = UserTournament.query.filter_by(tournament_id=t.id).all()
-        total_attending = sum(1 for r in registrations if r.attending)
+        registrations = db.session.query(UserTournament).filter_by(tournament_id=t.id).all()
+
+        session_counts = {}
+        for reg in registrations:
+            sessions = (reg.session_label or "").split(", ")
+            for session in sessions:
+                if session:
+                    session_counts[session] = session_counts.get(session, 0) + 1
+
+        total_attending = len(registrations)
         total_meetups = sum(1 for r in registrations if r.wants_to_meet)
-        
+
         dashboard_data.append({
             "tournament": t,
             "total_attending": total_attending,
-            "total_meetups": total_meetups
+            "total_meetups": total_meetups,
+            "session_counts": session_counts
         })
 
     return render_template("admin_dashboard.html", dashboard_data=dashboard_data)
