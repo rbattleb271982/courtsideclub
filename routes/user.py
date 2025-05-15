@@ -262,14 +262,15 @@ def order_lanyard():
     if user.lanyard_ordered:
         return render_template('order_lanyard.html', lanyard_ordered=True, states=sorted(STATE_ABBRS))
     
-    # Check if user has selected and saved sessions for any tournament
-    valid_attendance = UserTournament.query.filter_by(
-        user_id=current_user.id, 
-        attending=True
-    ).filter(UserTournament.sessions.cast(db.String) != '[]').first()
+    # Check if user has selected at least one session + opted in
+    opted_in = db.session.query(UserTournament).filter_by(
+        user_id=current_user.id,
+        wants_to_meet=True
+    ).count() > 0
 
-    if not valid_attendance:
-        return render_template('order_lanyard.html', no_sessions=True)
+    if not opted_in:
+        flash("You need to select at least one tournament session and raise your hand before ordering your lanyard.")
+        return redirect(url_for('user.profile'))
     
     # For backward compatibility, also check the legacy raised_hand JSON field
     legacy_check = False
