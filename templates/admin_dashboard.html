@@ -15,11 +15,19 @@
       <p><strong>🙋 Open to Meet-ups:</strong> {{ row.total_meetups }}</p>
 
       <h4 style="margin-top: 1em;">📊 Session Attendance:</h4>
-      <ul>
+      <div class="session-list" style="background: #f8f9fa; padding: 0.8em; border-radius: 4px; margin-top: 0.5em;">
         {% for label, count in row.session_counts.items() %}
-          <li>{{ label }} – {{ count }} attendee{{ "s" if count > 1 else "" }}</li>
+          <div style="margin: 0.3em 0;">
+            <span class="session-name" style="color: #495057;">{{ label }}</span>
+            <span class="badge bg-success" style="float: right; background: #28a745; color: white; padding: 0.3em 0.6em; border-radius: 12px;">
+              {{ count }} attendee{{ "s" if count > 1 else "" }}
+            </span>
+          </div>
         {% endfor %}
-      </ul>
+        {% if not row.session_counts %}
+          <div style="color: #6c757d; font-style: italic;">No sessions selected yet</div>
+        {% endif %}
+      </div>
 
       <p>
         <a href="{{ url_for('admin.view_attendees', tournament_slug=row.tournament.slug) }}" class="btn btn-sm btn-outline-primary">View Attendees</a>
