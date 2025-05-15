@@ -1,0 +1,75 @@
+STEP 1: Update routes/user.py (profile route)
+Replace the current /profile route with this:
+
+@user_bp.route('/profile')
+@login_required
+def profile():
+    return render_template("profile.html", user=current_user)
+We remove all legacy logic (attending, raised_hand, etc.).
+
+📋 STEP 2: Replace templates/profile.html with this:
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>👤 Profile</h2>
+
+<p><strong>Name:</strong> {{ user.name or user.first_name }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+
+<hr>
+
+<h3>🎾 Your Activity</h3>
+<p><a href="{{ url_for('user.my_tournaments') }}">View My Tournaments</a></p>
+
+{% if user.lanyard_ordered %}
+  <p>🎁 You’ve already ordered your free lanyard.</p>
+{% else %}
+  <p>🧢 Haven’t claimed your lanyard yet? <a href="{{ url_for('user.order_lanyard') }}">Order now</a></p>
+{% endif %}
+
+<hr>
+
+<h3>⚙️ Settings</h3>
+<form method="POST" action="{{ url_for('user.toggle_notifications') }}">
+  <label>
+    <input type="checkbox" name="notifications" {% if user.notifications %}checked{% endif %} onchange="this.form.submit()">
+    Receive email updates and reminders
+  </label>
+</form>
+
+<p><a href="{{ url_for('user.change_password') }}">🔐 Change Password</a></p>
+
+{% endblock %}
+📋 STEP 3: Verify these routes exist in routes/user.py:
+@user_bp.route('/notifications/toggle', methods=['POST'])
+@login_required
+def toggle_notifications():
+    current_user.notifications = not current_user.notifications
+    db.session.commit()
+    return redirect(url_for('user.profile'))
+
+@user_bp.route('/password/change')
+@login_required
+def change_password():
+    return render_template("change_password.html")
+If you don’t have change_password.html, I can generate that too.
+
+🧪 REPLIT AGENT INSTRUCTION:
+Hi Replit — I just updated the /profile route and template to:
+
+Remove all legacy attendance fields
+Show current user info: name, email
+Show lanyard status with a link to order
+Link to /my-tournaments
+Toggle email notifications
+Link to change password
+Please:
+
+Log in as a regular user (not admin)
+Visit /profile and confirm:
+Name/email show correctly
+Lanyard status matches lanyard_ordered
+Notification checkbox toggles the value
+“View My Tournaments” link works
+Confirm there are no leftover references to attending, raised_hand, or past_tournaments_json
+👉 Do not mark complete until the full /profile experience works with no errors, and only current features are shown.
