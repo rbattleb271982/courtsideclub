@@ -26,63 +26,69 @@ def home():
             
         # Get future tournaments (after today's date)
         from datetime import datetime
-    today = datetime.now().date()
-    
-    # Get all attending tournaments using the new UserTournament model
-    user_tournaments = UserTournament.query.filter_by(user_id=user.id).all()
-    attending_ids = [ut.tournament_id for ut in user_tournaments]
-    
-    # Also include tournaments from legacy JSON field for backward compatibility during migration
-    if user.attending:
-        for tournament_id in user.attending.keys():
-            if tournament_id not in attending_ids:
-                attending_ids.append(tournament_id)
-    
-    # Get all attending tournaments
-    all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
-    
-    # Get all the user's past tournaments
-    # Combine data from both the relationship and the legacy JSON field
-    past_tournaments_from_rel = user.attended_tournaments
-    past_tournament_ids_legacy = user.past_tournaments_json if hasattr(user, 'past_tournaments_json') else []
-    
-    # Combine past tournament IDs
-    past_tournament_ids = [t.id for t in past_tournaments_from_rel]
-    for t_id in past_tournament_ids_legacy:
-        if t_id not in past_tournament_ids:
-            past_tournament_ids.append(t_id)
-    
-    past_tournaments_attended = Tournament.query.filter(Tournament.id.in_(past_tournament_ids)).all() if past_tournament_ids else []
-    
-    # Get current tournament list (not past)
-    current_tournaments = [t for t in all_attending if t.end_date >= today]
-    
-    # Calculate attendance counts for each tournament using new model
-    attendance_counts = {}
-    for tournament in current_tournaments:
-        # Count users attending this tournament - only count those marked with attending=True
-        attending_count = UserTournament.query.filter_by(
-            tournament_id=tournament.id,
-            attending=True
-        ).count()
+        today = datetime.now().date()
         
-        # Count users open to meeting at this tournament - only those attending and open to meet
-        meeting_count = UserTournament.query.filter_by(
-            tournament_id=tournament.id,
-            attending=True,
-            open_to_meet=True
-        ).count()
+        # Get all attending tournaments using the new UserTournament model
+        user_tournaments = UserTournament.query.filter_by(user_id=user.id).all()
+        attending_ids = [ut.tournament_id for ut in user_tournaments]
         
-        attendance_counts[tournament.id] = {
-            'attending': attending_count,
-            'meeting': meeting_count
-        }
-    
-    return render_template('home.html', 
-                          user=user, 
-                          upcoming_tournaments=current_tournaments,
-                          past_tournaments=past_tournaments_attended,
-                          attendance_counts=attendance_counts)
+        # Also include tournaments from legacy JSON field for backward compatibility during migration
+        if user.attending:
+            for tournament_id in user.attending.keys():
+                if tournament_id not in attending_ids:
+                    attending_ids.append(tournament_id)
+        
+        # Get all attending tournaments
+        all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
+        
+        # Get all the user's past tournaments
+        # Combine data from both the relationship and the legacy JSON field
+        past_tournaments_from_rel = user.attended_tournaments
+        past_tournament_ids_legacy = user.past_tournaments_json if hasattr(user, 'past_tournaments_json') else []
+        
+        # Combine past tournament IDs
+        past_tournament_ids = [t.id for t in past_tournaments_from_rel]
+        for t_id in past_tournament_ids_legacy:
+            if t_id not in past_tournament_ids:
+                past_tournament_ids.append(t_id)
+        
+        past_tournaments_attended = Tournament.query.filter(Tournament.id.in_(past_tournament_ids)).all() if past_tournament_ids else []
+        
+        # Get current tournament list (not past)
+        current_tournaments = [t for t in all_attending if t.end_date >= today]
+        
+        # Calculate attendance counts for each tournament using new model
+        attendance_counts = {}
+        for tournament in current_tournaments:
+            # Count users attending this tournament - only count those marked with attending=True
+            attending_count = UserTournament.query.filter_by(
+                tournament_id=tournament.id,
+                attending=True
+            ).count()
+            
+            # Count users open to meeting at this tournament - only those attending and open to meet
+            meeting_count = UserTournament.query.filter_by(
+                tournament_id=tournament.id,
+                attending=True,
+                open_to_meet=True
+            ).count()
+            
+            attendance_counts[tournament.id] = {
+                'attending': attending_count,
+                'meeting': meeting_count
+            }
+        
+        return render_template('home.html', 
+                            user=user, 
+                            upcoming_tournaments=current_tournaments,
+                            past_tournaments=past_tournaments_attended,
+                            attendance_counts=attendance_counts)
+                            
+    except Exception as e:
+        # Add error handling to capture any other issues
+        logging.error(f"Error in home route: {str(e)}")
+        flash("An error occurred while loading your profile", "danger")
+        return redirect(url_for('auth.login'))
 
 # Keep the profile route for backward compatibility, redirecting to home
 @user_bp.route('/profile')
