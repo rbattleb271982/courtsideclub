@@ -16,7 +16,7 @@ def send_email(to_email, subject, content_html):
         int or None: Status code if email was sent successfully, None otherwise
     """
     # Use a verified Gmail address for SendGrid
-    from_email = 'your_verified_email@gmail.com'  # Replace with my actual verified Gmail
+    from_email = 'richardbattlebaxter@gmail.com'  # Using your verified Gmail
 
     # Create the email message
     message = Mail(
