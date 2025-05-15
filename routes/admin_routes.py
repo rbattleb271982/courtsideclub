@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
-from models import db, Tournament, UserTournament, User
+from models import db, Tournament, UserTournament, User, Event
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -85,11 +85,21 @@ def edit_tournament(tournament_id):
         return redirect(url_for("admin.edit_tournament", tournament_id=tournament.id))
 
     return render_template("admin_edit_tournament.html", tournament=tournament)
+@admin_bp.route('/events')
+@login_required
+def view_events():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.homepage"))
+        
+    events = Event.query.order_by(Event.timestamp.desc()).limit(100).all()
+    return render_template("admin_events.html", events=events)
+
 import csv
 from io import StringIO
 from flask import Response
 
-@admin_bp.route('/admin/export-lanyards')
+@admin_bp.route('/export-lanyards')
 @login_required
 def export_lanyards():
     if not current_user.is_admin:

@@ -92,6 +92,7 @@ def profile():
 def update_profile():
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
+    location = request.form.get('location')
     notifications = 'notifications' in request.form
 
     # Update user in database
@@ -100,6 +101,12 @@ def update_profile():
         user.first_name = first_name
     if last_name:
         user.last_name = last_name
+    
+    # Track if location was updated
+    location_changed = False
+    if location is not None and location != user.location:
+        user.location = location
+        location_changed = True
 
     # Also update the name field for backward compatibility
     if first_name and last_name:
@@ -107,6 +114,14 @@ def update_profile():
 
     user.notifications = notifications
     db.session.commit()
+
+    # Log the profile update event
+    from services.event_logger import log_event
+    event_data = {}
+    if location_changed:
+        event_data['location_updated'] = True
+        event_data['new_location'] = location
+    log_event(current_user.id, 'profile_updated', event_data)
 
     # Clear temporary password after profile update (if exists)
     if 'temp_password' in session:

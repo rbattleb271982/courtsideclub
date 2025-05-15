@@ -1,0 +1,81 @@
+# === models/event.py ===
+
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
+from datetime import datetime
+from app import db
+
+class Event(db.Model):
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    name = Column(String(100), nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    metadata = Column(JSON)
+
+    def __repr__(self):
+        return f"<Event {self.name} by User {self.user_id}>"
+
+# === models/__init__.py ===
+# (Just add this import line)
+from .event import Event
+
+# === services/event_logger.py ===
+
+from models import Event
+from app import db
+
+def log_event(user_id, event_name, metadata=None):
+    event = Event(user_id=user_id, name=event_name, metadata=metadata or {})
+    db.session.add(event)
+    db.session.commit()
+
+# === routes/user.py ===
+# Example usage after user updates location
+
+from flask import request, redirect, url_for, flash
+from flask_login import login_required, current_user
+from app import app, db
+from services.event_logger import log_event
+
+@app.route('/update-location', methods=['POST'])
+@login_required
+def update_location():
+    new_location = request.form['location']
+    current_user.location = new_location
+    db.session.commit()
+    log_event(current_user.id, 'location_updated', {'new_location': new_location})
+    flash("Location updated")
+    return redirect(url_for('user.profile'))
+
+# === routes/admin.py ===
+# View recent events (admin only)
+
+from flask import render_template, abort
+from models import Event
+
+@app.route('/admin/events')
+@login_required
+def view_events():
+    if not current_user.is_admin:
+        abort(403)
+    events = Event.query.order_by(Event.timestamp.desc()).limit(100).all()
+    return render_template('admin/view_events.html', events=events)
+
+# === templates/admin/view_events.html ===
+# (Create this file if not already present)
+
+'''
+<h2>Recent Events</h2>
+<ul>
+  {% for event in events %}
+    <li>{{ event.timestamp }} — <strong>{{ event.name }}</strong> — User ID: {{ event.user_id }} — {{ event.metadata }}</li>
+  {% endfor %}
+</ul>
+'''
+
+# === After code is in place, run these in the Shell tab ===
+
+# ONLY RUN THIS PART IN THE REPLIT SHELL (not in a file):
+'''
+flask db migrate -m "add event tracking"
+flask db upgrade
+'''

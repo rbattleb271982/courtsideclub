@@ -66,6 +66,7 @@ class User(UserMixin, db.Model):
                                            back_populates='user',
                                            cascade="all, delete-orphan")
     
+    location = db.Column(db.String(100))
     lanyard_ordered = db.Column(db.Boolean, default=False)
     notifications = db.Column(db.Boolean, default=True)
     welcome_seen = db.Column(db.Boolean, default=False)
@@ -161,6 +162,21 @@ class ShippingAddress(db.Model):
     
     def __repr__(self):
         return f'<ShippingAddress user_id={self.user_id}>'
+
+class Event(db.Model):
+    __tablename__ = 'events'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    event_data = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
+    
+    # Relationship to user
+    user = relationship('User', backref=backref('events', cascade="all, delete-orphan"))
+    
+    def __repr__(self):
+        return f"<Event {self.name} by User {self.user_id}>"
 
 def load_user(user_id):
     return User.query.get(int(user_id))
