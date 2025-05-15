@@ -201,30 +201,36 @@ def send_welcome_email(user_id):
     # Get user's name or use a default greeting
     user_name = user.first_name if hasattr(user, 'first_name') and user.first_name else "Tennis Fan"
 
+    upcoming_tournaments = [
+        {"name": "Rome Masters", "date": "May 20"},
+        {"name": "Roland-Garros", "date": "May 26"},
+        {"name": "Queen's Club", "date": "June 17"}
+    ]
+
+    tournament_lines = "".join([
+        f"<li>🎾 {t['name']} – {t['date']}</li>" for t in upcoming_tournaments
+    ])
+    tournament_html = f"<ul>{tournament_lines}</ul>"
+
     welcome_email_html = f"""
     <p>Hi {user_name},</p>
 
-    <p>Welcome to <strong>CourtSideClub</strong> - the home for tennis fans who want to do more than just watch.</p>
+    <p>Welcome to <strong>CourtSideClub</strong> – the community for tennis fans who want more than just a seat in the stands.</p>
 
-    <p>Here's what you can do inside:</p>
+    <p>Here's what you can do starting today:</p>
     <ul>
-      <li>🎾 Select which tournaments you're attending</li>
-      <li>📅 See who else is going</li>
-      <li>👋 Raise your hand to meet other fans</li>
-      <li>📬 Get your free lanyard to signal you're open to connecting</li>
+      <li>📍 Choose the tournaments you're attending</li>
+      <li>🤝 Raise your hand to meet other fans</li>
+      <li>🧢 Get your free lanyard to help you connect in person</li>
     </ul>
 
-    <p>Coming up soon:</p>
-    <ul>
-      <li>🗓 Rome Masters - May 20</li>
-      <li>🗓 Roland-Garros - May 26</li>
-      <li>🗓 Queen\'s Club - June 17</li>
-    </ul>
+    <p>Some of the biggest tournaments coming up:</p>
+    {tournament_html}
 
-    <p>-&gt; <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to pick your tournaments</a></p>
+    <p>Ready to dive in? <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to pick your tournaments</a> and join the community.</p>
 
-    <p>Glad to have you here,<br>
-    - The CourtSideClub Team</p>
+    <p>Thanks for joining CourtSideClub — we're excited to have you with us!<br>
+    – The CourtSideClub Team</p>
     """
 
     send_email(
