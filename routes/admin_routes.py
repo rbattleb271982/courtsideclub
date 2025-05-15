@@ -95,6 +95,17 @@ def view_events():
     events = Event.query.order_by(Event.timestamp.desc()).limit(100).all()
     return render_template("admin_events.html", events=events)
 
+@admin_bp.route('/event-types')
+@login_required
+def view_event_types():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.homepage"))
+        
+    event_names = db.session.query(Event.name).distinct().all()
+    event_names = sorted([name[0] for name in event_names])
+    return render_template("admin_event_types.html", event_names=event_names)
+
 import csv
 from io import StringIO
 from flask import Response

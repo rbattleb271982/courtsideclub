@@ -1,0 +1,25 @@
+
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Tracked Event Types</h2>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <ul class="list-group">
+                {% for name in event_names %}
+                    <li class="list-group-item">{{ name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <a href="{{ url_for('admin.view_events') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> View Recent Events
+        </a>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
