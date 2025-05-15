@@ -21,7 +21,7 @@ def system_info():
         # Check database connection and count users
         user_count = User.query.count()
         tournament_count = Tournament.query.count()
-        
+
         # Database URL (with password hidden)
         db_url = os.environ.get('DATABASE_URL', '')
         if '://' in db_url:
@@ -38,7 +38,7 @@ def system_info():
                 masked_url = db_url
         else:
             masked_url = "Not in standard format"
-        
+
         # Check database columns
         columns_info = {}
         try:
@@ -51,7 +51,7 @@ def system_info():
                 columns_info['users'] = [row[0] for row in result]
         except Exception as e:
             columns_info['error'] = str(e)
-        
+
         return jsonify({
             'status': 'ok',
             'database': {
@@ -83,7 +83,7 @@ def test_user_creation():
         import string
         random_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         test_email = f"test_{random_str}@example.com"
-        
+
         # Create a new test user
         test_user = User(
             email=test_email,
@@ -97,11 +97,11 @@ def test_user_creation():
             lanyard_ordered=False,
             notifications=True
         )
-        
+
         # Save to database
         db.session.add(test_user)
         db.session.commit()
-        
+
         return jsonify({
             'status': 'success',
             'message': f'Created test user with email {test_email}',
@@ -122,12 +122,12 @@ def error_simulation():
     try:
         # Intentionally cause a database error
         error_type = "database"
-        
+
         if error_type == "database":
             # Try to access a non-existent table
             result = db.session.execute("SELECT * FROM non_existent_table")
             return jsonify({'result': [dict(row) for row in result]})
-        
+
         return jsonify({'message': 'No error simulation selected'})
     except Exception as e:
         logger.error(f"Simulated error: {str(e)}", exc_info=True)
@@ -148,25 +148,25 @@ def test_email(email=None):
     """Test sending an email via SendGrid"""
     from services.sendgrid_service import send_email
     import os
-    
+
     # Use provided email or default
     recipient_email = email if email else 'your_email@example.com'
-    
+
     # Get API key (for debugging purposes)
     api_key = os.environ.get('SENDGRID_API_KEY')
     api_key_status = "Not provided" if not api_key else f"Provided (length: {len(api_key)})"
-    
+
     # Get FROM_EMAIL from config
     from flask import current_app
     from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
-    
+
     # Send the email
     status_code = send_email(
         to_email=recipient_email,
         subject='CourtSideClub Test Email',
         content_html='<p>This is a test email from CourtSideClub 🎾</p>'
     )
-    
+
     # Prepare the result message
     if status_code:
         message = f"""
@@ -200,7 +200,7 @@ def send_welcome_email(user_id):
 
     # Get user's name or use a default greeting
     user_name = user.first_name if hasattr(user, 'first_name') and user.first_name else "Tennis Fan"
-    
+
     welcome_email_html = f"""
     <p>Hi {user_name},</p>
 
@@ -248,40 +248,41 @@ def send_reminder(user_id, tournament_slug):
     # Check if the user has a lanyard ordered
     has_lanyard = user.lanyard_ordered if hasattr(user, 'lanyard_ordered') else False
 
-    # Get sessions user selected (if stored in UserTournament model)
+    # Get sessions user selected and meeting status
     user_tourney = db.session.query(UserTournament).filter_by(user_id=user.id, tournament_id=tournament.id).first()
-    
-    # Initialize session info
-    session_info = "your session"
-    
-    # Try to get formatted session information from the user's tournament registration
-    if user_tourney:
-        if hasattr(user_tourney, 'session_label'):
-            session_info = user_tourney.session_label
-        elif hasattr(user_tourney, 'sessions') and user_tourney.sessions:
-            # Format sessions in a readable way
-            session_info = f"sessions: {', '.join(user_tourney.sessions)}" if user_tourney.sessions else "your session"
+    session_label = user_tourney.session_label if user_tourney and hasattr(user_tourney, 'session_label') else "your session"
 
-    # Build the email body
-    lanyard_message = (
-        "<p>🎉 Your lanyard is on its way - you'll be ready to meet other fans courtside!</p>"
-        if has_lanyard else
-        '<p>🧢 Don\'t forget - your free lanyard is still waiting. <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to claim yours</a> so it arrives before the tournament!</p>'
+    # Determine meeting message based on user's preferences
+    open_to_meet = user_tourney and user_tourney.open_to_meet
+    meetup_msg = (
+        "<p>👋 Great news — you're set to meet other fans at the tournament! We'll send you final details about meeting spots soon.</p>"
+        if open_to_meet else
+        "<p>Want to meet other fans? <a href=\"https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login\">Update your preferences</a> to join the meetup.</p>"
     )
 
-    # Get user's name or use a default greeting
-    user_name = user.first_name if hasattr(user, 'first_name') and user.first_name else "Tennis Fan"
-    
+    # Build lanyard message
+    lanyard_msg = (
+        "<p>🎉 Your lanyard is on its way — you'll be ready to meet other fans courtside!</p>"
+        if has_lanyard else
+        '<p>🧢 Don\'t forget — your free lanyard is still waiting. <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to claim yours</a> so it arrives before the tournament!</p>'
+    )
+
     reminder_html = f"""
-    <p>Hi {user_name},</p>
+    <p>Hi {user.first_name},</p>
 
-    <p>Your tournament is coming up! 🎾</p>
+    <p>Thanks for being part of CourtSideClub — we're glad to have you. Your next tournament is coming up, and we want to make sure you're ready.</p>
 
-    <p><strong>{tournament.name}</strong> starts soon, and you're signed up for {session_info}.</p>
+    <p>🎾 You're just two weeks away from <strong>{tournament.name}</strong>.</p>
 
-    {lanyard_message}
+    <p>You're registered for <strong>{session_label}</strong>, and the tournament kicks off on <strong>{tournament.start_date.strftime('%B %d')}</strong>.</p>
 
-    <p>We can't wait to see you there.<br>
+    {meetup_msg}
+
+    {lanyard_msg}
+
+    <p>Need to make a change? You can <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">log into your account</a> anytime to update your session.</p>
+
+    <p>See you courtside,<br>
     – The CourtSideClub Team</p>
     """
 
