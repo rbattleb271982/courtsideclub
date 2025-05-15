@@ -36,6 +36,10 @@ def faqs():
 def about():
     return render_template('public/about.html')
 
+@main_bp.route('/faqs')
+def faqs():
+    return render_template('public/faqs.html')
+
 @main_bp.route('/blog')
 def blog():
     return render_template('public/blog.html')
