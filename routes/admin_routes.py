@@ -110,67 +110,12 @@ import csv
 from io import StringIO
 from flask import Response
 
+from flask import Response
+from io import StringIO
+import csv
+
 @admin_bp.route('/export-lanyards')
 @login_required
-def export_lanyards():
-    if not current_user.is_admin:
-        return "Access denied", 403
-
-    from models import User, UserTournament, Tournament, ShippingAddress
-
-    # Join with ShippingAddress to get shipping details
-    user_data = (
-        db.session.query(User, UserTournament, Tournament, ShippingAddress)
-        .join(UserTournament, User.id == UserTournament.user_id)
-        .join(Tournament, Tournament.id == UserTournament.tournament_id)
-        .join(ShippingAddress, User.id == ShippingAddress.user_id, isouter=True)
-        .filter(User.lanyard_ordered == True)
-        .order_by(Tournament.start_date)
-        .all()
-    )
-
-    # Generate CSV
-    csv_buffer = StringIO()
-    writer = csv.writer(csv_buffer)
-    writer.writerow([
-        "User Name", "Email", "Tournament", "Session", "Tournament City", "Tournament Country", "Start Date", 
-        "Shipping Name", "Address Line 1", "Address Line 2", "City", "State", "Zip/Postal Code", "Country"
-    ])
-
-    for user, ut, tournament, address in user_data:
-        shipping_name = address.name if address else ""
-        address1 = address.address1 if address else ""
-        address2 = address.address2 if address else ""
-        city = address.city if address else ""
-        state = address.state if address else ""
-        zip_code = address.zip_code if address else ""
-        country = address.country if address else ""
-        
-        writer.writerow([
-            user.name or f"{user.first_name} {user.last_name}",
-            user.email,
-            tournament.name,
-            ut.session_label or "—",
-            tournament.city,
-            tournament.country,
-            tournament.start_date.strftime("%Y-%m-%d"),
-            shipping_name,
-            address1,
-            address2,
-            city,
-            state,
-            zip_code,
-            country
-        ])
-
-    return Response(
-        csv_buffer.getvalue(),
-        mimetype="text/csv",
-        headers={"Content-Disposition": "attachment;filename=lanyard_orders.csv"}
-    )
-
-@admin_bp.route('/export-lanyards')
-@login_required 
 def export_lanyards():
     if not current_user.is_admin:
         flash("Access denied.", "danger")

@@ -101,7 +101,7 @@ def update_profile():
         user.first_name = first_name
     if last_name:
         user.last_name = last_name
-    
+
     # Track if location was updated
     location_changed = False
     if location is not None and location != user.location:
@@ -253,77 +253,39 @@ def order_lanyard():
         "WI", "WV", "WY"
     ]
 
-    user = User.query.get(current_user.id)
-
-    if user.lanyard_ordered:
-        return render_template('order_lanyard.html', lanyard_ordered=True, states=sorted(STATE_ABBRS))
-
-    # Check if user has selected at least one session + opted in
-    opted_in = db.session.query(UserTournament).filter_by(
+    # ✅ Only allow access if user has selected at least one session
+    has_session = db.session.query(UserTournament).filter_by(
         user_id=current_user.id,
-        wants_to_meet=True
+        attending=True
     ).count() > 0
 
-    # For testing purposes, we'll allow all users to order lanyards
-    if False and not opted_in:
-        flash("You need to select at least one tournament session and be open to meeting before ordering your lanyard.")
+    if not has_session:
+        flash("You must select at least one tournament session before ordering a lanyard.")
         return redirect(url_for('user.profile'))
 
     if request.method == 'POST':
-        # Get form data
-        name = request.form.get('name')
-        address1 = request.form.get('address1')
-        address2 = request.form.get('address2', '')
-        city = request.form.get('city')
-        state = request.form.get('state')
-        zip_code = request.form.get('zip')
-        country = request.form.get('country')
-
-        # Form validation
-        if not all([name, address1, city, zip_code, country]):
-            flash('Please fill out all required fields.', 'danger')
-            return render_template('order_lanyard.html', lanyard_ordered=False, states=sorted(STATE_ABBRS))
-
-        # Store shipping address
-        shipping_address = ShippingAddress(
-            user_id=user.id,
-            name=name,
-            address1=address1,
-            address2=address2,
-            city=city,
-            state=state,
-            zip_code=zip_code,
-            country=country
+        # Handle lanyard form submission
+        address = ShippingAddress(
+            user_id=current_user.id,
+            name=request.form['name'],
+            address1=request.form['address1'],
+            address2=request.form.get('address2', ''),
+            city=request.form['city'],
+            state=request.form['state'],
+            zip_code=request.form['zip_code'],
+            country=request.form['country']
         )
-        
-        # Update user in database to mark lanyard as ordered
-        user.lanyard_ordered = True
-        db.session.add(shipping_address)
+
+        # Update user lanyard_ordered status
+        current_user.lanyard_ordered = True
+
+        # Save to database
+        db.session.add(address)
         db.session.commit()
 
-        # Send confirmation email to user
-        if user.notifications:
-            send_email(
-                to_email=user.email,
-                subject="Your CourtSide Club Lanyard Order",
-                content_html=render_template('email/notification.html', 
-                                            name=user.get_full_name(),
-                                            message="Your lanyard order has been placed! You'll receive it soon.")
-            )
+        flash("Lanyard request received! It will ship soon.")
+        return redirect(url_for('user.profile'))
 
-        # Send admin notification
-        admin_email = current_app.config.get('ADMIN_EMAIL')
-        if admin_email:
-            send_email(
-                to_email=admin_email,
-                subject="New Lanyard Order",
-                content_html=render_template('email/admin_summary.html',
-                                            user_email=user.email,
-                                            user_name=user.get_full_name(),
-                                            shipping_details=f"{name}, {address1}, {city}, {country}")
-            )
-
-        # Reload the page with the confirmation message
-        return redirect(url_for('user.order_lanyard'))
-
-    return render_template('order_lanyard.html', lanyard_ordered=False, states=sorted(STATE_ABBRS))
+    return render_template('order_lanyard.html', 
+                         states=sorted(STATE_ABBRS),
+                         lanyard_ordered=current_user.lanyard_ordered)
