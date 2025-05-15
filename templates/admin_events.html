@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>User Events</h1>
+    <p class="text-muted">Showing the most recent 100 events</p>
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User ID</th>
+                        <th>Event</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td>{{ event.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td>{{ event.user_id }}</td>
+                        <td><span class="badge bg-primary">{{ event.name }}</span></td>
+                        <td><code>{{ event.event_data }}</code></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">No events logged yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="mb-3">
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

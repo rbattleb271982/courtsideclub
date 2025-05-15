@@ -23,6 +23,12 @@
                value="{{ user.last_name or '' }}">
       </div>
       <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" name="location" id="location" class="form-control" 
+               value="{{ user.location or '' }}" placeholder="City, Country">
+        <small class="form-text text-muted">Help other fans find you at tournaments</small>
+      </div>
+      <div class="form-group">
         <label>
           <input type="checkbox" name="notifications" {% if user.notifications %}checked{% endif %}>
           Receive email updates and reminders

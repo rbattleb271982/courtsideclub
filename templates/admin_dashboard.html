@@ -6,7 +6,14 @@
 <div class="container" style="max-width: 800px; margin: 2rem auto;">
   <h2>🎾 Admin Dashboard <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
   <hr style="margin-bottom: 2em;">
-  <p><a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-secondary">⬇️ Export Lanyard Orders (CSV)</a></p>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-secondary">⬇️ Export Lanyard Orders (CSV)</a>
+    </div>
+    <div class="col-md-6 text-md-end">
+      <a href="{{ url_for('admin.view_events') }}" class="btn btn-info">📊 View User Event Log</a>
+    </div>
+  </div>
 
   {% for row in dashboard_data %}
     <div style="margin-bottom: 2em; padding: 1em; border: 1px solid #ccc; border-radius: 6px;">
