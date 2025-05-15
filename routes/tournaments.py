@@ -172,18 +172,18 @@ def tournament_detail(tournament_id):
     raised_hands = []
     user_tournaments = UserTournament.query.filter_by(
         tournament_id=tournament_id,
-        open_to_meet=True
+        open_to_meet=True,
+        attending=True  # Only include users who are actually attending
     ).all()
 
     for user_tournament in user_tournaments:
         user = user_tournament.user
-        for day in user_tournament.dates:
-            sessions_str = ", ".join(user_tournament.sessions)
+        # Use session_label directly or extract day/session from it
+        if user_tournament.session_label:
             raised_hands.append({
                 'name': user.get_full_name(),
                 'email': user.email,
-                'day': day,
-                'sessions': sessions_str,
+                'session': user_tournament.session_label,
                 'user_id': user.id
             })
 
@@ -216,15 +216,15 @@ def tournament_detail(tournament_id):
     if user_tournament and user_tournament.attending and user_tournament.open_to_meet:
         meeting_count += 1
 
-    # For backward compatibility during migration
-    # Check if current user has a UserTournament record or is in the legacy fields
+    # Get the current user's tournament registration
     user_tournament = UserTournament.query.filter_by(
         user_id=current_user.id,
         tournament_id=tournament_id
     ).first()
 
-    user_attending = user_tournament is not None or tournament_id in current_user.attending
-    user_raised_hand = (user_tournament and user_tournament.open_to_meet) or tournament_id in current_user.raised_hand
+    # Check if user is attending and open to meeting
+    user_attending = user_tournament is not None and user_tournament.attending
+    user_open_to_meet = user_tournament is not None and user_tournament.open_to_meet
 
     # Parse tournament sessions into days for the template and calculate calendar dates
     from datetime import timedelta
@@ -293,7 +293,7 @@ def tournament_detail(tournament_id):
     return render_template('tournament_detail.html',
                           tournament=tournament,
                           user_attending=user_attending,
-                          user_raised_hand=user_raised_hand,
+                          user_open_to_meet=user_open_to_meet,
                           raised_hands=raised_hands,
                           attending_count=attending_count,
                           meeting_count=meeting_count,
@@ -385,20 +385,20 @@ def attend_tournament(tournament_id):
 
             # If days and sessions were selected, update or create UserTournament
             if selected_days and selected_sessions:
+                # Create a meaningful session label from the selected days and sessions
+                session_label = ""
+                if selected_days and selected_sessions:
+                    day_str = ", ".join(selected_days)
+                    session_str = ", ".join(selected_sessions)
+                    session_label = f"Days: {day_str} | Sessions: {session_str}"
+                    
                 if user_tournament:
                     # Update existing registration
-                    user_tournament.dates = selected_days
-                    user_tournament.sessions = selected_sessions
+                    user_tournament.session_label = session_label
                     user_tournament.open_to_meet = open_to_meet
                     user_tournament.attending = True
                 else:
                     # Create new registration
-                    # Create a meaningful session label from the selected days and sessions
-                    session_label = ""
-                    if selected_days and selected_sessions:
-                        day_str = ", ".join(selected_days)
-                        session_str = ", ".join(selected_sessions)
-                        session_label = f"Days: {day_str} | Sessions: {session_str}"
                         
                     user_tournament = UserTournament(
                         user_id=user.id,

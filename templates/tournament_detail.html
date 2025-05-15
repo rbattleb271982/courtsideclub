@@ -151,7 +151,7 @@
             </div>
 
             <!-- Who's Going Card (only visible if user is attending and open to meeting) -->
-            {% if user_raised_hand and raised_hands %}
+            {% if user_open_to_meet and raised_hands %}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title h5 mb-0">Who's Open to Meeting</h3>
@@ -164,7 +164,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <div class="font-weight-bold">{{ person.name }}</div>
-                                        <div class="small text-muted">{{ person.day }} - {{ person.sessions }}</div>
+                                        <div class="small text-muted">{{ person.session }}</div>
                                     </div>
                                     <a href="mailto:{{ person.email }}" class="btn btn-sm btn-outline-primary">
                                         <i data-feather="mail" class="icon-xs"></i>
