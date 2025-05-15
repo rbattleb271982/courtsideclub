@@ -1,53 +1,22 @@
 {% extends "layout.html" %}
-
-{% block title %}Welcome | CourtSide Club{% endblock %}
-
 {% block content %}
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div class="flashes">
-        {% for message in messages %}
-          <div class="flash-message">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
 
-  <div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
-  <!-- Hero section -->
-  <div style="text-align: center; margin-bottom: 2rem;">
-    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome to CourtSide Club 🎾</h1>
-    <p style="color: #555;">Meet other tennis fans at tournaments around the world. Sign up, show up, and connect.</p>
+<div style="text-align: center; margin-top: 3em;">
+  <h1>🎾 Welcome to CourtSideClub</h1>
+  <p style="font-size: 1.2em; max-width: 600px; margin: 1em auto;">
+    Connect with fellow tennis fans at your next tournament. Choose your sessions, raise your hand to meet up, and get your free lanyard!
+  </p>
 
-    
-  </div>
-
-  <hr style="margin: 2rem 0; border: none; border-top: 1px solid #ccc;">
-
-  <!-- Tournament list -->
-  <h2 style="margin-bottom: 1rem;">Explore Upcoming Tournaments</h2>
-  {% set ns = namespace(current_month=None) %}
-  <div style="display: flex; flex-direction: column; gap: 1rem;">
-    {% for t in tournaments %}
-      {% set tournament_month = t.start_date.strftime('%B %Y') %}
-      {% if tournament_month != ns.current_month %}
-        <h3 style="margin-top: 2rem; margin-bottom: 0.5rem; color: #2c5f2d;">
-          {{ tournament_month }}
-        </h3>
-        {% set ns.current_month = tournament_month %}
-      {% endif %}
-      <a href="{{ url_for('tournaments.public_tournament_page', slug=t.slug) }}" style="text-decoration: none; color: inherit;">
-        <div class="tournament-row">
-          <div class="tournament-name">
-            {{ t.name }}
-            <span class="tournament-type">{{ t.event_type }} • {{ t.tour_type }}</span>
-          </div>
-          <div class="tournament-meta">
-            {{ t.start_date.strftime('%B %d, %Y') }} — {{ t.city }}, {{ t.country }}
-          </div>
-        </div>
-      </a>
-    {% endfor %}
-  </div>
+  {% if not current_user.is_authenticated %}
+    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary" style="margin: 1em;">Get Started</a>
+    <p><a href="{{ url_for('auth.login') }}">Already have an account?</a></p>
+  {% else %}
+    <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary" style="margin: 1em;">Browse Tournaments</a>
+  {% endif %}
 </div>
+
+<div style="text-align: center; margin-top: 2em;">
+  <a href="{{ url_for('user.order_lanyard') }}">🧢 Get your free lanyard</a>
+</div>
+
 {% endblock %}
