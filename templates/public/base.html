@@ -2,10 +2,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}CourtSide Club{% endblock %}</title>
-  <meta name="description" content="{% block description %}Meet fellow tennis fans at tournaments worldwide.{% endblock %}">
+  <meta name="description" content="{% block description %}Meet tennis fans at tournaments. Join the community and connect IRL.{% endblock %}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{% block og_title %}CourtSide Club{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}Find tennis fans near you at tournaments around the world.{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}/static/images/og-default.jpg{% endblock %}">
+  <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}CourtSide Club{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}Connect with fellow tennis fans at ATP & WTA events.{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}/static/images/og-default.jpg{% endblock %}">
   <style>
     body { font-family: sans-serif; margin: 0; padding: 0; }
     nav {
@@ -53,5 +66,16 @@
   <main>
     {% block content %}{% endblock %}
   </main>
+  <footer style="text-align: center; margin-top: 3rem; padding: 2rem; font-size: 0.9rem; background: #f4f4f4;">
+    <p>
+      Explore: 
+      <a href="/tournaments">Tournaments</a> · 
+      <a href="/how-it-works">How It Works</a> · 
+      <a href="/lanyard">Free Lanyard</a> · 
+      <a href="/faqs">FAQs</a> · 
+      <a href="/about">About</a> · 
+      <a href="/blog">Blog</a>
+    </p>
+  </footer>
 </body>
 </html>

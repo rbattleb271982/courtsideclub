@@ -47,3 +47,23 @@ def privacy():
 @main_bp.route('/terms')
 def terms():
     return render_template('public/terms.html')
+
+@main_bp.route('/sitemap.xml')
+def sitemap():
+    from flask import Response, url_for
+    pages = [
+        url_for('main.public_home', _external=True),
+        url_for('main.public_tournaments', _external=True),
+        url_for('main.how_it_works', _external=True),
+        url_for('main.lanyard_info', _external=True),
+        url_for('main.faqs', _external=True),
+        url_for('main.about', _external=True),
+        url_for('main.blog', _external=True),
+        url_for('main.privacy', _external=True),
+        url_for('main.terms', _external=True),
+    ]
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for page in pages:
+        xml += f"<url><loc>{page}</loc></url>\n"
+    xml += "</urlset>"
+    return Response(xml, mimetype='application/xml')
