@@ -101,9 +101,6 @@ def signup():
                     last_name=last_name,
                     name=f"{first_name} {last_name}",  # Also set the name field for compatibility
                     password_hash=generate_password_hash(password),
-                    attending={},
-                    raised_hand={},
-                    past_tournaments_json=[],  # Use the correct attribute name that matches the model
                     lanyard_ordered=False,
                     notifications=True,
                     welcome_seen=True  # Set to True since we'll show the welcome message directly

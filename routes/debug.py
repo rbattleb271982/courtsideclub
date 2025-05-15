@@ -91,9 +91,6 @@ def test_user_creation():
             last_name="User",
             name="Debug User",
             password_hash=generate_password_hash("password123"),
-            attending={},
-            raised_hand={},
-            past_tournaments=[],
             lanyard_ordered=False,
             notifications=True
         )
