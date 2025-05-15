@@ -1,0 +1,44 @@
+{% extends "public/base.html" %}
+
+{% block title %}About CourtSide Club | Connect with Tennis Fans{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">About CourtSide Club</h1>
+            
+            <p class="lead mb-4">
+                CourtSide Club connects tennis fans attending the same tournaments, creating a community of passionate enthusiasts.
+            </p>
+            
+            <div class="my-5">
+                <h2>Our Mission</h2>
+                <p>
+                    To enhance the tournament experience by helping tennis fans connect with each other while attending major tournaments around the world.
+                </p>
+            </div>
+            
+            <div class="my-5">
+                <h2>How It Started</h2>
+                <p>
+                    CourtSide Club was created by tennis fans for tennis fans. We noticed that while attending tournaments, 
+                    there were countless opportunities to meet like-minded enthusiasts, but no easy way to connect before or during the event. 
+                    Our platform was designed to solve this problem.
+                </p>
+            </div>
+            
+            <div class="my-5">
+                <h2>Join Our Community</h2>
+                <p>
+                    By joining CourtSide Club, you'll become part of a global community of tennis fans who share your passion for the sport.
+                    Sign up today to start connecting with other fans at your next tournament.
+                </p>
+                <p class="mt-4">
+                    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Join CourtSide Club</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
