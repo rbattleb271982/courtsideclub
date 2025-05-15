@@ -198,10 +198,13 @@ def send_welcome_email(user_id):
     if not user:
         return f"User with ID {user_id} not found", 404
 
+    # Get user's name or use a default greeting
+    user_name = user.first_name if hasattr(user, 'first_name') and user.first_name else "Tennis Fan"
+    
     welcome_email_html = f"""
-    <p>Hi {user.first_name},</p>
+    <p>Hi {user_name},</p>
 
-    <p>Welcome to <strong>CourtSideClub</strong> – the home for tennis fans who want to do more than just watch.</p>
+    <p>Welcome to <strong>CourtSideClub</strong> - the home for tennis fans who want to do more than just watch.</p>
 
     <p>Here's what you can do inside:</p>
     <ul>
@@ -213,15 +216,15 @@ def send_welcome_email(user_id):
 
     <p>Coming up soon:</p>
     <ul>
-      <li>🗓 Rome Masters – May 20</li>
-      <li>🗓 Roland-Garros – May 26</li>
-      <li>🗓 Queen's Club – June 17</li>
+      <li>🗓 Rome Masters - May 20</li>
+      <li>🗓 Roland-Garros - May 26</li>
+      <li>🗓 Queen\'s Club - June 17</li>
     </ul>
 
-    <p>→ <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to pick your tournaments</a></p>
+    <p>-&gt; <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to pick your tournaments</a></p>
 
     <p>Glad to have you here,<br>
-    – The CourtSideClub Team</p>
+    - The CourtSideClub Team</p>
     """
 
     send_email(
@@ -231,3 +234,61 @@ def send_welcome_email(user_id):
     )
 
     return f"Welcome email sent to {user.email}"
+
+@debug_bp.route('/debug/send-reminder/<int:user_id>/<int:tournament_id>')
+def send_reminder(user_id, tournament_id):
+    from models import User, Tournament, UserTournament
+
+    user = db.session.get(User, user_id)
+    tournament = db.session.get(Tournament, tournament_id)
+
+    if not user or not tournament:
+        return "Invalid user or tournament ID", 404
+
+    # Check if the user has a lanyard ordered
+    has_lanyard = user.lanyard_ordered if hasattr(user, 'lanyard_ordered') else False
+
+    # Get sessions user selected (if stored in UserTournament model)
+    user_tourney = db.session.query(UserTournament).filter_by(user_id=user.id, tournament_id=tournament.id).first()
+    
+    # Initialize session info
+    session_info = "your session"
+    
+    # Try to get formatted session information from the user's tournament registration
+    if user_tourney:
+        if hasattr(user_tourney, 'session_label'):
+            session_info = user_tourney.session_label
+        elif hasattr(user_tourney, 'sessions') and user_tourney.sessions:
+            # Format sessions in a readable way
+            session_info = f"sessions: {', '.join(user_tourney.sessions)}" if user_tourney.sessions else "your session"
+
+    # Build the email body
+    lanyard_message = (
+        "<p>🎉 Your lanyard is on its way - you'll be ready to meet other fans courtside!</p>"
+        if has_lanyard else
+        '<p>🧢 Don\'t forget - your free lanyard is still waiting. <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to claim yours</a> so it arrives before the tournament!</p>'
+    )
+
+    # Get user's name or use a default greeting
+    user_name = user.first_name if hasattr(user, 'first_name') and user.first_name else "Tennis Fan"
+    
+    reminder_html = f"""
+    <p>Hi {user_name},</p>
+
+    <p>Your tournament is coming up! 🎾</p>
+
+    <p><strong>{tournament.name}</strong> starts soon, and you're signed up for {session_info}.</p>
+
+    {lanyard_message}
+
+    <p>We can't wait to see you there.<br>
+    – The CourtSideClub Team</p>
+    """
+
+    send_email(
+        to_email=user.email,
+        subject=f"{tournament.name} is just 2 weeks away! 🎾",
+        content_html=reminder_html
+    )
+
+    return f"Tournament reminder sent to {user.email}"
