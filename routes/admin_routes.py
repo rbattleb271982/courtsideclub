@@ -76,3 +76,46 @@ def edit_tournament(tournament_id):
         return redirect(url_for("admin.edit_tournament", tournament_id=tournament.id))
 
     return render_template("admin_edit_tournament.html", tournament=tournament)
+import csv
+from io import StringIO
+from flask import Response
+
+@admin_bp.route('/admin/export-lanyards')
+@login_required
+def export_lanyards():
+    if not current_user.is_admin:
+        return "Access denied", 403
+
+    from models import User, UserTournament, Tournament
+
+    user_data = (
+        db.session.query(User, UserTournament, Tournament)
+        .join(UserTournament, User.id == UserTournament.user_id)
+        .join(Tournament, Tournament.id == UserTournament.tournament_id)
+        .filter(User.lanyard_ordered == True)
+        .filter(UserTournament.wants_to_meet == True)
+        .order_by(Tournament.start_date)
+        .all()
+    )
+
+    # Generate CSV
+    csv_buffer = StringIO()
+    writer = csv.writer(csv_buffer)
+    writer.writerow(["User Name", "Email", "Tournament", "Session", "City", "Country", "Start Date"])
+
+    for user, ut, tournament in user_data:
+        writer.writerow([
+            user.name or f"{user.first_name} {user.last_name}",
+            user.email,
+            tournament.name,
+            ut.session_label or "—",
+            tournament.city,
+            tournament.country,
+            tournament.start_date.strftime("%Y-%m-%d")
+        ])
+
+    return Response(
+        csv_buffer.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment;filename=lanyard_orders.csv"}
+    )
