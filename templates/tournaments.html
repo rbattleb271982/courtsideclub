@@ -98,8 +98,8 @@
                                     {% set user_tournament = current_user.tournament_registrations|selectattr("tournament_id", "equalto", tournament.id)|first %}
                                     {% if user_tournament and user_tournament.attending %}
                                         <div class="d-flex flex-column">
-                                            <a href="{{ url_for('tournaments.tournament_detail', tournament_id=tournament.id) }}" class="btn btn-success btn-sm mb-2">
-                                                <i data-feather="check" class="attendance-check-icon"></i> View Sessions
+                                            <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.id) }}" class="btn btn-success btn-sm mb-2">
+                                                <i data-feather="check" class="attendance-check-icon"></i> View Tournament
                                             </a>
                                             <button type="submit" name="remove" value="true" class="btn btn-outline-danger btn-sm">
                                                 <i data-feather="x" class="attendance-check-icon"></i> Cancel Attendance

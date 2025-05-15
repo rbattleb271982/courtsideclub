@@ -40,6 +40,16 @@ def list_tournaments():
     for tournament in tournaments:
         # Count users who have registered for this tournament
         attending_users = UserTournament.query.filter_by(
+
+
+@tournaments_bp.route('/tournaments/<tournament_slug>')
+def view_tournament(tournament_slug):
+    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
+    if not tournament:
+        return "Tournament not found", 404
+    return render_template('tournament_detail.html', tournament=tournament)
+
+
             tournament_id=tournament.id
         ).count()
 
