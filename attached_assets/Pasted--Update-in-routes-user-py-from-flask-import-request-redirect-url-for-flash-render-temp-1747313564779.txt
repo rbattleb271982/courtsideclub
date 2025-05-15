@@ -1,0 +1,79 @@
+# === Update in routes/user.py ===
+
+from flask import request, redirect, url_for, flash, render_template, send_file
+from flask_login import login_required, current_user
+from io import StringIO
+import csv
+from app import db
+from models import UserTournament, ShippingAddress, Tournament
+from . import user_bp
+
+@user_bp.route('/order_lanyard', methods=['GET', 'POST'])
+@login_required
+def order_lanyard():
+    # ✅ Only allow access if user has selected at least one session
+    has_session = db.session.query(UserTournament).filter_by(user_id=current_user.id).count() > 0
+
+    if not has_session:
+        flash("You must select at least one tournament session before ordering a lanyard.")
+        return redirect(url_for('user.profile'))
+
+    if request.method == 'POST':
+        # Handle lanyard form submission — skip cost handling
+        address = ShippingAddress(
+            user_id=current_user.id,
+            name=request.form['name'],
+            address1=request.form['address1'],
+            address2=request.form.get('address2'),
+            city=request.form['city'],
+            state=request.form['state'],
+            zip_code=request.form['zip_code'],
+            country=request.form['country']
+        )
+        db.session.add(address)
+        db.session.commit()
+        flash("Lanyard request received! It will ship soon.")
+        return redirect(url_for('user.profile'))
+
+    return render_template("order_lanyard.html", free_lanyard=True)
+
+
+# === Admin CSV Export: Add to routes/admin.py ===
+
+from flask_login import login_required, current_user
+from flask import Response
+from models import User, ShippingAddress
+
+@app.route('/admin/export-lanyards')
+@login_required
+def export_lanyards():
+    if not current_user.is_admin:
+        abort(403)
+
+    # Get users who submitted a shipping address AND selected a session
+    results = (
+        db.session.query(User, ShippingAddress)
+        .join(ShippingAddress, User.id == ShippingAddress.user_id)
+        .join(UserTournament, User.id == UserTournament.user_id)
+        .distinct(User.id)
+        .all()
+    )
+
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Name', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country', 'Email'])
+
+    for user, address in results:
+        writer.writerow([
+            address.name,
+            address.address1,
+            address.address2 or '',
+            address.city,
+            address.state,
+            address.zip_code,
+            address.country,
+            user.email
+        ])
+
+    output.seek(0)
+    return Response(output, mimetype="text/csv", headers={"Content-Disposition": "attachment;filename=lanyard_orders.csv"})
