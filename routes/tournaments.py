@@ -348,9 +348,9 @@ def attend_tournament(tournament_id):
                 user_tournament = UserTournament(
                     user_id=user.id,
                     tournament_id=tournament_id,
-                    dates=[],
-                    sessions=[],
-                    open_to_meet=True
+                    session_label=None,
+                    open_to_meet=True,
+                    wants_to_meet=True
                 )
                 db.session.add(user_tournament)
                 db.session.commit()
@@ -393,12 +393,19 @@ def attend_tournament(tournament_id):
                     user_tournament.attending = True
                 else:
                     # Create new registration
+                    # Create a meaningful session label from the selected days and sessions
+                    session_label = ""
+                    if selected_days and selected_sessions:
+                        day_str = ", ".join(selected_days)
+                        session_str = ", ".join(selected_sessions)
+                        session_label = f"Days: {day_str} | Sessions: {session_str}"
+                        
                     user_tournament = UserTournament(
                         user_id=user.id,
                         tournament_id=tournament_id,
-                        dates=selected_days,
-                        sessions=selected_sessions,
+                        session_label=session_label,
                         open_to_meet=open_to_meet,
+                        wants_to_meet=open_to_meet,
                         attending=True
                     )
                     db.session.add(user_tournament)

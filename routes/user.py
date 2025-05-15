@@ -28,29 +28,18 @@ def home():
         from datetime import datetime
         today = datetime.now().date()
 
-        # Get all attending tournaments using the new UserTournament model
+        # Get all attending tournaments using the UserTournament model
         user_tournaments = UserTournament.query.filter_by(user_id=user.id).all()
         attending_ids = [ut.tournament_id for ut in user_tournaments]
-
-        # Also include tournaments from legacy JSON field for backward compatibility during migration
-        if user.attending:
-            for tournament_id in user.attending.keys():
-                if tournament_id not in attending_ids:
-                    attending_ids.append(tournament_id)
 
         # Get all attending tournaments
         all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
 
-        # Get all the user's past tournaments
-        # Combine data from both the relationship and the legacy JSON field
+        # Get all the user's past tournaments from relationship
         past_tournaments_from_rel = user.attended_tournaments
-        past_tournament_ids_legacy = user.past_tournaments_json if hasattr(user, 'past_tournaments_json') else []
-
-        # Combine past tournament IDs
+        
+        # Get past tournament IDs
         past_tournament_ids = [t.id for t in past_tournaments_from_rel]
-        for t_id in past_tournament_ids_legacy:
-            if t_id not in past_tournament_ids:
-                past_tournament_ids.append(t_id)
 
         past_tournaments_attended = Tournament.query.filter(Tournament.id.in_(past_tournament_ids)).all() if past_tournament_ids else []
 
@@ -157,29 +146,12 @@ def update_attending():
         new_registration = UserTournament(
             user_id=user.id,
             tournament_id=t_id,
-            dates=[],
-            sessions=[],
-            open_to_meet=True  # Default to being open to meeting
+            # Using only session_label instead of dates and sessions arrays
+            session_label=None,
+            open_to_meet=True,  # Default to being open to meeting
+            wants_to_meet=True  # Also set wants_to_meet to True by default
         )
         db.session.add(new_registration)
-
-    # For backward compatibility during migration, also update JSON fields
-    # Get the current attending data (dictionary)
-    current_attending = dict(user.attending) if user.attending else {}
-
-    # Remove tournaments no longer selected from JSON field
-    for t_id in to_remove:
-        if t_id in current_attending:
-            del current_attending[t_id]
-
-    # Add newly selected tournaments to JSON field
-    for t_id in to_add:
-        if t_id not in current_attending:
-            # Initialize with an empty structure for days/sessions
-            current_attending[t_id] = {}
-
-    # Update the user's JSON attending field for backward compatibility
-    user.attending = current_attending
 
     # Commit all changes
     db.session.commit()
