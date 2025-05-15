@@ -253,16 +253,24 @@ def order_lanyard():
         "WI", "WV", "WY"
     ]
 
-    # ✅ Only allow access if user has selected at least one session and is marked as attending
-    user_sessions = UserTournament.query.filter_by(
-        user_id=current_user.id,
-        attending=True
-    ).all()
-    has_session = any(ut.session_label for ut in user_sessions)
+    # Debug: Print user sessions info
+    user_sessions = UserTournament.query.filter_by(user_id=current_user.id).all()
+    print(f"User {current_user.id} sessions:")
+    for session in user_sessions:
+        print(f"Tournament: {session.tournament_id}, Attending: {session.attending}, Label: {session.session_label}")
 
-    if not has_session:
-        flash("You must select at least one tournament session before ordering a lanyard.")
-        return redirect(url_for('user.profile'))
+    # Allow admins to bypass session check
+    if not current_user.is_admin:
+        # Only allow access if user has selected at least one session and is marked as attending
+        attending_sessions = UserTournament.query.filter_by(
+            user_id=current_user.id,
+            attending=True
+        ).all()
+        has_session = any(ut.session_label for ut in attending_sessions)
+
+        if not has_session:
+            flash("You must select at least one tournament session before ordering a lanyard.")
+            return redirect(url_for('user.home'))
 
     if request.method == 'POST':
         # Handle lanyard form submission
