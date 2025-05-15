@@ -13,7 +13,15 @@
         <h3 class="h5">{{ row.tournament.name }} ({{ row.tournament.start_date.strftime('%b %d') }})</h3>
         <p>👥 Total Attending: {{ row.total_attending }}</p>
         <p>🙋‍♂️ Open to Meet-ups: {{ row.total_meetups }}</p>
-        <a href="{{ url_for('admin.view_attendees', tournament_slug=row.tournament.slug) }}" class="btn btn-sm btn-outline-primary">View Attendees</a>
+        <div class="mb-2">
+          <a href="{{ url_for('admin.view_attendees', tournament_slug=row.tournament.slug) }}" class="btn btn-sm btn-outline-primary">View Attendees</a>
+        </div>
+        <form method="GET" action="{{ url_for('debug.send_reminder', user_id=current_user.id, tournament_slug=row.tournament.slug) }}" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-secondary">📬 Send Reminder (to me)</button>
+        </form>
+        <form method="GET" action="{{ url_for('debug.send_welcome_email', user_id=current_user.id) }}" style="display:inline;">
+          <button type="submit" class="btn btn-sm btn-secondary">✉️ Send Welcome (to me)</button>
+        </form>
       </div>
     </div>
   {% endfor %}
