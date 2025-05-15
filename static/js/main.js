@@ -242,7 +242,4 @@ function initCopyAttendanceButton() {
   }
 }
 
-// Call this function if the DOM has profile elements
-if (document.querySelector('.profile-avatar')) {
-  updateProfileAvatar();
-}
+// Profile page initialization code here

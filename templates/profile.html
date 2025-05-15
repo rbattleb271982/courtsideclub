@@ -3,7 +3,7 @@
 
 <h2>👤 Profile</h2>
 
-<p><strong>Name:</strong> {{ user.name or user.first_name }}</p>
+<p><strong>Name:</strong> {{ user.get_full_name() }}</p>
 <p><strong>Email:</strong> {{ user.email }}</p>
 
 <hr>
