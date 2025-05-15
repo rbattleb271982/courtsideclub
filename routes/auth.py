@@ -39,6 +39,16 @@ def login():
             if is_valid:
                 login_user(user)
                 
+                # Log the successful login event
+                from services.event_logger import log_event
+                event_data = {
+                    'method': 'password',
+                    'email': email,
+                    'ip': request.remote_addr,
+                    'user_agent': str(request.user_agent) if request.user_agent else None
+                }
+                log_event(user.id, 'user_login', event_data)
+                
                 # Show welcome message if user hasn't seen it before
                 if not user.welcome_seen:
                     flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
@@ -111,6 +121,16 @@ def signup():
                 
                 # Log the user in
                 login_user(new_user)
+                
+                # Log the signup event
+                from services.event_logger import log_event
+                event_data = {
+                    'method': 'signup',
+                    'email': email,
+                    'ip': request.remote_addr,
+                    'user_agent': str(request.user_agent) if request.user_agent else None
+                }
+                log_event(new_user.id, 'user_signup', event_data)
                 
                 # Show welcome message
                 flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")

@@ -120,16 +120,43 @@ def update_sessions(tournament_slug):
     selected_sessions = request.form.getlist("sessions")
     wants_to_meet = bool(request.form.get("wants_to_meet"))
 
+    # Track previous state for event logging
+    is_new_registration = False
+    previous_sessions = None
+    previous_wants_to_meet = None
+
     # update UserTournament entry
     user_tourney = db.session.query(UserTournament).filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
     if not user_tourney:
         user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
         db.session.add(user_tourney)
+        is_new_registration = True
+    else:
+        previous_sessions = user_tourney.session_label
+        previous_wants_to_meet = user_tourney.wants_to_meet
 
     user_tourney.session_label = ", ".join(selected_sessions)
     user_tourney.wants_to_meet = wants_to_meet
+    
+    # If session is selected, mark as attending
+    if selected_sessions:
+        user_tourney.attending = True
 
     db.session.commit()
+    
+    # Log the event
+    from services.event_logger import log_event
+    event_data = {
+        'tournament_id': tournament.id,
+        'tournament_name': tournament.name,
+        'selected_sessions': selected_sessions,
+        'wants_to_meet': wants_to_meet,
+        'is_new_registration': is_new_registration,
+        'previous_sessions': previous_sessions,
+        'previous_wants_to_meet': previous_wants_to_meet
+    }
+    log_event(current_user.id, 'tournament_session_update', event_data)
+    
     return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
 
