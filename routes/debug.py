@@ -235,15 +235,15 @@ def send_welcome_email(user_id):
 
     return f"Welcome email sent to {user.email}"
 
-@debug_bp.route('/debug/send-reminder/<int:user_id>/<int:tournament_id>')
-def send_reminder(user_id, tournament_id):
+@debug_bp.route('/debug/send-reminder/<int:user_id>/<tournament_slug>')
+def send_reminder(user_id, tournament_slug):
     from models import User, Tournament, UserTournament
 
     user = db.session.get(User, user_id)
-    tournament = db.session.get(Tournament, tournament_id)
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first()
 
     if not user or not tournament:
-        return "Invalid user or tournament ID", 404
+        return "Invalid user or tournament slug", 404
 
     # Check if the user has a lanyard ordered
     has_lanyard = user.lanyard_ordered if hasattr(user, 'lanyard_ordered') else False
