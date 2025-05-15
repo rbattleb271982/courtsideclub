@@ -140,3 +140,23 @@ def tournament_dates():
     tournaments = Tournament.query.order_by(Tournament.start_date).all()
     dates = [{"name": t.name, "start": t.start_date.strftime('%Y-%m-%d'), "end": t.end_date.strftime('%Y-%m-%d')} for t in tournaments]
     return jsonify(dates)
+
+@debug_bp.route('/test-email')
+@debug_bp.route('/test-email/<email>')
+def test_email(email=None):
+    """Test sending an email via SendGrid"""
+    from services.sendgrid_service import send_email
+    
+    # Use provided email or default
+    recipient_email = email if email else 'your_email@example.com'
+    
+    status_code = send_email(
+        to_email=recipient_email,
+        subject='CourtSideClub Test Email',
+        content_html='<p>This is a test email from CourtSideClub 🎾</p>'
+    )
+    
+    if status_code:
+        return f"Test email sent to {recipient_email} with status code: {status_code}"
+    else:
+        return "Failed to send email. Check server logs for details."

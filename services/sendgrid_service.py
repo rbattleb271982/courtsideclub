@@ -15,17 +15,22 @@ def send_email(to_email, subject, content_html):
     Returns:
         int or None: Status code if email was sent successfully, None otherwise
     """
+    # Get the FROM_EMAIL from config, or use default
     from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
     
+    # Create the email message
     message = Mail(
         from_email=from_email,
         to_emails=to_email,
         subject=subject,
-        html_content=content_html
+        html_content=content_html  # SendGrid expects 'html_content', but our function uses 'content_html'
     )
     
     try:
+        # Initialize SendGrid client with API key
         sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        
+        # Send the email
         response = sg.send(message)
         print(f"Email sent to {to_email}: {response.status_code}")
         return response.status_code
