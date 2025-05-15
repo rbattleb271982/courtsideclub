@@ -1,46 +1,34 @@
 import os
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, To, Content
+from sendgrid.helpers.mail import Mail
 from flask import current_app
 
-def send_email(to_email, subject, html_content=None, text_content=None):
+def send_email(to_email, subject, content_html):
     """
     Send an email using SendGrid
     
     Args:
         to_email (str): Recipient email address
         subject (str): Email subject
-        html_content (str, optional): HTML content of the email
-        text_content (str, optional): Plain text content of the email
+        content_html (str): HTML content of the email
         
     Returns:
-        bool: True if email was sent successfully, False otherwise
+        int or None: Status code if email was sent successfully, None otherwise
     """
-    api_key = current_app.config.get('SENDGRID_API_KEY')
-    if not api_key:
-        # Log this, but for demo purposes we'll pretend it worked
-        print("SendGrid API key not configured. Email would have been sent.")
-        return True
-    
-    from_email = current_app.config.get('FROM_EMAIL', 'noreply@tennisfans.app')
+    from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
     
     message = Mail(
-        from_email=Email(from_email),
-        to_emails=To(to_email),
-        subject=subject
+        from_email=from_email,
+        to_emails=to_email,
+        subject=subject,
+        html_content=content_html
     )
     
-    if html_content:
-        message.content = Content("text/html", html_content)
-    elif text_content:
-        message.content = Content("text/plain", text_content)
-    else:
-        message.content = Content("text/plain", "")
-    
     try:
-        sg = SendGridAPIClient(api_key)
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         response = sg.send(message)
-        return True
+        print(f"Email sent to {to_email}: {response.status_code}")
+        return response.status_code
     except Exception as e:
-        print(f"SendGrid error: {str(e)}")
-        return False
+        print(f"Error sending email: {e}")
+        return None
