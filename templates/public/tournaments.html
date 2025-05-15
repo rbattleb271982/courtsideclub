@@ -1,16 +1,42 @@
 
 {% extends "public/base.html" %}
-{% block title %}Tennis Tournaments - CourtSide Club{% endblock %}
-{% block meta_description %}Browse upcoming ATP and WTA tennis tournaments. Find fans attending the same sessions.{% endblock %}
+{% block title %}Tournaments – CourtSide Club{% endblock %}
+{% block description %}Explore upcoming ATP and WTA tournaments where you can meet fellow CourtSide Club members.{% endblock %}
+
 {% block content %}
-<h1>Tennis Tournaments</h1>
-<div class="tournaments-grid">
+<div class="container">
+  <h1>Upcoming Tournaments</h1>
+  <p class="lead">Find tennis fans attending the same tournaments as you.</p>
+
+  {% set ns = namespace(current_month=None) %}
+  <div class="tournaments-list">
     {% for tournament in tournaments %}
-    <div class="tournament-card">
-        <h2>{{ tournament.name }}</h2>
-        <p>{{ tournament.start_date.strftime('%B %d, %Y') }}</p>
-        <p>{{ tournament.city }}, {{ tournament.country }}</p>
-    </div>
+      {% set month = tournament.start_date.strftime('%B %Y') %}
+      {% if month != ns.current_month %}
+        {% set ns.current_month = month %}
+        <h2 class="month-heading">{{ month }}</h2>
+      {% endif %}
+
+      <div class="tournament-card">
+        <div class="tournament-name">
+          <h3>{{ tournament.name }}</h3>
+          <span class="tournament-type">{{ tournament.event_type }} • {{ tournament.tour_type }}</span>
+        </div>
+        <div class="tournament-meta">
+          <div class="tournament-date">
+            {{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%d, %Y') }}
+          </div>
+          <div class="tournament-location">
+            <i data-feather="map-pin"></i> {{ tournament.city }}, {{ tournament.country }}
+          </div>
+        </div>
+        <div class="tournament-actions">
+          <a href="{{ url_for('main.public_tournament_detail', slug=tournament.slug) }}" class="btn btn-primary">View Details</a>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-center">No upcoming tournaments found.</p>
     {% endfor %}
+  </div>
 </div>
 {% endblock %}

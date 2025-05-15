@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, abort
 from models import Tournament
+import datetime
 
 main_bp = Blueprint('main', __name__)
 
@@ -9,7 +10,7 @@ def public_home():
 
 @main_bp.route('/tournaments')
 def public_tournaments():
-    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    tournaments = Tournament.query.filter(Tournament.start_date >= datetime.date.today()).order_by(Tournament.start_date).all()
     return render_template('public/tournaments.html', tournaments=tournaments)
 
 @main_bp.route('/tournaments/<slug>')
