@@ -5,6 +5,7 @@ from models import db, User, Tournament, UserTournament
 from services.sendgrid_service import send_email
 import json
 import logging
+from datetime import datetime
 
 # Initialize blueprint
 user_bp = Blueprint('user', __name__)
@@ -25,7 +26,6 @@ def home():
             return redirect(url_for('auth.login'))
 
         # Get future tournaments (after today's date)
-        from datetime import datetime
         today = datetime.now().date()
 
         # Get all attending tournaments using the UserTournament model
@@ -78,7 +78,7 @@ def home():
 @user_bp.route('/profile')
 @login_required
 def profile():
-    return redirect(url_for('user.home'))
+    return render_template("profile.html", user=current_user)
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required
@@ -162,55 +162,54 @@ def settings():
 
     return render_template('settings.html', user=user)
 
-@user_bp.route('/toggle_notifications')
+@user_bp.route('/notifications/toggle', methods=['POST'])
 @login_required
 def toggle_notifications():
-    # Toggle notifications setting
-    user = User.query.get(current_user.id)
-    user.notifications = not user.notifications
+    current_user.notifications = not current_user.notifications
     db.session.commit()
-
-    status = "enabled" if user.notifications else "disabled"
+    status = "enabled" if current_user.notifications else "disabled"
     flash(f'Notifications {status}!', 'success')
     return redirect(url_for('user.settings'))
 
-@user_bp.route('/change_password', methods=['POST'])
+@user_bp.route('/change_password', methods=['POST','GET'])
 @login_required
 def change_password():
-    current_password = request.form.get('current_password')
-    new_password = request.form.get('new_password')
-    confirm_password = request.form.get('confirm_password')
+    if request.method == 'POST':
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
 
-    # Check if new password and confirmation match
-    if new_password != confirm_password:
-        flash('New passwords do not match.', 'danger')
+        # Check if new password and confirmation match
+        if new_password != confirm_password:
+            flash('New passwords do not match.', 'danger')
+            return redirect(url_for('user.change_password'))
+
+        # Get the current user
+        user = User.query.get(current_user.id)
+
+        # If a current password was provided, verify it
+        if current_password and user.password_hash:
+            if not check_password_hash(user.password_hash, current_password):
+                flash('Current password is incorrect.', 'danger')
+                return redirect(url_for('user.change_password'))
+
+        # Update the password hash
+        try:
+            user.password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+            db.session.commit()
+
+            # Clear temporary password after successful password change (if exists)
+            if 'temp_password' in session:
+                del session['temp_password']
+
+            flash('Password updated successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error updating password: {str(e)}")
+            flash('An error occurred while updating your password.', 'danger')
+
         return redirect(url_for('user.settings'))
-
-    # Get the current user
-    user = User.query.get(current_user.id)
-
-    # If a current password was provided, verify it
-    if current_password and user.password_hash:
-        if not check_password_hash(user.password_hash, current_password):
-            flash('Current password is incorrect.', 'danger')
-            return redirect(url_for('user.settings'))
-
-    # Update the password hash
-    try:
-        user.password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
-        db.session.commit()
-
-        # Clear temporary password after successful password change (if exists)
-        if 'temp_password' in session:
-            del session['temp_password']
-
-        flash('Password updated successfully!', 'success')
-    except Exception as e:
-        db.session.rollback()
-        logging.error(f"Error updating password: {str(e)}")
-        flash('An error occurred while updating your password.', 'danger')
-
-    return redirect(url_for('user.settings'))
+    return render_template("change_password.html")
 
 @user_bp.route('/my-tournaments')
 @login_required
