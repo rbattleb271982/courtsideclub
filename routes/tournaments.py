@@ -53,6 +53,14 @@ def list_tournaments():
             'attending': attending_users,
             'meeting': meeting_users
         }
+        
+    return render_template('tournaments.html',
+                          tournaments=tournaments,
+                          all_tournaments=all_tournaments,
+                          today=today,
+                          name_filter=name_filter,
+                          country_filter=country_filter,
+                          attendance_counts=attendance_counts)
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>')
@@ -62,13 +70,7 @@ def view_tournament(tournament_slug):
         return "Tournament not found", 404
     return render_template('tournament_detail.html', tournament=tournament)
 
-    return render_template('tournaments.html', 
-                          tournaments=tournaments,
-                          all_tournaments=all_tournaments,
-                          today=today,
-                          name_filter=name_filter,
-                          country_filter=country_filter,
-                          attendance_counts=attendance_counts)
+
 
 @tournaments_bp.route("/tournaments/<slug>")
 def public_tournament_page(slug):

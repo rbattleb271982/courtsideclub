@@ -85,8 +85,8 @@
 
                     <div class="alert alert-info small">
                         <i data-feather="info" class="icon-sm"></i> 
-                        <strong>{{ attending_count }}</strong> fan{{ attending_count|pluralize }} attending this tournament.
-                        <strong>{{ meeting_count }}</strong> fan{{ meeting_count|pluralize }} open to meeting.
+                        <strong>{{ attending_count }}</strong> fan{% if attending_count != 1 %}s{% endif %} attending this tournament.
+                        <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
                     </div>
 
                     {% if user_attending %}
