@@ -154,13 +154,7 @@ def update_attending():
     flash('Tournament preferences updated!', 'success')
     return redirect(url_for('user.home'))
 
-@user_bp.route('/settings')
-@login_required
-def settings():
-    # Get user data
-    user = User.query.get(current_user.id)
 
-    return render_template('settings.html', user=user)
 
 @user_bp.route('/notifications/toggle', methods=['POST'])
 @login_required
