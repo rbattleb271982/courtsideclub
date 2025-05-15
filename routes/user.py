@@ -209,7 +209,7 @@ def change_password():
             logging.error(f"Error updating password: {str(e)}")
             flash('An error occurred while updating your password.', 'danger')
 
-        return redirect(url_for('user.settings'))
+        return redirect(url_for('user.profile'))
     return render_template("change_password.html")
 
 @user_bp.route('/my-tournaments')
