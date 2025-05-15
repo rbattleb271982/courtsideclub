@@ -249,11 +249,45 @@ def send_reminder(user_id, tournament_slug):
     has_lanyard = user.lanyard_ordered if hasattr(user, 'lanyard_ordered') else False
 
     # Get sessions user selected and meeting status
-    user_tourney = db.session.query(UserTournament).filter_by(user_id=user.id, tournament_id=tournament.id).first()
-    session_label = user_tourney.session_label if user_tourney and hasattr(user_tourney, 'session_label') else "your session"
+    meetup_msg = ""
+    lanyard_msg = ""
+
+    # Get user's tournament registration
+    user_tournament = db.session.query(UserTournament).filter_by(
+        user_id=user.id,
+        tournament_id=tournament.id,
+        attending=True
+    ).first()
+
+    # Build session list with meetup counts
+    session_lines = ""
+    if user_tournament and user_tournament.sessions:
+        for session in user_tournament.sessions:
+            # Count others who are attending this session and open to meeting
+            count = db.session.query(UserTournament).filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.sessions.contains([session]),
+                UserTournament.open_to_meet == True,
+                UserTournament.user_id != user.id,
+                UserTournament.attending == True
+            ).count()
+
+            count_line = (
+                f"– <strong>{count} other fan{'s' if count != 1 else ''}</strong> who are open to meeting up"
+                if count > 0 else
+                "– you're the first to raise your hand for this one!"
+            )
+            session_lines += f"<li>✅ {session} {count_line}</li>"
+
+    # Final HTML for session summary
+    session_summary_html = (
+        f"<p>Here are the sessions you've selected:</p><ul>{session_lines}</ul>"
+        if session_lines else
+        "<p>You haven't selected any sessions for this tournament yet.</p>"
+    )
 
     # Determine meeting message based on user's preferences
-    open_to_meet = user_tourney and user_tourney.open_to_meet
+    open_to_meet = user_tournament and user_tournament.open_to_meet if user_tournament else False
     meetup_msg = (
         "<p>👋 Great news — you're set to meet other fans at the tournament! We'll send you final details about meeting spots soon.</p>"
         if open_to_meet else
@@ -262,9 +296,9 @@ def send_reminder(user_id, tournament_slug):
 
     # Build lanyard message
     lanyard_msg = (
-        "<p>🎉 Your lanyard is on its way — you'll be ready to meet other fans courtside!</p>"
+        "<p>🎉 Your lanyard is on its way — bring it with you to help fellow fans spot you!</p>"
         if has_lanyard else
-        '<p>🧢 Don\'t forget — your free lanyard is still waiting. <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to claim yours</a> so it arrives before the tournament!</p>'
+        '<p>🧢 Don’t forget — your free lanyard is still waiting. <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to claim yours</a> so it arrives before the tournament!</p>'
     )
 
     reminder_html = f"""
@@ -274,13 +308,13 @@ def send_reminder(user_id, tournament_slug):
 
     <p>🎾 You're just two weeks away from <strong>{tournament.name}</strong>.</p>
 
-    <p>You're registered for <strong>{session_label}</strong>, and the tournament kicks off on <strong>{tournament.start_date.strftime('%B %d')}</strong>.</p>
+    {session_summary_html}
 
     {meetup_msg}
 
     {lanyard_msg}
 
-    <p>Need to make a change? You can <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">log into your account</a> anytime to update your session.</p>
+    <p>Need to make a change? You can <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">log into your account</a> anytime to update your selections.</p>
 
     <p>See you courtside,<br>
     – The CourtSideClub Team</p>
