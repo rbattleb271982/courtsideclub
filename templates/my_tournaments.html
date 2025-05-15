@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}My Tournaments{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">My Tournaments</h1>
+    
+    {% if user_tournaments %}
+        <div class="row">
+            {% for user_tournament in user_tournaments %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card tournament-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ user_tournament.tournament.name }}</h5>
+                            <p class="card-text tournament-date">
+                                {{ user_tournament.tournament.start_date.strftime('%b %d, %Y') }} to {{ user_tournament.tournament.end_date.strftime('%b %d, %Y') }}
+                            </p>
+                            <p class="card-text tournament-location">
+                                <i data-feather="map-pin"></i> {{ user_tournament.tournament.city }}, {{ user_tournament.tournament.country }}
+                            </p>
+                            
+                            <div class="mt-3">
+                                <h6>Your Attendance</h6>
+                                {% if user_tournament.attending %}
+                                    <span class="badge badge-success">Confirmed Attending ✓</span>
+                                {% else %}
+                                    <span class="badge badge-warning">Sessions Selected - Not Confirmed</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mt-2">
+                                <h6>Your Sessions</h6>
+                                {% if user_tournament.session_label %}
+                                    <p>{{ user_tournament.session_label }}</p>
+                                {% elif user_tournament.sessions %}
+                                    <p>{{ user_tournament.sessions|join(', ') }}</p>
+                                {% else %}
+                                    <p class="text-muted">No sessions selected</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mt-2">
+                                <h6>Open to Meeting?</h6>
+                                {% if user_tournament.open_to_meet %}
+                                    <span class="badge badge-primary">Yes 🤝</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">No</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mt-3 text-center">
+                                <a href="{{ url_for('tournaments.view_tournament', tournament_slug=user_tournament.tournament.slug) }}" class="btn btn-primary">
+                                    Update Preferences
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <p>You haven't registered for any tournaments yet.</p>
+            <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary mt-2">Browse Tournaments</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize feather icons
+    document.addEventListener('DOMContentLoaded', function() {
+        feather.replace();
+    });
+</script>
+{% endblock %}

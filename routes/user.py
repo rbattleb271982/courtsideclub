@@ -245,6 +245,21 @@ def change_password():
 
     return redirect(url_for('user.settings'))
 
+@user_bp.route('/my-tournaments')
+@login_required
+def my_tournaments():
+    from models import Tournament, UserTournament
+
+    user_tournaments = (
+        db.session.query(UserTournament)
+        .filter_by(user_id=current_user.id)
+        .join(Tournament)
+        .order_by(Tournament.start_date)
+        .all()
+    )
+
+    return render_template("my_tournaments.html", user_tournaments=user_tournaments)
+
 @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
 @login_required
 def order_lanyard():
