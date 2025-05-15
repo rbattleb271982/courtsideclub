@@ -95,14 +95,15 @@ def export_lanyards():
     if not current_user.is_admin:
         return "Access denied", 403
 
-    from models import User, UserTournament, Tournament
+    from models import User, UserTournament, Tournament, ShippingAddress
 
+    # Join with ShippingAddress to get shipping details
     user_data = (
-        db.session.query(User, UserTournament, Tournament)
+        db.session.query(User, UserTournament, Tournament, ShippingAddress)
         .join(UserTournament, User.id == UserTournament.user_id)
         .join(Tournament, Tournament.id == UserTournament.tournament_id)
+        .join(ShippingAddress, User.id == ShippingAddress.user_id, isouter=True)
         .filter(User.lanyard_ordered == True)
-        .filter(UserTournament.wants_to_meet == True)
         .order_by(Tournament.start_date)
         .all()
     )
@@ -110,9 +111,20 @@ def export_lanyards():
     # Generate CSV
     csv_buffer = StringIO()
     writer = csv.writer(csv_buffer)
-    writer.writerow(["User Name", "Email", "Tournament", "Session", "City", "Country", "Start Date"])
+    writer.writerow([
+        "User Name", "Email", "Tournament", "Session", "Tournament City", "Tournament Country", "Start Date", 
+        "Shipping Name", "Address Line 1", "Address Line 2", "City", "State", "Zip/Postal Code", "Country"
+    ])
 
-    for user, ut, tournament in user_data:
+    for user, ut, tournament, address in user_data:
+        shipping_name = address.name if address else ""
+        address1 = address.address1 if address else ""
+        address2 = address.address2 if address else ""
+        city = address.city if address else ""
+        state = address.state if address else ""
+        zip_code = address.zip_code if address else ""
+        country = address.country if address else ""
+        
         writer.writerow([
             user.name or f"{user.first_name} {user.last_name}",
             user.email,
@@ -120,7 +132,14 @@ def export_lanyards():
             ut.session_label or "—",
             tournament.city,
             tournament.country,
-            tournament.start_date.strftime("%Y-%m-%d")
+            tournament.start_date.strftime("%Y-%m-%d"),
+            shipping_name,
+            address1,
+            address2,
+            city,
+            state,
+            zip_code,
+            country
         ])
 
     return Response(

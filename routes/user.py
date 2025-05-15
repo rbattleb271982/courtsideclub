@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Tournament, UserTournament, past_tournaments
+from models import db, User, Tournament, UserTournament, past_tournaments, ShippingAddress
 from services.sendgrid_service import send_email
 import json
 import logging
@@ -269,8 +269,21 @@ def order_lanyard():
             flash('Please fill out all required fields.', 'danger')
             return render_template('order_lanyard.html', lanyard_ordered=False, states=sorted(STATE_ABBRS))
 
+        # Store shipping address
+        shipping_address = ShippingAddress(
+            user_id=user.id,
+            name=name,
+            address1=address1,
+            address2=address2,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            country=country
+        )
+        
         # Update user in database to mark lanyard as ordered
         user.lanyard_ordered = True
+        db.session.add(shipping_address)
         db.session.commit()
 
         # Send confirmation email to user

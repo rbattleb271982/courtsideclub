@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 from sqlalchemy.ext.mutable import MutableList, MutableDict
 from sqlalchemy import types, Table, Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -141,6 +141,26 @@ class UserTournament(db.Model):
     
     def __repr__(self):
         return f'<UserTournament user_id={self.user_id} tournament_id={self.tournament_id}>'
+
+class ShippingAddress(db.Model):
+    __tablename__ = 'shipping_addresses'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    address1 = db.Column(db.String(255), nullable=False)
+    address2 = db.Column(db.String(255))
+    city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(50))
+    zip_code = db.Column(db.String(20), nullable=False)
+    country = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship to user
+    user = relationship('User', backref=backref('shipping_address', uselist=False, cascade="all, delete-orphan"))
+    
+    def __repr__(self):
+        return f'<ShippingAddress user_id={self.user_id}>'
 
 def load_user(user_id):
     return User.query.get(int(user_id))
