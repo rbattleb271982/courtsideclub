@@ -1,0 +1,65 @@
+Step 1: Replace templates/homepage.html
+
+Paste this in full:
+
+{% extends "layout.html" %}
+{% block content %}
+
+<div style="text-align: center; margin-top: 3em;">
+  <h1>🎾 Welcome to CourtSideClub</h1>
+  <p style="font-size: 1.2em; max-width: 600px; margin: 1em auto;">
+    Connect with fellow tennis fans at your next tournament. Choose your sessions, raise your hand to meet up, and get your free lanyard!
+  </p>
+
+  {% if not current_user.is_authenticated %}
+    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary" style="margin: 1em;">Get Started</a>
+    <p><a href="{{ url_for('auth.login') }}">Already have an account?</a></p>
+  {% else %}
+    <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary" style="margin: 1em;">Browse Tournaments</a>
+  {% endif %}
+</div>
+
+<div style="text-align: center; margin-top: 2em;">
+  <a href="{{ url_for('user.order_lanyard') }}">🧢 Get your free lanyard</a>
+</div>
+
+{% endblock %}
+✅ Step 2: Replace templates/tournaments.html
+
+Paste this version to group by month and polish layout:
+
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>🎾 Upcoming Tournaments</h2>
+
+{% set ns = namespace(current_month=None) %}
+<ul style="list-style: none; padding: 0;">
+  {% for t in tournaments %}
+    {% set month = t.start_date.strftime('%B %Y') %}
+    {% if month != ns.current_month %}
+      {% set ns.current_month = month %}
+      <li><h3 style="margin-top: 1.5em;">{{ month }}</h3></li>
+    {% endif %}
+    <li style="margin-bottom: 1em; padding: 1em; border: 1px solid #ccc; border-radius: 6px;">
+      <strong>{{ t.name }}</strong> – {{ t.city }}, {{ t.country }}<br>
+      🗓 {{ t.start_date.strftime('%b %d') }} – {{ t.end_date.strftime('%b %d') }}<br>
+      <a href="{{ url_for('tournaments.view_tournament', tournament_slug=t.id) }}">View Tournament Details</a>
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
+🧪 REPLIT AGENT INSTRUCTION:
+
+Hi Replit — I just updated:
+
+homepage.html to add a user-friendly welcome, call-to-action, and dynamic login/signup buttons.
+tournaments.html to group tournaments by month, improve visual layout, and show date/location clearly.
+Please:
+
+Visit / (homepage) while logged out and verify the CTA shows “Get Started”
+Log in and confirm it changes to “Browse Tournaments”
+Visit /tournaments and confirm tournaments are grouped by month, styled cleanly, and show location/date info
+Confirm all links work and no broken data or blank sections appear
+👉 Do not mark complete until both pages render fully and display real data without visual or link errors.
