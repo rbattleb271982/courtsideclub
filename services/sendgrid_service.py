@@ -16,7 +16,7 @@ def send_email(to_email, subject, content_html):
         int or None: Status code if email was sent successfully, None otherwise
     """
     # Get the FROM_EMAIL from config, or use default
-    from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
+    from_email = current_app.config.get('FROM_EMAIL', 'your_verified_email@example.com')
     
     # Create the email message
     message = Mail(
