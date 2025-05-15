@@ -55,12 +55,12 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(100))
     password_hash = db.Column(db.String(256))
     
-    # Keep these for backward compatibility during migration
-    attending = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
-    raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
-    past_tournaments_json = db.Column('past_tournaments', MutableList.as_mutable(JsonEncodedList), default=[])
+    # Legacy fields have been removed:
+    # attending = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
+    # raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
+    # past_tournaments_json = db.Column('past_tournaments', MutableList.as_mutable(JsonEncodedList), default=[])
     
-    # New relationships
+    # We're keeping this relationship for now
     attended_tournaments = relationship(
         'Tournament',
         secondary=past_tournaments,
@@ -121,11 +121,11 @@ class UserTournament(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     tournament_id = db.Column(db.String(50), db.ForeignKey('tournaments.id', ondelete='CASCADE'), nullable=False)
     
-    # Store selected dates and sessions
-    dates = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
-    sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
+    # Legacy fields for selected dates and sessions - will be phased out
+    # dates = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
+    # sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     
-    # Session label for simpler display (added for new implementation)
+    # Primary field for session information
     session_label = db.Column(db.String(255))
     
     # Whether the user is actually attending this tournament

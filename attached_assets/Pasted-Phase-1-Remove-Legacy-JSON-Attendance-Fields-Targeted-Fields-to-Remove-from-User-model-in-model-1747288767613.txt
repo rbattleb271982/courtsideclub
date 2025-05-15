@@ -1,0 +1,75 @@
+Phase 1: Remove Legacy JSON Attendance Fields
+🔥 Targeted Fields to Remove (from User model in models.py):
+
+attending
+raised_hand
+past_tournaments_json
+(and eventually attended_tournaments if fully deprecated)
+📋 Step 1: Update models.py
+
+In your User model, remove or comment out:
+
+attending = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
+raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
+past_tournaments_json = db.Column('past_tournaments', MutableList.as_mutable(JsonEncodedList), default=[])
+attended_tournaments = relationship('Tournament', secondary=past_tournaments, backref=db.backref('attendees', lazy='dynamic'))
+If you want to fully clean it out of the DB:
+
+📋 Step 2: Create migration script
+
+Create a file like remove_legacy_user_fields.py in your migrations folder:
+
+from models import db
+
+def run():
+    with db.engine.connect() as conn:
+        conn.execute("ALTER TABLE users DROP COLUMN IF EXISTS attending")
+        conn.execute("ALTER TABLE users DROP COLUMN IF EXISTS raised_hand")
+        conn.execute("ALTER TABLE users DROP COLUMN IF EXISTS past_tournaments")
+✅ Phase 2: Simplify Session Storage
+If you’re primarily using session_label, we can phase out dates and sessions.
+
+📋 Step 1: Update UserTournament in models.py
+
+Comment or remove:
+
+dates = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
+sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
+And keep:
+
+session_label = db.Column(db.String(255))  # Keep this as primary
+Optional: migrate the values if they’re stored differently.
+
+✅ Phase 3: Align All Tournament Slug Usage
+📋 In all your routes (especially view_tournament, attend_tournament, update_sessions, etc.):
+
+Make sure you're consistently using:
+
+@tournaments_bp.route('/tournaments/<tournament_slug>')
+def view_tournament(tournament_slug):
+    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
+And in your templates:
+
+<a href="{{ url_for('tournaments.view_tournament', tournament_slug=t.id) }}">
+✅ Phase 4: Improve SendGrid Fallback Support
+In services/sendgrid_service.py:
+
+📋 Update send_email() function to include plain text fallback:
+
+def send_email(to_email, subject, content_html, content_text=None):
+    if not content_text:
+        # Auto-generate fallback plain text
+        from bs4 import BeautifulSoup
+        content_text = BeautifulSoup(content_html, "html.parser").get_text()
+
+    message = {
+        "personalizations": [{"to": [{"email": to_email}]}],
+        "from": {"email": "richardbattlebaxter@gmail.com"},
+        "subject": subject,
+        "content": [
+            {"type": "text/plain", "value": content_text},
+            {"type": "text/html", "value": content_html}
+        ]
+    }
+    ...
+(You may need to pip install beautifulsoup4 for that helper.)
