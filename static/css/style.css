@@ -894,6 +894,22 @@ a:hover {
   color: var(--gray-dark);
 }
 
+/* How It Works CTA Button */
+.howitworks-cta-button {
+  display: inline-block;
+  background-color: #007a4d;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.howitworks-cta-button:hover {
+  background-color: #005f39;
+}
+
 /* Utilities */
 .text-center {
   text-align: center;
