@@ -166,12 +166,43 @@ def view_tournament(tournament_slug):
     attending_count = stats.get('attending', 0) 
     meeting_count = stats.get('meetup', 0)
     
+    # Get selected sessions for current user
+    selected_sessions = []
+    wants_to_meet = False
+    user_attending = False
+    
+    if user_tournament:
+        user_attending = user_tournament.attending
+        wants_to_meet = user_tournament.wants_to_meet
+        if user_tournament.session_label:
+            selected_sessions = user_tournament.session_label.split(',')
+    
+    # Get session-specific stats
+    session_stats = {}
+    if tournament.sessions:
+        for session in tournament.sessions:
+            # Count users attending this specific session
+            session_attendees = UserTournament.query.filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.attending == True,
+                UserTournament.session_label.like(f'%{session}%'),
+                other_users_filter
+            ).count()
+            
+            session_stats[session] = {
+                'attendees': session_attendees
+            }
+    
     return render_template('tournament_detail.html',
                          tournament=tournament,
                          user_tournament=user_tournament,
                          stats=stats,
                          attending_count=attending_count,
-                         meeting_count=meeting_count)
+                         meeting_count=meeting_count,
+                         selected_sessions=selected_sessions,
+                         session_stats=session_stats,
+                         wants_to_meet=wants_to_meet,
+                         user_attending=user_attending)
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
