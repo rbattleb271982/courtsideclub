@@ -196,6 +196,30 @@ def tournament_detail(tournament_slug):
     today = datetime.now().date()
     days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
     
+    # Ensure tournament sessions data exists
+    if not tournament.sessions or len(tournament.sessions) == 0:
+        # Add test sessions data if none exists
+        default_sessions = [
+            'Day 1 - Day', 
+            'Day 1 - Night', 
+            'Day 2 - Day', 
+            'Day 2 - Night',
+            'Day 3 - Day'
+        ]
+        # Update the database with these sessions
+        tournament.sessions = default_sessions
+        db.session.commit()
+        print(f"DEBUG: Added default sessions to tournament {tournament.name}: {tournament.sessions}")
+    else:
+        print(f"DEBUG: Tournament sessions from DB: {tournament.sessions}")
+    
+    # Ensure session stats exist for all sessions
+    for session in tournament.sessions:
+        if session not in session_stats:
+            session_stats[session] = {
+                'attendees': 0  # Default count if no data
+            }
+    
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          user_tournament=user_tournament,

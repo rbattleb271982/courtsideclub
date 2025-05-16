@@ -218,10 +218,15 @@ def attend_tournament_new(tournament_slug):
     # Important - mark this user as attending
     user_tourney.attending = True
     
+    # Add default session if none selected (first day/session)
+    if not user_tourney.session_label and tournament.sessions and len(tournament.sessions) > 0:
+        user_tourney.session_label = tournament.sessions[0]
+    
     # Log the event
     event_data = {
         'tournament_id': tournament.id,
-        'tournament_name': tournament.name
+        'tournament_name': tournament.name,
+        'attending': True
     }
     log_event(current_user.id, 'attend_tournament', event_data)
     
