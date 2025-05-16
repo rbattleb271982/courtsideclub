@@ -471,6 +471,9 @@ def attend_tournament_new(tournament_slug):
     # Always mark as attending, but session handling differs by type
     user_tournament.attending = True
     
+    # Set the attendance_type field
+    user_tournament.attendance_type = attendance_type
+    
     # Both "maybe" and "attending" types are for attending users
     # We'll preserve any existing session selections
     # The only difference is the message shown to the user
@@ -521,13 +524,17 @@ def mark_attending(tournament_slug):
     user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
     user_tournament.wants_to_meet = wants_to_meet
     
-    # Only mark as attending if they selected at least one session
+    # Always mark as attending (either maybe or full attending)
+    user_tournament.attending = True
+    
+    # Update attendance_type based on session selections
     if selected_sessions:
-        user_tournament.attending = True
+        user_tournament.attendance_type = 'attending'
         flash('You are now registered as attending this tournament.', 'success')
     else:
-        user_tournament.attending = False
-        flash('Please select at least one session to be marked as attending.', 'warning')
+        # If they didn't select any sessions, mark as "maybe"
+        user_tournament.attendance_type = 'maybe'
+        flash('Your preferences have been saved. You can select sessions later.', 'success')
 
     # Log the event
     event_data = {
