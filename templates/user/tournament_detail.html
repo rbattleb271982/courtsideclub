@@ -165,6 +165,17 @@
                     <div class="session-selection-ui mt-3">
                         <h4 class="h5 mb-3">Select sessions you'll attend:</h4>
                         
+                        <!-- Debug Info -->
+                        <div class="alert alert-info mb-3 small">
+                            <p><strong>Debug info:</strong></p>
+                            <p>Selected sessions: {{ selected_sessions|join(', ') if selected_sessions else 'None' }}</p>
+                            <p>Tournament sessions count: {{ tournament.sessions|length }}</p>
+                            <p>User tournament exists: {{ 'Yes' if user_tournament else 'No' }}</p>
+                            {% if user_tournament %}
+                                <p>User attending: {{ 'Yes' if user_tournament.attending else 'No' }}</p>
+                            {% endif %}
+                        </div>
+                        
                         <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
                             <!-- Create session day groups with actual dates -->
                             <div class="session-groups">
