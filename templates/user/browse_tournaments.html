@@ -48,28 +48,28 @@
             <div class="tournament-actions">
               {% if tournament.attendance_status == 'attending' and tournament.has_sessions %}
                 <!-- User is attending with sessions selected -->
-                <div class="attendance-status attending">
+                <div class="btn btn-selected">
                   <span class="status-icon">✅</span> You're Attending
                 </div>
                 <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
-                  <button type="submit" class="btn btn-outline">Not Attending</button>
+                  <button type="submit" class="btn-clear">Not Attending</button>
                 </form>
               {% elif tournament.attendance_status == 'maybe' %}
                 <!-- User has UserTournament but not fully attending or no sessions -->
-                <div class="attendance-status maybe">
-                  <span class="status-icon">⚪</span> Maybe Attending
+                <div class="btn btn-selected-maybe">
+                  <span class="status-icon">❓</span> Maybe Attending
                 </div>
                 <div class="attendance-buttons">
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-primary">Update Sessions</a>
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-outline">Update Sessions</a>
                   <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
-                    <button type="submit" class="btn btn-outline">Not Attending</button>
+                    <button type="submit" class="btn-clear">Not Attending</button>
                   </form>
                 </div>
               {% else %}
                 <!-- User is not attending this tournament -->
                 <div class="attendance-buttons">
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-primary">Attending</a>
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline">Maybe Attending</a>
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-outline primary-outline">Attending</a>
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline maybe-outline">Maybe Attending</a>
                 </div>
               {% endif %}
             </div>
@@ -342,23 +342,62 @@
     }
   }
   
-  .btn-primary {
+  /* Button status styles */
+  .btn-selected {
     background-color: #004d26;
     color: #fff;
+    cursor: default;
+    margin-bottom: 8px;
   }
   
-  .btn-primary:hover, .btn-primary:active {
-    background-color: #003d1e;
+  .btn-selected-maybe {
+    background-color: #666;
+    color: #fff;
+    cursor: default;
+    margin-bottom: 8px;
   }
   
   .btn-outline {
     background-color: transparent;
-    border: 1px solid #004d26;
+    border: 1px solid #666;
+    color: #666;
+  }
+  
+  .btn-outline.primary-outline {
+    border-color: #004d26;
     color: #004d26;
   }
   
-  .btn-outline:hover, .btn-outline:active {
+  .btn-outline.primary-outline:hover, 
+  .btn-outline.primary-outline:active {
     background-color: #f4f9f4;
+  }
+  
+  .btn-outline.maybe-outline {
+    border-color: #666;
+    color: #666;
+  }
+  
+  .btn-outline.maybe-outline:hover, 
+  .btn-outline.maybe-outline:active {
+    background-color: #f5f5f5;
+  }
+  
+  .btn-clear {
+    background: none;
+    border: none;
+    color: #666;
+    text-decoration: underline;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px;
+    width: 100%;
+    text-align: center;
+    transition: color 0.2s;
+  }
+  
+  .btn-clear:hover {
+    color: #333;
   }
   
   .status-icon {
@@ -367,6 +406,7 @@
   
   .attendance-form {
     width: 100%;
+    margin-top: 4px;
   }
   
   /* Mobile stats adjustments */
