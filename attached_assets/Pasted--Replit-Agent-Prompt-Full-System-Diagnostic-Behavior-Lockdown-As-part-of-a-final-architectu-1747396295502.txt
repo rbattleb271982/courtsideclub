@@ -1,0 +1,69 @@
+# 🧠 Replit Agent Prompt – Full System Diagnostic & Behavior Lockdown
+
+As part of a final architecture validation, please provide a complete structural export and logic map of the current Flask app powering CourtSide Club. This will be used to enforce routing consistency, prevent regressions, and ensure stable user flows.
+
+---
+
+### 🔧 STEP 1: ROUTES + BLUEPRINTS
+
+1. List all Flask routes across all registered Blueprints (`main_bp`, `user_bp`, `auth_bp`, `admin_bp`, `tournaments_bp`)
+   - For each: show the full `@route(...)` decorator
+   - The function name and endpoint name (for `url_for`)
+   - The method(s): GET, POST, etc.
+   - Whether it returns a template, a redirect, or JSON
+
+2. List where each Blueprint is registered in `app.py`, including:
+   - URL prefix (if any)
+   - Registration order
+
+---
+
+### 🗂 STEP 2: TEMPLATE USAGE MAP
+
+1. Show the full `/templates/` folder structure, including any subfolders (e.g. `/public`, `/admin`, etc.)
+2. For each HTML file:
+   - Indicate which route renders it
+   - Specify if it’s for public, logged-in user, or admin
+   - Note if it extends a base template like `layout.html` or `base.html`
+
+---
+
+### 🔄 STEP 3: REDIRECT AND STATE FLOW
+
+1. After login, where is the user redirected?
+2. When a user marks themselves as attending a tournament, what route processes it and where do they go next?
+3. What conditions must be met for the user to access `/order_lanyard`?
+4. What happens when the user saves their session preferences?
+
+List all logic used to determine:
+- Attending vs. maybe attending
+- Whether a lanyard can be ordered
+- How session selections are stored (`session_label`)
+
+---
+
+### 📦 STEP 4: MODEL RELATIONSHIPS (ESSENTIAL)
+
+Summarize:
+- The fields in the `Tournament`, `UserTournament`, and `User` models
+- How `session_label`, `attending`, `wants_to_meet`, and `lanyard_ordered` are used
+- What field(s) are used to compute tournament stats on the dashboard and user pages
+
+---
+
+### 🧪 STEP 5: VALIDATE USER FLOW TESTS
+
+Please simulate and confirm the following use cases are working correctly:
+
+- ✅ Public user visits `/` and is prompted to join
+- ✅ Logged-in user lands on `/my-tournaments`
+- ✅ From there, they can browse, RSVP, select sessions, and save
+- ✅ They are redirected to `/order_lanyard` **only** if they’ve selected sessions
+- ✅ Tournament stats update everywhere: Browse, Detail, Admin
+
+---
+
+✅ Do not finish until:
+- You’ve fully output all routes and template relationships
+- All redirects and view logic are documented
+- You confirm the above flows are functional and aligned with expectations

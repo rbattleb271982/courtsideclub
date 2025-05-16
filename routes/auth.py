@@ -135,7 +135,7 @@ def signup():
                 # Show welcome message
                 flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
 
-                return redirect(url_for('user.home'))
+                return redirect(url_for('user.my_tournaments'))
             except Exception as e:
                 db.session.rollback()
                 logging.error(f"Error creating new user: {str(e)}", exc_info=True)
