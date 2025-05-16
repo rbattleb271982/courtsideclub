@@ -247,7 +247,7 @@
                             {% endif %}
                         </div>
                         
-                        <button type="button" class="btn {% if selected_sessions|length > 0 %}btn-success{% else %}btn-secondary disabled{% endif %} save-btn" id="saveButton" {% if selected_sessions|length == 0 and is_attending %}disabled{% endif %}>
+                        <button type="button" class="btn {% if selected_sessions|length > 0 %}btn-success{% else %}btn-secondary disabled{% endif %} save-btn" id="saveButton" {% if selected_sessions|length == 0 %}disabled{% endif %}>
                             <i data-feather="save" class="icon-sm"></i> Save My Sessions
                         </button>
                         

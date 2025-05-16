@@ -78,7 +78,7 @@
 }
 
 .session-chip.selected .check-icon {
-  display: inline;
+  display: none; /* Hide checkmarks even when selected */
 }
 
 /* Save button container */
