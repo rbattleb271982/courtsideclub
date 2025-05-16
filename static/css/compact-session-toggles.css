@@ -1,0 +1,192 @@
+/* Compact Session Toggles CSS */
+
+/* Session day groups */
+.session-day-group {
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  padding: 1rem;
+}
+
+.day-title {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+/* Session toggle container */
+.session-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Individual session toggle chips */
+.session-chip {
+  display: inline-flex;
+  align-items: center;
+  background-color: white;
+  border: 2px solid #e9ecef;
+  border-radius: 30px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  min-width: calc(50% - 0.5rem);
+  max-width: 200px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.session-chip:hover {
+  border-color: #28a745;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.session-chip.selected {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.session-chip .session-name {
+  font-weight: 500;
+  margin-right: auto;
+}
+
+.session-chip .fan-count {
+  font-size: 0.7rem;
+  background-color: rgba(0,0,0,0.1);
+  border-radius: 20px;
+  padding: 0.15rem 0.5rem;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.session-chip.selected .fan-count {
+  background-color: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.session-chip .check-icon {
+  margin-left: 0.5rem;
+  display: none;
+}
+
+.session-chip.selected .check-icon {
+  display: inline;
+}
+
+/* Save button container */
+.save-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255,255,255,0.95);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  padding: 1rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.save-message {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.save-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.75rem;
+  font-weight: 500;
+}
+
+.save-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.save-btn .spinner-border {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Add padding to body when save container is fixed */
+body.has-fixed-save {
+  padding-bottom: 5rem;
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+  .session-chips {
+    justify-content: flex-start;
+  }
+  
+  .session-chip {
+    min-width: auto;
+    max-width: none;
+  }
+  
+  .save-container {
+    position: static;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 1rem 0;
+  }
+  
+  body.has-fixed-save {
+    padding-bottom: 0;
+  }
+}
+
+/* Additional styles for meeting toggle button */
+.meeting-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  font-weight: 500;
+  border-radius: 30px;
+}
+
+.meeting-toggle-btn .checkmark {
+  font-weight: bold;
+}
+
+/* Improved lanyard button */
+.lanyard-btn {
+  padding: 0.75rem;
+  font-weight: 500;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Improved attendance buttons */
+.attendance-btn {
+  border-radius: 30px !important;
+  padding: 0.6rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.attendance-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1) !important;
+}
+
+.attendance-btn .feather {
+  margin-right: 0.25rem;
+}

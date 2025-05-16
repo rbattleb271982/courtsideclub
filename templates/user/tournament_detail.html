@@ -3,7 +3,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/session-toggles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/compact-session-toggles.css') }}">
 <script src="{{ url_for('static', filename='js/tournament-detail.js') }}" defer></script>
 <script type="application/ld+json">
 {
@@ -87,21 +87,24 @@
                                 <!-- Attendance Toggle Buttons --> 
                                 <div class="attendance-buttons d-flex flex-column flex-md-row mb-2 mt-2">
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
-                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == True %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100">
+                                        <button type="submit" class="btn {% if user_tournament and user_tournament.attending == True %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending">
                                             <i data-feather="check-circle" class="icon-sm"></i> I'm Going!
+                                            {% if user_tournament and user_tournament.attending == True %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                     
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
                                         <input type="hidden" name="attendance_type" value="maybe">
-                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == 'maybe' %}btn-warning{% else %}btn-outline-warning{% endif %} hover-grow w-100">
+                                        <button type="submit" class="btn {% if user_tournament and user_tournament.attending == 'maybe' %}btn-warning{% else %}btn-outline-warning{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe">
                                             <i data-feather="help-circle" class="icon-sm"></i> Thinking About It
+                                            {% if user_tournament and user_tournament.attending == 'maybe' %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                     
                                     <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2 attendance-option">
-                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == False %}btn-secondary{% else %}btn-outline-secondary{% endif %} hover-grow w-100">
+                                        <button type="submit" class="btn {% if user_tournament and user_tournament.attending == False %}btn-secondary{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="not-attending">
                                             <i data-feather="x-circle" class="icon-sm"></i> Can't Make It
+                                            {% if user_tournament and user_tournament.attending == False %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                 </div>
@@ -112,10 +115,15 @@
                                            onclick="document.getElementById('wants-to-meet-top').click(); toggleMeetingButton(this);">
                                         <span class="d-flex align-items-center justify-content-center">
                                             <span class="mr-1">👋</span> 
+                                            <span class="meeting-label">
+                                                {% if wants_to_meet %}
+                                                I'm open to meeting other fans
+                                                {% else %}
+                                                Meet other fans?
+                                                {% endif %}
+                                            </span>
                                             {% if wants_to_meet %}
-                                            I'm open to meeting other fans
-                                            {% else %}
-                                            Meet other fans?
+                                            <span class="ml-1 checkmark">✓</span>
                                             {% endif %}
                                         </span>
                                     </button>
@@ -189,48 +197,42 @@
                                 {% for day_num in range(1, 5) %}
                                 {% set day_offset = day_num|int - 1 %}
                                 {% set day_date = tournament.start_date.replace(day=tournament.start_date.day + day_offset) %}
-                                <div class="session-day-group mb-4">
-                                    <h5 class="h6 font-weight-bold mb-3 day-header">
+                                <div class="session-day-group">
+                                    <div class="day-title">
                                         {{ day_date.strftime('%A, %b %d') }} (Day {{ day_num }})
-                                    </h5>
+                                    </div>
                                     
-                                    <!-- Day session -->
-                                    {% set day_key = "Day " + day_num|string + " - Day" %}
-                                    {% set is_selected = day_key in selected_sessions %}
-                                    <button type="button" 
-                                            class="session-toggle {% if is_selected %}selected{% else %}unselected{% endif %}" 
-                                            data-session="{{ day_key }}">
-                                        <strong>Day Session</strong> 
-                                        <span class="session-badge">
-                                            {% if day_key in session_stats and session_stats[day_key].attendees > 0 %}
-                                                {{ session_stats[day_key].attendees }} fan{% if session_stats[day_key].attendees != 1 %}s{% endif %}
-                                            {% else %}
-                                                Be the first!
-                                            {% endif %}
-                                        </span>
-                                        <span class="toggle-icon">
-                                            {% if is_selected %}✓{% else %}+{% endif %}
-                                        </span>
-                                    </button>
-                                    
-                                    <!-- Night session -->
-                                    {% set night_key = "Day " + day_num|string + " - Night" %}
-                                    {% set is_selected = night_key in selected_sessions %}
-                                    <button type="button" 
-                                            class="session-toggle {% if is_selected %}selected{% else %}unselected{% endif %}" 
-                                            data-session="{{ night_key }}">
-                                        <strong>Night Session</strong>
-                                        <span class="session-badge">
-                                            {% if night_key in session_stats and session_stats[night_key].attendees > 0 %}
-                                                {{ session_stats[night_key].attendees }} fan{% if session_stats[night_key].attendees != 1 %}s{% endif %}
-                                            {% else %}
-                                                Be the first!
-                                            {% endif %}
-                                        </span>
-                                        <span class="toggle-icon">
-                                            {% if is_selected %}✓{% else %}+{% endif %}
-                                        </span>
-                                    </button>
+                                    <div class="session-chips">
+                                        <!-- Day session -->
+                                        {% set day_key = "Day " + day_num|string + " - Day" %}
+                                        {% set is_selected = day_key in selected_sessions %}
+                                        <div class="session-chip {% if is_selected %}selected{% endif %}" data-session="{{ day_key }}">
+                                            <span class="session-name">Day Session</span>
+                                            <span class="fan-count">
+                                                {% if day_key in session_stats and session_stats[day_key].attendees > 0 %}
+                                                    {{ session_stats[day_key].attendees }} fan{% if session_stats[day_key].attendees != 1 %}s{% endif %}
+                                                {% else %}
+                                                    Be first!
+                                                {% endif %}
+                                            </span>
+                                            <span class="check-icon">✓</span>
+                                        </div>
+                                        
+                                        <!-- Night session -->
+                                        {% set night_key = "Day " + day_num|string + " - Night" %}
+                                        {% set is_selected = night_key in selected_sessions %}
+                                        <div class="session-chip {% if is_selected %}selected{% endif %}" data-session="{{ night_key }}">
+                                            <span class="session-name">Night Session</span>
+                                            <span class="fan-count">
+                                                {% if night_key in session_stats and session_stats[night_key].attendees > 0 %}
+                                                    {{ session_stats[night_key].attendees }} fan{% if session_stats[night_key].attendees != 1 %}s{% endif %}
+                                                {% else %}
+                                                    Be first!
+                                                {% endif %}
+                                            </span>
+                                            <span class="check-icon">✓</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -238,9 +240,9 @@
                     </div>
                     
                     <!-- Sticky Save Bar -->
-                    <div class="save-bar" id="saveBar">
+                    <div class="save-container" id="saveBar">
                         <!-- Selected Session Count -->
-                        <p id="sessionCountMessage">
+                        <div class="save-message" id="sessionCountMessage">
                             {% if selected_sessions|length > 0 %}
                             <span class="text-success font-weight-bold">
                                 <i data-feather="check-circle" class="icon-sm"></i>
@@ -251,9 +253,9 @@
                                 Select which sessions you'll attend
                             </span>
                             {% endif %}
-                        </p>
+                        </div>
                         
-                        <button type="button" class="btn btn-success btn-lg save-btn" id="saveButton">
+                        <button type="button" class="btn {% if selected_sessions|length > 0 %}btn-success{% else %}btn-secondary disabled{% endif %} save-btn" id="saveButton" {% if selected_sessions|length == 0 %}disabled{% endif %}>
                             <i data-feather="save" class="icon-sm"></i> Save My Sessions
                         </button>
                     </div>

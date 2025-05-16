@@ -6,34 +6,32 @@ document.addEventListener('DOMContentLoaded', function() {
     feather.replace();
   }
   
+  // Add mobile fixed save bar behavior
+  if (window.innerWidth < 768) {
+    document.body.classList.add('has-fixed-save');
+  }
+  
   // Track selected sessions
   let selectedSessions = [];
   
   // Initialize selected sessions from existing state
-  document.querySelectorAll('.session-toggle.selected').forEach(toggle => {
-    selectedSessions.push(toggle.dataset.session);
+  document.querySelectorAll('.session-chip.selected').forEach(chip => {
+    selectedSessions.push(chip.dataset.session);
   });
   
   // Update session count display and save button state
   updateSessionCountDisplay();
   updateSaveButtonState();
   
-  // Add sticky behavior to save bar on mobile
-  if (window.innerWidth < 768) {
-    document.body.classList.add('has-sticky-bar');
-  }
-  
-  // Add click handlers for session toggle buttons
-  const sessionToggles = document.querySelectorAll('.session-toggle');
-  sessionToggles.forEach(toggle => {
-    toggle.addEventListener('click', function() {
+  // Add click handlers for session chips
+  const sessionChips = document.querySelectorAll('.session-chip');
+  sessionChips.forEach(chip => {
+    chip.addEventListener('click', function() {
       const sessionValue = this.dataset.session;
       
       if (this.classList.contains('selected')) {
         // Remove from selected sessions
         this.classList.remove('selected');
-        this.classList.add('unselected');
-        this.querySelector('.toggle-icon').textContent = '+';
         
         // Remove from array
         const index = selectedSessions.indexOf(sessionValue);
@@ -42,9 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } else {
         // Add to selected sessions
-        this.classList.remove('unselected');
         this.classList.add('selected');
-        this.querySelector('.toggle-icon').textContent = '✓';
         
         // Add to array if not already there
         if (!selectedSessions.includes(sessionValue)) {
@@ -157,6 +153,23 @@ document.addEventListener('DOMContentLoaded', function() {
       toggleMeetingButton(this);
     });
   }
+  
+  // Handle attendance button clicks (visual feedback only)
+  const attendanceButtons = document.querySelectorAll('.attendance-btn');
+  attendanceButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // Show loading indicator on button
+      const originalContent = this.innerHTML;
+      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+      this.disabled = true;
+      
+      // The actual state change happens via form submission, this is just for UI feedback
+      setTimeout(() => {
+        this.innerHTML = originalContent; 
+        this.disabled = false;
+      }, 2000); // Reset after form submission
+    });
+  });
 });
 
 // Function to toggle meeting button appearance
@@ -164,13 +177,29 @@ function toggleMeetingButton(button) {
   const meetingCheckbox = document.getElementById('wants-to-meet-top');
   if (!meetingCheckbox) return;
   
+  const meetingLabel = button.querySelector('.meeting-label');
+  const checkmarkSpan = button.querySelector('.checkmark');
+  
   if (meetingCheckbox.checked) {
     button.classList.remove('btn-outline-success');
     button.classList.add('btn-success');
-    button.querySelector('span span:last-child').textContent = "I'm open to meeting other fans";
+    meetingLabel.textContent = "I'm open to meeting other fans";
+    
+    // Add checkmark if it doesn't exist
+    if (!checkmarkSpan) {
+      const checkmark = document.createElement('span');
+      checkmark.className = 'ml-1 checkmark';
+      checkmark.textContent = '✓';
+      button.querySelector('span').appendChild(checkmark);
+    }
   } else {
     button.classList.remove('btn-success');
     button.classList.add('btn-outline-success');
-    button.querySelector('span span:last-child').textContent = "Meet other fans?";
+    meetingLabel.textContent = "Meet other fans?";
+    
+    // Remove checkmark if it exists
+    if (checkmarkSpan) {
+      checkmarkSpan.remove();
+    }
   }
 }
