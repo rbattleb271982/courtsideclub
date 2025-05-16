@@ -94,7 +94,7 @@
                                 <!-- Attendance Toggle Buttons --> 
                                 <div class="attendance-buttons d-flex flex-column flex-md-row mb-2 mt-2">
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
-                                        <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
+                                        <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
                                             <i data-feather="check-circle" class="icon-sm"></i> I'm Going!
                                         </button>
                                     </form>
