@@ -193,7 +193,7 @@ def view_tournament(tournament_slug):
                 'attendees': session_attendees
             }
     
-    return render_template('tournament_detail.html',
+    return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          user_tournament=user_tournament,
                          stats=stats,
@@ -214,18 +214,38 @@ def attend_tournament_new(tournament_slug):
     if not user_tourney:
         user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
         db.session.add(user_tourney)
-
+    
+    # Important - mark this user as attending
+    user_tourney.attending = True
+    
+    # Log the event
+    event_data = {
+        'tournament_id': tournament.id,
+        'tournament_name': tournament.name
+    }
+    log_event(current_user.id, 'attend_tournament', event_data)
+    
     db.session.commit()
-    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+    return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/unattend', methods=['POST'])
 @login_required
 def unattend_tournament(tournament_slug):
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    
+    # Log the event before deleting
+    event_data = {
+        'tournament_id': tournament.id,
+        'tournament_name': tournament.name
+    }
+    log_event(current_user.id, 'unattend_tournament', event_data)
+    
+    # Remove the user tournament registration
     UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament.id).delete()
     db.session.commit()
-    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+    
+    return redirect(url_for('user.browse_tournaments'))
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/update', methods=['POST'])
