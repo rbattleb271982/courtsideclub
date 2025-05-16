@@ -438,8 +438,11 @@ def save_sessions(tournament_slug):
     else:
         flash('Please select at least one session to mark yourself as attending.', 'warning')
     
-    # Redirect back with session_saved parameter for lanyard button display
-    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
+    # Only include session_saved parameter if they actually saved sessions
+    if selected_sessions:
+        return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
+    else:
+        return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
 @tournaments_bp.route("/tournaments/<tournament_slug>/attend/new", methods=['POST'])
 @login_required
