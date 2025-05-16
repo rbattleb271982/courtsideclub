@@ -1,4 +1,3 @@
-
 {% extends "layout.html" %}
 
 {% block title %}{{ tournament.name }}{% endblock %}
@@ -7,74 +6,22 @@
 <div class="container">
   <div class="tournament-header mb-6">
     <h1 class="text-3xl font-bold">{{ tournament.name }}</h1>
-    <p class="text-gray-600">{{ tournament.location }}</p>
+    <p class="text-gray-600">{{ tournament.city }}, {{ tournament.country }}</p>
     <p class="text-gray-600">{{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
   </div>
 
-  {% if current_user.is_authenticated %}
-    <div class="card p-4 border rounded">
-      {% if not user_tournament or not user_tournament.session_label %}
-        <p class="text-lg mb-4">Select which day(s) and session(s) you'll be attending.</p>
-      {% endif %}
-
-      <form method="POST" action="{{ url_for('tournaments.update_attendance', slug=tournament.slug) }}">
-        <div class="session-selection mb-4">
-          <h3 class="font-semibold mb-2">Available Sessions</h3>
-          {% for session in tournament.available_sessions %}
-          <div class="mb-2">
-            <label class="inline-flex items-center">
-              <input type="checkbox" name="sessions" value="{{ session.id }}"
-                     {% if user_tournament and session.id in user_tournament.sessions %}checked{% endif %}
-                     class="form-checkbox">
-              <span class="ml-2">{{ session.label }}</span>
-            </label>
-          </div>
-          {% endfor %}
-        </div>
-
-        <div class="mb-4">
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="open_to_meet" 
-                   {% if user_tournament and user_tournament.open_to_meet %}checked{% endif %}
-                   class="form-checkbox">
-            <span class="ml-2">I'm open to meeting other fans</span>
-          </label>
-        </div>
-
-        <div class="flex items-center">
-          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-500 transition">
-            Save Preferences
-          </button>
-          
-          {% if user_tournament and user_tournament.session_label and not current_user.lanyard_ordered %}
-          <a href="{{ url_for('user.lanyard') }}" class="ml-4 bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-500 transition">
-            Order Lanyard
-          </a>
-          {% endif %}
-
-          {% if user_tournament and user_tournament.attending %}
-          <form action="{{ url_for('tournaments.opt_out', slug=tournament.slug) }}" method="POST" class="ml-4">
-            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-500 transition">
-              Opt Out
-            </button>
-          </form>
-          {% endif %}
-        </div>
-      </form>
-    </div>
-
-    <div class="mt-4">
-      <p class="text-sm text-gray-500">
-        {{ tournament.attendee_count }} attending • {{ tournament.hand_raised_count }} open to meetups • {{ tournament.lanyard_count }} lanyards ordered
-      </p>
-    </div>
-  {% else %}
-    <div class="card p-4 border rounded">
-      <p class="mb-4">Sign in to mark yourself as attending and connect with other fans!</p>
-      <a href="{{ url_for('auth.login') }}" class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-500 transition">
-        Sign In
-      </a>
-    </div>
+  {% if tournament.about %}
+  <div class="tournament-about mb-6">
+    <h2 class="text-xl font-semibold mb-2">About</h2>
+    <p class="text-gray-700">{{ tournament.about }}</p>
+  </div>
   {% endif %}
+
+  <div class="mt-8 card p-4 border rounded">
+    <p class="mb-4">Sign in to mark yourself as attending and connect with other fans!</p>
+    <a href="{{ url_for('auth.login') }}" class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-500 transition">
+      Sign In
+    </a>
+  </div>
 </div>
 {% endblock %}

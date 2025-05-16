@@ -15,21 +15,36 @@ def public_home():
 
 @main_bp.route('/tournaments')
 def public_tournaments():
-    from flask import redirect, url_for, current_user
-    # Redirect non-logged in users to the login page
-    if not current_user.is_authenticated:
-        return redirect(url_for('auth.login'))
-    
-    # Only show tournaments to logged-in users
-    tournaments = Tournament.query.filter(Tournament.start_date >= datetime.date.today()).order_by(Tournament.start_date).all()
-    return render_template('public/tournaments.html', tournaments=tournaments)
+    return redirect(url_for('auth.login'))
 
 @main_bp.route('/tournaments/<slug>')
 def public_tournament_detail(slug):
-    tournament = Tournament.query.filter_by(slug=slug).first()
-    if not tournament:
-        abort(404)
-    return render_template('public/tournament_detail.html', tournament=tournament)
+    from flask_login import current_user
+    
+    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
+    
+    if current_user.is_authenticated:
+        # Get user's tournament registration if logged in
+        user_tournament = UserTournament.query.filter_by(
+            user_id=current_user.id,
+            tournament_id=tournament.id
+        ).first()
+        
+        # Get tournament stats
+        stats = {
+            'attending': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count(),
+            'meetup': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True, wants_to_meet=True).count(),
+            'lanyards': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).join(User).filter_by(lanyard_ordered=True).count()
+        }
+        
+        return render_template('tournament_detail.html',
+                            tournament=tournament,
+                            user_tournament=user_tournament,
+                            stats=stats)
+    
+    # Show limited info for non-logged in users
+    return render_template('public/tournament_detail.html', 
+                         tournament=tournament)
 
 @main_bp.route('/how-it-works')
 def how_it_works():
