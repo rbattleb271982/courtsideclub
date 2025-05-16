@@ -1,6 +1,19 @@
 
 {% extends "public/base.html" %}
 {% block title %}Welcome to CourtSide Club{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "CourtSide Club",
+  "url": "https://courtside.repl.co",
+  "description": "Connect with fellow tennis fans at tournaments worldwide",
+  "logo": "{{ url_for('static', filename='tennis_ball.png', _external=True) }}"
+}
+</script>
+{% endblock %}
 {% block description %}Discover and connect with fellow tennis fans at tournaments worldwide.{% endblock %}
 
 {% block content %}

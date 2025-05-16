@@ -1,6 +1,39 @@
 
 {% extends "public/base.html" %}
 {% block title %}How It Works – CourtSide Club{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "How CourtSide Club Works",
+  "description": "Learn how to connect with tennis fans at tournaments using CourtSide Club",
+  "url": "{{ request.url }}",
+  "mainEntity": {
+    "@type": "HowTo",
+    "name": "Getting Started with CourtSide Club",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Create your account",
+        "text": "Use your email or social login to join. It's free and takes 1 minute."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Select tournaments",
+        "text": "Tell us which tournaments and sessions you'll attend."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Get your lanyard",
+        "text": "Request your free lanyard to identify yourself to other members."
+      }
+    ]
+  }
+}
+</script>
+{% endblock %}
 {% block description %}CourtSide Club helps tennis fans connect at tournaments. Here's how to find people, meet up, and join the fun.{% endblock %}
 
 {% block content %}
