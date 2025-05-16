@@ -410,17 +410,15 @@ def save_sessions(tournament_slug):
         previous_wants_to_meet = user_tournament.wants_to_meet
         previous_attending = user_tournament.attending
     
-    # Only mark as attending if they selected at least one session
+    # Always mark as attending when saving sessions, even if none selected
+    # This ensures the user's attendance status is preserved
+    user_tournament.attending = True
+    
+    # Log the session selection count
     if selected_sessions:
-        # This is full attendance with sessions
-        user_tournament.attending = True
-        print(f"DEBUG: User {current_user.id} marked as fully attending with {len(selected_sessions)} sessions")
+        print(f"DEBUG: User {current_user.id} saved {len(selected_sessions)} sessions")
     else:
-        # If no sessions selected but user is new, default to not attending
-        # For existing users, we keep their current attendance status
-        if is_new:
-            user_tournament.attending = False
-            print(f"DEBUG: New user {current_user.id} not marked as attending (no sessions selected)")
+        print(f"DEBUG: User {current_user.id} saved with no specific sessions")
     
     user_tournament.wants_to_meet = wants_to_meet
     user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
@@ -444,13 +442,11 @@ def save_sessions(tournament_slug):
     if selected_sessions:
         flash('Your tournament sessions have been saved.', 'success')
     else:
-        flash('Please select at least one session to mark yourself as attending.', 'warning')
+        flash('Your tournament preferences have been saved.', 'success')
     
-    # Only include session_saved parameter if they actually saved sessions
-    if selected_sessions:
-        return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
-    else:
-        return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+    # Always include session_saved parameter to ensure lanyard button appears
+    # This fixes the issue where the lanyard button doesn't show up
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
 
 @tournaments_bp.route("/tournaments/<tournament_slug>/attend/new", methods=['POST'])
 @login_required
@@ -475,13 +471,13 @@ def attend_tournament_new(tournament_slug):
     # Always mark as attending, but session handling differs by type
     user_tournament.attending = True
     
-    # For "maybe" type, clear session selections
+    # Both "maybe" and "attending" types are for attending users
+    # We'll preserve any existing session selections
+    # The only difference is the message shown to the user
     if attendance_type == 'maybe':
-        user_tournament.session_label = None
-        flash('You are marked as "Maybe Attending" this tournament.', 'success')
+        flash('You are marked as "Maybe Attending" this tournament. You can still select specific sessions.', 'success')
     else:
-        # For full attending, we don't preselect sessions anymore
-        # The user needs to explicitly select which sessions they'll attend
+        # For full attending, we encourage session selection
         if not user_tournament.session_label:
             flash('Please select which sessions you\'ll attend.', 'info')
     
