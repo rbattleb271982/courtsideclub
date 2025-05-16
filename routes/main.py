@@ -6,7 +6,12 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def public_home():
-    return render_template('public/home.html')
+    # Get next upcoming tournament for preview section
+    next_tournament = Tournament.query.filter(
+        Tournament.start_date >= datetime.date.today()
+    ).order_by(Tournament.start_date).first()
+    
+    return render_template('public/home.html', next_tournament=next_tournament)
 
 @main_bp.route('/tournaments')
 def public_tournaments():

@@ -1,23 +1,66 @@
 
 {% extends "public/base.html" %}
-{% block title %}Welcome to CourtSide Club{% endblock %}
-
-{% block head %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "CourtSide Club",
-  "url": "https://courtside.repl.co",
-  "description": "Connect with fellow tennis fans at tournaments worldwide",
-  "logo": "{{ url_for('static', filename='tennis_ball.png', _external=True) }}"
-}
-</script>
-{% endblock %}
-{% block description %}Discover and connect with fellow tennis fans at tournaments worldwide.{% endblock %}
+{% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
 
 {% block content %}
-  <h1>Welcome to CourtSide Club 🎾</h1>
-  <p>Find out who's attending ATP and WTA tournaments, meet up in real life, and join the community.</p>
-  <a href="/login" class="cta-button">Join Now</a>
+<section class="hero p-6 text-center">
+  <h1 class="text-3xl font-bold mb-2">Tennis is better together.</h1>
+  <p class="text-lg mb-4">
+    Join the community for fans attending ATP and WTA tournaments — see who's going, meet up in real life, and make every match more social.
+  </p>
+  <a href="/login" class="bg-green-600 text-white px-4 py-2 rounded-full text-lg">Join Now</a>
+</section>
+
+<section class="how-it-works p-6 bg-gray-100 text-center mt-6">
+  <h2 class="text-xl font-semibold mb-4">How It Works</h2>
+  <div class="space-y-4">
+    <div>🎾 <strong>Step 1:</strong> Create your profile<br><span class="text-sm text-gray-600">Tell us where you're based and which tournaments you're attending</span></div>
+    <div>📍 <strong>Step 2:</strong> See who's going<br><span class="text-sm text-gray-600">Browse other attendees and connect with fans at the same sessions</span></div>
+    <div>🧵 <strong>Step 3:</strong> Wear your lanyard<br><span class="text-sm text-gray-600">Show you're open to meeting up — no awkward intros needed</span></div>
+  </div>
+  <a href="/how-it-works" class="text-green-700 font-medium underline mt-4 inline-block">Learn More</a>
+</section>
+
+<section class="features p-6 text-center mt-6">
+  <h2 class="text-xl font-semibold mb-4">Why CourtSide Club?</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div>
+      <h3 class="font-semibold">In-person meetups</h3>
+      <p class="text-sm text-gray-600">Built for real fans at real tournaments.</p>
+    </div>
+    <div>
+      <h3 class="font-semibold">Every major tournament</h3>
+      <p class="text-sm text-gray-600">Grand Slams, Masters 1000s, 500s — stay in the loop all season.</p>
+    </div>
+    <div>
+      <h3 class="font-semibold">Simple, social, and fun</h3>
+      <p class="text-sm text-gray-600">No spam, no group chats — just a better way to connect courtside.</p>
+    </div>
+  </div>
+</section>
+
+<section class="tournaments-preview p-6 bg-gray-100 text-center mt-6">
+  <h2 class="text-xl font-semibold mb-4">Upcoming Tournaments</h2>
+  <div class="space-y-4">
+    {% if next_tournament %}
+    <div>
+      <strong>🎾 {{ next_tournament.name }} – {{ next_tournament.city }}, {{ next_tournament.country }}</strong><br>
+      {{ next_tournament.start_date.strftime('%B %d') }} – {{ next_tournament.end_date.strftime('%B %d, %Y') }}<br>
+      <a href="{{ url_for('main.public_tournament_detail', slug=next_tournament.slug) }}" class="text-green-700 underline">See who's going</a>
+    </div>
+    {% endif %}
+  </div>
+  <a href="/tournaments" class="text-green-700 font-medium underline mt-4 inline-block">View All Tournaments</a>
+</section>
+
+<footer class="text-center text-sm text-gray-500 mt-12 p-6">
+  <nav class="space-x-4 mb-2">
+    <a href="/about" class="underline">About</a>
+    <a href="/lanyard" class="underline">Lanyard</a>
+    <a href="/how-it-works" class="underline">How It Works</a>
+    <a href="/faqs" class="underline">FAQs</a>
+    <a href="/terms" class="underline">Terms</a>
+  </nav>
+  <p>CourtSide Club helps tennis fans connect at the world's biggest tournaments. Discover who's attending, meet up in person, and make match days unforgettable.</p>
+</footer>
 {% endblock %}
