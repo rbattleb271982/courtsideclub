@@ -767,6 +767,74 @@ a:hover {
   border-color: #f5c6cb;
 }
 
+/* Mobile Nav Styles */
+.mobile-header {
+  background-color: #004d26;
+  color: white;
+  font-family: sans-serif;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.menu-toggle {
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background-color: #004d26;
+  padding: 10px 0;
+}
+
+.mobile-menu a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.mobile-menu a:hover {
+  background-color: #00663f;
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .mobile-menu a {
+    border-top: none;
+    padding: 10px 15px;
+  }
+
+  .nav-container {
+    justify-content: space-between;
+  }
+}
+
 /* Badges */
 .badge {
   display: inline-block;

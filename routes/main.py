@@ -65,9 +65,7 @@ def faqs():
 # def about():
 #     return render_template('public/about.html')
 
-@main_bp.route('/blog')
-def blog():
-    return render_template('public/blog.html')
+# Blog route removed
 
 @main_bp.route('/privacy-policy')
 def privacy():

@@ -1,30 +1,20 @@
+
 {% extends "public/base.html" %}
-{% block title %}Get Your Free Lanyard – CourtSide Club{% endblock %}
-{% block description %}Your free CourtSide Club lanyard is how we recognize each other at tournaments. Here's how to get yours.{% endblock %}
-
 {% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
-  <h1>Get Your Free Lanyard</h1>
-  <p class="lead">Once you've picked at least one tournament session, you can request your lanyard - it's completely free, including shipping!</p>
-
-  <div class="mt-4">
-    <h3>Why a lanyard?</h3>
-    <p>It's our visual signal that you're open to connecting with other CourtSide Club members in real life at events. It's simple, social, and helps break the ice.</p>
+  <div class="container">
+    <h1>Get Your Free Lanyard</h1>
+    <p>
+      CourtSide Club lanyards are free for fans who RSVP to attend a tournament.
+      They're your visual signal that you're open to meeting other tennis lovers
+      on site. When you wear one, you make it easier for others to say hello.
+    </p>
+    <p>
+      After you log in and mark your tournament attendance, we'll collect your
+      shipping address and send one out — free of charge.
+    </p>
+    <p>
+      🎾 Tennis is better together. Let's make it social.
+    </p>
+    <a href="{{ url_for('auth.signup') }}">Sign up to get yours</a>
   </div>
-
-  <div class="mt-4">
-    <h3>How to get one:</h3>
-    <ol>
-      <li>Log in and select at least one tournament session you're attending</li>
-      <li>Go to your account and click "Order Lanyard"</li>
-      <li>Enter your shipping details</li>
-    </ol>
-  </div>
-
-  <p class="mt-4"><strong>That's it!</strong> Shipping is free, and it's a one-time thing — keep it and wear it proudly.</p>
-
-  <div class="mt-4">
-    <a href="{{ url_for('auth.login') }}" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-full text-lg shadow hover:bg-green-500 transition inline-block">Log in to Get Yours</a>
-  </div>
-</div>
 {% endblock %}
