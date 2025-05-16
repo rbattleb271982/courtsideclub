@@ -15,33 +15,30 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <header class="nav-container">
-  <nav class="nav">
-    <div class="nav-left">
-      <a class="nav-logo" href="{{ url_for('main.public_home') }}">CourtSide Club 🎾</a>
-    </div>
-    <div class="nav-right">
-      {% if current_user.is_authenticated %}
-        {% if current_user.is_admin %}
-        <div class="admin-nav">
-          <a class="nav-link admin-link" href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
-          <a class="nav-link admin-link" href="{{ url_for('admin.list_tournaments') }}">Manage Tournaments</a>
-          <a class="nav-link admin-link" href="{{ url_for('admin.export_lanyards') }}">Export Lanyards</a>
-          <a class="nav-link admin-link" href="{{ url_for('admin.view_events') }}">Event Log</a>
-        </div>
-        {% endif %}
-        <a class="nav-link" href="{{ url_for('user.my_tournaments') }}">My Tournaments</a>
-        <a class="nav-link" href="{{ url_for('tournaments.list_tournaments') }}">Browse Tournaments</a>
-        <a class="nav-link" href="{{ url_for('user.lanyard') }}">Order Lanyard</a>
-        <a class="nav-link" href="{{ url_for('user.profile') }}">Profile</a>
-        <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
-      {% else %}
-        <a class="nav-link" href="{{ url_for('auth.signup') }}">Register</a>
-        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-      {% endif %}
-    </div>
-  </nav>
-</header>
+    <header class="mobile-header">
+      <div class="nav-container">
+        <div class="logo">🎾 CourtSide Club</div>
+        <nav id="mobile-menu" class="mobile-menu">
+          {% if current_user.is_authenticated %}
+            {% if current_user.is_admin %}
+              <a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
+              <a href="{{ url_for('admin.list_tournaments') }}">Manage Tournaments</a>
+              <a href="{{ url_for('admin.export_lanyards') }}">Export Lanyards</a>
+              <a href="{{ url_for('admin.view_events') }}">Event Log</a>
+            {% endif %}
+            <a href="{{ url_for('user.my_tournaments') }}">My Tournaments</a>
+            <a href="{{ url_for('tournaments.list_tournaments') }}">Browse Tournaments</a>
+            <a href="{{ url_for('user.lanyard') }}">Order Lanyard</a>
+            <a href="{{ url_for('user.profile') }}">Profile</a>
+            <a href="{{ url_for('auth.logout') }}">Log Out</a>
+          {% else %}
+            <a href="{{ url_for('auth.signup') }}">Register</a>
+            <a href="{{ url_for('auth.login') }}">Login</a>
+          {% endif %}
+        </nav>
+        <button class="menu-toggle" onclick="toggleMenu(event)">☰</button>
+      </div>
+    </header>
 
     <!-- Flash Messages -->
     <div class="container mt-3">
@@ -66,5 +63,30 @@
     </footer>
 
     {% block scripts %}{% endblock %}
+    
+    <script>
+      function toggleMenu(event) {
+        event.stopPropagation(); // prevent click from bubbling
+        const menu = document.getElementById('mobile-menu');
+        const isOpen = menu.style.display === 'flex';
+        menu.style.display = isOpen ? 'none' : 'flex';
+      }
+
+      document.addEventListener('click', function(event) {
+        const menu = document.getElementById('mobile-menu');
+        const toggle = document.querySelector('.menu-toggle');
+        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+          menu.style.display = 'none';
+        }
+      });
+
+      // Ensure the menu is hidden on load for mobile, visible on desktop
+      document.addEventListener('DOMContentLoaded', function () {
+        const menu = document.getElementById('mobile-menu');
+        if (window.innerWidth < 768) {
+          menu.style.display = 'none';
+        }
+      });
+    </script>
 </body>
 </html>
