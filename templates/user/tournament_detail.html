@@ -181,9 +181,14 @@
                         
                         <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="sessionForm">
                             <!-- Hidden inputs for selected sessions - will be populated by JS -->
-                            <div id="hiddenSessionInputs"></div>
+                            <div id="hiddenSessionInputs">
+                                <!-- Preselected sessions -->
+                                {% for session in selected_sessions %}
+                                <input type="hidden" name="sessions" value="{{ session }}">
+                                {% endfor %}
+                            </div>
                             <!-- Hidden field for wants_to_meet -->
-                            <input type="hidden" name="wants_to_meet" id="wants_to_meet_hidden" value="false">
+                            <input type="hidden" name="wants_to_meet" id="wants_to_meet_hidden" value="{{ 'true' if wants_to_meet else 'false' }}">
                             
                             <!-- Create session day groups with actual dates -->
                             <div class="session-groups">

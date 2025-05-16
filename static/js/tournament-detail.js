@@ -132,10 +132,12 @@ document.addEventListener('DOMContentLoaded', function() {
         saveButton.disabled = true;
       }
       
-      // Clear previous hidden inputs
+      // Clear previous hidden inputs and rebuild
       const hiddenInputsContainer = document.getElementById('hiddenSessionInputs');
       if (hiddenInputsContainer) {
-        hiddenInputsContainer.innerHTML = '';
+        // Clear only dynamically added ones, not the preselected ones from server
+        const existingInputs = hiddenInputsContainer.querySelectorAll('input[name="sessions"]');
+        existingInputs.forEach(input => input.remove());
         
         // Create hidden inputs for each selected session
         selectedSessions.forEach(session => {
