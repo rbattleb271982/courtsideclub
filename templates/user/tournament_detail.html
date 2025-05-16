@@ -250,9 +250,10 @@
                         </div>
                         
                         {% set has_sessions_selected = selected_sessions|length > 0 %}
-                        <button type="submit" 
+                        <button type="button" 
                             class="btn {% if has_sessions_selected %}btn-success{% else %}btn-secondary disabled{% endif %} save-btn" 
                             id="saveButton" 
+                            onclick="document.getElementById('sessionForm').submit();"
                             {% if not has_sessions_selected %}disabled{% endif %}>
                             <i data-feather="save" class="icon-sm"></i> Save My Sessions
                         </button>
