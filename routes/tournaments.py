@@ -100,6 +100,44 @@ def view_tournament(tournament_slug):
         user_id=current_user.id,
         tournament_id=tournament.id
     ).first()
+    
+    # Handle attendance parameter from browse tournaments page
+    attendance_param = request.args.get('attendance')
+    session_saved = request.args.get('session_saved')
+    
+    # If we have an attendance parameter and no existing registration,
+    # create one with the requested status
+    if attendance_param and not user_tournament:
+        # Create basic UserTournament record
+        user_tournament = UserTournament()
+        user_tournament.user_id = current_user.id
+        user_tournament.tournament_id = tournament.id
+        
+        # Set attendance based on parameter
+        if attendance_param == 'attending':
+            user_tournament.attending = True
+            # Set a default session for convenience
+            if tournament.sessions and len(tournament.sessions) > 0:
+                user_tournament.session_label = tournament.sessions[0]
+                print(f"DEBUG: Set default session: {tournament.sessions[0]} for user {current_user.id}")
+        elif attendance_param == 'maybe':
+            user_tournament.attending = True
+            user_tournament.session_label = None
+        
+        # Default wants_to_meet to True
+        user_tournament.wants_to_meet = True
+        
+        # Add to database
+        db.session.add(user_tournament)
+        db.session.commit()
+        
+        # Log the event
+        event_name = 'attend_tournament' if attendance_param == 'attending' else 'maybe_attend_tournament'
+        log_event(current_user.id, event_name, {
+            'tournament_id': tournament.id,
+            'tournament_name': tournament.name,
+            'attendance_type': attendance_param
+        })
 
     if request.method == 'POST':
         selected_sessions = request.form.getlist('sessions')

@@ -140,14 +140,11 @@ document.addEventListener('DOMContentLoaded', function() {
           hiddenInputsContainer.appendChild(input);
         });
         
-        // Also add the wants-to-meet value as a hidden input
+        // Set the wants_to_meet hidden input value from checkbox
         const meetingCheckbox = document.getElementById('wants-to-meet-top');
-        if (meetingCheckbox) {
-          const meetingInput = document.createElement('input');
-          meetingInput.type = 'hidden';
-          meetingInput.name = 'open_to_meet';
-          meetingInput.value = meetingCheckbox.checked ? 'true' : 'false';
-          hiddenInputsContainer.appendChild(meetingInput);
+        const wantsToMeetHidden = document.getElementById('wants_to_meet_hidden');
+        if (meetingCheckbox && wantsToMeetHidden) {
+          wantsToMeetHidden.value = meetingCheckbox.checked ? 'true' : 'false';
         }
       }
       

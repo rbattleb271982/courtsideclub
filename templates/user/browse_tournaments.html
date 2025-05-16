@@ -74,8 +74,8 @@
               {% else %}
                 <!-- User is not attending this tournament -->
                 <div class="attendance-buttons">
-                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="btn btn-outline">I'm Attending</a>
-                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline">Maybe Attending</a>
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=attending" class="btn btn-outline">I'm Attending</a>
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=maybe" class="btn btn-outline">Maybe Attending</a>
                 </div>
               {% endif %}
             </div>
