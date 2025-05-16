@@ -15,22 +15,37 @@ def admin_dashboard():
     dashboard_data = []
     
     for t in tournaments:
-        registrations = db.session.query(UserTournament).filter_by(tournament_id=t.id).all()
+        # Only count users who are marked as attending
+        attending_registrations = db.session.query(UserTournament).filter_by(
+            tournament_id=t.id, 
+            attending=True
+        ).all()
 
+        # Count session attendance
         session_counts = {}
-        for reg in registrations:
+        for reg in attending_registrations:
             sessions = (reg.session_label or "").split(", ")
             for session in sessions:
                 if session:
                     session_counts[session] = session_counts.get(session, 0) + 1
 
-        total_attending = len(registrations)
-        total_meetups = sum(1 for r in registrations if r.wants_to_meet)
+        # Total attending users
+        total_attending = len(attending_registrations)
+        
+        # Count users who want to meet
+        total_meetups = sum(1 for r in attending_registrations if r.wants_to_meet)
+        
+        # Count lanyard orders - users who are attending AND ordered a lanyard
+        lanyard_count = db.session.query(UserTournament).filter_by(
+            tournament_id=t.id,
+            attending=True
+        ).join(User).filter_by(lanyard_ordered=True).count()
 
         dashboard_data.append({
             "tournament": t,
             "total_attending": total_attending,
             "total_meetups": total_meetups,
+            "total_lanyards": lanyard_count,
             "session_counts": session_counts
         })
 
@@ -109,10 +124,7 @@ def view_event_types():
 import csv
 from io import StringIO
 from flask import Response
-
-from flask import Response
-from io import StringIO
-import csv
+from models import ShippingAddress
 
 @admin_bp.route('/export-lanyards')
 @login_required
@@ -121,29 +133,52 @@ def export_lanyards():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
 
-    # Get users who submitted a shipping address AND selected a session
+    # Get users who meet these criteria:
+    # 1. Have lanyard_ordered=True
+    # 2. Are attending at least one tournament (UserTournament.attending=True)
+    # 3. Have selected at least one session (UserTournament.session_label is not empty)
+    # 4. Have a shipping address on file
     results = (
         db.session.query(User, ShippingAddress)
         .join(ShippingAddress, User.id == ShippingAddress.user_id)
         .join(UserTournament, User.id == UserTournament.user_id)
+        .filter(
+            User.lanyard_ordered == True,
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None),
+            UserTournament.session_label != ''
+        )
         .distinct(User.id)
         .all()
     )
 
     output = StringIO()
     writer = csv.writer(output)
-    writer.writerow(['Name', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country', 'Email'])
+    writer.writerow(['Name', 'Email', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country', 'Attending Tournaments'])
 
     for user, address in results:
+        # Get all tournaments this user is attending
+        attending_tournaments = (
+            db.session.query(Tournament.name)
+            .join(UserTournament, Tournament.id == UserTournament.tournament_id)
+            .filter(
+                UserTournament.user_id == user.id,
+                UserTournament.attending == True
+            )
+            .all()
+        )
+        tournament_names = "; ".join([t[0] for t in attending_tournaments])
+        
         writer.writerow([
-            address.name,
+            user.get_full_name(),
+            user.email,
             address.address1,
             address.address2 or '',
             address.city,
-            address.state,
+            address.state or '',
             address.zip_code,
             address.country,
-            user.email
+            tournament_names
         ])
 
     output.seek(0)

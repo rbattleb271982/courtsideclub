@@ -18,8 +18,33 @@
   {% for row in dashboard_data %}
     <div style="margin-bottom: 2em; padding: 1em; border: 1px solid #ccc; border-radius: 6px;">
       <h3>{{ row.tournament.name }} ({{ row.tournament.start_date.strftime('%b %d') }})</h3>
-      <p><strong>👥 Total Attending:</strong> {{ row.total_attending }}</p>
-      <p><strong>🙋 Open to Meet-ups:</strong> {{ row.total_meetups }}</p>
+      
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <div class="card shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">👥 Attending</h5>
+              <p class="card-text fs-3">{{ row.total_attending }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">🙋 Open to Meet</h5>
+              <p class="card-text fs-3">{{ row.total_meetups }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">🏷️ Lanyards</h5>
+              <p class="card-text fs-3">{{ row.total_lanyards }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <h4 style="margin-top: 1em;">📊 Session Attendance:</h4>
       <div class="session-list" style="background: #f8f9fa; padding: 0.8em; border-radius: 4px; margin-top: 0.5em;">
