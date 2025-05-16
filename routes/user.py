@@ -501,14 +501,18 @@ def browse_tournaments():
             # If user has a registration, check the status
             if tournament.id in user_registrations:
                 ut = user_registrations[tournament.id]
-                if ut.attending and ut.session_label:
+                if ut.attending and ut.attendance_type == 'attending':
+                    tournament.attendance_status = 'attending'
+                    tournament.has_sessions = bool(ut.session_label)  # Track if they have sessions
+                elif ut.attending and ut.attendance_type == 'maybe':
+                    tournament.attendance_status = 'maybe'
+                    tournament.has_sessions = bool(ut.session_label)  # They might have sessions
+                # Fall back to legacy logic for any records without attendance_type
+                elif ut.attending and ut.session_label:
                     tournament.attendance_status = 'attending'
                     tournament.has_sessions = True
                 elif ut.attending and not ut.session_label:
                     tournament.attendance_status = 'maybe'
-                elif not ut.attending and ut.session_label:
-                    tournament.attendance_status = 'maybe'
-                    tournament.has_sessions = True
             
             # Add stats to each tournament
             tournament.attendee_count = UserTournament.query.filter(

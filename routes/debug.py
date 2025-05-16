@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, render_template
-from models import db, User, Tournament
+from models import db, User, Tournament, UserTournament
 from services.sendgrid_service import send_email
 import logging
 import os
