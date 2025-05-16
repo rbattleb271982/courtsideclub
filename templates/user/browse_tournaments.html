@@ -48,7 +48,7 @@
             <div class="tournament-actions">
               {% if tournament.attendance_status == 'attending' and tournament.has_sessions %}
                 <!-- User is attending with sessions selected -->
-                <div class="btn btn-selected">
+                <div class="btn btn-success">
                   <span class="status-icon">✅</span> You're Attending
                 </div>
                 <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
@@ -56,7 +56,7 @@
                 </form>
               {% elif tournament.attendance_status == 'maybe' %}
                 <!-- User has UserTournament but not fully attending or no sessions -->
-                <div class="btn btn-selected-maybe">
+                <div class="btn btn-maybe">
                   <span class="status-icon">❓</span> Maybe Attending
                 </div>
                 <div class="attendance-buttons">
@@ -68,8 +68,8 @@
               {% else %}
                 <!-- User is not attending this tournament -->
                 <div class="attendance-buttons">
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-outline primary-outline">Attending</a>
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline maybe-outline">Maybe Attending</a>
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-outline">Attending</a>
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline">Maybe Attending</a>
                 </div>
               {% endif %}
             </div>
@@ -343,44 +343,31 @@
   }
   
   /* Button status styles */
-  .btn-selected {
+  .btn-success {
     background-color: #004d26;
     color: #fff;
     cursor: default;
     margin-bottom: 8px;
+    font-weight: 500;
   }
   
-  .btn-selected-maybe {
+  .btn-maybe {
     background-color: #666;
     color: #fff;
     cursor: default;
     margin-bottom: 8px;
+    font-weight: 500;
   }
   
   .btn-outline {
     background-color: transparent;
-    border: 1px solid #666;
-    color: #666;
-  }
-  
-  .btn-outline.primary-outline {
-    border-color: #004d26;
+    border: 1px solid #004d26;
     color: #004d26;
   }
   
-  .btn-outline.primary-outline:hover, 
-  .btn-outline.primary-outline:active {
+  .btn-outline:hover, 
+  .btn-outline:active {
     background-color: #f4f9f4;
-  }
-  
-  .btn-outline.maybe-outline {
-    border-color: #666;
-    color: #666;
-  }
-  
-  .btn-outline.maybe-outline:hover, 
-  .btn-outline.maybe-outline:active {
-    background-color: #f5f5f5;
   }
   
   .btn-clear {
