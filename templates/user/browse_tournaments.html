@@ -62,7 +62,7 @@
                 </form>
                 <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
                   <input type="hidden" name="attendance_type" value="maybe">
-                  <button type="submit" class="btn btn-outline-secondary w-100">
+                  <button type="submit" class="btn btn-outline-success w-100">
                     Maybe Attending
                   </button>
                 </form>
@@ -73,7 +73,7 @@
                 <!-- User has UserTournament but not fully attending or no sessions -->
                 <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
                   <input type="hidden" name="attendance_type" value="attending">
-                  <button type="submit" class="btn btn-outline-secondary w-100">
+                  <button type="submit" class="btn btn-outline-success w-100">
                     I'm Attending
                   </button>
                 </form>
@@ -90,13 +90,13 @@
                 <!-- User is not attending this tournament -->
                 <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
                   <input type="hidden" name="attendance_type" value="attending">
-                  <button type="submit" class="btn btn-outline-secondary w-100">
+                  <button type="submit" class="btn btn-outline-success w-100">
                     I'm Attending
                   </button>
                 </form>
                 <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
                   <input type="hidden" name="attendance_type" value="maybe">
-                  <button type="submit" class="btn btn-outline-secondary w-100">
+                  <button type="submit" class="btn btn-outline-success w-100">
                     Maybe Attending
                   </button>
                 </form>
