@@ -84,6 +84,49 @@ def list_tournaments():
                           attendance_counts=attendance_counts)
 
 
+@tournaments_bp.route('/tournaments/<tournament_slug>', methods=['GET', 'POST'])
+@login_required
+def view_tournament(tournament_slug):
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    
+    # Get current user's tournament registration
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament.id
+    ).first()
+
+    if request.method == 'POST':
+        attending = request.form.get('attending') == 'true'
+        selected_sessions = request.form.getlist('sessions')
+        
+        if not user_tournament:
+            user_tournament = UserTournament(
+                user_id=current_user.id,
+                tournament_id=tournament.id
+            )
+            db.session.add(user_tournament)
+        
+        user_tournament.attending = attending
+        user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+        
+        db.session.commit()
+        
+        if attending and selected_sessions:
+            return redirect(url_for('user.lanyard'))
+        return redirect(url_for('user.my_tournaments'))
+
+    # Get tournament stats
+    stats = {
+        'attending': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count(),
+        'meetup': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True, wants_to_meet=True).count(),
+        'lanyards': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).join(User).filter_by(lanyard_ordered=True).count()
+    }
+
+    return render_template('public/tournament_detail.html',
+                         tournament=tournament,
+                         user_tournament=user_tournament,
+                         stats=stats)
+
 @tournaments_bp.route('/tournaments/<tournament_slug>')
 def view_tournament(tournament_slug):
     tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()

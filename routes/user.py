@@ -242,7 +242,34 @@ def my_tournaments():
         .all()
     )
 
-    return render_template("my_tournaments.html", user_tournaments=user_tournaments)
+    # Get stats for each tournament
+    stats = {}
+    for ut in user_tournaments:
+        tournament = ut.tournament
+        registrations = UserTournament.query.filter_by(tournament_id=tournament.id).all()
+        stats[tournament.id] = {
+            'attending': sum(1 for r in registrations if r.attending),
+            'meetup': sum(1 for r in registrations if r.attending and r.wants_to_meet),
+            'lanyards': sum(1 for r in registrations if r.attending and r.session_label)
+        }
+
+    # Group tournaments by month
+    from itertools import groupby
+    from datetime import datetime
+    
+    def get_month_key(ut):
+        return ut.tournament.start_date.strftime('%B %Y')
+    
+    grouped_tournaments = {}
+    sorted_tournaments = sorted(user_tournaments, key=get_month_key)
+    for month, group in groupby(sorted_tournaments, key=get_month_key):
+        grouped_tournaments[month] = list(group)
+
+    return render_template(
+        "my_tournaments.html",
+        grouped_tournaments=grouped_tournaments,
+        stats=stats
+    )
 
 @user_bp.route('/lanyard')
 @login_required
