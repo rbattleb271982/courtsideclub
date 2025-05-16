@@ -103,7 +103,8 @@ def view_tournament(tournament_slug):
     
     # Handle attendance parameter from browse tournaments page
     attendance_param = request.args.get('attendance')
-    session_saved = request.args.get('session_saved')
+    # Check if session_saved is in parameters (after saving sessions)
+    session_saved = request.args.get('session_saved') == '1'
     
     # If we have an attendance parameter and no existing registration,
     # create one with the requested status
@@ -231,6 +232,7 @@ def view_tournament(tournament_slug):
                 'attendees': session_attendees
             }
     
+    # Pass session_saved flag to show lanyard button conditionally
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          user_tournament=user_tournament,
@@ -240,7 +242,8 @@ def view_tournament(tournament_slug):
                          selected_sessions=selected_sessions,
                          session_stats=session_stats,
                          wants_to_meet=wants_to_meet,
-                         user_attending=user_attending)
+                         user_attending=user_attending,
+                         session_saved=session_saved)
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
@@ -430,7 +433,7 @@ def save_sessions(tournament_slug):
     else:
         flash('Please select at least one session to mark yourself as attending.', 'warning')
     
-    # Redirect back with session_saved parameter
+    # Redirect back with session_saved parameter for lanyard button display
     return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
 
 @tournaments_bp.route("/tournaments/<tournament_slug>/attending", methods=['POST'])
