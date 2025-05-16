@@ -3,6 +3,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail.css') }}">
+<script src="{{ url_for('static', filename='js/tournament-detail.js') }}" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -80,44 +81,53 @@
                         <div class="detail-item mt-3 attendance-container">
                             <i data-feather="calendar-check" class="icon-sm"></i>
                             <div class="w-100">
-                                <span class="detail-label">Your Attendance</span>
+                                <span class="detail-label">Will you be there?</span>
                                 
                                 <!-- Attendance Toggle Buttons --> 
-                                <div class="attendance-buttons d-flex flex-wrap gap-2 mb-2 mt-2">
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mr-2 mb-1">
-                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow">
-                                            <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
+                                <div class="attendance-buttons d-flex flex-column flex-md-row mb-2 mt-2">
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2">
+                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100">
+                                            <i data-feather="check-circle" class="icon-sm"></i> I'm Going!
                                         </button>
                                     </form>
                                     
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mr-2 mb-1">
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2">
                                         <input type="hidden" name="attendance_type" value="maybe">
-                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == 'maybe' %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow">
-                                            <i data-feather="help-circle" class="icon-sm"></i> Maybe
+                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == 'maybe' %}btn-warning{% else %}btn-outline-warning{% endif %} hover-grow w-100">
+                                            <i data-feather="help-circle" class="icon-sm"></i> Thinking About It
                                         </button>
                                     </form>
                                     
-                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-1">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger hover-grow">
-                                            <i data-feather="x-circle" class="icon-sm"></i> Not Attending
+                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2">
+                                        <button type="submit" class="btn btn-sm {% if user_tournament and not user_tournament.attending %}btn-secondary{% else %}btn-outline-secondary{% endif %} hover-grow w-100">
+                                            <i data-feather="x-circle" class="icon-sm"></i> Can't Make It
                                         </button>
                                     </form>
                                 </div>
                                 
-                                <!-- Open to Meeting Checkbox -->
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" name="wants-to-meet-top" id="wants-to-meet-top" 
+                                <!-- Open to Meeting Toggle Button -->
+                                <div class="meeting-toggle mb-3">
+                                    <button class="btn btn-sm {% if wants_to_meet %}btn-info{% else %}btn-outline-info{% endif %} w-100 mb-2" 
+                                           onclick="document.getElementById('wants-to-meet-top').click();">
+                                        <span class="d-flex align-items-center justify-content-center">
+                                            <span class="mr-1">👋</span> 
+                                            {% if wants_to_meet %}
+                                            I'm open to meeting other fans
+                                            {% else %}
+                                            Meet other fans?
+                                            {% endif %}
+                                        </span>
+                                    </button>
+                                    <!-- Hidden form checkbox updated by the button above -->
+                                    <input class="form-check-input d-none" type="checkbox" name="wants-to-meet-top" id="wants-to-meet-top" 
                                         {% if wants_to_meet %}checked{% endif %}>
-                                    <label class="form-check-label" for="wants-to-meet-top">
-                                        👋 I'm open to meeting up with other fans
-                                    </label>
                                 </div>
                                 
                                 <!-- Lanyard Button -->
                                 {% if not current_user.lanyard_ordered %}
                                 <div>
-                                    <a href="{{ url_for('user.lanyard') }}" class="btn btn-outline-success btn-sm">
-                                        <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard
+                                    <a href="{{ url_for('user.lanyard') }}" class="btn btn-success btn-sm w-100">
+                                        <i data-feather="tag" class="icon-sm"></i> Order Free CourtSide Lanyard
                                     </a>
                                 </div>
                                 {% endif %}
@@ -167,59 +177,69 @@
                 <div class="card-body">
                     <!-- Session Selection UI -->
                     <div class="session-selection-ui">
-                        <h4 class="h5 mb-3">Select sessions you'll attend:</h4>
+                        <h4 class="h5 mb-3">Which sessions will you attend?</h4>
                         
                         <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
                             <!-- Create session day groups with actual dates -->
                             <div class="session-groups">
                                 {% for day_num in range(1, 5) %}
-                                {% set day_info = None %}
-                                {% for day in day_dates if day.day_number == day_num %}
-                                    {% set day_info = day %}
-                                {% endfor %}
-                                <div class="session-day-group mb-3 p-3 bg-light rounded">
-                                    <h5 class="h6 font-weight-bold mb-2">Day {{ day_num }} {% if day_info %}({{ day_info.formatted }}){% endif %}</h5>
+                                {% set day_offset = day_num|int - 1 %}
+                                {% set day_date = tournament.start_date.replace(day=tournament.start_date.day + day_offset) %}
+                                <div class="session-day-group mb-3 p-3 bg-light rounded shadow-sm">
+                                    <h5 class="h6 font-weight-bold mb-2">
+                                        {{ day_date.strftime('%A, %b %d') }} (Day {{ day_num }})
+                                    </h5>
                                     
                                     <!-- Day session -->
-                                    <div class="session-item d-flex align-items-center mb-2 p-2 bg-white rounded">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" 
+                                    <div class="session-item d-flex align-items-center mb-2 p-3 bg-white rounded">
+                                        <div class="form-check d-flex align-items-center">
+                                            <input class="form-check-input session-checkbox" type="checkbox" 
                                                    name="sessions" 
                                                    id="session-day{{ day_num }}-day" 
                                                    value="Day {{ day_num }} - Day"
                                                    {% if "Day " + day_num|string + " - Day" in selected_sessions %}checked{% endif %}>
-                                            <label class="form-check-label" for="session-day{{ day_num }}-day">
-                                                Day Session
+                                            <label class="form-check-label ml-2" for="session-day{{ day_num }}-day">
+                                                <span class="{% if "Day " + day_num|string + " - Day" in selected_sessions %}font-weight-bold text-success{% endif %}">
+                                                    Day Session
+                                                    {% if "Day " + day_num|string + " - Day" in selected_sessions %}
+                                                    <span class="text-success">✓</span>
+                                                    {% endif %}
+                                                </span>
                                             </label>
                                         </div>
                                         <span class="session-badge ml-auto">
                                             {% set session_key = "Day " + day_num|string + " - Day" %}
-                                            {% if session_key in session_stats %}
+                                            {% if session_key in session_stats and session_stats[session_key].attendees > 0 %}
                                                 {{ session_stats[session_key].attendees }} fan{% if session_stats[session_key].attendees != 1 %}s{% endif %}
                                             {% else %}
-                                                0 fans
+                                                Be the first!
                                             {% endif %}
                                         </span>
                                     </div>
                                     
                                     <!-- Night session -->
-                                    <div class="session-item d-flex align-items-center mb-2 p-2 bg-white rounded">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" 
+                                    <div class="session-item d-flex align-items-center mb-2 p-3 bg-white rounded">
+                                        <div class="form-check d-flex align-items-center">
+                                            <input class="form-check-input session-checkbox" type="checkbox" 
                                                    name="sessions" 
                                                    id="session-day{{ day_num }}-night" 
                                                    value="Day {{ day_num }} - Night"
                                                    {% if "Day " + day_num|string + " - Night" in selected_sessions %}checked{% endif %}>
-                                            <label class="form-check-label" for="session-day{{ day_num }}-night">
-                                                Night Session
+                                            <label class="form-check-label ml-2" for="session-day{{ day_num }}-night">
+                                                <span class="{% if "Day " + day_num|string + " - Night" in selected_sessions %}font-weight-bold text-success{% endif %}">
+                                                    Night Session
+                                                    {% if "Day " + day_num|string + " - Night" in selected_sessions %}
+                                                    <span class="text-success">✓</span>
+                                                    {% endif %}
+                                                </span>
                                             </label>
                                         </div>
                                         <span class="session-badge ml-auto">
                                             {% set session_key = "Day " + day_num|string + " - Night" %}
-                                            {% if session_key in session_stats %}
+                                            {% if session_key in session_stats and session_stats[session_key].attendees > 0 %}
                                                 {{ session_stats[session_key].attendees }} fan{% if session_stats[session_key].attendees != 1 %}s{% endif %}
                                             {% else %}
-                                                0 fans
+                                                Be the first!
                                             {% endif %}
                                         </span>
                                     </div>
@@ -227,9 +247,23 @@
                                 {% endfor %}
                             </div>
 
-                            <div class="mt-4">
-                                <button type="submit" class="btn btn-success btn-block">
-                                    <i data-feather="save" class="icon-sm"></i> Save Preferences
+                            <div class="save-preferences card mt-4 p-3 bg-light shadow-sm">
+                                <!-- Selected Session Count -->
+                                <p class="text-center mb-3">
+                                    {% if selected_sessions|length > 0 %}
+                                    <span class="text-success font-weight-bold">
+                                        <i data-feather="check-circle" class="icon-sm"></i>
+                                        You've selected {{ selected_sessions|length }} session{{ 's' if selected_sessions|length != 1 else '' }}
+                                    </span>
+                                    {% else %}
+                                    <span class="text-muted">
+                                        Select which sessions you'll attend
+                                    </span>
+                                    {% endif %}
+                                </p>
+                                
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i data-feather="save" class="icon-sm"></i> Save My Sessions
                                 </button>
                             </div>
                         </form>
