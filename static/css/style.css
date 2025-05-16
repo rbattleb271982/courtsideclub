@@ -768,18 +768,23 @@ a:hover {
 }
 
 /* === Mobile Navigation === */
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
 .mobile-header {
   background-color: #ffffff;
   color: #004d26;
   font-family: sans-serif;
-  width: 100vw;
+  width: 100%;
   border-bottom: 1px solid #e0e0e0;
   z-index: 1000;
   margin: 0;
   padding: 0;
-  position: relative;
-  left: 0;
-  right: 0;
+  box-sizing: border-box;
 }
 
 .nav-container {
@@ -820,6 +825,12 @@ a:hover {
   flex-direction: column;
   background-color: #f8f8f8;
   padding: 10px 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 1001;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .mobile-menu a {
