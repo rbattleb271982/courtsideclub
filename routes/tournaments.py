@@ -275,22 +275,23 @@ def attend_tournament(tournament_slug):
     # Important - mark this user as attending with explicit True
     user_tourney.attending = True
     
-    # Always set a default session - first day is a reasonable choice
-    # This ensures the session checkboxes appear
-    default_session = tournament.sessions[0]
-    user_tourney.session_label = default_session
-    print(f"DEBUG: Set default session: {default_session} for user {current_user.id}")
+    # No longer auto-select a default session
+    # User must explicitly choose their sessions
+    user_tourney.session_label = None
+    print(f"DEBUG: User {current_user.id} set as attending but must select sessions")
     
     # Log the event
     event_data = {
         'tournament_id': tournament.id,
         'tournament_name': tournament.name,
         'attending': True,
-        'default_session': default_session
+        'session_preselected': False
     }
     log_event(current_user.id, 'attend_tournament', event_data)
     
     db.session.commit()
+    
+    flash('Please select which sessions you\'ll attend.', 'info')
     return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
 
 

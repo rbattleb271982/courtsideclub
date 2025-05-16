@@ -71,12 +71,18 @@
                 </form>
               {% elif tournament.attendance_status == 'maybe' %}
                 <!-- User has UserTournament but not fully attending or no sessions -->
-                <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=attending" class="btn btn-outline-secondary w-100">
-                  I'm Attending
-                </a>
-                <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="btn btn-success w-100">
-                  Maybe Attending
-                </a>
+                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
+                  <input type="hidden" name="attendance_type" value="attending">
+                  <button type="submit" class="btn btn-outline-secondary w-100">
+                    I'm Attending
+                  </button>
+                </form>
+                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
+                  <input type="hidden" name="attendance_type" value="maybe">
+                  <button type="submit" class="btn btn-success w-100">
+                    Maybe Attending
+                  </button>
+                </form>
                 <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
                   <button type="submit" class="btn-clear">Not Attending</button>
                 </form>
