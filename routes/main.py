@@ -22,7 +22,9 @@ def public_tournament_detail(slug):
 
 @main_bp.route('/how-it-works')
 def how_it_works():
-    return render_template('public/how_it_works.html')
+    return render_template('public/how_it_works.html',
+                         page_title="How CourtSide Club Works - Tennis Fan Community",
+                         page_description="Learn how CourtSide Club helps tennis fans connect at tournaments. Find other fans, get your lanyard, and join the community.")
 
 @main_bp.route('/lanyard')
 def lanyard_info():
