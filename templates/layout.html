@@ -25,7 +25,7 @@
         <a class="nav-link" href="{{ url_for('user.home') }}">Home</a>
         <a class="nav-link" href="{{ url_for('user.my_tournaments') }}">My Tournaments</a>
         <a class="nav-link" href="{{ url_for('tournaments.list_tournaments') }}">Browse Tournaments</a>
-        <a class="nav-link" href="{{ url_for('user.order_lanyard') }}">Order Lanyard</a>
+        <a class="nav-link" href="{{ url_for('user.lanyard') }}">Order Lanyard</a>
         <a class="nav-link" href="{{ url_for('user.profile') }}">Profile</a>
         {% if current_user.is_admin %}
         <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
