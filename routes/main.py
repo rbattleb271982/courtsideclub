@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, abort
-from models import Tournament
+from flask import Blueprint, render_template, abort, redirect, url_for, request, Response
+from models import Tournament, User, UserTournament
 import datetime
 
 main_bp = Blueprint('main', __name__)
@@ -77,22 +77,37 @@ def privacy():
 def terms():
     return render_template('public/terms.html')
 
+@main_bp.route('/robots.txt')
+def robots():
+    host = request.host_url
+    robot_text = f"""User-agent: *
+Disallow:
+
+Sitemap: {host}sitemap.xml
+"""
+    return Response(robot_text, mimetype='text/plain')
+
 @main_bp.route('/sitemap.xml')
 def sitemap():
-    from flask import Response, url_for
+    # Get all public tournaments for the sitemap
+    tournaments = Tournament.query.all()
+    
+    # Basic pages
     pages = [
         url_for('main.public_home', _external=True),
-        # Tournaments page is now login-protected
-        # url_for('main.public_tournaments', _external=True),
         url_for('main.how_it_works', _external=True),
         url_for('main.lanyard_info', _external=True),
         url_for('main.faqs', _external=True),
-        # About content moved to homepage
-        # url_for('main.about', _external=True),
         url_for('main.blog', _external=True),
         url_for('main.privacy', _external=True),
         url_for('main.terms', _external=True),
     ]
+    
+    # Add all tournament detail pages
+    for tournament in tournaments:
+        pages.append(url_for('main.public_tournament_detail', slug=tournament.slug, _external=True))
+    
+    # Build the XML sitemap
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for page in pages:
         xml += f"<url><loc>{page}</loc></url>\n"

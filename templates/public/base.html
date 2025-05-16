@@ -10,7 +10,7 @@
   <!-- Open Graph -->
   <meta property="og:title" content="{% block og_title %}CourtSide Club{% endblock %}">
   <meta property="og:description" content="{% block og_description %}Find tennis fans near you at tournaments around the world.{% endblock %}">
-  <meta property="og:image" content="{% block og_image %}/static/images/og-default.jpg{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='tennis_ball.png', _external=True) }}{% endblock %}">
   <meta property="og:url" content="{{ request.url }}">
   <meta property="og:type" content="website">
 
@@ -18,70 +18,219 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block twitter_title %}CourtSide Club{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}Connect with fellow tennis fans at ATP & WTA events.{% endblock %}">
-  <meta name="twitter:image" content="{% block twitter_image %}/static/images/og-default.jpg{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{{ url_for('static', filename='tennis_ball.png', _external=True) }}{% endblock %}">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="{{ url_for('static', filename='tennis_ball.png') }}" type="image/png">
+  
+  <!-- Mobile-first styles -->
   <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; }
+    :root {
+      --primary-color: #1e8449;
+      --secondary-color: #2c5f2d;
+      --light-green: #e6f2e6;
+      --hover-green: #cde8cd;
+      --text-color: #333;
+      --light-gray: #f4f4f4;
+      --mid-gray: #ddd;
+      --button-radius: 4px;
+      --content-width: 1200px;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      font-family: 'Roboto', -apple-system, sans-serif; 
+      margin: 0; 
+      padding: 0;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: #fff;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: var(--content-width);
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
     nav {
-      background: #007f5f;
+      background: var(--primary-color);
       padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .nav-container {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      max-width: var(--content-width);
+      margin: 0 auto;
     }
+    
+    .nav-logo {
+      color: white;
+      font-size: 1.25rem;
+      font-weight: bold;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-logo img {
+      height: 28px;
+      margin-right: 8px;
+    }
+    
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
     nav a {
       color: white;
       text-decoration: none;
-      margin: 0.5rem;
-      font-weight: bold;
+      font-weight: 500;
+      padding: 0.5rem;
+      border-radius: 3px;
+      transition: background-color 0.2s;
     }
+    
     nav a:hover {
-      text-decoration: underline;
+      background-color: rgba(255,255,255,0.15);
+      text-decoration: none;
     }
-    main { padding: 1.5rem; }
+    
+    main { 
+      padding: 2rem 1rem;
+      min-height: 70vh;
+    }
+    
     .cta-button {
       display: inline-block;
-      background: #007f5f;
+      background: var(--primary-color);
       color: white;
       padding: 0.8rem 1.5rem;
-      border-radius: 4px;
+      border-radius: var(--button-radius);
       text-decoration: none;
       margin-top: 1rem;
+      font-weight: 500;
+      text-align: center;
+      transition: background-color 0.2s, transform 0.1s;
     }
+    
     .cta-button:hover {
-      background: #006346;
+      background: var(--secondary-color);
+      transform: translateY(-1px);
+    }
+    
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      background: var(--light-gray);
+      border-top: 1px solid var(--mid-gray);
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      max-width: var(--content-width);
+      margin: 0 auto;
+    }
+    
+    footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 1rem;
+        width: 100%;
+      }
+      
+      nav a {
+        display: block;
+        width: 100%;
+      }
+      
+      .cta-button {
+        display: block;
+        width: 100%;
+      }
     }
   </style>
+  
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
   <nav>
-    {% if not current_user.is_authenticated %}
-    <a href="/">Home</a>
-    {% endif %}
-    {% if current_user.is_authenticated and current_user.is_admin %}
-    <a href="/admin">Admin</a>
-    {% endif %}
-    <a href="/how-it-works">How It Works</a>
-    <a href="/lanyard">Lanyard</a>
-    <a href="/faqs">FAQs</a>
-    <a href="/blog">Blog</a>
-    {% if current_user.is_authenticated %}
-    <a href="/my-tournaments">My Tournaments</a>
-    <a href="/logout">Logout</a>
-    {% else %}
-    <a href="/login">Login</a>
-    {% endif %}
+    <div class="nav-container">
+      <a class="nav-logo" href="/">
+        CourtSide Club 🎾
+      </a>
+      
+      <div class="nav-links">
+        {% if request.path != '/' %}
+        <a href="/">Home</a>
+        {% endif %}
+        
+        <a href="{{ url_for('main.how_it_works') }}">How It Works</a>
+        <a href="{{ url_for('main.lanyard_info') }}">Free Lanyard</a>
+        <a href="{{ url_for('main.faqs') }}">FAQs</a>
+        
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('user.my_tournaments') }}">My Tournaments</a>
+          {% if current_user.is_admin %}
+          <a href="{{ url_for('admin.admin_dashboard') }}">Admin</a>
+          {% endif %}
+          <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Login</a>
+          <a href="{{ url_for('auth.signup') }}" class="cta-button">Sign Up</a>
+        {% endif %}
+      </div>
+    </div>
   </nav>
+  
   <main>
-    {% block content %}{% endblock %}
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
   </main>
-  <footer style="text-align: center; margin-top: 3rem; padding: 2rem; font-size: 0.9rem; background: #f4f4f4;">
-    <p>
-      Explore: 
-      <a href="/how-it-works">How It Works</a> · 
-      <a href="/lanyard">Free Lanyard</a> · 
-      <a href="/faqs">FAQs</a> · 
-      <a href="/blog">Blog</a>
-    </p>
+  
+  <footer>
+    <div class="footer-links">
+      <a href="{{ url_for('main.how_it_works') }}">How It Works</a>
+      <a href="{{ url_for('main.lanyard_info') }}">Free Lanyard</a>
+      <a href="{{ url_for('main.faqs') }}">FAQs</a>
+      <a href="{{ url_for('main.terms') }}">Terms</a>
+      <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>
+    </div>
+    <p style="margin-top: 1rem; color: #777; font-size: 0.8rem;">© 2025 CourtSide Club. All rights reserved.</p>
   </footer>
 </body>
 </html>

@@ -1,27 +1,224 @@
-{% extends "layout.html" %}
+{% extends "public/base.html" %}
 
-{% block title %}{{ tournament.name }}{% endblock %}
+{% block title %}{{ tournament.name }} - {{ tournament.start_date.strftime('%Y') }} Tennis Tournament - CourtSide Club{% endblock %}
+{% block description %}Join tennis fans attending {{ tournament.name }} in {{ tournament.city }}, {{ tournament.country }} from {{ tournament.start_date.strftime('%B %d') }} to {{ tournament.end_date.strftime('%B %d, %Y') }}.{% endblock %}
+
+{% block og_title %}{{ tournament.name }} | {{ tournament.city }} - {{ tournament.start_date.strftime('%Y') }}{% endblock %}
+{% block og_description %}Connect with fellow tennis fans at {{ tournament.name }} in {{ tournament.city }}, {{ tournament.country }}. {{ tournament.tour_type }} tournament from {{ tournament.start_date.strftime('%B %d') }} to {{ tournament.end_date.strftime('%B %d, %Y') }}.{% endblock %}
+
+{% block twitter_title %}{{ tournament.name }} | {{ tournament.city }} - {{ tournament.start_date.strftime('%Y') }}{% endblock %}
+{% block twitter_description %}Connect with fellow tennis fans at {{ tournament.name }} in {{ tournament.city }}, {{ tournament.country }}. {{ tournament.tour_type }} tournament from {{ tournament.start_date.strftime('%B %d') }} to {{ tournament.end_date.strftime('%B %d, %Y') }}.{% endblock %}
 
 {% block content %}
-<div class="container">
-  <div class="tournament-header mb-6">
-    <h1 class="text-3xl font-bold">{{ tournament.name }}</h1>
-    <p class="text-gray-600">{{ tournament.city }}, {{ tournament.country }}</p>
-    <p class="text-gray-600">{{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
-  </div>
+<div class="tournament-detail">
+  <header class="tournament-header">
+    <h1>{{ tournament.name }}</h1>
+    <div class="tournament-meta">
+      <div class="tournament-location">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <span>{{ tournament.city }}, {{ tournament.country }}</span>
+      </div>
+      <div class="tournament-dates">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span>{{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%B %d, %Y') }}</span>
+      </div>
+      <div class="tournament-type">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-award"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+        <span>{{ tournament.tour_type }}</span>
+      </div>
+    </div>
+  </header>
 
   {% if tournament.about %}
-  <div class="tournament-about mb-6">
-    <h2 class="text-xl font-semibold mb-2">About</h2>
-    <p class="text-gray-700">{{ tournament.about }}</p>
-  </div>
+  <section class="tournament-about">
+    <h2>About {{ tournament.name }}</h2>
+    <div class="tournament-description">
+      <p>{{ tournament.about }}</p>
+    </div>
+  </section>
   {% endif %}
 
-  <div class="mt-8 card p-4 border rounded">
-    <p class="mb-4">Sign in to mark yourself as attending and connect with other fans!</p>
-    <a href="{{ url_for('auth.login') }}" class="bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-500 transition">
-      Sign In
-    </a>
-  </div>
+  {% if tournament.draw_url or tournament.schedule_url %}
+  <section class="tournament-links">
+    <h2>Tournament Information</h2>
+    <div class="link-buttons">
+      {% if tournament.draw_url %}
+      <a href="{{ tournament.draw_url }}" target="_blank" rel="noopener noreferrer" class="link-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        View Tournament Draw
+      </a>
+      {% endif %}
+      {% if tournament.schedule_url %}
+      <a href="{{ tournament.schedule_url }}" target="_blank" rel="noopener noreferrer" class="link-button">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        View Schedule
+      </a>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="cta-section">
+    <div class="cta-card">
+      <h2>Connect with Tennis Fans at {{ tournament.name }}</h2>
+      <p>Join CourtSide Club to mark yourself as attending, select your sessions, and meet other tennis fans!</p>
+      <div class="cta-buttons">
+        <a href="{{ url_for('auth.login') }}?next={{ url_for('main.public_tournament_detail', slug=tournament.slug) }}" class="cta-button">Log In</a>
+        <a href="{{ url_for('auth.signup') }}" class="cta-button secondary">Sign Up</a>
+      </div>
+    </div>
+  </section>
 </div>
+
+<style>
+  .tournament-detail {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .tournament-header {
+    margin-bottom: 2rem;
+  }
+  
+  .tournament-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+  }
+  
+  .tournament-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tournament-meta > div {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 0.95rem;
+  }
+  
+  .tournament-meta svg {
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+  }
+  
+  .tournament-about, .tournament-links {
+    margin-bottom: 2.5rem;
+  }
+  
+  .tournament-about h2, .tournament-links h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+  }
+  
+  .tournament-description {
+    line-height: 1.7;
+    color: #444;
+  }
+  
+  .link-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .link-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--light-green);
+    color: var(--secondary-color);
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .link-button:hover {
+    background-color: var(--hover-green);
+    transform: translateY(-2px);
+  }
+  
+  .link-button svg {
+    margin-right: 0.5rem;
+  }
+  
+  .cta-section {
+    margin: 3rem 0;
+  }
+  
+  .cta-card {
+    background-color: var(--light-green);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .cta-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+  }
+  
+  .cta-card p {
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    color: #444;
+  }
+  
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .cta-button {
+    padding: 0.75rem 2rem;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+  }
+  
+  .cta-button.secondary {
+    background-color: white;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+  }
+  
+  .cta-button.secondary:hover {
+    background-color: var(--light-green);
+  }
+  
+  @media (max-width: 768px) {
+    .tournament-meta {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .cta-buttons {
+      flex-direction: column;
+    }
+    
+    .tournament-header h1 {
+      font-size: 1.5rem;
+    }
+  }
+</style>
 {% endblock %}

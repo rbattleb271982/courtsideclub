@@ -1,0 +1,75 @@
+# 🌍 Replit Agent Prompt: Stabilize Public Pages for SEO and Consistency
+
+Please ensure the public-facing experience of CourtSide Club is clean, optimized for SEO, mobile-friendly, and does not conflict with logged-in or admin behavior.
+
+---
+
+## ROUTES & TEMPLATES
+
+Public pages include:
+
+- `/` → `public/home.html`
+- `/how-it-works` → `public/how_it_works.html`
+- `/lanyard` → `public/lanyard.html`
+- `/faqs` → `public/faqs.html`
+- `/blog` → `public/blog.html`
+- `/privacy-policy` → `public/privacy.html`
+- `/terms` → `public/terms.html`
+- `/tournaments/<slug>` → `public/tournament_detail.html` (SEO version)
+
+---
+
+## TASKS TO COMPLETE
+
+### 1. SEO STRUCTURE
+
+- Add proper `<title>`, `<meta name="description">`, and `<meta property="og:...">` tags to all public templates
+- Ensure each public page includes:
+  - `og:title`, `og:description`, `og:url`, `og:image` if possible
+  - `twitter:card`, `twitter:title`, `twitter:description`
+
+Use page-specific content when available, e.g., tournament name + date for `/tournaments/<slug>`
+
+---
+
+### 2. MOBILE OPTIMIZATION
+
+- Ensure all public templates (`public/*.html`) are mobile-first
+- Use proper spacing, font sizing, and responsive layout (especially on the homepage and how-it-works page)
+- Verify lanyard page renders well on small screens
+
+---
+
+### 3. FOOTER + NAVIGATION CLEANUP
+
+- Footer should include:
+  - How it Works | Free Lanyard | FAQs | Terms | Privacy Policy
+  - Do **not** show “Explore” or duplicate link rows
+- Navbar (for logged-out users) should not include:
+  - “Tournaments” (unless fully public)
+  - “Home” if already on the homepage
+
+---
+
+### 4. PUBLIC TOURNAMENT PAGE (`/tournaments/<slug>`)
+
+- For users **not logged in**, show:
+  - Tournament name, location, dates, and tour type
+  - Short description or about field
+- Do not show session selection or RSVP options
+- For logged-in users, allow the normal session/RVSP behavior
+
+Use `if current_user.is_authenticated` to conditionally render advanced features
+
+---
+
+### 5. SITEMAP + ROBOTS
+
+- Ensure `/sitemap.xml` route works and returns valid XML
+- Add a `robots.txt` route with:
+
+```txt
+User-agent: *
+Disallow:
+
+Sitemap: https://<your-domain>/sitemap.xml
