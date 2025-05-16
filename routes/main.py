@@ -55,6 +55,10 @@ def how_it_works():
 @main_bp.route('/lanyard')
 def lanyard_info():
     return render_template('public/lanyard.html')
+    
+@main_bp.route('/lanyard-info')
+def lanyard_info_public():
+    return render_template('public/lanyard_info.html')
 
 @main_bp.route('/faqs')
 def faqs():
