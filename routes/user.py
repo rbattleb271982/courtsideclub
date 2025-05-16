@@ -318,14 +318,19 @@ def browse_tournaments():
         for tournament in month_group:
             # Default status
             tournament.attendance_status = 'not_attending'
+            tournament.has_sessions = False
             
             # If user has a registration, check the status
             if tournament.id in user_registrations:
                 ut = user_registrations[tournament.id]
-                if ut.attending:
+                if ut.attending and ut.session_label:
                     tournament.attendance_status = 'attending'
-                elif ut.session_label:  # Has session but not attending (maybe)
+                    tournament.has_sessions = True
+                elif ut.attending and not ut.session_label:
                     tournament.attendance_status = 'maybe'
+                elif not ut.attending and ut.session_label:
+                    tournament.attendance_status = 'maybe'
+                    tournament.has_sessions = True
             
             # Add stats to each tournament
             tournament.attendee_count = UserTournament.query.filter(
@@ -341,9 +346,13 @@ def browse_tournaments():
                 UserTournament.user_id != current_user.id  # Exclude current user
             ).count()
     
+    # Get list of months for filter bar
+    months = list(grouped_tournaments.keys())
+    
     return render_template(
         "user/browse_tournaments.html",
-        grouped_tournaments=grouped_tournaments
+        grouped_tournaments=grouped_tournaments,
+        months=months
     )
 
 @user_bp.route('/lanyard')
