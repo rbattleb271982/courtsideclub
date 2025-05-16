@@ -9,7 +9,7 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 def admin_dashboard():
     if not current_user.is_admin:
         flash("Access denied.", "danger")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.public_home"))
 
     tournaments = Tournament.query.order_by(Tournament.start_date).all()
     dashboard_data = []
@@ -41,7 +41,7 @@ def admin_dashboard():
 def view_attendees(tournament_slug):
     if not current_user.is_admin:
         flash("Access denied.", "danger")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.public_home"))
 
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     user_tourneys = UserTournament.query.filter_by(
@@ -61,7 +61,7 @@ def list_tournaments():
     """Admin view to list all tournaments for editing"""
     if not getattr(current_user, "is_admin", False):
         flash("Access denied.", "danger")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.public_home"))
 
     tournaments = Tournament.query.order_by(Tournament.start_date).all()
     return render_template("admin_tournament_list.html", tournaments=tournaments)
@@ -72,7 +72,7 @@ def edit_tournament(tournament_id):
     """Admin view to edit tournament details"""
     if not getattr(current_user, "is_admin", False):
         flash("Access denied.", "danger")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.public_home"))
 
     tournament = Tournament.query.get_or_404(tournament_id)
 
@@ -90,7 +90,7 @@ def edit_tournament(tournament_id):
 def view_events():
     if not current_user.is_admin:
         flash("Access denied.", "danger")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.public_home"))
         
     events = Event.query.order_by(Event.timestamp.desc()).limit(100).all()
     return render_template("admin_events.html", events=events)
@@ -100,7 +100,7 @@ def view_events():
 def view_event_types():
     if not current_user.is_admin:
         flash("Access denied.", "danger")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.public_home"))
         
     event_names = db.session.query(Event.name).distinct().all()
     event_names = sorted([name[0] for name in event_names])
@@ -119,7 +119,7 @@ import csv
 def export_lanyards():
     if not current_user.is_admin:
         flash("Access denied.", "danger")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.public_home"))
 
     # Get users who submitted a shipping address AND selected a session
     results = (
