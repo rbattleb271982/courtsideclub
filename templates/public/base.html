@@ -9,10 +9,11 @@
 <body>
   <header class="mobile-header">
     <div class="nav-container">
-      <div class="logo">CourtSide Club</div>
+      <div class="logo">🎾 CourtSide Club</div>
       <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     </div>
     <nav id="mobile-menu" class="mobile-menu">
+      <a href="{{ url_for('main.public_home') }}">Home</a>
       <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
       <a href="{{ url_for('main.lanyard_info') }}">Free Lanyard</a>
       <a href="{{ url_for('main.faqs') }}">FAQ</a>

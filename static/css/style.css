@@ -785,6 +785,7 @@ a:hover {
   justify-content: space-between;
   align-items: center;
   padding-bottom: 0;
+  flex-wrap: nowrap;
 }
 
 .logo {
