@@ -3,16 +3,26 @@
 {% block title %}Browse Tournaments - CourtSide Club{% endblock %}
 
 {% block content %}
-<div class="page-content">
+<div class="page-content" id="tournaments-content">
   <h1 class="main-heading">Browse Tournaments</h1>
   
-  <!-- Month Filter Bar -->
-  <div class="month-filter-container">
+  <!-- Month Filter Bar - Desktop -->
+  <div class="month-filter-container desktop-filter">
     <div class="month-filter-scroll">
       {% for month in grouped_tournaments.keys() %}
         <a href="#month-{{ month|replace(' ', '-') }}" class="month-filter-link">{{ month }}</a>
       {% endfor %}
     </div>
+  </div>
+  
+  <!-- Month Filter Dropdown - Mobile -->
+  <div class="month-filter-container mobile-filter">
+    <select id="month-selector" class="month-selector">
+      <option value="">Select Month</option>
+      {% for month in grouped_tournaments.keys() %}
+        <option value="#month-{{ month|replace(' ', '-') }}">{{ month }}</option>
+      {% endfor %}
+    </select>
   </div>
   
   <!-- Tournaments Grouped by Month -->
@@ -111,14 +121,31 @@
     width: 100%;
   }
   
-  /* Mobile-specific filter adjustments */
-  @media (max-width: 639px) {
+  /* Responsive filter display */
+  .desktop-filter {
+    display: block;
+  }
+  
+  .mobile-filter {
+    display: none;
+  }
+  
+  /* Mobile filter styles */
+  @media (max-width: 767px) {
+    .desktop-filter {
+      display: none;
+    }
+    
+    .mobile-filter {
+      display: block;
+    }
+    
     .month-filter-container {
       margin-left: -15px;
       margin-right: -15px;
       width: calc(100% + 30px);
       border-radius: 0;
-      padding: 10px 5px;
+      padding: 10px 15px;
     }
     
     .page-content {
@@ -126,6 +153,31 @@
     }
   }
   
+  /* Month selector dropdown */
+  .month-selector {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 16px;
+    color: #004d26;
+    font-weight: 500;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23004d26%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+  }
+  
+  .month-selector:focus {
+    outline: none;
+    border-color: #004d26;
+    box-shadow: 0 0 0 2px rgba(0, 77, 38, 0.2);
+  }
+  
+  /* Desktop horizontal scroll styles */
   .month-filter-scroll {
     display: flex;
     overflow-x: auto;
@@ -152,14 +204,6 @@
     font-weight: 500;
     transition: all 0.2s;
     font-size: 15px;
-  }
-  
-  /* Mobile tap-friendly adjustments */
-  @media (max-width: 639px) {
-    .month-filter-link {
-      padding: 8px 14px;
-      font-size: 14px;
-    }
   }
   
   .month-filter-link:hover, .month-filter-link:active {
@@ -432,4 +476,35 @@
     margin-top: 20px;
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get the month selector dropdown
+    const monthSelector = document.getElementById('month-selector');
+    
+    // Add change event listener to scroll to selected month
+    if (monthSelector) {
+      monthSelector.addEventListener('change', function() {
+        const selectedValue = this.value;
+        if (selectedValue) {
+          // Get the target section element
+          const targetElement = document.querySelector(selectedValue);
+          
+          if (targetElement) {
+            // Calculate scroll position with offset for the sticky header
+            const headerOffset = 80;
+            const elementPosition = targetElement.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            // Scroll to the section
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}
