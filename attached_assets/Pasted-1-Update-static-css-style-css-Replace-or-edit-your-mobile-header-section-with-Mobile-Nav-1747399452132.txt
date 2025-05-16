@@ -1,0 +1,101 @@
+1. Update static/css/style.css — Replace or edit your .mobile-header section with:
+/* === Mobile Navigation === */
+.mobile-header {
+  background-color: #004d26;
+  color: white;
+  font-family: sans-serif;
+  padding: 10px 16px;
+  position: relative;
+  z-index: 1000;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.menu-toggle {
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background-color: #004d26;
+  padding: 10px 0;
+  z-index: 999;
+}
+
+.mobile-menu a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu a:hover {
+  background-color: #00663f;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: flex-end;
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .mobile-menu a {
+    border-top: none;
+    padding: 10px 15px;
+  }
+
+  .nav-container {
+    padding: 0 16px;
+  }
+}
+✅ 2. Update the JavaScript in base.html (enhanced toggle logic)
+Place this just before </body>:
+
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const isOpen = menu.style.display === 'flex';
+
+    // Close any open navs before opening
+    document.querySelectorAll('.mobile-menu').forEach(m => m.style.display = 'none');
+
+    if (!isOpen) {
+      menu.style.display = 'flex';
+    }
+  }
+
+  // Optional: close menu if you click outside
+  document.addEventListener('click', function(event) {
+    const menu = document.getElementById('mobile-menu');
+    const toggle = document.querySelector('.menu-toggle');
+    if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+      menu.style.display = 'none';
+    }
+  });
+</script>
