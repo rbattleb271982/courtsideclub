@@ -92,7 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateSaveButtonState() {
     const saveButton = document.getElementById('saveButton');
     const goingBtn = document.getElementById('btn-going');
+    const thinkingBtn = document.getElementById('btn-thinking');
     const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
+    const isMaybe = thinkingBtn && thinkingBtn.classList.contains('btn-success');
     
     if (saveButton) {
       if (selectedSessions.length > 0) {
@@ -101,15 +103,20 @@ document.addEventListener('DOMContentLoaded', function() {
         saveButton.classList.add('btn-success');
         saveButton.disabled = false;
       } else if (isAttending) {
-        // No sessions but is attending, disable save button
+        // User clicked "I'm Attending" but has no sessions, disable save button
         saveButton.classList.remove('btn-success');
         saveButton.classList.add('btn-secondary', 'disabled');
         saveButton.disabled = true;
-      } else {
-        // "Thinking About It" state - enable the save button
+      } else if (isMaybe) {
+        // "Maybe Attending" state - enable the save button
         saveButton.classList.remove('btn-secondary', 'disabled');
         saveButton.classList.add('btn-success');
         saveButton.disabled = false;
+      } else {
+        // Not attending at all
+        saveButton.classList.remove('btn-success');
+        saveButton.classList.add('btn-secondary', 'disabled');
+        saveButton.disabled = true;
       }
     }
   }
@@ -183,7 +190,6 @@ function updateSessionUIVisibility() {
   // Get attendance buttons
   const goingBtn = document.getElementById('btn-going');
   const thinkingBtn = document.getElementById('btn-thinking');
-  const notGoingBtn = document.getElementById('btn-not-going');
   
   // Get UI sections
   const sessionSelectionUI = document.getElementById('session-selection-ui');
@@ -195,18 +201,17 @@ function updateSessionUIVisibility() {
   
   // Determine current attendance state
   const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
-  const isThinking = thinkingBtn && thinkingBtn.classList.contains('btn-secondary');
-  const isNotGoing = notGoingBtn && notGoingBtn.classList.contains('btn-secondary');
+  const isMaybe = thinkingBtn && thinkingBtn.classList.contains('btn-success');
+  const isNotAttending = !isAttending && !isMaybe;
   
   // Update UI visibility based on attendance state
-  // This function should match server-side logic
   
   if (sessionSelectionCard) {
-    sessionSelectionCard.style.display = isNotGoing ? 'none' : 'block';
+    sessionSelectionCard.style.display = isNotAttending ? 'none' : 'block';
   }
   
   if (sessionSelectionUI) {
-    sessionSelectionUI.style.display = isAttending ? 'block' : 'none';
+    sessionSelectionUI.style.display = (isAttending || isMaybe) ? 'block' : 'none';
   }
   
   if (meetingToggleContainer) {
@@ -214,15 +219,15 @@ function updateSessionUIVisibility() {
   }
   
   if (thinkingMessage) {
-    thinkingMessage.style.display = (isThinking && !isAttending) ? 'block' : 'none';
+    thinkingMessage.style.display = isMaybe ? 'block' : 'none';
   }
   
   if (saveBar) {
-    saveBar.style.display = isNotGoing ? 'none' : 'block';
+    saveBar.style.display = isNotAttending ? 'none' : 'block';
   }
   
   if (sessionCountMessage) {
-    sessionCountMessage.style.display = isAttending ? 'block' : 'none';
+    sessionCountMessage.style.display = (isAttending || isMaybe) ? 'block' : 'none';
   }
 }
 
