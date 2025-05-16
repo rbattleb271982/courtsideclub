@@ -15,6 +15,12 @@ def public_home():
 
 @main_bp.route('/tournaments')
 def public_tournaments():
+    from flask import redirect, url_for, current_user
+    # Redirect non-logged in users to the login page
+    if not current_user.is_authenticated:
+        return redirect(url_for('auth.login'))
+    
+    # Only show tournaments to logged-in users
     tournaments = Tournament.query.filter(Tournament.start_date >= datetime.date.today()).order_by(Tournament.start_date).all()
     return render_template('public/tournaments.html', tournaments=tournaments)
 
@@ -39,9 +45,10 @@ def lanyard_info():
 def faqs():
     return render_template('public/faqs.html')
 
-@main_bp.route('/about')
-def about():
-    return render_template('public/about.html')
+# About page content has been moved to the homepage
+# @main_bp.route('/about')
+# def about():
+#     return render_template('public/about.html')
 
 @main_bp.route('/blog')
 def blog():
@@ -60,11 +67,13 @@ def sitemap():
     from flask import Response, url_for
     pages = [
         url_for('main.public_home', _external=True),
-        url_for('main.public_tournaments', _external=True),
+        # Tournaments page is now login-protected
+        # url_for('main.public_tournaments', _external=True),
         url_for('main.how_it_works', _external=True),
         url_for('main.lanyard_info', _external=True),
         url_for('main.faqs', _external=True),
-        url_for('main.about', _external=True),
+        # About content moved to homepage
+        # url_for('main.about', _external=True),
         url_for('main.blog', _external=True),
         url_for('main.privacy', _external=True),
         url_for('main.terms', _external=True),
