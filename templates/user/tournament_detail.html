@@ -1,0 +1,342 @@
+{% extends "layout.html" %}
+{% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "{{ tournament.name | e }}",
+  "startDate": "{{ tournament.start_date.isoformat() }}",
+  "endDate": "{{ tournament.end_date.isoformat() }}",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "location": {
+    "@type": "Place",
+    "name": "{{ tournament.city | e }}, {{ tournament.country | e }}",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "{{ tournament.city | e }}",
+      "addressCountry": "{{ tournament.country | e }}"
+    }
+  },
+  "image": "{{ url_for('static', filename='images/og-preview.jpg', _external=True) }}",
+  "description": "Join tennis fans at {{ tournament.name | e }} through CourtSide Club to connect, attend sessions, and meet up in person.",
+  "organizer": {
+    "@type": "Organization",
+    "name": "CourtSide Club", 
+    "url": "https://courtside.repl.co"
+  }
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container tournament-detail">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card tournament-card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h1 class="card-title h4 mb-0">{{ tournament.name }}</h1>
+                </div>
+                <div class="card-body">
+                    <div class="tournament-details">
+                        <div class="detail-item">
+                            <i data-feather="calendar" class="icon-sm"></i>
+                            <div>
+                                <span class="detail-label">Dates</span>
+                                <span class="detail-value">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i data-feather="map-pin" class="icon-sm"></i>
+                            <div>
+                                <span class="detail-label">Location</span>
+                                <span class="detail-value">{{ tournament.city }}, {{ tournament.country }}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i data-feather="award" class="icon-sm"></i>
+                            <div>
+                                <span class="detail-label">Tournament</span>
+                                <span class="detail-value">{{ tournament.event_type }} • {{ tournament.tour_type }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if tournament.about %}
+                    <div class="tournament-description mt-4">
+                        <h4 class="h5">About the Tournament</h4>
+                        <p>{{ tournament.about }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="tournament-links mt-4">
+                        {% if tournament.draw_url or tournament.schedule_url %}
+                        <h4 class="h5">Tournament Links</h4>
+                        <div class="links-container">
+                            {% if tournament.draw_url %}
+                            <a href="{{ tournament.draw_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                <i data-feather="external-link" class="icon-sm"></i> View Tournament Draw
+                            </a>
+                            {% endif %}
+                            
+                            {% if tournament.schedule_url %}
+                            <a href="{{ tournament.schedule_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                <i data-feather="external-link" class="icon-sm"></i> View Tournament Schedule
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            {% if current_user.lanyard_ordered %}
+            <div class="alert alert-success mb-4">
+                <i data-feather="package" class="icon-sm"></i> Your lanyard is on its way!
+            </div>
+            {% endif %}
+            
+            <!-- Tournament Attendance Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Your Tournament Attendance</h3>
+                </div>
+                <div class="card-body">
+                    {% if user_attending %}
+                    <div class="alert alert-success d-flex align-items-center mb-3">
+                        <span class="mr-2">✅</span> 
+                        <div>You're attending this tournament</div>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-4">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i data-feather="x-circle" class="icon-sm"></i> I'm no longer attending
+                        </button>
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
+                        <button type="submit" class="btn btn-success mb-3">
+                            <i data-feather="check-circle" class="icon-sm"></i> I'm attending this tournament
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <div class="alert alert-info small">
+                        <i data-feather="info" class="icon-sm"></i> 
+                        <strong>{{ attending_count }}</strong> fan{% if attending_count != 1 %}s{% endif %} attending this tournament.
+                        <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
+                    </div>
+
+                    {% if user_attending and tournament.sessions %}
+                    <!-- Sessions Selection Form -->
+                    <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="mt-4">
+                        <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
+
+                        <!-- Group sessions by day -->
+                        {% set days = {} %}
+                        {% for session in tournament.sessions %}
+                            {% set day = session.split(' - ')[0] %}
+                            {% if day not in days %}
+                                {% set _ = days.update({day: []}) %}
+                            {% endif %}
+                            {% set _ = days[day].append(session) %}
+                        {% endfor %}
+
+                        <div class="session-groups">
+                            {% for day, day_sessions in days.items() %}
+                            <div class="session-day-group mb-4">
+                                <h5 class="h6 font-weight-bold mb-2">{{ day }}</h5>
+                                {% for session in day_sessions %}
+                                <div class="session-item d-flex align-items-center mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="sessions" id="session-{{ loop.index }}" 
+                                            value="{{ session }}" {% if session in selected_sessions %}checked{% endif %}>
+                                        <label class="form-check-label" for="session-{{ loop.index }}">
+                                            {{ session.split(' - ')[1] if ' - ' in session else session }}
+                                        </label>
+                                    </div>
+                                    
+                                    {% if session in session_stats %}
+                                    <span class="badge badge-success ml-2" title="Other fans attending this session">
+                                        {{ session_stats[session].attendees }} fan{% if session_stats[session].attendees != 1 %}s{% endif %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <label class="font-weight-bold">Are you open to meeting other fans?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="wants_to_meet" id="wants-to-meet" 
+                                   {% if wants_to_meet %}checked{% endif %}>
+                                <label class="form-check-label" for="wants-to-meet">
+                                    👋 I'm open to meeting up with other fans
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success">
+                                <i data-feather="save" class="icon-sm"></i> Save Preferences
+                            </button>
+
+                            {% if not current_user.lanyard_ordered %}
+                            <a href="{{ url_for('user.lanyard') }}" class="btn btn-outline-success ml-2">
+                                <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard
+                            </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Stats Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Tournament Stats</h3>
+                </div>
+                <div class="card-body">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Fans Attending</div>
+                        <div class="stat-value">{{ attending_count }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Fans Open to Meeting</div>
+                        <div class="stat-value">{{ meeting_count }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Fans with Lanyards</div>
+                        <div class="stat-value">{{ stats.lanyards }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if days_until <= 30 and not current_user.lanyard_ordered %}
+            <!-- Lanyard Reminder -->
+            <div class="card mb-4 lanyard-reminder">
+                <div class="card-body">
+                    <h4 class="h5 card-title">Don't forget your lanyard!</h4>
+                    <p>The tournament is {{ days_until }} day{% if days_until != 1 %}s{% endif %} away. Order your free lanyard now to get it in time.</p>
+                    <a href="{{ url_for('user.lanyard') }}" class="btn btn-primary">Order My Lanyard</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .tournament-detail {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .tournament-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .detail-item svg {
+        color: #004d26;
+    }
+    
+    .detail-item div {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .detail-label {
+        font-size: 0.875rem;
+        color: #666;
+    }
+    
+    .detail-value {
+        font-weight: 500;
+    }
+    
+    .links-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .session-item {
+        padding: 8px 12px;
+        background-color: #f8f9fa;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+    
+    .session-day-group {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .badge-success {
+        background-color: #004d26;
+        color: white;
+        font-weight: normal;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+    
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-label {
+        font-size: 0.875rem;
+        color: #666;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #004d26;
+    }
+    
+    .lanyard-reminder {
+        background-color: #e0f2eb;
+        border-color: #004d26;
+    }
+    
+    .icon-sm {
+        width: 18px;
+        height: 18px;
+    }
+    
+    @media (max-width: 767px) {
+        .tournament-detail .row > div {
+            margin-bottom: 1rem;
+        }
+        
+        .links-container {
+            flex-direction: column;
+        }
+        
+        .links-container a {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

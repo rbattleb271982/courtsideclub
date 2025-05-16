@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Tournament, UserTournament, past_tournaments, ShippingAddress
 from services.sendgrid_service import send_email
+from services.event_logger import log_event
 import json
 import logging
 from datetime import datetime
@@ -82,6 +83,126 @@ def home():
         logging.error(f"Error in home route: {str(e)}")
         flash("An error occurred while loading your profile", "danger")
         return redirect(url_for('auth.login'))
+
+# Tournament detail view specifically for logged-in users
+@user_bp.route('/tournament/<tournament_slug>', methods=['GET', 'POST'])
+@login_required
+def tournament_detail(tournament_slug):
+    # Get the tournament by slug
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    
+    # Process form submission for session selection
+    if request.method == 'POST':
+        selected_sessions = request.form.getlist('sessions')
+        wants_to_meet = bool(request.form.get('wants_to_meet', False))
+        
+        # Get or create user tournament registration
+        user_tournament = UserTournament.query.filter_by(
+            user_id=current_user.id, 
+            tournament_id=tournament.id
+        ).first()
+        
+        if not user_tournament:
+            user_tournament = UserTournament(
+                user_id=current_user.id,
+                tournament_id=tournament.id
+            )
+            db.session.add(user_tournament)
+        
+        # Only mark as attending if they selected at least one session
+        if selected_sessions:
+            user_tournament.attending = True
+        else:
+            user_tournament.attending = False
+            
+        user_tournament.wants_to_meet = wants_to_meet
+        user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+        
+        # Log the event for tracking
+        event_data = {
+            'tournament_id': tournament.id,
+            'tournament_name': tournament.name,
+            'selected_sessions': selected_sessions,
+            'wants_to_meet': wants_to_meet,
+            'attending': user_tournament.attending
+        }
+        log_event(current_user.id, 'tournament_session_update', event_data)
+        
+        db.session.commit()
+        
+        flash('Your tournament sessions have been saved.', 'success')
+        return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
+    
+    # Get current user's tournament registration
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament.id
+    ).first()
+    
+    # Get selected sessions for current user
+    selected_sessions = []
+    wants_to_meet = False
+    user_attending = False
+    
+    if user_tournament:
+        user_attending = user_tournament.attending
+        wants_to_meet = user_tournament.wants_to_meet
+        if user_tournament.session_label:
+            selected_sessions = user_tournament.session_label.split(',')
+    
+    # Get tournament stats - exclude the current user for accurate display
+    other_users_filter = UserTournament.user_id != current_user.id
+    
+    stats = {
+        'attending': UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            other_users_filter
+        ).count(),
+        'meetup': UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.wants_to_meet == True,
+            other_users_filter
+        ).count(),
+        'lanyards': UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            other_users_filter
+        ).join(User).filter_by(lanyard_ordered=True).count()
+    }
+    
+    # Get session-specific stats
+    session_stats = {}
+    if tournament.sessions:
+        for session in tournament.sessions:
+            # Count users attending this specific session
+            session_attendees = UserTournament.query.filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.attending == True,
+                UserTournament.session_label.like(f'%{session}%'),
+                other_users_filter
+            ).count()
+            
+            session_stats[session] = {
+                'attendees': session_attendees
+            }
+    
+    # Calculate days until tournament
+    today = datetime.now().date()
+    days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
+    
+    return render_template('user/tournament_detail.html',
+                         tournament=tournament,
+                         user_tournament=user_tournament,
+                         stats=stats,
+                         attending_count=stats['attending'],
+                         meeting_count=stats['meetup'],
+                         selected_sessions=selected_sessions,
+                         session_stats=session_stats,
+                         wants_to_meet=wants_to_meet,
+                         user_attending=user_attending,
+                         days_until=days_until)
 
 # Keep the profile route for backward compatibility, redirecting to my_tournaments
 @user_bp.route('/profile')

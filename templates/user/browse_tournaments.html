@@ -66,7 +66,7 @@
                   <span class="status-icon">❓</span> Maybe Attending
                 </div>
                 <div class="attendance-buttons">
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-outline">Update Sessions</a>
+                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="btn btn-outline">Update Sessions</a>
                   <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
                     <button type="submit" class="btn-clear">Not Attending</button>
                   </form>
@@ -74,8 +74,8 @@
               {% else %}
                 <!-- User is not attending this tournament -->
                 <div class="attendance-buttons">
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-outline">I'm Attending</a>
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline">Maybe Attending</a>
+                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="btn btn-outline">I'm Attending</a>
+                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline">Maybe Attending</a>
                 </div>
               {% endif %}
             </div>
