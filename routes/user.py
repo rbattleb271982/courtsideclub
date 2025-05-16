@@ -93,8 +93,10 @@ def tournament_detail(tournament_slug):
     
     # Process form submission for session selection
     if request.method == 'POST':
+        # Get selected sessions and wants_to_meet preference (from either top or bottom checkbox)
         selected_sessions = request.form.getlist('sessions')
-        wants_to_meet = bool(request.form.get('wants_to_meet', False))
+        # Check for wants_to_meet from either the top section or the form section
+        wants_to_meet = bool(request.form.get('wants-to-meet-top', False)) or bool(request.form.get('wants_to_meet', False))
         
         # Get or create user tournament registration
         user_tournament = UserTournament.query.filter_by(
@@ -103,17 +105,20 @@ def tournament_detail(tournament_slug):
         ).first()
         
         if not user_tournament:
-            user_tournament = UserTournament(
-                user_id=current_user.id,
-                tournament_id=tournament.id
-            )
+            # Create a new UserTournament record
+            user_tournament = UserTournament()
+            user_tournament.user_id = current_user.id
+            user_tournament.tournament_id = tournament.id
             db.session.add(user_tournament)
         
         # Only mark as attending if they selected at least one session
         if selected_sessions:
             user_tournament.attending = True
         else:
-            user_tournament.attending = False
+            # If no sessions selected but form submitted, keep current attending status
+            # This allows users to update wants_to_meet without losing attendance status
+            if user_tournament.attending is None:
+                user_tournament.attending = False
             
         user_tournament.wants_to_meet = wants_to_meet
         user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
