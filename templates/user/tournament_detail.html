@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/compact-session-toggles.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-buttons.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/toggle-switch.css') }}">
 <script src="{{ url_for('static', filename='js/tournament-detail.js') }}" defer></script>
 <script type="application/ld+json">
 {
@@ -101,14 +102,14 @@
                                     
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
                                         <input type="hidden" name="attendance_type" value="maybe">
-                                        <button type="submit" class="btn {% if is_thinking %}btn-secondary{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
+                                        <button type="submit" class="btn {% if is_thinking %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
                                             <i data-feather="help-circle" class="icon-sm"></i> Thinking About It
                                             {% if is_thinking %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                     
                                     <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2 attendance-option">
-                                        <button type="submit" class="btn {% if is_not_going %}btn-secondary{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="not-attending" id="btn-not-going">
+                                        <button type="submit" class="btn {% if is_not_going %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="not-attending" id="btn-not-going">
                                             <i data-feather="x-circle" class="icon-sm"></i> Can't Make It
                                             {% if is_not_going %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
@@ -117,25 +118,20 @@
                                 
                                 <!-- Open to Meeting Toggle Button -->
                                 <div class="meeting-toggle mb-3" id="meeting-toggle-container" {% if not is_attending %}style="display: none;"{% endif %}>
-                                    <button class="btn meeting-toggle-btn {% if wants_to_meet %}btn-success{% else %}btn-outline-success{% endif %} rounded w-100 mb-2" 
-                                           onclick="document.getElementById('wants-to-meet-top').click(); toggleMeetingButton(this);">
-                                        <span class="d-flex align-items-center justify-content-center">
-                                            <span class="mr-1">👋</span> 
-                                            <span class="meeting-label">
-                                                {% if wants_to_meet %}
-                                                I'm open to meeting other fans
-                                                {% else %}
-                                                Meet other fans?
-                                                {% endif %}
-                                            </span>
-                                            {% if wants_to_meet %}
-                                            <span class="ml-1 checkmark">✓</span>
-                                            {% endif %}
+                                    <div class="toggle-switch-container d-flex align-items-center justify-content-between">
+                                        <span class="toggle-label">
+                                            <span class="mr-1">👋</span> I'm open to meeting other fans
                                         </span>
-                                    </button>
-                                    <!-- Hidden form checkbox updated by the button above -->
-                                    <input class="form-check-input d-none" type="checkbox" name="wants-to-meet-top" id="wants-to-meet-top" 
-                                        {% if wants_to_meet %}checked{% endif %}>
+                                        <label class="switch">
+                                            <input type="checkbox" id="wants-to-meet-top" {% if wants_to_meet %}checked{% endif %}>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    
+                                    <!-- Hidden form for the toggle switch -->
+                                    <form id="meeting-toggle-form" class="d-none" method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
+                                        <input type="hidden" name="wants_to_meet" id="wants-to-meet-hidden" value="{{ 'true' if wants_to_meet else 'false' }}">
+                                    </form>
                                 </div>
                             </div>
                         </div>

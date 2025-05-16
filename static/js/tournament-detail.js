@@ -156,129 +156,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Handle toggle behavior for "I'm open to meeting" button
-  const meetingToggleBtn = document.querySelector('.meeting-toggle-btn');
-  const meetingCheckbox = document.getElementById('wants-to-meet-top');
-  
-  if (meetingToggleBtn && meetingCheckbox) {
-    meetingToggleBtn.addEventListener('click', function(e) {
-      e.preventDefault(); // Prevent form submission
-      meetingCheckbox.checked = !meetingCheckbox.checked;
-      
-      // Update button styling
-      toggleMeetingButton(this);
-    });
-  }
-  
-  // Handle attendance button clicks (visual feedback only)
+  // Handle attendance button clicks
   const attendanceButtons = document.querySelectorAll('.attendance-btn');
   
-  // Track which button is currently updating
-  let isUpdating = false;
+  // Simply let forms submit naturally without visual changes
+  // The page will reload with the correct state
   
-  attendanceButtons.forEach(button => {
-    button.addEventListener('click', function(e) {
-      // Check if any button is currently updating
-      if (isUpdating) {
-        // Prevent multiple buttons from showing "Updating..." at the same time
-        e.preventDefault();
-        return false;
-      }
+  // Handle toggle switch for "I'm open to meeting other fans"
+  const toggleSwitch = document.getElementById('wants-to-meet-top');
+  const meetingForm = document.getElementById('meeting-toggle-form');
+  const hiddenInput = document.getElementById('wants-to-meet-hidden');
+  
+  if (toggleSwitch && meetingForm && hiddenInput) {
+    toggleSwitch.addEventListener('change', function() {
+      // Update hidden form input value
+      hiddenInput.value = this.checked ? 'true' : 'false';
       
-      // Mark that we're now updating
-      isUpdating = true;
-      
-      // Store the original content and button for potential rollback
-      const originalContent = this.innerHTML;
-      const clickedButton = this;
-      
-      // Show loading indicator only on this button
-      this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
-      this.disabled = true;
-      
-      // Disable all other buttons during this operation
-      attendanceButtons.forEach(otherButton => {
-        if (otherButton !== clickedButton) {
-          otherButton.disabled = true;
-        }
-      });
-      
-      // Set a fallback timeout in case the form submission fails
-      const fallbackTimeout = setTimeout(() => {
-        // Reset button state
-        clickedButton.innerHTML = originalContent;
-        clickedButton.disabled = false;
-        isUpdating = false;
-        
-        // Re-enable all buttons
-        attendanceButtons.forEach(btn => {
-          btn.disabled = false;
-        });
-        
-        // Show error message
-        showErrorToast('Update failed. Please try again.');
-      }, 10000); // 10 second timeout as a fallback
-      
-      // The form will submit normally, and the page will reload
-      // The fallback timeout will be cleared by page reload if successful
+      // Submit the form
+      meetingForm.submit();
     });
-  });
-  
-  // Function to show error toast
-  function showErrorToast(message) {
-    // Create toast container if it doesn't exist
-    let toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.id = 'toast-container';
-      toastContainer.style.position = 'fixed';
-      toastContainer.style.bottom = '20px';
-      toastContainer.style.right = '20px';
-      toastContainer.style.zIndex = '9999';
-      document.body.appendChild(toastContainer);
-    }
-    
-    // Create toast
-    const toast = document.createElement('div');
-    toast.className = 'toast show';
-    toast.style.minWidth = '250px';
-    toast.style.backgroundColor = '#f8d7da';
-    toast.style.color = '#721c24';
-    toast.style.padding = '10px 20px';
-    toast.style.marginBottom = '10px';
-    toast.style.borderRadius = '4px';
-    toast.style.boxShadow = '0 0.25rem 0.75rem rgba(0, 0, 0, 0.1)';
-    
-    toast.innerHTML = `
-      <div class="d-flex align-items-center">
-        <i data-feather="alert-circle" style="margin-right: 10px;"></i>
-        <div>${message}</div>
-        <button type="button" class="ml-auto close" style="background: none; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer;">
-          &times;
-        </button>
-      </div>
-    `;
-    
-    // Add to container
-    toastContainer.appendChild(toast);
-    
-    // Initialize icon if feather is available
-    if (typeof feather !== 'undefined') {
-      feather.replace();
-    }
-    
-    // Add click handler to close button
-    const closeButton = toast.querySelector('.close');
-    if (closeButton) {
-      closeButton.addEventListener('click', () => {
-        toast.remove();
-      });
-    }
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-      toast.remove();
-    }, 5000);
   }
 });
 
@@ -330,34 +226,5 @@ function updateSessionUIVisibility() {
   }
 }
 
-// Function to toggle meeting button appearance
-function toggleMeetingButton(button) {
-  const meetingCheckbox = document.getElementById('wants-to-meet-top');
-  if (!meetingCheckbox) return;
-  
-  const meetingLabel = button.querySelector('.meeting-label');
-  const checkmarkSpan = button.querySelector('.checkmark');
-  
-  if (meetingCheckbox.checked) {
-    button.classList.remove('btn-outline-success');
-    button.classList.add('btn-success');
-    meetingLabel.textContent = "I'm open to meeting other fans";
-    
-    // Add checkmark if it doesn't exist
-    if (!checkmarkSpan) {
-      const checkmark = document.createElement('span');
-      checkmark.className = 'ml-1 checkmark';
-      checkmark.textContent = '✓';
-      button.querySelector('span').appendChild(checkmark);
-    }
-  } else {
-    button.classList.remove('btn-success');
-    button.classList.add('btn-outline-success');
-    meetingLabel.textContent = "Meet other fans?";
-    
-    // Remove checkmark if it exists
-    if (checkmarkSpan) {
-      checkmarkSpan.remove();
-    }
-  }
-}
+// The page uses normal form submissions 
+// without any special UI manipulation after click
