@@ -86,21 +86,21 @@
                                 
                                 <!-- Attendance Toggle Buttons --> 
                                 <div class="attendance-buttons d-flex flex-column flex-md-row mb-2 mt-2">
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2">
-                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100">
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
+                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == True %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100">
                                             <i data-feather="check-circle" class="icon-sm"></i> I'm Going!
                                         </button>
                                     </form>
                                     
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2">
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
                                         <input type="hidden" name="attendance_type" value="maybe">
                                         <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == 'maybe' %}btn-warning{% else %}btn-outline-warning{% endif %} hover-grow w-100">
                                             <i data-feather="help-circle" class="icon-sm"></i> Thinking About It
                                         </button>
                                     </form>
                                     
-                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2">
-                                        <button type="submit" class="btn btn-sm {% if user_tournament and not user_tournament.attending %}btn-secondary{% else %}btn-outline-secondary{% endif %} hover-grow w-100">
+                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2 attendance-option">
+                                        <button type="submit" class="btn btn-sm {% if user_tournament and user_tournament.attending == False %}btn-secondary{% else %}btn-outline-secondary{% endif %} hover-grow w-100">
                                             <i data-feather="x-circle" class="icon-sm"></i> Can't Make It
                                         </button>
                                     </form>
@@ -108,8 +108,8 @@
                                 
                                 <!-- Open to Meeting Toggle Button -->
                                 <div class="meeting-toggle mb-3">
-                                    <button class="btn btn-sm {% if wants_to_meet %}btn-info{% else %}btn-outline-info{% endif %} w-100 mb-2" 
-                                           onclick="document.getElementById('wants-to-meet-top').click();">
+                                    <button class="btn meeting-toggle-btn {% if wants_to_meet %}btn-success{% else %}btn-outline-success{% endif %} rounded w-100 mb-2" 
+                                           onclick="document.getElementById('wants-to-meet-top').click(); toggleMeetingButton(this);">
                                         <span class="d-flex align-items-center justify-content-center">
                                             <span class="mr-1">👋</span> 
                                             {% if wants_to_meet %}
@@ -127,7 +127,7 @@
                                 <!-- Lanyard Button -->
                                 {% if not current_user.lanyard_ordered %}
                                 <div>
-                                    <a href="{{ url_for('user.lanyard') }}" class="btn btn-success btn-sm w-100">
+                                    <a href="{{ url_for('user.lanyard') }}" class="btn btn-success btn-lg w-100 rounded shadow-sm hover-grow">
                                         <i data-feather="tag" class="icon-sm"></i> Order Free CourtSide Lanyard
                                     </a>
                                 </div>

@@ -14,8 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
     selectedSessions.push(toggle.dataset.session);
   });
   
-  // Update session count display
+  // Update session count display and save button state
   updateSessionCountDisplay();
+  updateSaveButtonState();
   
   // Add sticky behavior to save bar on mobile
   if (window.innerWidth < 768) {
@@ -51,8 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
       
-      // Update session count display
+      // Update session count display and save button state
       updateSessionCountDisplay();
+      updateSaveButtonState();
     });
   });
   
@@ -84,12 +86,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  // Function to update save button state
+  function updateSaveButtonState() {
+    const saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+      if (selectedSessions.length > 0) {
+        saveButton.classList.remove('btn-secondary', 'disabled');
+        saveButton.classList.add('btn-success');
+        saveButton.disabled = false;
+      } else {
+        saveButton.classList.remove('btn-success');
+        saveButton.classList.add('btn-secondary', 'disabled');
+        saveButton.disabled = true;
+      }
+    }
+  }
+  
   // Handle save button click
   const saveButton = document.getElementById('saveButton');
   const sessionForm = document.getElementById('sessionForm');
   
   if (saveButton && sessionForm) {
     saveButton.addEventListener('click', function() {
+      if (selectedSessions.length === 0) {
+        return; // Prevent submission if no sessions selected
+      }
+      
+      // Show loading state
+      saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+      saveButton.disabled = true;
+      
       // Clear previous hidden inputs
       const hiddenInputsContainer = document.getElementById('hiddenSessionInputs');
       hiddenInputsContainer.innerHTML = '';
@@ -103,13 +129,23 @@ document.addEventListener('DOMContentLoaded', function() {
         hiddenInputsContainer.appendChild(input);
       });
       
+      // Also add the wants-to-meet value as a hidden input
+      const meetingCheckbox = document.getElementById('wants-to-meet-top');
+      if (meetingCheckbox) {
+        const meetingInput = document.createElement('input');
+        meetingInput.type = 'hidden';
+        meetingInput.name = 'open_to_meet';
+        meetingInput.value = meetingCheckbox.checked ? 'true' : 'false';
+        hiddenInputsContainer.appendChild(meetingInput);
+      }
+      
       // Submit the form
       sessionForm.submit();
     });
   }
   
   // Handle toggle behavior for "I'm open to meeting" button
-  const meetingToggleBtn = document.querySelector('.meeting-toggle button');
+  const meetingToggleBtn = document.querySelector('.meeting-toggle-btn');
   const meetingCheckbox = document.getElementById('wants-to-meet-top');
   
   if (meetingToggleBtn && meetingCheckbox) {
@@ -118,15 +154,23 @@ document.addEventListener('DOMContentLoaded', function() {
       meetingCheckbox.checked = !meetingCheckbox.checked;
       
       // Update button styling
-      if (meetingCheckbox.checked) {
-        this.classList.remove('btn-outline-info');
-        this.classList.add('btn-info');
-        this.querySelector('span span:last-child').textContent = "I'm open to meeting other fans";
-      } else {
-        this.classList.remove('btn-info');
-        this.classList.add('btn-outline-info');
-        this.querySelector('span span:last-child').textContent = "Meet other fans?";
-      }
+      toggleMeetingButton(this);
     });
   }
 });
+
+// Function to toggle meeting button appearance
+function toggleMeetingButton(button) {
+  const meetingCheckbox = document.getElementById('wants-to-meet-top');
+  if (!meetingCheckbox) return;
+  
+  if (meetingCheckbox.checked) {
+    button.classList.remove('btn-outline-success');
+    button.classList.add('btn-success');
+    button.querySelector('span span:last-child').textContent = "I'm open to meeting other fans";
+  } else {
+    button.classList.remove('btn-success');
+    button.classList.add('btn-outline-success');
+    button.querySelector('span span:last-child').textContent = "Meet other fans?";
+  }
+}
