@@ -790,6 +790,7 @@ a:hover {
   color: #004d26;
   font-weight: bold;
   font-size: 20px;
+  white-space: nowrap;
 }
 
 .menu-toggle {
@@ -1199,4 +1200,23 @@ input:checked + .toggle-slider:before {
 
 .error-btn:hover {
   background-color: #cde8cd;
+}
+
+.main-content {
+  margin-top: 20px;
+  padding: 0 16px;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  padding: 16px 0;
+  font-size: 14px;
+}
+
+.footer-links a {
+  color: #004d26;
+  text-decoration: none;
 }

@@ -16,11 +16,11 @@
 </section>
 
 <footer class="text-center text-sm text-gray-500 mt-12 p-6">
-  <nav class="space-x-4 mb-2">
-    <a href="/lanyard" class="underline">Lanyard</a>
-    <a href="/how-it-works" class="underline">How It Works</a>
-    <a href="/faqs" class="underline">FAQs</a>
-    <a href="/terms" class="underline">Terms</a>
-  </nav>
+  <div class="footer-links">
+    <a href="{{ url_for('main.lanyard_info') }}">Lanyard</a>
+    <a href="{{ url_for('main.how_it_works') }}">How It Works</a>
+    <a href="{{ url_for('main.faqs') }}">FAQs</a>
+    <a href="{{ url_for('main.terms') }}">Terms</a>
+  </div>
 </footer>
 {% endblock %}
