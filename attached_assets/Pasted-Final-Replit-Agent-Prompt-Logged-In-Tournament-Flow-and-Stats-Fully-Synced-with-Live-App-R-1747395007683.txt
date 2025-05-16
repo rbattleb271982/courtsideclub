@@ -1,0 +1,105 @@
+Final Replit Agent Prompt – Logged-In Tournament Flow and Stats (Fully Synced with Live App)
+# 🛠️ Replit Agent Prompt
+
+Please fix and fully implement the logged-in user experience for browsing tournaments, selecting sessions, updating stats, and ordering lanyards. All logic must match the existing models, routes, and templates below. Do not rename or recreate anything that already exists.
+
+---
+
+## ✅ BROWSE TOURNAMENTS PAGE
+
+Route: @user_bp.route('/my-tournaments')  
+Template: templates/my_tournaments.html  
+Models: Tournament, UserTournament
+
+### 1. Show Tournament Stats for Each Card
+
+Each tournament card must show:
+
+```html
+<p class="text-sm text-gray-500 mt-2">
+  {{ stats[t.id].attending or 0 }} attending •
+  {{ stats[t.id].meetup or 0 }} open to meetups •
+  {{ stats[t.id].lanyards or 0 }} lanyards ordered
+</p>
+In the route logic, attach these stats for each tournament:
+
+stats = {}
+for t in tournaments:
+    registrations = UserTournament.query.filter_by(tournament_id=t.id).all()
+    stats[t.id] = {
+        'attending': sum(1 for r in registrations if r.attending),
+        'meetup': sum(1 for r in registrations if r.attending and r.wants_to_meet),
+        'lanyards': sum(1 for r in registrations if r.attending and r.session_label)
+    }
+Pass stats=stats to the template context.
+
+2. Add Filter at Top
+Restore grouping of tournaments by month using Jinja (namespace logic or dropdown is fine).
+
+3. Let Users Select “I’m Attending” or “Maybe Attending”
+Use two buttons in each card:
+
+<form action="{{ url_for('tournaments.mark_attending', tournament_slug=t.slug) }}" method="POST">
+  <input type="hidden" name="status" value="attending">
+  <button class="btn btn-success">I’m Attending</button>
+</form>
+<form action="{{ url_for('tournaments.mark_attending', tournament_slug=t.slug) }}" method="POST">
+  <input type="hidden" name="status" value="maybe">
+  <button class="btn btn-outline">Maybe Attending</button>
+</form>
+After either button, redirect to /tournaments/<slug>
+
+✅ INDIVIDUAL TOURNAMENT PAGE
+
+Route: @main_bp.route('/tournaments/<slug>')
+Template: templates/public/tournament_detail.html
+Models: Tournament, UserTournament
+
+4. Show Status Radios: Attending / Not Attending
+There is no dedicated "maybe" status in the model. Use:
+
+attending=True and session_label not empty → Attending
+attending=True and session_label empty → Maybe Attending
+attending=False → Not Attending
+Show these as radio buttons, pre-selecting based on user_tournament.
+
+5. Show Day + Session Checkboxes
+Use the tournament.sessions JSON list and group into days. Checkboxes must reflect the existing comma-separated session_label stored in UserTournament.
+
+6. Save Preferences
+Saving should:
+
+POST to the same mark_attending route
+Save attending=True only if at least one session was selected
+Set session_label as comma-separated string
+Redirect to /order_lanyard
+✅ LANYARD PAGE ACCESS
+
+Route: @user_bp.route('/order_lanyard', methods=['GET', 'POST'])
+Template: templates/order_lanyard.html
+Model: lanyard_ordered is tracked in User (not UserTournament)
+
+7. Only Show Lanyard Form If:
+User has at least one UserTournament with:
+
+attending=True and
+session_label is not empty
+Admins bypass this logic.
+
+Example (already exists, but confirm working):
+
+attending_sessions = UserTournament.query.filter_by(user_id=current_user.id, attending=True).all()
+has_session = any(ut.session_label for ut in attending_sessions)
+If not valid, show message:
+
+“You must select at least one tournament session before ordering a lanyard.”
+Redirect to /my-tournaments
+
+✅ Do not finish until:
+Stats appear correctly for every tournament card (or 0 if no data)
+Filter shows at top of Browse
+Attending / Maybe buttons redirect correctly
+Individual tournament page shows saved sessions and status
+Saving selections updates UserTournament
+Lanyard page only works after valid attendance + session
+No broken routes or template errors
