@@ -769,10 +769,10 @@ a:hover {
 
 /* === Mobile Navigation === */
 .mobile-header {
-  background-color: #ffffff; /* white background for contrast */
+  background-color: #ffffff;
   color: #004d26;
   font-family: sans-serif;
-  padding: 10px 16px;
+  padding: 8px 16px;
   border-bottom: 1px solid #ccc;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   z-index: 1000;
@@ -784,6 +784,7 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 0;
 }
 
 .logo {
@@ -1084,6 +1085,8 @@ input:checked + .toggle-slider:before {
 
 .footer-links a:hover {
   color: var(--white);
+  text-decoration: underline;
+  color: #007a4d;
 }
 
 .footer-bottom {
@@ -1147,6 +1150,7 @@ input:checked + .toggle-slider:before {
 }
 
 .tournament-links ul {
+```text
   list-style: none;
   padding-left: 0;
 }
