@@ -40,16 +40,17 @@
     function toggleMenu() {
       const menu = document.getElementById('mobile-menu');
       const isOpen = menu.style.display === 'flex';
-
-      // Close any open navs before opening
-      document.querySelectorAll('.mobile-menu').forEach(m => m.style.display = 'none');
-
-      if (!isOpen) {
+      
+      if (isOpen) {
+        // If menu is open, close it
+        menu.style.display = 'none';
+      } else {
+        // If menu is closed, open it
         menu.style.display = 'flex';
       }
     }
 
-    // Optional: close menu if you click outside
+    // Close menu if you click outside
     document.addEventListener('click', function(event) {
       const menu = document.getElementById('mobile-menu');
       const toggle = document.querySelector('.menu-toggle');
