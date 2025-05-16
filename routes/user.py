@@ -226,6 +226,12 @@ def tournament_detail(tournament_slug):
                 'attendees': 0  # Default count if no data
             }
     
+    # Debugging session UI conditions before rendering
+    if user_tournament:
+        print(f"DEBUG: Rendering session UI block: user_tournament.attending={user_tournament.attending}, tournament.sessions={tournament.sessions}")
+    else:
+        print(f"DEBUG: No user_tournament exists, cannot show session UI")
+    
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          user_tournament=user_tournament,

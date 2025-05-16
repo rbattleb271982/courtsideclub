@@ -129,7 +129,8 @@
                         <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
                     </div>
 
-                    {% if user_tournament and user_tournament.attending == True %}
+                    {# TEMPORARILY REMOVED CONDITIONAL to test rendering #}
+                    <!-- DEBUGGING: user_tournament: {{ user_tournament }}, attending: {{ user_attending }} -->
                     <!-- Sessions Selection Form -->
                     <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="mt-4">
                         <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
@@ -197,7 +198,7 @@
                             {% endif %}
                         </div>
                     </form>
-                    {% endif %}
+                    {# TEMPORARILY REMOVED end if ({% endif %}) for testing #}
                 </div>
             </div>
         </div>
