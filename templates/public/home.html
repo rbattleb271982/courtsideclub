@@ -1,56 +1,33 @@
-
 {% extends "public/base.html" %}
 {% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
 
 {% block content %}
-<section class="hero p-6 text-center">
-  <h1 class="text-3xl font-bold mb-2">Tennis is better together.</h1>
-  <p class="text-lg mb-4">
+<section class="bg-green-700 text-white text-center py-12 px-4">
+  <h1 class="text-4xl font-bold mb-4">Tennis is better together.</h1>
+  <p class="text-lg mb-6 max-w-xl mx-auto">
     Join the community for fans attending ATP and WTA tournaments — see who's going, meet up in real life, and make every match more social.
   </p>
-  <a href="/login" class="bg-green-600 text-white px-4 py-2 rounded-full text-lg">Join Now</a>
+  <a href="/login" class="bg-white text-green-700 font-semibold px-6 py-3 rounded-full text-lg shadow hover:bg-gray-100 transition">
+    Join Now
+  </a>
 </section>
 
-<section class="how-it-works p-6 bg-gray-100 text-center mt-6">
-  <h2 class="text-xl font-semibold mb-4">How It Works</h2>
-  <div class="space-y-4">
-    <div>🎾 <strong>Step 1:</strong> Create your profile<br><span class="text-sm text-gray-600">Tell us where you're based and which tournaments you're attending</span></div>
-    <div>📍 <strong>Step 2:</strong> See who's going<br><span class="text-sm text-gray-600">Browse other attendees and connect with fans at the same sessions</span></div>
-    <div>🧵 <strong>Step 3:</strong> Wear your lanyard<br><span class="text-sm text-gray-600">Show you're open to meeting up — no awkward intros needed</span></div>
-  </div>
-  <a href="/how-it-works" class="text-green-700 font-medium underline mt-4 inline-block">Learn More</a>
-</section>
-
-<section class="features p-6 text-center mt-6">
-  <h2 class="text-xl font-semibold mb-4">Why CourtSide Club?</h2>
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div>
-      <h3 class="font-semibold">In-person meetups</h3>
-      <p class="text-sm text-gray-600">Built for real fans at real tournaments.</p>
+<section class="py-12 px-4 text-center">
+  <h2 class="text-2xl font-semibold mb-8">Why CourtSide Club?</h2>
+  <div class="grid gap-8 sm:grid-cols-1 md:grid-cols-3 max-w-5xl mx-auto">
+    <div class="p-4">
+      <h3 class="text-xl font-bold mb-2">In-person meetups</h3>
+      <p class="text-gray-600">Built for real fans at real tournaments.</p>
     </div>
-    <div>
-      <h3 class="font-semibold">Every major tournament</h3>
-      <p class="text-sm text-gray-600">Grand Slams, Masters 1000s, 500s — stay in the loop all season.</p>
+    <div class="p-4">
+      <h3 class="text-xl font-bold mb-2">Every major tournament</h3>
+      <p class="text-gray-600">Grand Slams, Masters 1000s, 500s — stay in the loop all season.</p>
     </div>
-    <div>
-      <h3 class="font-semibold">Simple, social, and fun</h3>
-      <p class="text-sm text-gray-600">No spam, no group chats — just a better way to connect courtside.</p>
+    <div class="p-4">
+      <h3 class="text-xl font-bold mb-2">Simple, social, and fun</h3>
+      <p class="text-gray-600">No spam, no group chats — just a better way to connect courtside.</p>
     </div>
   </div>
-</section>
-
-<section class="tournaments-preview p-6 bg-gray-100 text-center mt-6">
-  <h2 class="text-xl font-semibold mb-4">Upcoming Tournaments</h2>
-  <div class="space-y-4">
-    {% if next_tournament %}
-    <div>
-      <strong>🎾 {{ next_tournament.name }} – {{ next_tournament.city }}, {{ next_tournament.country }}</strong><br>
-      {{ next_tournament.start_date.strftime('%B %d') }} – {{ next_tournament.end_date.strftime('%B %d, %Y') }}<br>
-      <a href="{{ url_for('main.public_tournament_detail', slug=next_tournament.slug) }}" class="text-green-700 underline">See who's going</a>
-    </div>
-    {% endif %}
-  </div>
-  <a href="/tournaments" class="text-green-700 font-medium underline mt-4 inline-block">View All Tournaments</a>
 </section>
 
 <footer class="text-center text-sm text-gray-500 mt-12 p-6">
