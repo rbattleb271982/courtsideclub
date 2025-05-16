@@ -96,7 +96,6 @@
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
                                         <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
                                             <i data-feather="check-circle" class="icon-sm"></i> I'm Going!
-                                            {% if is_attending %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                     
@@ -104,14 +103,12 @@
                                         <input type="hidden" name="attendance_type" value="maybe">
                                         <button type="submit" class="btn {% if is_thinking %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
                                             <i data-feather="help-circle" class="icon-sm"></i> Thinking About It
-                                            {% if is_thinking %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                     
                                     <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2 attendance-option">
                                         <button type="submit" class="btn {% if is_not_going %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="not-attending" id="btn-not-going">
                                             <i data-feather="x-circle" class="icon-sm"></i> Can't Make It
-                                            {% if is_not_going %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                 </div>
