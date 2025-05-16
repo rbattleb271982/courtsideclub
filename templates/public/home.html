@@ -10,17 +10,12 @@
   <p class="text-base mt-6 max-w-xl mx-auto text-white">
     CourtSide Club is a community-first platform built to help fans make real-world connections at professional tennis events. Whether you're attending solo or with friends, we make it easy to discover who's going and feel part of something bigger.
   </p>
-  <a href="/login" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-full text-lg shadow hover:bg-green-500 transition inline-block">
+  <a href="{{ url_for('auth.signup') }}" class="hero-cta-button">
     Join Now
   </a>
 </section>
 
 <footer class="text-center text-sm text-gray-500 mt-12 p-6">
-  <div class="footer-links">
-    <a href="{{ url_for('main.lanyard_info') }}">Lanyard</a>
-    <a href="{{ url_for('main.how_it_works') }}">How It Works</a>
-    <a href="{{ url_for('main.faqs') }}">FAQs</a>
-    <a href="{{ url_for('main.terms') }}">Terms</a>
-  </div>
+  <p>© {{ current_year }} CourtSide Club</p>
 </footer>
 {% endblock %}

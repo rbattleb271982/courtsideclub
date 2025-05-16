@@ -895,8 +895,8 @@ a:hover {
   color: var(--gray-dark);
 }
 
-/* How It Works CTA Button */
-.howitworks-cta-button {
+/* CTA Buttons */
+.howitworks-cta-button, .hero-cta-button {
   display: inline-block;
   background-color: #007a4d;
   color: white;
@@ -907,7 +907,7 @@ a:hover {
   margin-top: 20px;
 }
 
-.howitworks-cta-button:hover {
+.howitworks-cta-button:hover, .hero-cta-button:hover {
   background-color: #005f39;
 }
 
