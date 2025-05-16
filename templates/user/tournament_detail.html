@@ -141,75 +141,86 @@
                         <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
                     </div>
 
-                    {% if user_tournament and user_tournament.attending == True %}
-                    <!-- Sessions Selection Form -->
-                    <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="mt-4">
+                    <!-- Completely rewritten session selection UI with NO CONDITIONALS -->
+                    <div class="session-selection-ui mt-4">
                         <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
-
-                        <!-- Group sessions by day -->
-                        {% set days = {} %}
-                        {% for session in tournament.sessions %}
-                            {% set day = session.split(' - ')[0] %}
-                            {% if day not in days %}
-                                {% set _ = days.update({day: []}) %}
-                            {% endif %}
-                            {% set _ = days[day].append(session) %}
-                        {% endfor %}
                         
-                        <!-- If no sessions defined in tournament, add default sessions -->
-                        {% if days|length == 0 %}
-                            {% set days = {'Day 1': ['Day 1 - Day', 'Day 1 - Night'], 'Day 2': ['Day 2 - Day', 'Day 2 - Night'], 'Day 3': ['Day 3 - Day']} %}
-                        {% endif %}
-
-                        <div class="session-groups">
-                            {% for day, day_sessions in days.items() %}
-                            <div class="session-day-group mb-4">
-                                <h5 class="h6 font-weight-bold mb-2">{{ day }}</h5>
-                                {% for session in day_sessions %}
-                                <div class="session-item d-flex align-items-center mb-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="sessions" id="session-{{ loop.index }}" 
-                                            value="{{ session }}" {% if session in selected_sessions %}checked{% endif %}>
-                                        <label class="form-check-label" for="session-{{ loop.index }}">
-                                            {{ session.split(' - ')[1] if ' - ' in session else session }}
-                                        </label>
+                        <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
+                            <!-- Debug values shown on page -->
+                            <div class="alert alert-info small mb-3">
+                                <strong>Debug:</strong> sessions count: {{ tournament.sessions|length }}
+                                {% if user_tournament %}
+                                <br>User attending: {{ user_tournament.attending }}
+                                {% else %}
+                                <br>No user_tournament record exists
+                                {% endif %}
+                                {% if selected_sessions %}
+                                <br>Selected sessions: {{ selected_sessions|join(', ') }}
+                                {% else %}
+                                <br>No sessions selected
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Create session day groups -->
+                            <div class="session-groups">
+                                {% for day_num in range(1, 5) %}
+                                <div class="session-day-group mb-3 p-3 bg-light rounded">
+                                    <h5 class="h6 font-weight-bold mb-2">Day {{ day_num }}</h5>
+                                    
+                                    <!-- Day session -->
+                                    <div class="session-item d-flex align-items-center mb-2 p-2 bg-white rounded">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="sessions" 
+                                                   id="session-day{{ day_num }}-day" 
+                                                   value="Day {{ day_num }} - Day">
+                                            <label class="form-check-label" for="session-day{{ day_num }}-day">
+                                                Day
+                                            </label>
+                                        </div>
+                                        <span class="session-badge ml-auto">0 fans</span>
                                     </div>
                                     
-                                    {% if session in session_stats %}
-                                    <span class="session-badge ml-2" title="Other fans attending this session">
-                                        {{ session_stats[session].attendees }} fan{% if session_stats[session].attendees != 1 %}s{% endif %}
-                                    </span>
-                                    {% endif %}
+                                    <!-- Night session -->
+                                    <div class="session-item d-flex align-items-center mb-2 p-2 bg-white rounded">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" 
+                                                   name="sessions" 
+                                                   id="session-day{{ day_num }}-night" 
+                                                   value="Day {{ day_num }} - Night">
+                                            <label class="form-check-label" for="session-day{{ day_num }}-night">
+                                                Night
+                                            </label>
+                                        </div>
+                                        <span class="session-badge ml-auto">0 fans</span>
+                                    </div>
                                 </div>
                                 {% endfor %}
                             </div>
-                            {% endfor %}
-                        </div>
 
-                        <div class="form-group mt-4">
-                            <label class="font-weight-bold">Are you open to meeting other fans?</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="wants_to_meet" id="wants-to-meet" 
-                                   {% if wants_to_meet %}checked{% endif %}>
-                                <label class="form-check-label" for="wants-to-meet">
-                                    👋 I'm open to meeting up with other fans
-                                </label>
+                            <div class="form-group mt-3">
+                                <label class="font-weight-bold d-block">Are you open to meeting other fans?</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="wants_to_meet" id="wants-to-meet">
+                                    <label class="form-check-label" for="wants-to-meet">
+                                        👋 I'm open to meeting up with other fans
+                                    </label>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-success">
-                                <i data-feather="save" class="icon-sm"></i> Save Preferences
-                            </button>
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-success">
+                                    <i data-feather="save" class="icon-sm"></i> Save Preferences
+                                </button>
 
-                            {% if not current_user.lanyard_ordered %}
-                            <a href="{{ url_for('user.lanyard') }}" class="btn btn-outline-success ml-2">
-                                <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard
-                            </a>
-                            {% endif %}
-                        </div>
-                    </form>
-                    {% endif %}
+                                {% if not current_user.lanyard_ordered %}
+                                <a href="{{ url_for('user.lanyard') }}" class="btn btn-outline-success ml-2">
+                                    <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard
+                                </a>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
