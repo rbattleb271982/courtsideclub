@@ -58,7 +58,7 @@ def login():
                 next_page = request.args.get('next', '')
                 if next_page:
                     return redirect(next_page)
-                return redirect(url_for('user.home'))
+                return redirect(url_for('user.my_tournaments'))
         
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
