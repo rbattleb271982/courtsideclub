@@ -209,31 +209,39 @@ def view_tournament(tournament_slug):
 @login_required
 def attend_tournament_new(tournament_slug):
     tournament = db.session.query(Tournament).filter_by(slug=tournament_slug).first_or_404()
+    
+    # Make sure the tournament has sessions defined
+    if not tournament.sessions or len(tournament.sessions) == 0:
+        # Add default sessions - comprehensive set for entire tournament
+        tournament.sessions = [
+            'Day 1 - Day', 'Day 1 - Night',
+            'Day 2 - Day', 'Day 2 - Night',
+            'Day 3 - Day', 'Day 3 - Night',
+            'Day 4 - Day', 'Day 4 - Night'
+        ]
+        db.session.flush()  # Save tournament sessions first
+        print(f"DEBUG: Added default sessions to tournament {tournament.name}: {tournament.sessions}")
 
     user_tourney = UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
     if not user_tourney:
         user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
         db.session.add(user_tourney)
     
-    # Important - mark this user as attending
+    # Important - mark this user as attending with explicit True
     user_tourney.attending = True
     
-    # Force-add default session (first day/session) to ensure the session selector displays
-    if tournament.sessions and len(tournament.sessions) > 0:
-        user_tourney.session_label = tournament.sessions[0]
-    else:
-        # If no sessions are defined, add a default one
-        default_session = "Day 1 - Day"
-        if not tournament.sessions:
-            tournament.sessions = [default_session, "Day 1 - Night", "Day 2 - Day"]
-            db.session.flush()  # Save tournament changes first
-        user_tourney.session_label = default_session
+    # Always set a default session - first day is a reasonable choice
+    # This ensures the session checkboxes appear
+    default_session = tournament.sessions[0]
+    user_tourney.session_label = default_session
+    print(f"DEBUG: Set default session: {default_session} for user {current_user.id}")
     
     # Log the event
     event_data = {
         'tournament_id': tournament.id,
         'tournament_name': tournament.name,
-        'attending': True
+        'attending': True,
+        'default_session': default_session
     }
     log_event(current_user.id, 'attend_tournament', event_data)
     
