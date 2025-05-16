@@ -37,13 +37,29 @@
   </main>
 
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ensure the mobile menu is initially hidden on mobile but not on desktop
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (window.innerWidth < 768) {
+        mobileMenu.style.display = 'none';
+      }
+    });
+
     function toggleMenu(event) {
-      event.stopPropagation(); // Prevent the click from being captured by document event listener
+      if (event) {
+        event.stopPropagation(); // Prevent the click from being captured by document event listener
+      }
+      
       const menu = document.getElementById('mobile-menu');
+      
+      // Don't toggle on desktop
+      if (window.innerWidth >= 768) {
+        return;
+      }
       
       // Check if the menu is currently visible
       const computedStyle = window.getComputedStyle(menu);
-      const isVisible = computedStyle.display !== 'none';
+      const isVisible = computedStyle.display === 'flex';
       
       if (isVisible) {
         menu.style.display = 'none';
@@ -54,6 +70,11 @@
 
     // Close menu when clicking outside
     document.addEventListener('click', function(event) {
+      // Don't handle outside clicks on desktop
+      if (window.innerWidth >= 768) {
+        return;
+      }
+      
       const menu = document.getElementById('mobile-menu');
       const toggle = document.querySelector('.menu-toggle');
       
