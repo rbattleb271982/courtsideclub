@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('has-fixed-save');
   }
   
+  // Initialize UI visibility based on current attendance state
+  updateSessionUIVisibility();
+  
   // Track selected sessions
   let selectedSessions = [];
   
@@ -164,13 +167,73 @@ document.addEventListener('DOMContentLoaded', function() {
       this.disabled = true;
       
       // The actual state change happens via form submission, this is just for UI feedback
-      setTimeout(() => {
-        this.innerHTML = originalContent; 
-        this.disabled = false;
-      }, 2000); // Reset after form submission
+      // Visual updates already happen in template with page reload, but we disable temporarily
+      
+      // Also update UI visibility based on which button was clicked
+      const attendanceType = this.dataset.attendance;
+      if (attendanceType === 'attending') {
+        // Going button clicked - prepare to show session UI
+        document.getElementById('session-selection-ui').style.display = 'block';
+        document.getElementById('meeting-toggle-container').style.display = 'block';
+        document.getElementById('thinking-message').style.display = 'none';
+      } else if (attendanceType === 'maybe') {
+        // Thinking button clicked - hide sessions, show thinking message
+        document.getElementById('session-selection-ui').style.display = 'none';
+        document.getElementById('meeting-toggle-container').style.display = 'none';
+        document.getElementById('thinking-message').style.display = 'block';
+      } else if (attendanceType === 'not-attending') {
+        // Not attending button clicked - hide everything
+        document.getElementById('session-selection-card').style.display = 'none';
+      }
     });
   });
 });
+
+// Function to toggle the session UI based on attendance state
+function updateSessionUIVisibility() {
+  // Get attendance buttons
+  const goingBtn = document.getElementById('btn-going');
+  const thinkingBtn = document.getElementById('btn-thinking');
+  const notGoingBtn = document.getElementById('btn-not-going');
+  
+  // Get UI sections
+  const sessionSelectionUI = document.getElementById('session-selection-ui');
+  const sessionSelectionCard = document.getElementById('session-selection-card');
+  const meetingToggleContainer = document.getElementById('meeting-toggle-container');
+  const saveBar = document.getElementById('saveBar');
+  const sessionCountMessage = document.getElementById('sessionCountMessage');
+  const thinkingMessage = document.getElementById('thinking-message');
+  
+  // Determine current attendance state
+  const isGoing = goingBtn && goingBtn.classList.contains('btn-success');
+  const isThinking = thinkingBtn && thinkingBtn.classList.contains('btn-secondary');
+  const isNotGoing = notGoingBtn && notGoingBtn.classList.contains('btn-secondary');
+  
+  // Update UI visibility based on attendance state
+  if (sessionSelectionCard) {
+    sessionSelectionCard.style.display = isNotGoing ? 'none' : 'block';
+  }
+  
+  if (sessionSelectionUI) {
+    sessionSelectionUI.style.display = isGoing ? 'block' : 'none';
+  }
+  
+  if (meetingToggleContainer) {
+    meetingToggleContainer.style.display = isGoing ? 'block' : 'none';
+  }
+  
+  if (thinkingMessage) {
+    thinkingMessage.style.display = isThinking ? 'block' : 'none';
+  }
+  
+  if (saveBar) {
+    saveBar.style.display = isNotGoing ? 'none' : 'block';
+  }
+  
+  if (sessionCountMessage) {
+    sessionCountMessage.style.display = isGoing ? 'block' : 'none';
+  }
+}
 
 // Function to toggle meeting button appearance
 function toggleMeetingButton(button) {
