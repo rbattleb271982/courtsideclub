@@ -1,0 +1,41 @@
+One-Stop Replit Prompt – Homepage + Nav + Pages Cleanup
+# 🛠️ Replit Agent Prompt
+
+Please make the following updates across the CourtSide Club public site:
+
+---
+
+### 1. ✅ Fix “Join Now” CTA on Homepage
+In `templates/public/home.html`, make sure the "Join Now" link is styled as a proper green button.
+
+**Replace the current CTA block with:**
+```html
+<a href="/login" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-full text-lg shadow hover:bg-green-500 transition inline-block">
+  Join Now
+</a>
+2. ✅ Remove “Tournaments” from Public Nav and Disable Public Access
+In your public navigation (base.html or equivalent), remove the “Tournaments” link for logged-out users.
+Keep the link and route visible for logged-in users only.
+Fully disable the public /tournaments index route — if a public user accesses it directly, redirect them to /login or show a 404.
+Do not affect the individual tournament slug pages (/tournaments/<slug>), which may remain public/indexable.
+3. ✅ Convert “Get Started” on /how-it-works Page to a Button
+In templates/public/how_it_works.html, replace the current “Get Started” link with this green button:
+
+<a href="/login" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-full text-lg shadow hover:bg-green-500 transition inline-block">
+  Get Started
+</a>
+4. ✅ Remove Emoji from Lanyard Page
+In templates/public/lanyard.html, find and remove any emoji (e.g., 🧵) used to represent the lanyard. Do not replace it with anything else.
+
+5. ✅ Remove “About” Page and Add Its Content to Homepage
+Delete or disable the about.html file and any route to /about.
+On the homepage (templates/public/home.html), add the following second paragraph immediately after the existing hero paragraph:
+<p class="text-base mt-6 max-w-xl mx-auto text-white">
+  CourtSide Club is a community-first platform built to help fans make real-world connections at professional tennis events. Whether you’re attending solo or with friends, we make it easy to discover who’s going and feel part of something bigger.
+</p>
+✅ Do not finish until you’ve confirmed:
+
+“Join Now” and “Get Started” are styled as green buttons
+“Tournaments” is removed from public nav and fully disabled until login
+Lanyard emoji is removed
+About content is deleted and appears on the homepage as a second paragraph
