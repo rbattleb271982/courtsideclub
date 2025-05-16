@@ -95,16 +95,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (saveButton) {
       if (selectedButtons.length > 0) {
-        // Has sessions, always enable the save button
-        saveButton.classList.remove('btn-secondary', 'disabled');
+        // Has sessions, use solid green button
+        saveButton.classList.remove('btn-outline-success');
         saveButton.classList.add('btn-success');
-        saveButton.disabled = false;
       } else {
-        // No sessions selected, disable the save button
+        // No sessions selected, use outline button
         saveButton.classList.remove('btn-success');
-        saveButton.classList.add('btn-secondary', 'disabled');
-        saveButton.disabled = true;
+        saveButton.classList.add('btn-outline-success');
       }
+      
+      // Always enable the save button
+      saveButton.classList.remove('disabled', 'btn-secondary');
+      saveButton.disabled = false;
       
       // Update selectedSessions array based on actual DOM state
       selectedSessions = [];

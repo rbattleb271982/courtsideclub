@@ -92,14 +92,14 @@
                                 <!-- Attendance Toggle Buttons --> 
                                 <div class="attendance-buttons d-flex flex-column flex-md-row mb-2 mt-2">
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
-                                        <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
+                                        <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
                                             <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
                                         </button>
                                     </form>
                                     
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
                                         <input type="hidden" name="attendance_type" value="maybe">
-                                        <button type="submit" class="btn {% if is_maybe %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
+                                        <button type="submit" class="btn {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
                                             <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
                                         </button>
                                     </form>
@@ -255,15 +255,14 @@
                         </div>
                         
                         {% set has_sessions_selected = selected_sessions|length > 0 %}
-                        <button type="submit" 
-                            class="btn {% if has_sessions_selected %}btn-success{% else %}btn-secondary disabled{% endif %} save-btn" 
-                            id="saveButton" 
-                            {% if not has_sessions_selected %}disabled{% endif %}>
-                            <i data-feather="save" class="icon-sm"></i> Save My Sessions
+                        <button type="submit" form="sessionForm"
+                            class="btn {% if has_sessions_selected %}btn-success{% else %}btn-outline-success{% endif %} save-btn" 
+                            id="saveButton">
+                            <i data-feather="save" class="icon-sm"></i> Save My Selections
                         </button>
                         
-                        <!-- Lanyard Button moved here - Only visible after sessions saved -->
-                        {% if not current_user.lanyard_ordered and is_full_attending and session_saved %}
+                        <!-- Lanyard Button moved here - Visible after any save for attending users -->
+                        {% if not current_user.lanyard_ordered and is_attending and session_saved %}
                         <div class="mt-3">
                             <a href="{{ url_for('user.lanyard') }}" class="btn btn-success btn-lg w-100 rounded shadow-sm hover-grow">
                                 <i data-feather="tag" class="icon-sm"></i> Order Free CourtSide Lanyard
