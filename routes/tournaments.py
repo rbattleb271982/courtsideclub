@@ -162,10 +162,16 @@ def view_tournament(tournament_slug):
         ).join(User).filter_by(lanyard_ordered=True).count()
     }
 
-    return render_template('public/tournament_detail.html',
+    # Use the authenticated template for logged-in users
+    attending_count = stats.get('attending', 0) 
+    meeting_count = stats.get('meetup', 0)
+    
+    return render_template('tournament_detail.html',
                          tournament=tournament,
                          user_tournament=user_tournament,
-                         stats=stats)
+                         stats=stats,
+                         attending_count=attending_count,
+                         meeting_count=meeting_count)
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
