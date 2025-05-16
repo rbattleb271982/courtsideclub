@@ -54,29 +54,34 @@
             <div class="tournament-actions">
               {% if tournament.attendance_status == 'attending' and tournament.has_sessions %}
                 <!-- User is attending with sessions selected -->
-                <div class="btn btn-success">
-                  <span class="status-icon">✅</span> You're Attending
-                </div>
+                <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="btn btn-success w-100">
+                  I'm Attending
+                </a>
+                <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=maybe" class="btn btn-outline-secondary w-100">
+                  Maybe Attending
+                </a>
                 <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
                   <button type="submit" class="btn-clear">Not Attending</button>
                 </form>
               {% elif tournament.attendance_status == 'maybe' %}
                 <!-- User has UserTournament but not fully attending or no sessions -->
-                <div class="btn btn-maybe">
-                  <span class="status-icon">❓</span> Maybe Attending
-                </div>
-                <div class="attendance-buttons">
-                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="btn btn-outline">Update Sessions</a>
-                  <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
-                    <button type="submit" class="btn-clear">Not Attending</button>
-                  </form>
-                </div>
+                <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=attending" class="btn btn-outline-secondary w-100">
+                  I'm Attending
+                </a>
+                <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="btn btn-success w-100">
+                  Maybe Attending
+                </a>
+                <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
+                  <button type="submit" class="btn-clear">Not Attending</button>
+                </form>
               {% else %}
                 <!-- User is not attending this tournament -->
-                <div class="attendance-buttons">
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=attending" class="btn btn-outline">I'm Attending</a>
-                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=maybe" class="btn btn-outline">Maybe Attending</a>
-                </div>
+                <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=attending" class="btn btn-outline-secondary w-100">
+                  I'm Attending
+                </a>
+                <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?attendance=maybe" class="btn btn-outline-secondary w-100">
+                  Maybe Attending
+                </a>
               {% endif %}
             </div>
           </div>
