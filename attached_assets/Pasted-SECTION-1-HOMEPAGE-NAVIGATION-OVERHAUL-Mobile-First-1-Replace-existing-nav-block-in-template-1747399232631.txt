@@ -1,0 +1,140 @@
+SECTION 1: HOMEPAGE NAVIGATION OVERHAUL (Mobile-First)
+
+🔧 1. Replace existing nav block in templates/public/base.html with:
+<header class="mobile-header">
+  <div class="nav-container">
+    <div class="logo">CourtSide Club</div>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+  <nav id="mobile-menu" class="mobile-menu">
+    <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
+    <a href="{{ url_for('main.lanyard_info') }}">Free Lanyard</a>
+    <a href="{{ url_for('main.faqs') }}">FAQ</a>
+    <a href="{{ url_for('auth.login') }}">Login</a>
+    <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+  </nav>
+</header>
+🎨 2. Add this CSS to your main stylesheet or within <style> tag in base.html:
+/* Mobile Nav Styles */
+.mobile-header {
+  background-color: #004d26;
+  color: white;
+  font-family: sans-serif;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.menu-toggle {
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background-color: #004d26;
+  padding: 10px 0;
+}
+
+.mobile-menu a {
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.mobile-menu a:hover {
+  background-color: #00663f;
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .mobile-menu a {
+    border-top: none;
+    padding: 10px 15px;
+  }
+
+  .nav-container {
+    justify-content: space-between;
+  }
+}
+🧠 3. Add this JS snippet just before </body> in base.html:
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+  }
+</script>
+📄 SECTION 5: LANYARD PAGE SHOULD BE PUBLIC
+
+4. In routes/main.py, replace or add:
+@main_bp.route('/lanyard')
+def lanyard_info():
+    return render_template('public/lanyard.html')
+5. Create or overwrite templates/public/lanyard.html:
+{% extends "public/base.html" %}
+{% block content %}
+  <div class="container">
+    <h1>Get Your Free Lanyard</h1>
+    <p>
+      CourtSide Club lanyards are free for fans who RSVP to attend a tournament.
+      They’re your visual signal that you’re open to meeting other tennis lovers
+      on site. When you wear one, you make it easier for others to say hello.
+    </p>
+    <p>
+      After you log in and mark your tournament attendance, we’ll collect your
+      shipping address and send one out — free of charge.
+    </p>
+    <p>
+      🎾 Tennis is better together. Let’s make it social.
+    </p>
+    <a href="{{ url_for('auth.signup') }}">Sign up to get yours</a>
+  </div>
+{% endblock %}
+📜 SECTION 8 & 9: PRIVACY POLICY + TERMS PLACEHOLDERS
+
+6. In templates/public/privacy.html:
+{% extends "public/base.html" %}
+{% block content %}
+  <h1>Privacy Policy</h1>
+  <p>This is a placeholder privacy policy. We’ll update this with full legal details soon.</p>
+{% endblock %}
+7. In templates/public/terms.html:
+{% extends "public/base.html" %}
+{% block content %}
+  <h1>Terms of Service</h1>
+  <p>These are the placeholder terms of use. We’ll replace this with full terms shortly.</p>
+{% endblock %}
+🔥 CLEANUP TASKS (Optional but Recommended)
+
+8. Remove the unused /blog route:
+Delete or comment out this in routes/main.py:
+@main_bp.route('/blog')
+def blog():
+    return render_template('public/blog.html')
+Delete templates/public/blog.html if it exists
+Remove blog from your navigation/menu if linked
