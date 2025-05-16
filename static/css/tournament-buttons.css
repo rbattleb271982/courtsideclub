@@ -16,7 +16,12 @@
   color: white;
 }
 
-.attendance-btn.btn-secondary,
+.attendance-btn.btn-outline-secondary {
+  background-color: white;
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
 .attendance-btn.btn-outline-secondary:hover {
   background-color: #6c757d;
   border-color: #6c757d;
