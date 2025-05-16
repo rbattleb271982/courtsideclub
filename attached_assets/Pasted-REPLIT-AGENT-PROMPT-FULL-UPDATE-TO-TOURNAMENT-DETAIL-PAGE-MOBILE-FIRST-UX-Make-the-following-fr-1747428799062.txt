@@ -1,0 +1,46 @@
+REPLIT AGENT PROMPT — FULL UPDATE TO TOURNAMENT DETAIL PAGE (MOBILE-FIRST UX)
+
+Make the following front-end and UX updates to the tournament detail page (tournament_detail.html) and any required supporting styles or JS. These changes are focused on mobile-first UX improvements:
+
+✅ 1. SESSION SELECTION UI (Replace current implementation)
+Rebuild the session selection block like this:
+
+Group sessions by Day (e.g., Day 1, Day 2)
+Each day should show:
+📅 Date label (e.g., Monday, Aug 04 (Day 1))
+Two large toggle buttons:
+🕑 Day Session
+🌙 Night Session
+Each toggle button should:
+Be styled like the “I’m Going” buttons (rounded, full width on mobile)
+Show green background and ✅ when selected
+Show light border with ➕ icon when not selected
+Display how many other fans selected that session as a pill badge (3 fans attending, or Be the first!)
+Replace all checkboxes with these visual toggles (do not use native <input type="checkbox"> UI)
+✅ 2. "I’m Going / Thinking About It / Can’t Make It" Buttons
+Do not change this text anymore.
+Style them consistently:
+Gray by default
+Highlighted green when selected
+Only one can be selected at a time
+Position them under the tournament stats in the top green card.
+✅ 3. Move These Into the Top Box
+👋 “I’m open to meeting up with other fans” — turn this into a toggle-style button (same style as above)
+“Order Free Lanyard” — convert this into a green button, not a plain text link
+Place both directly beneath the attendance buttons inside the top info card
+✅ 4. Remove or Fix the Following
+Remove: 0 fans attending this tournament. 0 fans open to meeting. line from the "Your Tournament Attendance" box
+Remove: debug text like sessions count, no user_tournament record exists
+Ensure: selected sessions persist properly across refresh/return
+✅ 5. Save Button Behavior
+Move the green “Save Preferences” button into a sticky footer bar for mobile
+It should only appear when the user has selected at least one session
+Use responsive CSS to only make it sticky on smaller screens
+Use a green background and white text: Save Preferences
+📦 DIRECTORY & ROUTE NOTES
+Template: templates/user/tournament_detail.html
+Route: @user_bp.route('/tournament/<tournament_slug>')
+Session info comes from: tournament.sessions (stored as JSON array)
+✅ Make all the changes listed above.
+🟡 Use checkpoints sparingly — only when absolutely necessary.
+🛠 Do not finish until visually confirmed that all logic and styles work on both desktop and mobile.

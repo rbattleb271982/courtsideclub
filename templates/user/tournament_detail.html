@@ -3,6 +3,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/session-toggles.css') }}">
 <script src="{{ url_for('static', filename='js/tournament-detail.js') }}" defer></script>
 <script type="application/ld+json">
 {
@@ -179,94 +180,82 @@
                     <div class="session-selection-ui">
                         <h4 class="h5 mb-3">Which sessions will you attend?</h4>
                         
-                        <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
+                        <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" id="sessionForm">
+                            <!-- Hidden inputs for selected sessions - will be populated by JS -->
+                            <div id="hiddenSessionInputs"></div>
+                            
                             <!-- Create session day groups with actual dates -->
                             <div class="session-groups">
                                 {% for day_num in range(1, 5) %}
                                 {% set day_offset = day_num|int - 1 %}
                                 {% set day_date = tournament.start_date.replace(day=tournament.start_date.day + day_offset) %}
-                                <div class="session-day-group mb-3 p-3 bg-light rounded shadow-sm">
-                                    <h5 class="h6 font-weight-bold mb-2">
+                                <div class="session-day-group mb-4">
+                                    <h5 class="h6 font-weight-bold mb-3 day-header">
                                         {{ day_date.strftime('%A, %b %d') }} (Day {{ day_num }})
                                     </h5>
                                     
                                     <!-- Day session -->
-                                    <div class="session-item d-flex align-items-center mb-2 p-3 bg-white rounded">
-                                        <div class="form-check d-flex align-items-center">
-                                            <input class="form-check-input session-checkbox" type="checkbox" 
-                                                   name="sessions" 
-                                                   id="session-day{{ day_num }}-day" 
-                                                   value="Day {{ day_num }} - Day"
-                                                   {% if "Day " + day_num|string + " - Day" in selected_sessions %}checked{% endif %}>
-                                            <label class="form-check-label ml-2" for="session-day{{ day_num }}-day">
-                                                <span class="{% if "Day " + day_num|string + " - Day" in selected_sessions %}font-weight-bold text-success{% endif %}">
-                                                    Day Session
-                                                    {% if "Day " + day_num|string + " - Day" in selected_sessions %}
-                                                    <span class="text-success">✓</span>
-                                                    {% endif %}
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <span class="session-badge ml-auto">
-                                            {% set session_key = "Day " + day_num|string + " - Day" %}
-                                            {% if session_key in session_stats and session_stats[session_key].attendees > 0 %}
-                                                {{ session_stats[session_key].attendees }} fan{% if session_stats[session_key].attendees != 1 %}s{% endif %}
+                                    {% set day_key = "Day " + day_num|string + " - Day" %}
+                                    {% set is_selected = day_key in selected_sessions %}
+                                    <button type="button" 
+                                            class="session-toggle {% if is_selected %}selected{% else %}unselected{% endif %}" 
+                                            data-session="{{ day_key }}">
+                                        <strong>Day Session</strong> 
+                                        <span class="session-badge">
+                                            {% if day_key in session_stats and session_stats[day_key].attendees > 0 %}
+                                                {{ session_stats[day_key].attendees }} fan{% if session_stats[day_key].attendees != 1 %}s{% endif %}
                                             {% else %}
                                                 Be the first!
                                             {% endif %}
                                         </span>
-                                    </div>
+                                        <span class="toggle-icon">
+                                            {% if is_selected %}✓{% else %}+{% endif %}
+                                        </span>
+                                    </button>
                                     
                                     <!-- Night session -->
-                                    <div class="session-item d-flex align-items-center mb-2 p-3 bg-white rounded">
-                                        <div class="form-check d-flex align-items-center">
-                                            <input class="form-check-input session-checkbox" type="checkbox" 
-                                                   name="sessions" 
-                                                   id="session-day{{ day_num }}-night" 
-                                                   value="Day {{ day_num }} - Night"
-                                                   {% if "Day " + day_num|string + " - Night" in selected_sessions %}checked{% endif %}>
-                                            <label class="form-check-label ml-2" for="session-day{{ day_num }}-night">
-                                                <span class="{% if "Day " + day_num|string + " - Night" in selected_sessions %}font-weight-bold text-success{% endif %}">
-                                                    Night Session
-                                                    {% if "Day " + day_num|string + " - Night" in selected_sessions %}
-                                                    <span class="text-success">✓</span>
-                                                    {% endif %}
-                                                </span>
-                                            </label>
-                                        </div>
-                                        <span class="session-badge ml-auto">
-                                            {% set session_key = "Day " + day_num|string + " - Night" %}
-                                            {% if session_key in session_stats and session_stats[session_key].attendees > 0 %}
-                                                {{ session_stats[session_key].attendees }} fan{% if session_stats[session_key].attendees != 1 %}s{% endif %}
+                                    {% set night_key = "Day " + day_num|string + " - Night" %}
+                                    {% set is_selected = night_key in selected_sessions %}
+                                    <button type="button" 
+                                            class="session-toggle {% if is_selected %}selected{% else %}unselected{% endif %}" 
+                                            data-session="{{ night_key }}">
+                                        <strong>Night Session</strong>
+                                        <span class="session-badge">
+                                            {% if night_key in session_stats and session_stats[night_key].attendees > 0 %}
+                                                {{ session_stats[night_key].attendees }} fan{% if session_stats[night_key].attendees != 1 %}s{% endif %}
                                             {% else %}
                                                 Be the first!
                                             {% endif %}
                                         </span>
-                                    </div>
+                                        <span class="toggle-icon">
+                                            {% if is_selected %}✓{% else %}+{% endif %}
+                                        </span>
+                                    </button>
                                 </div>
                                 {% endfor %}
                             </div>
-
-                            <div class="save-preferences card mt-4 p-3 bg-light shadow-sm">
-                                <!-- Selected Session Count -->
-                                <p class="text-center mb-3">
-                                    {% if selected_sessions|length > 0 %}
-                                    <span class="text-success font-weight-bold">
-                                        <i data-feather="check-circle" class="icon-sm"></i>
-                                        You've selected {{ selected_sessions|length }} session{{ 's' if selected_sessions|length != 1 else '' }}
-                                    </span>
-                                    {% else %}
-                                    <span class="text-muted">
-                                        Select which sessions you'll attend
-                                    </span>
-                                    {% endif %}
-                                </p>
-                                
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i data-feather="save" class="icon-sm"></i> Save My Sessions
-                                </button>
-                            </div>
                         </form>
+                    </div>
+                    
+                    <!-- Sticky Save Bar -->
+                    <div class="save-bar" id="saveBar">
+                        <!-- Selected Session Count -->
+                        <p id="sessionCountMessage">
+                            {% if selected_sessions|length > 0 %}
+                            <span class="text-success font-weight-bold">
+                                <i data-feather="check-circle" class="icon-sm"></i>
+                                You've selected {{ selected_sessions|length }} session{{ 's' if selected_sessions|length != 1 else '' }}
+                            </span>
+                            {% else %}
+                            <span class="text-muted">
+                                Select which sessions you'll attend
+                            </span>
+                            {% endif %}
+                        </p>
+                        
+                        <button type="button" class="btn btn-success btn-lg save-btn" id="saveButton">
+                            <i data-feather="save" class="icon-sm"></i> Save My Sessions
+                        </button>
                     </div>
                 </div>
             </div>

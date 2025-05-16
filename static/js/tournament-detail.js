@@ -6,50 +6,71 @@ document.addEventListener('DOMContentLoaded', function() {
     feather.replace();
   }
   
-  // Add click handlers for session checkboxes to improve visual feedback
-  const sessionCheckboxes = document.querySelectorAll('.session-checkbox');
-  sessionCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      const label = this.closest('.form-check').querySelector('.form-check-label span');
-      if (this.checked) {
-        label.classList.add('font-weight-bold', 'text-success');
-        // Add checkmark if it doesn't exist
-        if (!label.querySelector('.text-success')) {
-          const checkmark = document.createElement('span');
-          checkmark.className = 'text-success';
-          checkmark.textContent = '✓';
-          label.appendChild(document.createTextNode(' '));
-          label.appendChild(checkmark);
+  // Track selected sessions
+  let selectedSessions = [];
+  
+  // Initialize selected sessions from existing state
+  document.querySelectorAll('.session-toggle.selected').forEach(toggle => {
+    selectedSessions.push(toggle.dataset.session);
+  });
+  
+  // Update session count display
+  updateSessionCountDisplay();
+  
+  // Add sticky behavior to save bar on mobile
+  if (window.innerWidth < 768) {
+    document.body.classList.add('has-sticky-bar');
+  }
+  
+  // Add click handlers for session toggle buttons
+  const sessionToggles = document.querySelectorAll('.session-toggle');
+  sessionToggles.forEach(toggle => {
+    toggle.addEventListener('click', function() {
+      const sessionValue = this.dataset.session;
+      
+      if (this.classList.contains('selected')) {
+        // Remove from selected sessions
+        this.classList.remove('selected');
+        this.classList.add('unselected');
+        this.querySelector('.toggle-icon').textContent = '+';
+        
+        // Remove from array
+        const index = selectedSessions.indexOf(sessionValue);
+        if (index > -1) {
+          selectedSessions.splice(index, 1);
         }
       } else {
-        label.classList.remove('font-weight-bold', 'text-success');
-        // Remove checkmark if it exists
-        const checkmark = label.querySelector('.text-success');
-        if (checkmark) {
-          checkmark.remove();
+        // Add to selected sessions
+        this.classList.remove('unselected');
+        this.classList.add('selected');
+        this.querySelector('.toggle-icon').textContent = '✓';
+        
+        // Add to array if not already there
+        if (!selectedSessions.includes(sessionValue)) {
+          selectedSessions.push(sessionValue);
         }
       }
       
-      // Update selected session count message
-      updateSelectedSessionCount();
+      // Update session count display
+      updateSessionCountDisplay();
     });
   });
   
   // Function to update the session count message
-  function updateSelectedSessionCount() {
-    const checkedCount = document.querySelectorAll('.session-checkbox:checked').length;
-    const countMessage = document.querySelector('.save-preferences p');
+  function updateSessionCountDisplay() {
+    const sessionCount = selectedSessions.length;
+    const sessionCountElement = document.getElementById('sessionCountMessage');
     
-    if (countMessage) {
-      if (checkedCount > 0) {
-        countMessage.innerHTML = `
+    if (sessionCountElement) {
+      if (sessionCount > 0) {
+        sessionCountElement.innerHTML = `
           <span class="text-success font-weight-bold">
             <i data-feather="check-circle" class="icon-sm"></i>
-            You've selected ${checkedCount} session${checkedCount !== 1 ? 's' : ''}
+            You've selected ${sessionCount} session${sessionCount !== 1 ? 's' : ''}
           </span>
         `;
       } else {
-        countMessage.innerHTML = `
+        sessionCountElement.innerHTML = `
           <span class="text-muted">
             Select which sessions you'll attend
           </span>
@@ -61,6 +82,30 @@ document.addEventListener('DOMContentLoaded', function() {
         feather.replace();
       }
     }
+  }
+  
+  // Handle save button click
+  const saveButton = document.getElementById('saveButton');
+  const sessionForm = document.getElementById('sessionForm');
+  
+  if (saveButton && sessionForm) {
+    saveButton.addEventListener('click', function() {
+      // Clear previous hidden inputs
+      const hiddenInputsContainer = document.getElementById('hiddenSessionInputs');
+      hiddenInputsContainer.innerHTML = '';
+      
+      // Create hidden inputs for each selected session
+      selectedSessions.forEach(session => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'sessions';
+        input.value = session;
+        hiddenInputsContainer.appendChild(input);
+      });
+      
+      // Submit the form
+      sessionForm.submit();
+    });
   }
   
   // Handle toggle behavior for "I'm open to meeting" button
@@ -83,13 +128,5 @@ document.addEventListener('DOMContentLoaded', function() {
         this.querySelector('span span:last-child').textContent = "Meet other fans?";
       }
     });
-  }
-  
-  // Create sticky save button for mobile
-  const savePreferences = document.querySelector('.save-preferences');
-  if (savePreferences && window.innerWidth < 768) {
-    savePreferences.classList.add('fixed-bottom', 'mb-0', 'rounded-0');
-    savePreferences.style.zIndex = '1000';
-    document.body.style.paddingBottom = '100px'; // Add padding to prevent content being hidden
   }
 });
