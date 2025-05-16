@@ -91,29 +91,16 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to update save button state
   function updateSaveButtonState() {
     const saveButton = document.getElementById('saveButton');
-    const goingBtn = document.getElementById('btn-going');
-    const thinkingBtn = document.getElementById('btn-thinking');
-    const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
-    const isMaybe = thinkingBtn && thinkingBtn.classList.contains('btn-success');
     
     if (saveButton) {
+      // Simpler logic: if we have selected sessions, enable the button
       if (selectedSessions.length > 0) {
         // Has sessions, always enable the save button
         saveButton.classList.remove('btn-secondary', 'disabled');
         saveButton.classList.add('btn-success');
         saveButton.disabled = false;
-      } else if (isAttending) {
-        // User clicked "I'm Attending" but has no sessions, disable save button
-        saveButton.classList.remove('btn-success');
-        saveButton.classList.add('btn-secondary', 'disabled');
-        saveButton.disabled = true;
-      } else if (isMaybe) {
-        // "Maybe Attending" state - enable the save button
-        saveButton.classList.remove('btn-secondary', 'disabled');
-        saveButton.classList.add('btn-success');
-        saveButton.disabled = false;
       } else {
-        // Not attending at all
+        // No sessions selected, disable the save button
         saveButton.classList.remove('btn-success');
         saveButton.classList.add('btn-secondary', 'disabled');
         saveButton.disabled = true;
@@ -121,45 +108,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
-  // Handle save button click
+  // Handle form submission
   const saveButton = document.getElementById('saveButton');
   const sessionForm = document.getElementById('sessionForm');
   
-  if (saveButton && sessionForm) {
-    saveButton.addEventListener('click', function() {
+  if (sessionForm) {
+    // Handle form submission
+    sessionForm.addEventListener('submit', function(e) {
       if (selectedSessions.length === 0) {
-        return; // Prevent submission if no sessions selected
+        e.preventDefault(); // Prevent submission if no sessions selected
+        return;
       }
       
-      // Show loading state
-      saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-      saveButton.disabled = true;
+      // Show loading state on button if it exists
+      if (saveButton) {
+        saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        saveButton.disabled = true;
+      }
       
       // Clear previous hidden inputs
       const hiddenInputsContainer = document.getElementById('hiddenSessionInputs');
-      hiddenInputsContainer.innerHTML = '';
-      
-      // Create hidden inputs for each selected session
-      selectedSessions.forEach(session => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'sessions';
-        input.value = session;
-        hiddenInputsContainer.appendChild(input);
-      });
-      
-      // Also add the wants-to-meet value as a hidden input
-      const meetingCheckbox = document.getElementById('wants-to-meet-top');
-      if (meetingCheckbox) {
-        const meetingInput = document.createElement('input');
-        meetingInput.type = 'hidden';
-        meetingInput.name = 'open_to_meet';
-        meetingInput.value = meetingCheckbox.checked ? 'true' : 'false';
-        hiddenInputsContainer.appendChild(meetingInput);
+      if (hiddenInputsContainer) {
+        hiddenInputsContainer.innerHTML = '';
+        
+        // Create hidden inputs for each selected session
+        selectedSessions.forEach(session => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'sessions';
+          input.value = session;
+          hiddenInputsContainer.appendChild(input);
+        });
+        
+        // Also add the wants-to-meet value as a hidden input
+        const meetingCheckbox = document.getElementById('wants-to-meet-top');
+        if (meetingCheckbox) {
+          const meetingInput = document.createElement('input');
+          meetingInput.type = 'hidden';
+          meetingInput.name = 'open_to_meet';
+          meetingInput.value = meetingCheckbox.checked ? 'true' : 'false';
+          hiddenInputsContainer.appendChild(meetingInput);
+        }
       }
       
-      // Submit the form
-      sessionForm.submit();
+      // Let form submit naturally
     });
   }
   
