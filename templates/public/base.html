@@ -17,8 +17,10 @@
       <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
       <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
       <a href="{{ url_for('main.faqs') }}">FAQ</a>
-      <a href="{{ url_for('auth.login') }}">Login</a>
-      <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+      {% if request.endpoint not in ['auth.login', 'auth.signup'] %}
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+      {% endif %}
     </nav>
   </header>
 
