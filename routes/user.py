@@ -280,6 +280,72 @@ def my_tournaments():
         stats=stats
     )
 
+@user_bp.route('/browse-tournaments')
+@login_required
+def browse_tournaments():
+    """
+    Display upcoming tournaments grouped by month with attendance status for the current user.
+    Allow users to mark themselves as attending or maybe attending.
+    """
+    # Get today's date for filtering
+    today = datetime.now().date()
+    
+    # Get all upcoming tournaments, sorted by start date
+    upcoming_tournaments = Tournament.query.filter(
+        Tournament.end_date >= today
+    ).order_by(Tournament.start_date).all()
+    
+    # Get current user's tournament registrations
+    user_registrations = {
+        ut.tournament_id: ut for ut in UserTournament.query.filter_by(
+            user_id=current_user.id
+        ).all()
+    }
+    
+    # Group tournaments by month
+    def get_month_key(tournament):
+        return tournament.start_date.strftime('%B %Y')
+    
+    grouped_tournaments = {}
+    sorted_tournaments = sorted(upcoming_tournaments, key=get_month_key)
+    
+    from itertools import groupby
+    for month, group in groupby(sorted_tournaments, key=get_month_key):
+        grouped_tournaments[month] = list(group)
+    
+    # Add attendance status to each tournament
+    for month_group in grouped_tournaments.values():
+        for tournament in month_group:
+            # Default status
+            tournament.attendance_status = 'not_attending'
+            
+            # If user has a registration, check the status
+            if tournament.id in user_registrations:
+                ut = user_registrations[tournament.id]
+                if ut.attending:
+                    tournament.attendance_status = 'attending'
+                elif ut.session_label:  # Has session but not attending (maybe)
+                    tournament.attendance_status = 'maybe'
+            
+            # Add stats to each tournament
+            tournament.attendee_count = UserTournament.query.filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.attending == True,
+                UserTournament.user_id != current_user.id  # Exclude current user
+            ).count()
+            
+            tournament.meetup_count = UserTournament.query.filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.attending == True,
+                UserTournament.wants_to_meet == True,
+                UserTournament.user_id != current_user.id  # Exclude current user
+            ).count()
+    
+    return render_template(
+        "user/browse_tournaments.html",
+        grouped_tournaments=grouped_tournaments
+    )
+
 @user_bp.route('/lanyard')
 @login_required
 def lanyard():

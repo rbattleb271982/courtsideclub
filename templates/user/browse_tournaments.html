@@ -1,0 +1,254 @@
+{% extends "layout.html" %}
+
+{% block title %}Browse Tournaments - CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="page-content">
+  <h1 class="main-heading">Browse Tournaments</h1>
+  
+  <div class="month-filter-container">
+    <div class="month-filter-scroll">
+      {% for month, tournaments in grouped_tournaments.items() %}
+        <a href="#month-{{ month|replace(' ', '-') }}" class="month-filter-link">{{ month }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  
+  {% for month, tournaments in grouped_tournaments.items() %}
+    <div id="month-{{ month|replace(' ', '-') }}" class="month-section">
+      <h2 class="month-heading">{{ month }}</h2>
+      
+      <div class="tournaments-grid">
+        {% for tournament in tournaments %}
+          <div class="tournament-card">
+            <div class="tournament-header">
+              <h3 class="tournament-name">{{ tournament.name }}</h3>
+              <div class="tournament-dates">
+                {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}
+              </div>
+            </div>
+            
+            <div class="tournament-location">
+              {{ tournament.city }}, {{ tournament.country }}
+            </div>
+            
+            <div class="tournament-stats">
+              <div class="stat-item">
+                <span class="stat-value">{{ tournament.attendee_count }}</span> 
+                <span class="stat-label">attending</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-value">{{ tournament.meetup_count }}</span> 
+                <span class="stat-label">want to meet</span>
+              </div>
+            </div>
+            
+            <div class="tournament-actions">
+              {% if tournament.attendance_status == 'attending' %}
+                <div class="attendance-status attending">
+                  <span class="status-icon">✓</span> You're Attending
+                </div>
+                <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post">
+                  <button type="submit" class="btn btn-outline">Not Attending</button>
+                </form>
+              {% else %}
+                <div class="attendance-buttons">
+                  <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-primary">
+                    {% if tournament.attendance_status == 'maybe' %}
+                      Update Sessions
+                    {% else %}
+                      Attending
+                    {% endif %}
+                  </a>
+                  {% if tournament.attendance_status == 'not_attending' %}
+                    <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}?maybe=true" class="btn btn-outline">
+                      Maybe Attending
+                    </a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <p>No upcoming tournaments found.</p>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+  .month-filter-container {
+    margin-bottom: 20px;
+    background-color: #f4f9f4;
+    border-radius: 8px;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .month-filter-scroll {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .month-filter-link {
+    padding: 8px 16px;
+    white-space: nowrap;
+    color: #004d26;
+    text-decoration: none;
+    border-radius: 20px;
+    margin-right: 8px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .month-filter-link:hover {
+    background-color: #e0f2eb;
+  }
+  
+  .month-section {
+    margin-bottom: 40px;
+    scroll-margin-top: 70px;
+  }
+  
+  .month-heading {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .tournaments-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  @media (min-width: 768px) {
+    .tournaments-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .tournaments-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .tournament-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .tournament-header {
+    margin-bottom: 8px;
+  }
+  
+  .tournament-name {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .tournament-dates {
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .tournament-location {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+  
+  .tournament-stats {
+    display: flex;
+    margin-bottom: 16px;
+    gap: 20px;
+  }
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stat-value {
+    font-weight: bold;
+    font-size: 18px;
+    color: #004d26;
+  }
+  
+  .stat-label {
+    font-size: 13px;
+    color: #666;
+  }
+  
+  .tournament-actions {
+    margin-top: auto;
+  }
+  
+  .attendance-status {
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 6px;
+    border-radius: 4px;
+  }
+  
+  .attendance-status.attending {
+    background-color: #e0f2eb;
+    color: #004d26;
+  }
+  
+  .attendance-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .btn-primary {
+    background-color: #004d26;
+    color: #fff;
+  }
+  
+  .btn-outline {
+    background-color: transparent;
+    border: 1px solid #004d26;
+    color: #004d26;
+  }
+  
+  .status-icon {
+    margin-right: 5px;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+  }
+</style>
+{% endblock %}
