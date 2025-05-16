@@ -127,6 +127,9 @@ class UserTournament(db.Model):
     # Whether the user is actually attending this tournament
     attending = db.Column(db.Boolean, default=False)
     
+    # Type of attendance: 'attending' or 'maybe'
+    attendance_type = db.Column(db.String(20), default='attending')
+    
     # Whether the user is open to meeting (original field)
     open_to_meet = db.Column(db.Boolean, default=True)
     
