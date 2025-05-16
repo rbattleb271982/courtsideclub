@@ -1,0 +1,51 @@
+Please apply the following UX, logic, and layout improvements to the tournament detail page. This is a mobile-first app, so prioritize layout on small screens first (375px–500px).
+🔹 1. Fix Date Calculation Bug
+I’m seeing this error:
+unsupported operand type(s) for +: 'datetime.date' and 'int'
+✅ Fix it by importing timedelta:
+from datetime import timedelta
+day_date = tournament.start_date + timedelta(days=i)
+Use this to show actual calendar dates next to session groups like:
+Day 1 (Aug 04)
+Day 2 (Aug 05)
+🔹 2. Move and Expand Attendance Controls
+Move the gray “I’m attending this tournament” button into the top green info card
+Add two more buttons:
+“Maybe Attending”
+“Not Attending” (clears their selection)
+Show these buttons inline on desktop and stacked on mobile
+Only one should be active at a time
+🔹 3. Remove Redundant Lines
+Remove: 0 fans attending this tournament. 0 fans open to meeting.
+Remove all debug lines:
+Debug: sessions count: ...
+No user_tournament record exists
+No sessions selected
+
+---
+🔹 **4. Improve Session Display**
+- Show each “Day X” label **with the actual calendar date**
+  - Example: `Day 2 (Aug 05)`
+- Let users:
+  - Select which day(s) they are attending
+  - Choose specific sessions (e.g., Day / Night)
+- Use checkboxes with visible borders and clear spacing
+
+---
+🔹 **5. Move Meetup Checkbox Up**
+- Move this text into the **top green card**, near the attendance buttons:
+👋 I’m open to meeting up with other fans
+- Keep it visible and tappable
+
+---
+🔹 **6. Improve Save Button**
+- Make the “Save Preferences” button **solid green**
+  - Use `.btn-success` as the default class
+
+---
+🔹 **7. Move “Order Free Lanyard” Button (Optional)**
+- If it fits nicely, place the “Order Free Lanyard” button in the top info card too
+- Otherwise leave it below the save button, but style it cleanly and make sure it’s mobile friendly
+
+✅ Do not use checkpoints unless I explicitly ask.  
+✅ Confirm visually that all checkboxes, attendance toggles, dates, and session stats render correctly.
