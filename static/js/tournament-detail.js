@@ -91,10 +91,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to update save button state
   function updateSaveButtonState() {
     const saveButton = document.getElementById('saveButton');
+    const selectedButtons = document.querySelectorAll('.session-chip.selected');
     
     if (saveButton) {
-      // Simpler logic: if we have selected sessions, enable the button
-      if (selectedSessions.length > 0) {
+      if (selectedButtons.length > 0) {
         // Has sessions, always enable the save button
         saveButton.classList.remove('btn-secondary', 'disabled');
         saveButton.classList.add('btn-success');
