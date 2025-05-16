@@ -482,7 +482,11 @@ def mark_attending(tournament_slug):
 
     db.session.commit()
 
-    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
+    # Redirect back with session_saved parameter for lanyard button display when there are sessions
+    if selected_sessions:
+        return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
+    else:
+        return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
 @tournaments_bp.route("/tournaments/public/<slug>")
 def public_tournament_page(slug):

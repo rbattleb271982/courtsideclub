@@ -105,6 +105,12 @@ document.addEventListener('DOMContentLoaded', function() {
         saveButton.classList.add('btn-secondary', 'disabled');
         saveButton.disabled = true;
       }
+      
+      // Update selectedSessions array based on actual DOM state
+      selectedSessions = [];
+      selectedButtons.forEach(button => {
+        selectedSessions.push(button.dataset.session);
+      });
     }
   }
   
