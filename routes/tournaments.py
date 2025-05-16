@@ -327,6 +327,74 @@ def update_sessions(tournament_slug):
 
     return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
+@tournaments_bp.route("/tournaments/<tournament_slug>/save_sessions", methods=['POST'])
+@login_required
+def save_sessions(tournament_slug):
+    """Save selected sessions for a tournament"""
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    
+    # Get selected sessions and wants_to_meet preference
+    selected_sessions = request.form.getlist('sessions')
+    wants_to_meet = request.form.get('wants_to_meet') == 'true'
+    
+    # Get or create user tournament registration
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id, 
+        tournament_id=tournament.id
+    ).first()
+    
+    is_new = False
+    previous_sessions = None
+    previous_wants_to_meet = None
+    previous_attending = None
+    
+    if not user_tournament:
+        # Create a new UserTournament record
+        user_tournament = UserTournament()
+        user_tournament.user_id = current_user.id
+        user_tournament.tournament_id = tournament.id
+        db.session.add(user_tournament)
+        is_new = True
+    else:
+        previous_sessions = user_tournament.session_label
+        previous_wants_to_meet = user_tournament.wants_to_meet
+        previous_attending = user_tournament.attending
+    
+    # Only mark as attending if they selected at least one session
+    if selected_sessions:
+        user_tournament.attending = True
+    else:
+        # If no sessions selected, don't update attendance status
+        if is_new:
+            user_tournament.attending = False
+    
+    user_tournament.wants_to_meet = wants_to_meet
+    user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+    
+    # Log the event for tracking
+    event_data = {
+        'tournament_id': tournament.id,
+        'tournament_name': tournament.name,
+        'selected_sessions': selected_sessions,
+        'wants_to_meet': wants_to_meet,
+        'is_new': is_new,
+        'previous_sessions': previous_sessions,
+        'previous_wants_to_meet': previous_wants_to_meet,
+        'previous_attending': previous_attending,
+        'attending': user_tournament.attending
+    }
+    log_event(current_user.id, 'tournament_session_update', event_data)
+    
+    db.session.commit()
+    
+    if selected_sessions:
+        flash('Your tournament sessions have been saved.', 'success')
+    else:
+        flash('Please select at least one session to mark yourself as attending.', 'warning')
+    
+    # Redirect back with session_saved parameter
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
+
 @tournaments_bp.route("/tournaments/<tournament_slug>/attending", methods=['POST'])
 @login_required
 def mark_attending(tournament_slug):
