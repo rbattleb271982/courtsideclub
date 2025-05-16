@@ -2,6 +2,36 @@
 {% extends "public/base.html" %}
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
 {% block meta_description %}Meet tennis fans at {{ tournament.name }} in {{ tournament.city }}. Find people attending the same sessions.{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "{{ tournament.name }}",
+  "startDate": "{{ tournament.start_date.isoformat() }}",
+  "endDate": "{{ tournament.end_date.isoformat() }}",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "location": {
+    "@type": "Place",
+    "name": "{{ tournament.city }}, {{ tournament.country }}",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "{{ tournament.city }}",
+      "addressCountry": "{{ tournament.country }}"
+    }
+  },
+  "image": "{{ url_for('static', filename='images/og-preview.jpg', _external=True) }}",
+  "description": "Join other tennis fans at {{ tournament.name }} with CourtSide Club to connect, attend sessions, and meet up in person.",
+  "organizer": {
+    "@type": "Organization", 
+    "name": "CourtSide Club",
+    "url": "https://courtside.repl.co"
+  }
+}
+</script>
+{% endblock %}
 {% block content %}
 <h1>{{ tournament.name }}</h1>
 <div class="tournament-details">
