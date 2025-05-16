@@ -1,0 +1,76 @@
+/* Tournament attendance button styling */
+.attendance-btn {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.attendance-btn.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.attendance-btn.btn-outline-success:hover {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.attendance-btn.btn-secondary,
+.attendance-btn.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white;
+}
+
+.attendance-btn .checkmark {
+  margin-left: 5px;
+}
+
+.attendance-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Toast notifications */
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.toast {
+  min-width: 250px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease;
+}
+
+.toast.show {
+  display: block;
+}
+
+.toast.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.toast .close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.toast .close:hover {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
