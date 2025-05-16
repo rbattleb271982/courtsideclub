@@ -53,7 +53,7 @@ def list_tournaments():
             'attending': attending_users,
             'meeting': meeting_users
         }
-        
+
     return render_template('tournaments.html',
                           tournaments=tournaments,
                           all_tournaments=all_tournaments,
@@ -137,13 +137,13 @@ def update_sessions(tournament_slug):
 
     user_tourney.session_label = ", ".join(selected_sessions)
     user_tourney.wants_to_meet = wants_to_meet
-    
+
     # If session is selected, mark as attending
     if selected_sessions:
         user_tourney.attending = True
 
     db.session.commit()
-    
+
     # Log the event
     from services.event_logger import log_event
     event_data = {
@@ -156,10 +156,33 @@ def update_sessions(tournament_slug):
         'previous_wants_to_meet': previous_wants_to_meet
     }
     log_event(current_user.id, 'tournament_session_update', event_data)
-    
+
     return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
+@tournaments_bp.route("/tournaments/<slug>/attending", methods=['POST'])
+@login_required
+def mark_attending(slug):
+    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
 
+    # Create or update user tournament registration
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament.id
+    ).first()
+
+    if not user_tournament:
+        user_tournament = UserTournament(
+            user_id=current_user.id,
+            tournament_id=tournament.id,
+            attending=True
+        )
+        db.session.add(user_tournament)
+    else:
+        user_tournament.attending = True
+
+    db.session.commit()
+
+    return redirect(url_for('tournaments.tournament_detail', tournament_id=tournament.id))
 
 @tournaments_bp.route("/tournaments/<slug>")
 def public_tournament_page(slug):
@@ -418,7 +441,7 @@ def attend_tournament(tournament_id):
                     day_str = ", ".join(selected_days)
                     session_str = ", ".join(selected_sessions)
                     session_label = f"Days: {day_str} | Sessions: {session_str}"
-                    
+
                 if user_tournament:
                     # Update existing registration
                     user_tournament.session_label = session_label
@@ -426,7 +449,7 @@ def attend_tournament(tournament_id):
                     user_tournament.attending = True
                 else:
                     # Create new registration
-                        
+
                     user_tournament = UserTournament(
                         user_id=user.id,
                         tournament_id=tournament_id,
@@ -484,7 +507,7 @@ def past_tournaments():
 
     # Get the user's past tournaments from the many-to-many relationship
     user = User.query.get(current_user.id)
-    
+
     # Get past tournament IDs from the past_tournaments table
     past_tournaments_query = db.session.query(past_tournaments.c.tournament_id).filter(
         past_tournaments.c.user_id == user.id
@@ -497,7 +520,7 @@ def past_tournaments():
         db.session.execute(
             db.delete(past_tournaments).where(past_tournaments.c.user_id == user.id)
         )
-        
+
         # Process checked tournaments
         selected_tournament_ids = []
         for field_name, value in request.form.items():
@@ -508,7 +531,7 @@ def past_tournaments():
                 # Add to the list if checked
                 if value == 'on':
                     selected_tournament_ids.append(tournament_id)
-        
+
         # Add new entries to past_tournaments table
         for tournament_id in selected_tournament_ids:
             db.session.execute(
@@ -517,7 +540,7 @@ def past_tournaments():
                     tournament_id=tournament_id
                 )
             )
-            
+
         db.session.commit()
 
         flash("Your past tournament selections have been saved.", 'success')

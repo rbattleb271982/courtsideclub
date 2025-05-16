@@ -242,9 +242,19 @@ def my_tournaments():
 
     return render_template("my_tournaments.html", user_tournaments=user_tournaments)
 
-@user_bp.route('/order_lanyard', methods=['GET', 'POST'])
+@user_bp.route('/lanyard')
 @login_required
-def order_lanyard():
+def lanyard():
+    # Check if user has selected any tournament sessions
+    attending_sessions = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        attending=True
+    ).first()
+
+    if not attending_sessions or not attending_sessions.session_label:
+        flash("To order your lanyard, you need to select a tournament and session first.", "warning")
+        return redirect(url_for("user.my_tournaments"))
+
     # List of U.S. state abbreviations
     STATE_ABBRS = [
         "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN",

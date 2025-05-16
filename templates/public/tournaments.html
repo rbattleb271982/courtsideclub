@@ -1,42 +1,45 @@
 
 {% extends "public/base.html" %}
-{% block title %}Tournaments – CourtSide Club{% endblock %}
-{% block description %}Explore upcoming ATP and WTA tournaments where you can meet fellow CourtSide Club members.{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1>Upcoming Tournaments</h1>
-  <p class="lead">Find tennis fans attending the same tournaments as you.</p>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-4">Browse Tournaments</h1>
+  
+  <p class="text-sm text-gray-700 mb-4">
+    Click into a tournament you're interested in to mark yourself as attending and select the specific sessions you'll be at.
+  </p>
 
   {% set ns = namespace(current_month=None) %}
-  <div class="tournaments-list">
-    {% for tournament in tournaments %}
-      {% set month = tournament.start_date.strftime('%B %Y') %}
-      {% if month != ns.current_month %}
-        {% set ns.current_month = month %}
-        <h2 class="month-heading">{{ month }}</h2>
-      {% endif %}
-
-      <div class="tournament-card">
-        <div class="tournament-name">
-          <h3>{{ tournament.name }}</h3>
-          <span class="tournament-type">{{ tournament.event_type }} • {{ tournament.tour_type }}</span>
+  {% for tournament in tournaments %}
+    {% if tournament.start_date.strftime('%B %Y') != ns.current_month %}
+      {% set ns.current_month = tournament.start_date.strftime('%B %Y') %}
+      <h2 class="text-lg font-semibold mt-6">{{ ns.current_month }}</h2>
+    {% endif %}
+    
+    <div class="tournament-card bg-white rounded-lg shadow-md p-4 mb-4">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="text-xl font-semibold">{{ tournament.name }}</h3>
+          <p class="text-gray-600">
+            {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}
+          </p>
+          <p class="text-gray-600">{{ tournament.city }}, {{ tournament.country }}</p>
+          <p class="text-sm text-gray-500 mt-1">
+            {{ tournament.attendee_count }} attending • 
+            {{ tournament.open_to_meet_count }} open to meetups
+          </p>
         </div>
-        <div class="tournament-meta">
-          <div class="tournament-date">
-            {{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%d, %Y') }}
-          </div>
-          <div class="tournament-location">
-            <i data-feather="map-pin"></i> {{ tournament.city }}, {{ tournament.country }}
-          </div>
-        </div>
-        <div class="tournament-actions">
-          <a href="{{ url_for('main.public_tournament_detail', slug=tournament.slug) }}" class="btn btn-primary">View Details</a>
+        <div class="flex flex-col items-end">
+          <form action="{{ url_for('tournaments.mark_attending', tournament_slug=tournament.slug) }}" method="POST">
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm hover:bg-green-500 transition">
+              I'm Attending
+            </button>
+          </form>
+          <a href="{{ url_for('tournaments.tournament_detail', slug=tournament.slug) }}" 
+             class="text-green-600 hover:text-green-500 text-sm mt-2">View Details</a>
         </div>
       </div>
-    {% else %}
-      <p class="text-center">No upcoming tournaments found.</p>
-    {% endfor %}
-  </div>
+    </div>
+  {% endfor %}
 </div>
 {% endblock %}
