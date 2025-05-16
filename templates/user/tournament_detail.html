@@ -129,14 +129,17 @@
                         <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
                     </div>
 
-                    {% if user_tournament and user_tournament.attending and tournament.sessions %}
+                    {% if user_tournament and user_tournament.attending %}
+                    <!-- Force add default sessions if none are present -->
+                    {% set default_sessions = ['Day 1 - Day', 'Day 1 - Night', 'Day 2 - Day', 'Day 2 - Night'] %}
+                    {% set sessions_to_display = tournament.sessions if tournament.sessions and tournament.sessions|length > 0 else default_sessions %}
                     <!-- Sessions Selection Form -->
                     <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="mt-4">
                         <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
 
                         <!-- Group sessions by day -->
                         {% set days = {} %}
-                        {% for session in tournament.sessions %}
+                        {% for session in sessions_to_display %}
                             {% set day = session.split(' - ')[0] %}
                             {% if day not in days %}
                                 {% set _ = days.update({day: []}) %}
