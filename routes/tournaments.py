@@ -33,25 +33,30 @@ def list_tournaments():
     # Get the filtered tournaments, in chronological order by start date
     tournaments = query.all()
 
-    # Add stats to each tournament
+    # Add stats to each tournament - exclude current user from counts
+    other_users_filter = UserTournament.user_id != current_user.id if current_user.is_authenticated else True
+    
     for tournament in tournaments:
-        # Count users who are attending
-        tournament.attendee_count = UserTournament.query.filter_by(
-            tournament_id=tournament.id,
-            attending=True
+        # Count users who are attending (excluding current user until they select sessions)
+        tournament.attendee_count = UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            other_users_filter
         ).count()
 
-        # Count users who are open to meeting
-        tournament.hand_raised_count = UserTournament.query.filter_by(
-            tournament_id=tournament.id,
-            attending=True,
-            open_to_meet=True
+        # Count users who are open to meeting (excluding current user until they select sessions)
+        tournament.hand_raised_count = UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.open_to_meet == True,
+            other_users_filter
         ).count()
 
-        # Count users who ordered lanyards
-        tournament.lanyard_count = UserTournament.query.filter_by(
-            tournament_id=tournament.id,
-            attending=True
+        # Count users who ordered lanyards (excluding current user until they select sessions)
+        tournament.lanyard_count = UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            other_users_filter
         ).join(User).filter_by(lanyard_ordered=True).count()
 
     # Get today's date for highlighting current tournaments
@@ -97,8 +102,8 @@ def view_tournament(tournament_slug):
     ).first()
 
     if request.method == 'POST':
-        attending = request.form.get('attending') == 'true'
         selected_sessions = request.form.getlist('sessions')
+        wants_to_meet = bool(request.form.get('wants_to_meet', False))
         
         if not user_tournament:
             user_tournament = UserTournament(
@@ -107,20 +112,54 @@ def view_tournament(tournament_slug):
             )
             db.session.add(user_tournament)
         
-        user_tournament.attending = attending
+        # Only mark as attending if they selected at least one session
+        if selected_sessions:
+            user_tournament.attending = True
+        else:
+            user_tournament.attending = False
+            
+        user_tournament.wants_to_meet = wants_to_meet
         user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+        
+        # Log the event for tracking
+        event_data = {
+            'tournament_id': tournament.id,
+            'tournament_name': tournament.name,
+            'selected_sessions': selected_sessions,
+            'wants_to_meet': wants_to_meet,
+            'attending': user_tournament.attending
+        }
+        log_event(current_user.id, 'tournament_session_update', event_data)
         
         db.session.commit()
         
-        if attending and selected_sessions:
+        flash('Your tournament selections have been saved.', 'success')
+        
+        # Redirect to lanyard page if they're now attending
+        if user_tournament.attending:
             return redirect(url_for('user.lanyard'))
         return redirect(url_for('user.my_tournaments'))
 
-    # Get tournament stats
+    # Get tournament stats - exclude the current user for accurate display
+    other_users_filter = UserTournament.user_id != current_user.id if current_user.is_authenticated else True
+    
     stats = {
-        'attending': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count(),
-        'meetup': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True, wants_to_meet=True).count(),
-        'lanyards': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).join(User).filter_by(lanyard_ordered=True).count()
+        'attending': UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            other_users_filter
+        ).count(),
+        'meetup': UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.wants_to_meet == True,
+            other_users_filter
+        ).count(),
+        'lanyards': UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            other_users_filter
+        ).join(User).filter_by(lanyard_ordered=True).count()
     }
 
     return render_template('public/tournament_detail.html',
@@ -164,6 +203,7 @@ def update_sessions(tournament_slug):
     is_new_registration = False
     previous_sessions = None
     previous_wants_to_meet = None
+    previous_attending = None
 
     # update UserTournament entry
     user_tourney = db.session.query(UserTournament).filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
@@ -174,13 +214,17 @@ def update_sessions(tournament_slug):
     else:
         previous_sessions = user_tourney.session_label
         previous_wants_to_meet = user_tourney.wants_to_meet
+        previous_attending = user_tourney.attending
 
-    user_tourney.session_label = ", ".join(selected_sessions)
+    # Format sessions consistently with a comma separator
+    user_tourney.session_label = ", ".join(selected_sessions) if selected_sessions else None
     user_tourney.wants_to_meet = wants_to_meet
 
-    # If session is selected, mark as attending
+    # Only mark as attending if they selected at least one session
     if selected_sessions:
         user_tourney.attending = True
+    else:
+        user_tourney.attending = False
 
     db.session.commit()
 
@@ -192,9 +236,17 @@ def update_sessions(tournament_slug):
         'wants_to_meet': wants_to_meet,
         'is_new_registration': is_new_registration,
         'previous_sessions': previous_sessions,
-        'previous_wants_to_meet': previous_wants_to_meet
+        'previous_wants_to_meet': previous_wants_to_meet,
+        'previous_attending': previous_attending,
+        'now_attending': user_tourney.attending
     }
     log_event(current_user.id, 'tournament_session_update', event_data)
+
+    # Flash message to inform user of changes
+    if user_tourney.attending:
+        flash('Your tournament session selections have been saved.', 'success')
+    else:
+        flash('Your selections were saved, but you will not be marked as attending until you select at least one session.', 'warning')
 
     return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
@@ -209,15 +261,38 @@ def mark_attending(tournament_slug):
         tournament_id=tournament.id
     ).first()
 
+    # Get selected sessions from the form
+    selected_sessions = request.form.getlist('sessions')
+    wants_to_meet = bool(request.form.get('wants_to_meet', False))
+
     if not user_tournament:
         user_tournament = UserTournament(
             user_id=current_user.id,
-            tournament_id=tournament.id,
-            attending=True
+            tournament_id=tournament.id
         )
         db.session.add(user_tournament)
-    else:
+    
+    # Update session selections
+    user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+    user_tournament.wants_to_meet = wants_to_meet
+    
+    # Only mark as attending if they selected at least one session
+    if selected_sessions:
         user_tournament.attending = True
+        flash('You are now registered as attending this tournament.', 'success')
+    else:
+        user_tournament.attending = False
+        flash('Please select at least one session to be marked as attending.', 'warning')
+
+    # Log the event
+    event_data = {
+        'tournament_id': tournament.id,
+        'tournament_name': tournament.name,
+        'selected_sessions': selected_sessions,
+        'wants_to_meet': wants_to_meet,
+        'attending': user_tournament.attending
+    }
+    log_event(current_user.id, 'tournament_attendance_update', event_data)
 
     db.session.commit()
 

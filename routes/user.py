@@ -317,8 +317,8 @@ def lanyard():
         has_session = any(ut.session_label for ut in attending_sessions)
 
         if not has_session:
-            flash("You must select at least one tournament session before ordering a lanyard.")
-            return redirect(url_for('user.home'))
+            flash("You must select at least one tournament session before ordering a lanyard.", "warning")
+            return redirect(url_for('user.my_tournaments'))
 
     if request.method == 'POST':
         # Handle lanyard form submission
