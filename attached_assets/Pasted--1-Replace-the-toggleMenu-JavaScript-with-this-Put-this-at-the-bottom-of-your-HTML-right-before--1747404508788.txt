@@ -1,0 +1,72 @@
+✅ 1. Replace the toggleMenu JavaScript with this:
+Put this at the bottom of your HTML, right before </body>:
+
+<script>
+  function toggleMenu(event) {
+    event.stopPropagation(); // prevent click from bubbling
+    const menu = document.getElementById('mobile-menu');
+    const isOpen = menu.style.display === 'flex';
+    menu.style.display = isOpen ? 'none' : 'flex';
+  }
+
+  document.addEventListener('click', function(event) {
+    const menu = document.getElementById('mobile-menu');
+    const toggle = document.querySelector('.menu-toggle');
+    if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+      menu.style.display = 'none';
+    }
+  });
+
+  // Ensure the menu is hidden on load
+  document.addEventListener('DOMContentLoaded', function () {
+    const menu = document.getElementById('mobile-menu');
+    if (window.innerWidth < 768) {
+      menu.style.display = 'none';
+    }
+  });
+</script>
+✅ 2. Confirm your HTML structure (inside base.html) looks like this:
+<header class="mobile-header">
+  <div class="nav-container">
+    <div class="logo">🎾 CourtSide Club</div>
+    <nav id="mobile-menu" class="mobile-menu">
+      <a href="{{ url_for('main.public_home') }}">Home</a>
+      <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
+      <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
+      <a href="{{ url_for('main.faqs') }}">FAQ</a>
+      {% if request.path not in ['/login', '/signup'] %}
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+      {% endif %}
+    </nav>
+    <button class="menu-toggle" onclick="toggleMenu(event)">☰</button>
+  </div>
+</header>
+✅ 3. Confirm this CSS is in your stylesheet:
+/* default mobile */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  background-color: #f8f8f8;
+  padding: 10px 0;
+}
+
+/* desktop view */
+@media (min-width: 768px) {
+  .menu-toggle {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: flex-end;
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .mobile-menu a {
+    border-top: none;
+    padding: 10px 15px;
+  }
+}
