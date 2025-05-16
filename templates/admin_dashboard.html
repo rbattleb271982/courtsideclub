@@ -46,19 +46,41 @@
         </div>
       </div>
 
-      <h4 style="margin-top: 1em;">📊 Session Attendance:</h4>
-      <div class="session-list" style="background: #f8f9fa; padding: 0.8em; border-radius: 4px; margin-top: 0.5em;">
-        {% for label, count in row.session_counts.items() %}
-          <div style="margin: 0.3em 0;">
-            <span class="session-name" style="color: #495057;">{{ label }}</span>
-            <span class="badge bg-success" style="float: right; background: #28a745; color: white; padding: 0.3em 0.6em; border-radius: 12px;">
-              {{ count }} attendee{{ "s" if count > 1 else "" }}
-            </span>
-          </div>
-        {% endfor %}
-        {% if not row.session_counts %}
-          <div style="color: #6c757d; font-style: italic;">No sessions selected yet</div>
-        {% endif %}
+      <div class="card mt-3 mb-3">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">📊 Session Attendance</h5>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Session</th>
+                <th>Attendees</th>
+                <th class="text-center">%</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for label, count in row.session_counts.items() %}
+                <tr>
+                  <td>{{ label }}</td>
+                  <td>{{ count }} attendee{{ "s" if count > 1 else "" }}</td>
+                  <td class="text-center">
+                    {% if row.total_attending > 0 %}
+                      {{ ((count / row.total_attending) * 100) | round(1) }}%
+                    {% else %}
+                      0%
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              {% if not row.session_counts %}
+                <tr>
+                  <td colspan="3" class="text-center text-muted">No sessions selected yet</td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <p>

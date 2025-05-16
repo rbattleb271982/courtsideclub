@@ -5,23 +5,105 @@
 {% block content %}
 <div class="container" style="max-width: 800px; margin: 2rem auto;">
   <h2>👥 Attendees – {{ tournament.name }}</h2>
-
-  <div class="list-group mt-4">
-    {% for ut in user_tourneys %}
-      <div class="list-group-item">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <strong>{{ ut.user.get_full_name() }}</strong>
-            <div class="text-muted">Sessions: {{ ut.session_label or "N/A" }}</div>
-          </div>
-          {% if ut.wants_to_meet %}
-            <span class="badge badge-primary">👋 Open to Meet</span>
-          {% endif %}
-        </div>
+  
+  <div class="mb-4 p-3 bg-light rounded">
+    <div class="row">
+      <div class="col-md-4 text-center">
+        <h5>Total Attendees</h5>
+        <div class="h3">{{ user_tourneys|length }}</div>
       </div>
-    {% endfor %}
+      <div class="col-md-4 text-center">
+        <h5>Open to Meet</h5>
+        <div class="h3">{{ user_tourneys|selectattr('wants_to_meet')|list|length }}</div>
+      </div>
+      <div class="col-md-4 text-center">
+        <h5>Lanyards Ordered</h5>
+        <div class="h3">{{ user_tourneys|selectattr('user.lanyard_ordered')|list|length }}</div>
+      </div>
+    </div>
   </div>
 
-  <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-link mt-4">← Back to Dashboard</a>
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Sessions Breakdown</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Session</th>
+            <th class="text-center">Attendees</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set session_counts = {} %}
+          {% for ut in user_tourneys %}
+            {% set sessions = (ut.session_label or "")|split(", ") %}
+            {% for session in sessions if session %}
+              {% if session in session_counts %}
+                {% set _ = session_counts.update({session: session_counts[session] + 1}) %}
+              {% else %}
+                {% set _ = session_counts.update({session: 1}) %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          
+          {% for session, count in session_counts.items() %}
+            <tr>
+              <td>{{ session }}</td>
+              <td class="text-center">{{ count }}</td>
+            </tr>
+          {% endfor %}
+          
+          {% if not session_counts %}
+            <tr>
+              <td colspan="2" class="text-center">No sessions selected yet</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Attendee List</h5>
+    </div>
+    <div class="list-group list-group-flush">
+      {% for ut in user_tourneys %}
+        <div class="list-group-item">
+          <div class="row">
+            <div class="col-md-6">
+              <h6>{{ ut.user.get_full_name() }}</h6>
+              <div class="small text-muted">{{ ut.user.email }}</div>
+              <div class="small">Location: {{ ut.user.location or "Not specified" }}</div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-1"><strong>Sessions:</strong> {{ ut.session_label or "None selected" }}</div>
+              <div>
+                {% if ut.wants_to_meet %}
+                  <span class="badge bg-success">👋 Open to Meet</span>
+                {% endif %}
+                {% if ut.user.lanyard_ordered %}
+                  <span class="badge bg-info">🏷️ Lanyard Ordered</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      
+      {% if not user_tourneys %}
+        <div class="list-group-item text-center text-muted">
+          No attendees registered yet for this tournament
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex">
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+    <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-primary ms-2">Export Lanyard Orders</a>
+  </div>
 </div>
 {% endblock %}
