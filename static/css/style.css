@@ -769,13 +769,13 @@ a:hover {
 
 /* === Mobile Navigation === */
 .mobile-header {
-  background-color: #004d26;
-  color: white;
+  background-color: #ffffff; /* white background for contrast */
+  color: #004d26;
   font-family: sans-serif;
   padding: 10px 16px;
-  position: relative;
+  border-bottom: 1px solid #ccc;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   z-index: 1000;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .nav-container {
@@ -787,39 +787,37 @@ a:hover {
 }
 
 .logo {
+  color: #004d26;
   font-weight: bold;
   font-size: 20px;
 }
 
 .menu-toggle {
-  font-size: 24px;
+  color: #004d26;
   background: none;
   border: none;
-  color: white;
+  font-size: 24px;
   cursor: pointer;
-  padding: 8px;
 }
 
 .mobile-menu {
   display: none;
   flex-direction: column;
-  background-color: #004d26;
+  background-color: #f8f8f8;
   padding: 10px 0;
-  z-index: 999;
 }
 
 .mobile-menu a {
-  color: white;
+  color: #004d26;
   padding: 10px 20px;
   text-decoration: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .mobile-menu a:hover {
-  background-color: #00663f;
+  background-color: #e0f2eb;
 }
 
-/* Desktop styles */
 @media (min-width: 768px) {
   .menu-toggle {
     display: none;
