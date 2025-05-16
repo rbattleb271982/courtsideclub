@@ -1,0 +1,82 @@
+Replit Prompt to Implement New Homepage
+# 🛠️ Replit Agent Prompt
+
+Please update the homepage route and template in the CourtSide Club Flask app with the following:
+
+1. In `main_routes.py`, make sure the `/` route renders `home.html`.
+   ```python
+   @main.route("/")
+   def homepage():
+       return render_template("public/home.html")
+In templates/public/home.html, replace the current contents with this mobile-first, SEO-friendly structure:
+{% extends "base.html" %}
+{% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
+
+{% block content %}
+<section class="hero p-6 text-center">
+  <h1 class="text-3xl font-bold mb-2">Tennis is better together.</h1>
+  <p class="text-lg mb-4">
+    Join the community for fans attending ATP and WTA tournaments — see who’s going, meet up in real life, and make every match more social.
+  </p>
+  <a href="/login" class="bg-green-600 text-white px-4 py-2 rounded-full text-lg">Join Now</a>
+</section>
+
+<section class="how-it-works p-6 bg-gray-100 text-center mt-6">
+  <h2 class="text-xl font-semibold mb-4">How It Works</h2>
+  <div class="space-y-4">
+    <div>🎾 <strong>Step 1:</strong> Create your profile<br><span class="text-sm text-gray-600">Tell us where you're based and which tournaments you're attending</span></div>
+    <div>📍 <strong>Step 2:</strong> See who's going<br><span class="text-sm text-gray-600">Browse other attendees and connect with fans at the same sessions</span></div>
+    <div>🧵 <strong>Step 3:</strong> Wear your lanyard<br><span class="text-sm text-gray-600">Show you're open to meeting up — no awkward intros needed</span></div>
+  </div>
+  <a href="/how-it-works" class="text-green-700 font-medium underline mt-4 inline-block">Learn More</a>
+</section>
+
+<section class="features p-6 text-center mt-6">
+  <h2 class="text-xl font-semibold mb-4">Why CourtSide Club?</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div>
+      <h3 class="font-semibold">In-person meetups</h3>
+      <p class="text-sm text-gray-600">Built for real fans at real tournaments.</p>
+    </div>
+    <div>
+      <h3 class="font-semibold">Every major tournament</h3>
+      <p class="text-sm text-gray-600">Grand Slams, Masters 1000s, 500s — stay in the loop all season.</p>
+    </div>
+    <div>
+      <h3 class="font-semibold">Simple, social, and fun</h3>
+      <p class="text-sm text-gray-600">No spam, no group chats — just a better way to connect courtside.</p>
+    </div>
+  </div>
+</section>
+
+<section class="tournaments-preview p-6 bg-gray-100 text-center mt-6">
+  <h2 class="text-xl font-semibold mb-4">Upcoming Tournaments</h2>
+  <div class="space-y-4">
+    <div>
+      <strong>🎾 Roland-Garros – Paris, France</strong><br>
+      May 26 – June 9, 2025<br>
+      <a href="/tournaments/roland-garros" class="text-green-700 underline">See who’s going</a>
+    </div>
+  </div>
+  <a href="/tournaments" class="text-green-700 font-medium underline mt-4 inline-block">View All Tournaments</a>
+</section>
+
+<footer class="text-center text-sm text-gray-500 mt-12 p-6">
+  <nav class="space-x-4 mb-2">
+    <a href="/about" class="underline">About</a>
+    <a href="/lanyard" class="underline">Lanyard</a>
+    <a href="/how-it-works" class="underline">How It Works</a>
+    <a href="/faqs" class="underline">FAQs</a>
+    <a href="/terms" class="underline">Terms</a>
+  </nav>
+  <p>CourtSide Club helps tennis fans connect at the world’s biggest tournaments. Discover who’s attending, meet up in person, and make match days unforgettable.</p>
+</footer>
+{% endblock %}
+After saving, restart the server and visit / to confirm that the homepage:
+Loads the new layout and copy
+Is responsive on mobile
+Links work properly
+✅ Do not finish until you’ve fully tested the new homepage layout, including mobile responsiveness and route loading.
+
+
+Let me know when you're ready for the matching SEO meta tags and JSON-LD schema — I’ll give you that in the next step.
