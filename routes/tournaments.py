@@ -129,25 +129,27 @@ def view_tournament(tournament_slug):
 
 @tournaments_bp.route('/tournaments/<tournament_slug>')
 def view_tournament(tournament_slug):
-    tournament = db.session.query(Tournament).filter_by(id=tournament_slug).first()
-    if not tournament:
-        return "Tournament not found", 404
-
-    user_attending = False
-    selected_sessions = []
-    wants_to_meet = False
-
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    
     if current_user.is_authenticated:
-        user_tourney = db.session.query(UserTournament).filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
-        if user_tourney:
-            user_attending = True
-            selected_sessions = user_tourney.session_label.split(", ") if user_tourney.session_label else []
-            wants_to_meet = user_tourney.wants_to_meet
-
-    return render_template("tournament_detail.html", tournament=tournament,
-                           user_attending=user_attending,
-                           selected_sessions=selected_sessions,
-                           wants_to_meet=wants_to_meet)
+        user_tournament = UserTournament.query.filter_by(
+            user_id=current_user.id,
+            tournament_id=tournament.id
+        ).first()
+        
+        stats = {
+            'attending': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count(),
+            'meetup': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True, wants_to_meet=True).count(),
+            'lanyards': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).join(User).filter_by(lanyard_ordered=True).count()
+        }
+        
+        return render_template('tournament_detail.html',
+                            tournament=tournament,
+                            user_tournament=user_tournament,
+                            stats=stats)
+    
+    return render_template('public/tournament_detail.html',
+                         tournament=tournament)
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
