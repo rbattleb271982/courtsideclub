@@ -43,7 +43,15 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_pre_ping': True,  # Check connection validity before use
     'pool_timeout': 30,  # Timeout after 30 seconds
     'pool_size': 10,  # Maximum number of connections
-    'max_overflow': 5  # Maximum number of connections above pool_size
+    'max_overflow': 5,  # Maximum number of connections above pool_size
+    'pool_reset_on_return': None,  # Don't reset pool on connection return
+    'connect_args': {
+        'connect_timeout': 10,  # Connection timeout in seconds
+        'keepalives': 1,  # Enable TCP keepalives
+        'keepalives_idle': 30,  # Seconds between TCP keepalives
+        'keepalives_interval': 10,  # Seconds between TCP keepalive retransmits
+        'keepalives_count': 5  # Number of TCP keepalive retransmits
+    }
 }
 
 # Initialize the database
