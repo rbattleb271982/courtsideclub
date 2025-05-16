@@ -35,13 +35,9 @@
           <div class="tournament-card">
             <div class="tournament-header">
               <h3 class="tournament-name">{{ tournament.name }}</h3>
-              <div class="tournament-dates">
-                {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}
+              <div class="tournament-meta">
+                {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d') }} · {{ tournament.city }}, {{ tournament.country }}
               </div>
-            </div>
-            
-            <div class="tournament-location">
-              {{ tournament.city }}, {{ tournament.country }}
             </div>
             
             <div class="tournament-stats">
@@ -247,29 +243,31 @@
   
   .tournament-card {
     background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    padding: 14px;
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, box-shadow 0.2s;
-    min-height: 240px;
+    min-height: 210px;
   }
   
   /* Mobile-specific card adjustments */
   @media (max-width: 639px) {
     .tournament-card {
-      padding: 16px;
+      padding: 12px;
       margin-bottom: 10px;
-      border-radius: 10px;
+      border-radius: 8px;
+      min-height: 190px;
     }
     
     .tournaments-grid {
       margin: 0 -5px; /* Reduce margins on smaller screens */
+      gap: 12px;
     }
     
     .month-section {
-      margin-bottom: 30px;
+      margin-bottom: 24px;
     }
   }
   
@@ -280,31 +278,27 @@
   
   /* Tournament Content Styling */
   .tournament-header {
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
   
   .tournament-name {
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
     font-size: 18px;
     font-weight: 600;
     color: #004d26;
+    line-height: 1.2;
   }
   
-  .tournament-dates {
+  .tournament-meta {
     color: #555;
-    font-size: 15px;
-  }
-  
-  .tournament-location {
-    font-size: 16px;
-    margin-bottom: 16px;
-    color: #444;
+    font-size: 14px;
+    margin-bottom: 6px;
   }
   
   .tournament-stats {
     display: flex;
-    margin-bottom: 20px;
-    gap: 24px;
+    margin-bottom: 12px;
+    gap: 20px;
   }
   
   .stat-item {
@@ -315,13 +309,15 @@
   
   .stat-value {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
     color: #004d26;
+    line-height: 1;
   }
   
   .stat-label {
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
+    margin-top: 2px;
   }
   
   /* Tournament Actions */
@@ -351,7 +347,7 @@
   
   .attendance-buttons {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-direction: column;
     width: 100%;
   }
@@ -391,22 +387,34 @@
     background-color: #004d26;
     color: #fff;
     cursor: default;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 500;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .btn-maybe {
     background-color: #666;
     color: #fff;
     cursor: default;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: 500;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .btn-outline {
     background-color: transparent;
     border: 1px solid #004d26;
     color: #004d26;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .btn-outline:hover, 
@@ -419,12 +427,13 @@
     border: none;
     color: #666;
     text-decoration: underline;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
-    padding: 8px;
+    padding: 6px;
     width: 100%;
     text-align: center;
     transition: color 0.2s;
+    margin-top: 0;
   }
   
   .btn-clear:hover {
@@ -432,12 +441,12 @@
   }
   
   .status-icon {
-    margin-right: 5px;
+    margin-right: 4px;
   }
   
   .attendance-form {
     width: 100%;
-    margin-top: 4px;
+    margin-top: 2px;
   }
   
   /* Mobile stats and spacing adjustments */
