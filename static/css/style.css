@@ -785,6 +785,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  position: relative;
 }
 
 .nav-container {
@@ -825,13 +826,21 @@ body {
   flex-direction: column;
   background-color: #f8f8f8;
   padding: 10px 0;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 1001;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .mobile-menu a {
   color: #004d26;
-  padding: 10px 20px;
+  padding: 12px 20px;
   text-decoration: none;
   border-top: 1px solid rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+  margin: 2px 0;
 }
 
 .mobile-menu a:hover {
