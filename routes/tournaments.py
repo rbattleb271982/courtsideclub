@@ -232,6 +232,10 @@ def view_tournament(tournament_slug):
                 'attendees': session_attendees
             }
     
+    # Calculate days until tournament for lanyard reminder
+    today = datetime.date.today()
+    days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
+    
     # Pass session_saved flag to show lanyard button conditionally
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
@@ -243,7 +247,8 @@ def view_tournament(tournament_slug):
                          session_stats=session_stats,
                          wants_to_meet=wants_to_meet,
                          user_attending=user_attending,
-                         session_saved=session_saved)
+                         session_saved=session_saved,
+                         days_until=days_until)
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
