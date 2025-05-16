@@ -1,0 +1,61 @@
+Replit Agent Prompt – Fix Missing Changes to Browse + Individual Tournament Pages
+# 🛠️ Replit Agent Prompt
+
+Please apply the following **logged-in user experience changes** to the CourtSide Club Flask app. These were previously requested but not fully implemented.
+
+Do not skip steps or finish until all functionality is confirmed working as expected.
+
+---
+
+## PART 1: BROWSE TOURNAMENTS PAGE (`/browse-tournaments`)
+
+### 1. Add Instructional Text
+At the top of the page, add this text:
+```html
+<p class="text-sm text-gray-700 mb-4">
+  Click into a tournament you’re interested in to mark yourself as attending and select the specific sessions you’ll be at.
+</p>
+2. Restore Filter (by month)
+Use Jinja to group tournaments by month with:
+
+{% set ns = namespace(current_month=None) %}
+{% for tournament in tournaments %}
+  {% if tournament.start_date.strftime('%B %Y') != ns.current_month %}
+    {% set ns.current_month = tournament.start_date.strftime('%B %Y') %}
+    <h2 class="text-lg font-semibold mt-6">{{ ns.current_month }}</h2>
+  {% endif %}
+  <!-- Tournament card -->
+{% endfor %}
+3. Add “I’m Attending” Button to Each Tournament
+For each tournament tile, add:
+
+<form action="{{ url_for('tournaments.mark_attending', tournament_id=tournament.id) }}" method="POST">
+  <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm hover:bg-green-500 transition">
+    I’m Attending
+  </button>
+</form>
+✅ After submission, redirect to that tournament’s detail page (/tournaments/<slug>).
+
+4. Display Tournament Stats (on Browse View)
+Under each tournament tile, show:
+
+<p class="text-sm text-gray-500 mt-1">
+  {{ tournament.attendee_count }} attending • {{ tournament.hand_raised_count }} open to meetups • {{ tournament.lanyard_count }} lanyards ordered
+</p>
+Use your real backend variables.
+
+PART 2: INDIVIDUAL TOURNAMENT PAGE (/tournaments/<slug>)
+
+1. Show:
+Tournament details (name, location, dates)
+User session/day selections
+“Opt out” of attending button
+“Order Lanyard” button only if session(s) have been selected
+2. Add Conditional Logic
+If the user hasn’t selected any days/sessions yet, show a prompt:
+“Select which day(s) and session(s) you’ll be attending.”
+Only display the Order Lanyard button if the user has selected at least one session.
+Always show tournament stats:
+<p class="text-sm text-gray-500 mt-4">
+  {{ tournament.attendee_count }} attending • {{ tournament.hand_raised_count }} open to meetups • {{ tournament.lanyard_count }} lanyards ordered
+</p>
