@@ -114,13 +114,12 @@ def view_tournament(tournament_slug):
         user_tournament.user_id = current_user.id
         user_tournament.tournament_id = tournament.id
         
-        # Set attendance based on parameter
+        # Set attendance based on parameter, but don't pre-select sessions
         if attendance_param == 'attending':
             user_tournament.attending = True
-            # Set a default session for convenience
-            if tournament.sessions and len(tournament.sessions) > 0:
-                user_tournament.session_label = tournament.sessions[0]
-                print(f"DEBUG: Set default session: {tournament.sessions[0]} for user {current_user.id}")
+            # No default session - user must explicitly select
+            user_tournament.session_label = None
+            print(f"DEBUG: User {current_user.id} marked as attending but must select sessions")
         elif attendance_param == 'maybe':
             user_tournament.attending = True
             user_tournament.session_label = None
@@ -253,7 +252,7 @@ def view_tournament(tournament_slug):
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
 @login_required
-def attend_tournament_new(tournament_slug):
+def attend_tournament(tournament_slug):
     tournament = db.session.query(Tournament).filter_by(slug=tournament_slug).first_or_404()
     
     # Make sure the tournament has sessions defined
@@ -440,6 +439,53 @@ def save_sessions(tournament_slug):
     
     # Redirect back with session_saved parameter for lanyard button display
     return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
+
+@tournaments_bp.route("/tournaments/<tournament_slug>/attend/new", methods=['POST'])
+@login_required
+def attend_tournament_new(tournament_slug):
+    """Handle new attendance type for Maybe Attending vs I'm Attending"""
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    attendance_type = request.form.get('attendance_type', 'attending')  # Default to full attending
+
+    # Create or update user tournament registration
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament.id
+    ).first()
+
+    if not user_tournament:
+        user_tournament = UserTournament(
+            user_id=current_user.id,
+            tournament_id=tournament.id
+        )
+        db.session.add(user_tournament)
+    
+    # Always mark as attending, but session handling differs by type
+    user_tournament.attending = True
+    
+    # For "maybe" type, clear session selections
+    if attendance_type == 'maybe':
+        user_tournament.session_label = None
+        flash('You are marked as "Maybe Attending" this tournament.', 'success')
+    else:
+        # For full attending, we don't preselect sessions anymore
+        # The user needs to explicitly select which sessions they'll attend
+        if not user_tournament.session_label:
+            flash('Please select which sessions you\'ll attend.', 'info')
+    
+    # Log the event
+    event_data = {
+        'tournament_id': tournament.id,
+        'tournament_name': tournament.name,
+        'attendance_type': attendance_type,
+        'attending': user_tournament.attending
+    }
+    log_event(current_user.id, 'attend_tournament', event_data)
+
+    db.session.commit()
+    
+    # Redirect to tournament detail page with the appropriate attendance type
+    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug))
 
 @tournaments_bp.route("/tournaments/<tournament_slug>/attending", methods=['POST'])
 @login_required
