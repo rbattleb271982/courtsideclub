@@ -1,0 +1,44 @@
+# 🛠️ Replit Agent Prompt
+
+Please update `templates/public/home.html` with the following fixes:
+
+1. **Ensure the homepage uses the global site navigation** (`CourtSide Club` in the top nav bar, not just a text link above the hero).
+   - This should come from `base.html`, and the homepage already uses `{% extends "base.html" %}`, so ensure the nav is rendered like on all other pages.
+
+2. **Fix the “Join Now” CTA button** so it renders as a proper green button (not plain text or a hyperlink).
+
+3. **Update the hero paragraph** so that this sentence:
+   > *CourtSide Club helps tennis fans connect at the world’s biggest tournaments. Discover who’s attending, meet up in person, and make match days unforgettable.*
+
+   is **moved to the end** of the paragraph and not repeated in the footer.
+
+---
+
+### 🔁 Final home.html content:
+
+```html
+{% extends "base.html" %}
+{% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
+
+{% block content %}
+<section class="bg-green-700 text-white text-center py-12 px-4">
+  <h1 class="text-4xl font-bold mb-4">Tennis is better together.</h1>
+  <p class="text-lg mb-6 max-w-xl mx-auto">
+    From Grand Slams to Masters 1000s and 500s, discover who’s attending, meet up in person, and make match days unforgettable. Built for real fans who want genuine, in-person connections. CourtSide Club helps tennis fans connect at the world’s biggest tournaments.
+  </p>
+  <a href="/login" class="bg-green-600 text-white font-semibold px-6 py-3 rounded-full text-lg shadow hover:bg-green-500 transition inline-block">
+    Join Now
+  </a>
+</section>
+
+<footer class="text-center text-sm text-gray-500 mt-12 p-6">
+  <nav class="space-x-4 mb-2">
+    <a href="/about" class="underline">About</a>
+    <a href="/lanyard" class="underline">Lanyard</a>
+    <a href="/how-it-works" class="underline">How It Works</a>
+    <a href="/faqs" class="underline">FAQs</a>
+    <a href="/terms" class="underline">Terms</a>
+  </nav>
+  <!-- Removed repeated footer paragraph to avoid duplication -->
+</footer>
+{% endblock %}
