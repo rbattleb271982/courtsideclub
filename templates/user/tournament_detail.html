@@ -169,9 +169,12 @@
                             <!-- Create session day groups with actual dates -->
                             <div class="session-groups">
                                 {% for day_num in range(1, 5) %}
-                                <!-- Simply don't show the date for now to avoid datetime errors -->
+                                {% set day_info = None %}
+                                {% for day in day_dates if day.day_number == day_num %}
+                                    {% set day_info = day %}
+                                {% endfor %}
                                 <div class="session-day-group mb-3 p-3 bg-light rounded">
-                                    <h5 class="h6 font-weight-bold mb-2">Day {{ day_num }}</h5>
+                                    <h5 class="h6 font-weight-bold mb-2">Day {{ day_num }} {% if day_info %}({{ day_info.formatted }}){% endif %}</h5>
                                     
                                     <!-- Day session -->
                                     <div class="session-item d-flex align-items-center mb-2 p-2 bg-white rounded">

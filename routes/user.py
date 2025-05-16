@@ -231,13 +231,21 @@ def tournament_detail(tournament_slug):
                 'attendees': 0  # Default count if no data
             }
     
-    # Debugging session UI conditions before rendering
-    if user_tournament:
-        print(f"DEBUG: Rendering session UI block: user_tournament.attending={user_tournament.attending}, tournament.sessions={tournament.sessions}")
-    else:
-        print(f"DEBUG: No user_tournament exists, cannot show session UI")
+    # Calculate dates for each tournament day
+    # Use only imports already available at top of file
+    import datetime as dt
+    day_dates = []
+    start_date = tournament.start_date
+    for i in range(7):  # Generate 7 days of dates
+        day_date = start_date + dt.timedelta(days=i)
+        day_dates.append({
+            'day_number': i + 1,
+            'date': day_date,
+            'formatted': day_date.strftime('%b %d')
+        })
     
     return render_template('user/tournament_detail.html',
+                          day_dates=day_dates,
                          tournament=tournament,
                          user_tournament=user_tournament,
                          stats=stats,
