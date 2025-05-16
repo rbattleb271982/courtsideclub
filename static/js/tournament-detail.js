@@ -195,14 +195,18 @@ function updateSessionUIVisibility() {
   const saveBar = document.getElementById('saveBar');
   const sessionCountMessage = document.getElementById('sessionCountMessage');
   const thinkingMessage = document.getElementById('thinking-message');
+  const lanyardButton = document.querySelector('.lanyard-button');
   
   // Determine current attendance state
   const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
   const isMaybe = thinkingBtn && thinkingBtn.classList.contains('btn-success');
   const isNotAttending = !isAttending && !isMaybe;
   
-  // Update UI visibility based on attendance state
+  // Check if we have selected sessions
+  const selectedSessionCount = document.querySelectorAll('.session-chip.selected').length;
+  const hasSelectedSessions = selectedSessionCount > 0;
   
+  // Update UI visibility based on attendance state
   if (sessionSelectionCard) {
     sessionSelectionCard.style.display = isNotAttending ? 'none' : 'block';
   }
@@ -212,7 +216,8 @@ function updateSessionUIVisibility() {
   }
   
   if (meetingToggleContainer) {
-    meetingToggleContainer.style.display = isAttending ? 'block' : 'none';
+    // Only show meeting toggle for fully attending users
+    meetingToggleContainer.style.display = (isAttending && hasSelectedSessions) ? 'block' : 'none';
   }
   
   if (thinkingMessage) {
@@ -226,6 +231,9 @@ function updateSessionUIVisibility() {
   if (sessionCountMessage) {
     sessionCountMessage.style.display = (isAttending || isMaybe) ? 'block' : 'none';
   }
+  
+  // Update save button state based on selected sessions
+  updateSaveButtonState();
 }
 
 // The page uses normal form submissions 

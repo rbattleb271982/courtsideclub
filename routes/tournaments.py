@@ -208,12 +208,15 @@ def view_tournament(tournament_slug):
     selected_sessions = []
     wants_to_meet = False
     user_attending = False
+    is_full_attending = False
     
     if user_tournament:
         user_attending = user_tournament.attending
         wants_to_meet = user_tournament.wants_to_meet
         if user_tournament.session_label:
             selected_sessions = user_tournament.session_label.split(',')
+            # User is fully attending if they are attending and have selected sessions
+            is_full_attending = user_attending and len(selected_sessions) > 0
     
     # Get session-specific stats
     session_stats = {}
@@ -246,6 +249,7 @@ def view_tournament(tournament_slug):
                          session_stats=session_stats,
                          wants_to_meet=wants_to_meet,
                          user_attending=user_attending,
+                         is_full_attending=is_full_attending,
                          session_saved=session_saved,
                          days_until=days_until)
 
@@ -408,11 +412,15 @@ def save_sessions(tournament_slug):
     
     # Only mark as attending if they selected at least one session
     if selected_sessions:
+        # This is full attendance with sessions
         user_tournament.attending = True
+        print(f"DEBUG: User {current_user.id} marked as fully attending with {len(selected_sessions)} sessions")
     else:
-        # If no sessions selected, don't update attendance status
+        # If no sessions selected but user is new, default to not attending
+        # For existing users, we keep their current attendance status
         if is_new:
             user_tournament.attending = False
+            print(f"DEBUG: New user {current_user.id} not marked as attending (no sessions selected)")
     
     user_tournament.wants_to_meet = wants_to_meet
     user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
