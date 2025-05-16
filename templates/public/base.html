@@ -10,7 +10,7 @@
   <header class="mobile-header">
     <div class="nav-container">
       <div class="logo">🎾 CourtSide Club</div>
-      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+      <button class="menu-toggle" onclick="toggleMenu(event)">☰</button>
       <nav id="mobile-menu" class="mobile-menu">
         <a href="{{ url_for('main.public_home') }}">Home</a>
         <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
@@ -37,24 +37,28 @@
   </main>
 
   <script>
-    function toggleMenu() {
+    function toggleMenu(event) {
+      event.stopPropagation(); // Prevent the click from being captured by document event listener
       const menu = document.getElementById('mobile-menu');
-      const isOpen = menu.style.display === 'flex';
       
-      if (isOpen) {
-        // If menu is open, close it
+      // Check if the menu is currently visible
+      const computedStyle = window.getComputedStyle(menu);
+      const isVisible = computedStyle.display !== 'none';
+      
+      if (isVisible) {
         menu.style.display = 'none';
       } else {
-        // If menu is closed, open it
         menu.style.display = 'flex';
       }
     }
 
-    // Close menu if you click outside
+    // Close menu when clicking outside
     document.addEventListener('click', function(event) {
       const menu = document.getElementById('mobile-menu');
       const toggle = document.querySelector('.menu-toggle');
-      if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+      
+      // Only close the menu if clicking outside menu and toggle button
+      if (menu && toggle && !menu.contains(event.target) && !toggle.contains(event.target)) {
         menu.style.display = 'none';
       }
     });
