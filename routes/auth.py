@@ -57,9 +57,7 @@ def login():
                     user.welcome_seen = True
                     db.session.commit()
 
-                next_page = request.args.get('next', '')
-                if next_page:
-                    return redirect(next_page)
+                # Always redirect to my_tournaments after login
                 return redirect(url_for('user.my_tournaments'))
 
         # If we get here, authentication failed

@@ -10,9 +10,11 @@ from datetime import datetime
 # Initialize blueprint
 user_bp = Blueprint('user', __name__)
 
+# Home route removed - users now go directly to my_tournaments
 @user_bp.route('/home')
 @login_required
 def home():
+    return redirect(url_for('user.my_tournaments'))
     try:
         # Verify user is authenticated
         if not current_user.is_authenticated:
