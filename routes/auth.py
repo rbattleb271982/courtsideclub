@@ -19,7 +19,7 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('user.home'))
+        return redirect(url_for('user.my_tournaments'))
 
     if request.method == 'POST':
         email = request.form['email'].lower()
@@ -68,7 +68,7 @@ def login():
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
-        return redirect(url_for('user.home'))
+        return redirect(url_for('user.my_tournaments'))
 
     if request.method == 'POST':
         try:
@@ -158,7 +158,7 @@ def logout():
 @auth_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
-        return redirect(url_for('user.home'))
+        return redirect(url_for('user.my_tournaments'))
 
     if request.method == 'POST':
         email = request.form.get('email', '').lower()

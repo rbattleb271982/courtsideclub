@@ -83,11 +83,11 @@ def home():
         flash("An error occurred while loading your profile", "danger")
         return redirect(url_for('auth.login'))
 
-# Keep the profile route for backward compatibility, redirecting to home
+# Keep the profile route for backward compatibility, redirecting to my_tournaments
 @user_bp.route('/profile')
 @login_required
 def profile():
-    return render_template("profile.html", user=current_user)
+    return redirect(url_for('user.my_tournaments'))
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required
