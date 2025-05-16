@@ -123,10 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (sessionForm) {
     // Handle form submission
     sessionForm.addEventListener('submit', function(e) {
-      if (selectedSessions.length === 0) {
-        e.preventDefault(); // Prevent submission if no sessions selected
-        return;
-      }
+      // Allow submission even if no sessions selected
       
       // Show loading state on button if it exists
       if (saveButton) {
@@ -219,11 +216,12 @@ function updateSessionUIVisibility() {
   
   if (meetingToggleContainer) {
     // Only show meeting toggle for fully attending users
-    meetingToggleContainer.style.display = (isAttending && hasSelectedSessions) ? 'block' : 'none';
+    meetingToggleContainer.style.display = (isAttending || isMaybe) ? 'block' : 'none';
   }
   
   if (thinkingMessage) {
-    thinkingMessage.style.display = isMaybe ? 'block' : 'none';
+    // Hide thinking message - we always show session selection UI now
+    thinkingMessage.style.display = 'none';
   }
   
   if (saveBar) {
