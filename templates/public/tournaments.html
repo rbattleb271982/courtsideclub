@@ -32,8 +32,10 @@
         <a href="{{ url_for('tournaments.view_tournament', slug=tournament.slug) }}" class="ml-2 text-blue-600 hover:underline">View Details</a>
       </div>
 
-      <p class="text-sm text-gray-500 mt-1">
-        {{ tournament.attendee_count }} attending • {{ tournament.hand_raised_count }} open to meetups • {{ tournament.lanyard_count }} lanyards ordered
+      <p class="text-sm text-gray-500 mt-2">
+        {{ tournament.attendee_count or 0 }} attending •
+        {{ tournament.hand_raised_count or 0 }} open to meetups •
+        {{ tournament.lanyard_count or 0 }} lanyards ordered
       </p>
     </div>
   {% endfor %}

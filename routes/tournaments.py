@@ -32,6 +32,27 @@ def list_tournaments():
     # Get the filtered tournaments, in chronological order by start date
     tournaments = query.all()
 
+    # Add stats to each tournament
+    for tournament in tournaments:
+        # Count users who are attending
+        tournament.attendee_count = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            attending=True
+        ).count()
+
+        # Count users who are open to meeting
+        tournament.hand_raised_count = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            attending=True,
+            open_to_meet=True
+        ).count()
+
+        # Count users who ordered lanyards
+        tournament.lanyard_count = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            attending=True
+        ).join(User).filter_by(lanyard_ordered=True).count()
+
     # Get today's date for highlighting current tournaments
     today = datetime.datetime.now().date()
 
