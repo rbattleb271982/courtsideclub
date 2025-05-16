@@ -84,16 +84,17 @@
                             <div class="w-100">
                                 <span class="detail-label">Will you be there?</span>
                                 
-                                {% set is_going = user_tournament and user_tournament.attending == True and selected_sessions|length > 0 %}
+                                {% set is_full_attending = user_tournament and user_tournament.attending == True and selected_sessions|length > 0 %}
+                                {% set is_attending = user_tournament and user_tournament.attending == True %}
                                 {% set is_thinking = user_tournament and ((user_tournament.attending == True and selected_sessions|length == 0) or user_tournament.attending == 'maybe') %}
                                 {% set is_not_going = not user_tournament or user_tournament.attending == False %}
                                 
                                 <!-- Attendance Toggle Buttons --> 
                                 <div class="attendance-buttons d-flex flex-column flex-md-row mb-2 mt-2">
                                     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2 mr-md-2 attendance-option">
-                                        <button type="submit" class="btn {% if is_going %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
+                                        <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
                                             <i data-feather="check-circle" class="icon-sm"></i> I'm Going!
-                                            {% if is_going %}<span class="ml-1">✓</span>{% endif %}
+                                            {% if is_attending %}<span class="ml-1">✓</span>{% endif %}
                                         </button>
                                     </form>
                                     
@@ -114,7 +115,7 @@
                                 </div>
                                 
                                 <!-- Open to Meeting Toggle Button -->
-                                <div class="meeting-toggle mb-3" id="meeting-toggle-container" {% if not is_going %}style="display: none;"{% endif %}>
+                                <div class="meeting-toggle mb-3" id="meeting-toggle-container" {% if not is_attending %}style="display: none;"{% endif %}>
                                     <button class="btn meeting-toggle-btn {% if wants_to_meet %}btn-success{% else %}btn-outline-success{% endif %} rounded w-100 mb-2" 
                                            onclick="document.getElementById('wants-to-meet-top').click(); toggleMeetingButton(this);">
                                         <span class="d-flex align-items-center justify-content-center">
@@ -174,7 +175,8 @@
             {% endif %}
             
             <!-- Tournament Attendance Section -->
-            {% set is_going = user_tournament and user_tournament.attending == True and selected_sessions|length > 0 %}
+            {% set is_full_attending = user_tournament and user_tournament.attending == True and selected_sessions|length > 0 %}
+            {% set is_attending = user_tournament and user_tournament.attending == True %}
             {% set is_thinking = user_tournament and ((user_tournament.attending == True and selected_sessions|length == 0) or user_tournament.attending == 'maybe') %}
             {% set is_not_going = not user_tournament or user_tournament.attending == False %}
             
@@ -184,7 +186,7 @@
                 </div>
                 <div class="card-body">
                     <!-- Session Selection UI - Only visible when "I'm Going!" is selected -->
-                    <div class="session-selection-ui" id="session-selection-ui" {% if not is_going %}style="display: none;"{% endif %}>
+                    <div class="session-selection-ui" id="session-selection-ui" {% if not is_attending %}style="display: none;"{% endif %}>
                         <h4 class="h5 mb-3">Which sessions will you attend?</h4>
                         
                         <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" id="sessionForm">
@@ -235,14 +237,14 @@
                     </div>
                     
                     <!-- Message for "Thinking About It" status -->
-                    <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" {% if not is_thinking %}style="display: none;"{% endif %}>
+                    <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" {% if not is_thinking or is_attending %}style="display: none;"{% endif %}>
                         <p class="text-muted mb-0">When you decide to attend, you'll be able to select your specific sessions.</p>
                     </div>
                     
                     <!-- Sticky Save Bar -->
                     <div class="save-container" id="saveBar">
                         <!-- Selected Session Count -->
-                        <div class="save-message" id="sessionCountMessage" {% if not is_going %}style="display: none;"{% endif %}>
+                        <div class="save-message" id="sessionCountMessage" {% if not is_attending %}style="display: none;"{% endif %}>
                             {% if selected_sessions|length > 0 %}
                             <span class="text-success font-weight-bold">
                                 <i data-feather="check-circle" class="icon-sm"></i>
@@ -255,7 +257,7 @@
                             {% endif %}
                         </div>
                         
-                        <button type="button" class="btn {% if selected_sessions|length > 0 %}btn-success{% else %}btn-secondary disabled{% endif %} save-btn" id="saveButton" {% if selected_sessions|length == 0 %}disabled{% endif %}>
+                        <button type="button" class="btn {% if selected_sessions|length > 0 %}btn-success{% else %}btn-secondary disabled{% endif %} save-btn" id="saveButton" {% if selected_sessions|length == 0 and is_attending %}disabled{% endif %}>
                             <i data-feather="save" class="icon-sm"></i> Save My Sessions
                         </button>
                         
