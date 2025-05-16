@@ -103,11 +103,27 @@
     margin-bottom: 20px;
     background-color: #f4f9f4;
     border-radius: 8px;
-    padding: 12px;
+    padding: 12px 8px;
     position: sticky;
-    top: 0;
+    top: 0; 
     z-index: 10;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: 100%;
+  }
+  
+  /* Mobile-specific filter adjustments */
+  @media (max-width: 639px) {
+    .month-filter-container {
+      margin-left: -15px;
+      margin-right: -15px;
+      width: calc(100% + 30px);
+      border-radius: 0;
+      padding: 10px 5px;
+    }
+    
+    .page-content {
+      padding: 0 15px;
+    }
   }
   
   .month-filter-scroll {
@@ -116,11 +132,19 @@
     padding-bottom: 5px;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    gap: 10px;
+    gap: 8px;
+    /* Hide scrollbar but keep functionality */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  /* Hide scrollbar for Chrome/Safari/Opera */
+  .month-filter-scroll::-webkit-scrollbar {
+    display: none;
   }
   
   .month-filter-link {
-    padding: 10px 18px;
+    padding: 10px 16px;
     white-space: nowrap;
     color: #004d26;
     text-decoration: none;
@@ -128,6 +152,14 @@
     font-weight: 500;
     transition: all 0.2s;
     font-size: 15px;
+  }
+  
+  /* Mobile tap-friendly adjustments */
+  @media (max-width: 639px) {
+    .month-filter-link {
+      padding: 8px 14px;
+      font-size: 14px;
+    }
   }
   
   .month-filter-link:hover, .month-filter-link:active {
@@ -153,12 +185,13 @@
   .tournaments-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 16px;
   }
   
   @media (min-width: 640px) {
     .tournaments-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
     }
   }
   
@@ -172,11 +205,28 @@
     background-color: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     transition: transform 0.2s, box-shadow 0.2s;
     min-height: 240px;
+  }
+  
+  /* Mobile-specific card adjustments */
+  @media (max-width: 639px) {
+    .tournament-card {
+      padding: 16px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    
+    .tournaments-grid {
+      margin: 0 -5px; /* Reduce margins on smaller screens */
+    }
+    
+    .month-section {
+      margin-bottom: 30px;
+    }
   }
   
   .tournament-card:hover {
@@ -233,13 +283,14 @@
   /* Tournament Actions */
   .tournament-actions {
     margin-top: auto;
+    width: 100%;
   }
   
   .attendance-status {
     font-weight: 500;
     text-align: center;
     margin-bottom: 12px;
-    padding: 8px;
+    padding: 10px;
     border-radius: 6px;
     font-size: 16px;
   }
@@ -258,9 +309,11 @@
     display: flex;
     gap: 10px;
     flex-direction: column;
+    width: 100%;
   }
   
-  @media (min-width: 480px) {
+  /* Always stack buttons on mobile for better tap targets */
+  @media (min-width: 640px) {
     .attendance-buttons {
       flex-direction: row;
     }
@@ -278,6 +331,15 @@
     display: inline-block;
     width: 100%;
     transition: all 0.2s;
+  }
+  
+  /* Mobile-specific button adjustments for better tap targets */
+  @media (max-width: 639px) {
+    .btn {
+      padding: 14px 16px; /* Taller buttons on mobile for easier tapping */
+      font-size: 15px;
+      min-height: 48px; /* Ensure minimum touch target size */
+    }
   }
   
   .btn-primary {
@@ -305,6 +367,22 @@
   
   .attendance-form {
     width: 100%;
+  }
+  
+  /* Mobile stats adjustments */
+  @media (max-width: 639px) {
+    .tournament-stats {
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    
+    .stat-item {
+      min-width: 80px; /* Ensure stats have enough tap area */
+    }
+    
+    .tournament-actions {
+      margin-top: 15px;
+    }
   }
   
   /* Empty State */
