@@ -3,7 +3,7 @@
 {% block title %}Browse Tournaments - CourtSide Club{% endblock %}
 
 {% block content %}
-<div class="page-content" id="tournaments-content">
+<div class="page-content browse-tournaments" id="tournaments-content">
   <h1 class="main-heading">Browse Tournaments</h1>
   
   <!-- Month Filter Bar - Desktop -->
@@ -407,41 +407,25 @@
   
   /* Button status styles */
   .btn-success {
-    background-color: #004d26;
-    color: #fff;
-    cursor: default;
     margin-bottom: 6px;
     font-weight: 500;
-    height: 36px;
+    min-height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
-  .btn-maybe {
-    background-color: #666;
-    color: #fff;
-    cursor: default;
+  .btn-outline-success {
     margin-bottom: 6px;
     font-weight: 500;
-    height: 36px;
+    min-height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
-  .btn-outline {
-    background-color: transparent;
-    border: 1px solid #004d26;
-    color: #004d26;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .btn-outline:hover, 
-  .btn-outline:active {
+  .btn-outline-success:hover, 
+  .btn-outline-success:active {
     background-color: #f4f9f4;
   }
   
@@ -506,6 +490,19 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     margin-top: 20px;
+  }
+  
+  /* Button style overrides for consistent colors */
+  .browse-tournaments .btn-success {
+    background-color: #28a745 !important;
+    color: white !important;
+    border: 1px solid #28a745 !important;
+  }
+  
+  .browse-tournaments .btn-outline-success {
+    background-color: white !important;
+    color: #28a745 !important;
+    border: 1px solid #28a745 !important;
   }
 </style>
 
