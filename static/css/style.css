@@ -896,6 +896,26 @@ a:hover {
   color: var(--gray-dark);
 }
 
+/* Hero Section */
+.hero-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.hero-section h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #007a4d;
+}
+
+.hero-section p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
 /* CTA Buttons */
 .howitworks-cta-button, .hero-cta-button {
   display: inline-block;
