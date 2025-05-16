@@ -1,166 +1,54 @@
 {% extends "layout.html" %}
-```
-```html
-{% block title %}My Tournaments{% endblock %}
-```
-```html
+```{% block title %}My Tournaments{% endblock %}
+
 {% block content %}
-```
-```html
 <div class="container">
-```
-```html
     <h1 class="mb-4">My Tournaments</h1>
-```
-```html
-    {% if grouped_tournaments %}
-```
-```html
-        {% for month, user_tournaments in grouped_tournaments.items() %}
-```
-```html
-            <h2 class="mt-4 mb-3">{{ month }}</h2>
-```
-```html
-            <div class="row">
-```
-```html
-                {% for user_tournament in user_tournaments %}
-```
-```html
-                    <div class="col-12 col-md-6 col-lg-4 mb-4">
-```
-```html
-                        <div class="card tournament-card h-100">
-```
-```html
-                            <div class="card-body">
-```
-```html
-                                <h5 class="card-title">{{ user_tournament.tournament.name }}</h5>
-```
-```html
-                                <p class="card-text tournament-date">
-```
-```html
-                                    {{ user_tournament.tournament.start_date.strftime('%b %d, %Y') }} to {{ user_tournament.tournament.end_date.strftime('%b %d, %Y') }}
-```
-```html
-                                </p>
-```
-```html
-                                <p class="card-text tournament-location">
-```
-```html
-                                    <i data-feather="map-pin"></i> {{ user_tournament.tournament.city }}, {{ user_tournament.tournament.country }}
-```
-```html
-                                </p>
-```
-```html
-                                <p class="text-sm text-gray-500 mt-2">
-```
-```html
-                                    {{ stats[user_tournament.tournament.id].attending or 0 }} attending •
-```
-```html
-                                    {{ stats[user_tournament.tournament.id].meetup or 0 }} open to meetups •
-```
-```html
-                                    {{ stats[user_tournament.tournament.id].lanyards or 0 }} lanyards ordered
-```
-```html
-                                </p>
-```
-```html
-                                <div class="mt-3">
-```
-```html
-                                    <form action="{{ url_for('tournaments.mark_attending', tournament_slug=user_tournament.tournament.slug) }}" method="POST" class="d-inline">
-```
-```html
-                                        <input type="hidden" name="status" value="attending">
-```
-```html
-                                        <button class="btn btn-success btn-sm">I'm Attending</button>
-```
-```html
-                                    </form>
-```
-```html
-                                    <form action="{{ url_for('tournaments.mark_attending', tournament_slug=user_tournament.tournament.slug) }}" method="POST" class="d-inline">
-```
-```html
-                                        <input type="hidden" name="status" value="maybe">
-```
-```html
-                                        <button class="btn btn-outline-secondary btn-sm">Maybe Attending</button>
-```
-```html
-                                    </form>
-```
-```html
+
+    {% if user_tournaments %}
+        <div class="row">
+            {% for ut in user_tournaments %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card tournament-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ ut.tournament.name }}</h5>
+                            <p class="card-text tournament-date">
+                                {{ ut.tournament.start_date.strftime('%b %d, %Y') }} to {{ ut.tournament.end_date.strftime('%b %d, %Y') }}
+                            </p>
+                            <p class="card-text tournament-location">
+                                <i data-feather="map-pin"></i> {{ ut.tournament.city }}, {{ ut.tournament.country }}
+                            </p>
+                            <p class="text-sm text-gray-500 mt-2">
+                                {{ stats[ut.tournament.id].attending }} attending •
+                                {{ stats[ut.tournament.id].meetup }} open to meetups •
+                                {{ stats[ut.tournament.id].lanyards }} lanyards ordered
+                            </p>
+                            {% if ut.session_label %}
+                                <div class="mt-2">
+                                    <span class="badge badge-success">{{ ut.session_label }}</span>
                                 </div>
-```
-```html
+                            {% endif %}
+                            <div class="mt-3">
+                                <a href="{{ url_for('tournaments.tournament_detail', tournament_slug=ut.tournament.slug) }}" class="btn btn-primary btn-sm">View Details</a>
                             </div>
-```
-```html
                         </div>
-```
-```html
                     </div>
-```
-```html
-                {% endfor %}
-```
-```html
-            </div>
-```
-```html
-        {% endfor %}
-```
-```html
-    {% else %}
-```
-```html
-        <div class="alert alert-info">
-```
-```html
-            <p>You haven't registered for any tournaments yet.</p>
-```
-```html
-            <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary mt-2">Browse Tournaments</a>
-```
-```html
+                </div>
+            {% endfor %}
         </div>
-```
-```html
+    {% else %}
+        <div class="alert alert-info">
+            <p>You haven't registered for any upcoming tournaments yet.</p>
+            <a href="{{ url_for('tournaments.list_tournaments') }}" class="btn btn-primary mt-2">Browse Tournaments</a>
+        </div>
     {% endif %}
-```
-```html
 </div>
-```
-```html
 {% endblock %}
-```
-```html
+
 {% block scripts %}
-```
-```html
 <script>
-```
-```html
     document.addEventListener('DOMContentLoaded', function() {
-```
-```html
         feather.replace();
-```
-```html
     });
-```
-```html
 </script>
-```
-```html
 {% endblock %}

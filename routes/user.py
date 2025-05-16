@@ -233,11 +233,16 @@ def change_password():
 @login_required
 def my_tournaments():
     from models import Tournament, UserTournament
+    from datetime import datetime
 
+    today = datetime.now().date()
+    
+    # Get future tournaments the user is registered for
     user_tournaments = (
         db.session.query(UserTournament)
-        .filter_by(user_id=current_user.id)
+        .filter_by(user_id=current_user.id, attending=True)
         .join(Tournament)
+        .filter(Tournament.start_date >= today)
         .order_by(Tournament.start_date)
         .all()
     )
@@ -246,7 +251,11 @@ def my_tournaments():
     stats = {}
     for ut in user_tournaments:
         tournament = ut.tournament
-        registrations = UserTournament.query.filter_by(tournament_id=tournament.id).all()
+        # Only count other attendees
+        registrations = UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.user_id != current_user.id
+        ).all()
         stats[tournament.id] = {
             'attending': sum(1 for r in registrations if r.attending),
             'meetup': sum(1 for r in registrations if r.attending and r.wants_to_meet),
