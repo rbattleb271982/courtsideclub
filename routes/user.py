@@ -144,11 +144,15 @@ def tournament_detail(tournament_slug):
     wants_to_meet = False
     user_attending = False
     
+    print(f"DEBUG: user_tournament = {user_tournament}")
     if user_tournament:
         user_attending = user_tournament.attending
         wants_to_meet = user_tournament.wants_to_meet
+        print(f"DEBUG: user_attending = {user_attending}, wants_to_meet = {wants_to_meet}")
+        print(f"DEBUG: tournament.sessions = {tournament.sessions}")
         if user_tournament.session_label:
             selected_sessions = user_tournament.session_label.split(',')
+            print(f"DEBUG: selected_sessions = {selected_sessions}")
     
     # Get tournament stats - exclude the current user for accurate display
     other_users_filter = UserTournament.user_id != current_user.id

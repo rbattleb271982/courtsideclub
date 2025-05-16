@@ -104,7 +104,7 @@
                     <h3 class="card-title h5 mb-0">Your Tournament Attendance</h3>
                 </div>
                 <div class="card-body">
-                    {% if user_attending %}
+                    {% if user_tournament and user_tournament.attending %}
                     <div class="alert alert-success d-flex align-items-center mb-3">
                         <span class="mr-2">✅</span> 
                         <div>You're attending this tournament</div>
@@ -129,7 +129,7 @@
                         <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
                     </div>
 
-                    {% if user_attending and tournament.sessions %}
+                    {% if user_tournament and user_tournament.attending and tournament.sessions %}
                     <!-- Sessions Selection Form -->
                     <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="mt-4">
                         <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
