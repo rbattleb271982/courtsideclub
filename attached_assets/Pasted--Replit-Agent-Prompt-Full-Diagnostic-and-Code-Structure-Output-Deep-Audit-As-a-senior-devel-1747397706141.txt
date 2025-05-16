@@ -1,0 +1,70 @@
+# 🧠 Replit Agent Prompt – Full Diagnostic and Code Structure Output (Deep Audit)
+
+As a senior developer performing an external review of the CourtSide Club app, I need a complete and detailed structure output of the system, including route flows, templates, model logic, and session behavior.
+
+✅ Use checkpoints sparingly.
+
+---
+
+### 1. ROUTE + BLUEPRINT INDEX (with URLs + Logic)
+
+For **each registered Blueprint**, output:
+
+- The file it lives in (e.g., `routes/user.py`)
+- The full `@route(...)` decorator, including methods
+- The function name and `endpoint` used for `url_for(...)`
+- What it renders (`render_template(...)`) or redirects to
+- Any conditionals (e.g., `if current_user.is_admin`, `login_required`, etc.)
+- Blueprint registration line from `app.py`
+
+Group results by Blueprint: `main_bp`, `auth_bp`, `user_bp`, `tournaments_bp`, `admin_bp`
+
+---
+
+### 2. TEMPLATE SYSTEM SNAPSHOT
+
+- List the full `/templates/` folder tree including all subdirectories
+- For each HTML template:
+  - Indicate which route renders it
+  - Whether it extends a base layout (e.g., `layout.html`, `public/base.html`)
+  - Note if it's **Public**, **Logged-in**, or **Admin-only**
+  - If conditional logic (e.g., `{% if current_user.is_authenticated %}`) changes what's shown
+
+---
+
+### 3. MODELS + RELATIONSHIPS
+
+For each SQLAlchemy model (`User`, `Tournament`, `UserTournament`, `ShippingAddress`):
+- List all columns and data types
+- Show `relationship(...)` fields
+- Identify which fields affect:
+  - Attendance logic
+  - Lanyard access
+  - Session tracking
+- Show any hybrid properties or computed fields (if any)
+
+---
+
+### 4. REDIRECT + FLOW BEHAVIOR
+
+Summarize:
+- What page is shown immediately after login (for regular users vs. admins)
+- What happens when a user clicks “I’m Attending” or “Maybe Attending”
+- How sessions are stored (`session_label`)
+- When a user is eligible to access `/order_lanyard`
+- What logic bypasses those checks for admins
+
+---
+
+### 5. TOURNAMENT STATS LOGIC
+
+- Where are stats (attending, meetup, lanyard) calculated?
+- Show how counts are derived in:
+  - `/my-tournaments`
+  - `/tournaments/<slug>`
+  - Admin dashboard
+- Are these values queried live or cached?
+
+---
+
+✅ Output everything in a **single pass**. Do not create unnecessary checkpoints. This is for an external engineering audit and needs to be copyable and traceable.
