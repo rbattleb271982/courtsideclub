@@ -136,7 +136,7 @@ def tournament_detail(tournament_slug):
         db.session.commit()
         
         flash('Your tournament sessions have been saved.', 'success')
-        return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
+        return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug, session_saved=1))
     
     # Get current user's tournament registration
     user_tournament = UserTournament.query.filter_by(
@@ -244,6 +244,9 @@ def tournament_detail(tournament_slug):
             'formatted': day_date.strftime('%b %d')
         })
     
+    # Check if sessions were just saved (from query param)
+    session_saved = request.args.get('session_saved', '0') == '1'
+    
     return render_template('user/tournament_detail.html',
                           day_dates=day_dates,
                          tournament=tournament,
@@ -255,7 +258,8 @@ def tournament_detail(tournament_slug):
                          session_stats=session_stats,
                          wants_to_meet=wants_to_meet,
                          user_attending=user_attending,
-                         days_until=days_until)
+                         days_until=days_until,
+                         session_saved=session_saved)
 
 # Keep the profile route for backward compatibility, redirecting to my_tournaments
 @user_bp.route('/profile')
