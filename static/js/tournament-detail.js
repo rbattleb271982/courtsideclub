@@ -22,9 +22,12 @@ document.addEventListener('DOMContentLoaded', function() {
     selectedSessions.push(chip.dataset.session);
   });
   
-  // Update session count display and save button state
+  // Update the UI based on initial state and selected sessions
   updateSessionCountDisplay();
   updateSaveButtonState();
+  
+  // Make sure visibility is correct on page load for desktop 
+  // Fix for the desktop issue where session picker gets hidden
   
   // Add click handlers for session chips
   const sessionChips = document.querySelectorAll('.session-chip');
@@ -88,15 +91,25 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to update save button state
   function updateSaveButtonState() {
     const saveButton = document.getElementById('saveButton');
+    const goingBtn = document.getElementById('btn-going');
+    const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
+    
     if (saveButton) {
       if (selectedSessions.length > 0) {
+        // Has sessions, always enable the save button
         saveButton.classList.remove('btn-secondary', 'disabled');
         saveButton.classList.add('btn-success');
         saveButton.disabled = false;
-      } else {
+      } else if (isAttending) {
+        // No sessions but is attending, disable save button
         saveButton.classList.remove('btn-success');
         saveButton.classList.add('btn-secondary', 'disabled');
         saveButton.disabled = true;
+      } else {
+        // "Thinking About It" state - enable the save button
+        saveButton.classList.remove('btn-secondary', 'disabled');
+        saveButton.classList.add('btn-success');
+        saveButton.disabled = false;
       }
     }
   }
@@ -160,31 +173,22 @@ document.addEventListener('DOMContentLoaded', function() {
   // Handle attendance button clicks (visual feedback only)
   const attendanceButtons = document.querySelectorAll('.attendance-btn');
   attendanceButtons.forEach(button => {
-    button.addEventListener('click', function() {
+    button.addEventListener('click', function(e) {
+      // Don't prevent default - we want the form to submit
+      
+      // But provide immediate visual feedback during the form submission
       // Show loading indicator on button
       const originalContent = this.innerHTML;
       this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
       this.disabled = true;
       
-      // The actual state change happens via form submission, this is just for UI feedback
-      // Visual updates already happen in template with page reload, but we disable temporarily
+      // Important: do NOT modify any other UI elements here - the page will reload
+      // and the server-side template logic will handle all visibility
       
-      // Also update UI visibility based on which button was clicked
-      const attendanceType = this.dataset.attendance;
-      if (attendanceType === 'attending') {
-        // Going button clicked - prepare to show session UI
-        document.getElementById('session-selection-ui').style.display = 'block';
-        document.getElementById('meeting-toggle-container').style.display = 'block';
-        document.getElementById('thinking-message').style.display = 'none';
-      } else if (attendanceType === 'maybe') {
-        // Thinking button clicked - hide sessions, show thinking message
-        document.getElementById('session-selection-ui').style.display = 'none';
-        document.getElementById('meeting-toggle-container').style.display = 'none';
-        document.getElementById('thinking-message').style.display = 'block';
-      } else if (attendanceType === 'not-attending') {
-        // Not attending button clicked - hide everything
-        document.getElementById('session-selection-card').style.display = 'none';
-      }
+      // The visual effect of clicking buttons on desktop should be:
+      // 1. Button shows loading state
+      // 2. Form submits
+      // 3. Page reloads with server-side template logic handling all visibility
     });
   });
 });
@@ -205,25 +209,27 @@ function updateSessionUIVisibility() {
   const thinkingMessage = document.getElementById('thinking-message');
   
   // Determine current attendance state
-  const isGoing = goingBtn && goingBtn.classList.contains('btn-success');
+  const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
   const isThinking = thinkingBtn && thinkingBtn.classList.contains('btn-secondary');
   const isNotGoing = notGoingBtn && notGoingBtn.classList.contains('btn-secondary');
   
   // Update UI visibility based on attendance state
+  // This function should match server-side logic
+  
   if (sessionSelectionCard) {
     sessionSelectionCard.style.display = isNotGoing ? 'none' : 'block';
   }
   
   if (sessionSelectionUI) {
-    sessionSelectionUI.style.display = isGoing ? 'block' : 'none';
+    sessionSelectionUI.style.display = isAttending ? 'block' : 'none';
   }
   
   if (meetingToggleContainer) {
-    meetingToggleContainer.style.display = isGoing ? 'block' : 'none';
+    meetingToggleContainer.style.display = isAttending ? 'block' : 'none';
   }
   
   if (thinkingMessage) {
-    thinkingMessage.style.display = isThinking ? 'block' : 'none';
+    thinkingMessage.style.display = (isThinking && !isAttending) ? 'block' : 'none';
   }
   
   if (saveBar) {
@@ -231,7 +237,7 @@ function updateSessionUIVisibility() {
   }
   
   if (sessionCountMessage) {
-    sessionCountMessage.style.display = isGoing ? 'block' : 'none';
+    sessionCountMessage.style.display = isAttending ? 'block' : 'none';
   }
 }
 
