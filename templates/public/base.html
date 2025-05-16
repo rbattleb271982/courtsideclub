@@ -34,8 +34,24 @@
   <script>
     function toggleMenu() {
       const menu = document.getElementById('mobile-menu');
-      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+      const isOpen = menu.style.display === 'flex';
+
+      // Close any open navs before opening
+      document.querySelectorAll('.mobile-menu').forEach(m => m.style.display = 'none');
+
+      if (!isOpen) {
+        menu.style.display = 'flex';
+      }
     }
+
+    // Optional: close menu if you click outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('mobile-menu');
+      const toggle = document.querySelector('.menu-toggle');
+      if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+        menu.style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>
