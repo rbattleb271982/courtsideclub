@@ -1,0 +1,76 @@
+/* Tournament detail page specific styles */
+
+/* Attendance controls */
+.attendance-buttons .btn {
+  transition: all 0.2s ease;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.attendance-buttons .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Make hover states more interactive */
+.btn-outline-success:hover {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Session groups styling */
+.session-day-group {
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.session-day-group:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.session-item {
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.session-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Checkbox styling */
+.form-check-input {
+  cursor: pointer;
+}
+
+.form-check-input:checked + .form-check-label {
+  font-weight: bold;
+  color: #28a745;
+}
+
+/* Badge styling */
+.session-badge {
+  background-color: #e9ecef;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.75rem;
+}
+
+/* Save button */
+.btn-success {
+  transition: all 0.2s ease;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+}

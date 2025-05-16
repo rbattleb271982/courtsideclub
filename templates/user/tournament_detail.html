@@ -76,6 +76,51 @@
                         </div>
                     </div>
                     
+                    <!-- Attendance Controls and Open to Meeting -->
+                    <div class="attendance-controls mt-4 p-3 bg-light rounded">
+                        <h4 class="h5 mb-3">Your Attendance</h4>
+                        
+                        <!-- Attendance Toggle Buttons --> 
+                        <div class="attendance-buttons d-flex flex-wrap gap-2 mb-3">
+                            <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mr-2 mb-2">
+                                <button type="submit" class="btn {% if user_tournament and user_tournament.attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow">
+                                    <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
+                                </button>
+                            </form>
+                            
+                            <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mr-2 mb-2">
+                                <input type="hidden" name="attendance_type" value="maybe">
+                                <button type="submit" class="btn {% if user_tournament and user_tournament.attending == 'maybe' %}btn-success{% else %}btn-outline-secondary{% endif %} hover-grow">
+                                    <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
+                                </button>
+                            </form>
+                            
+                            <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2">
+                                <button type="submit" class="btn btn-outline-danger hover-grow">
+                                    <i data-feather="x-circle" class="icon-sm"></i> Not Attending
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Open to Meeting Checkbox -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="wants-to-meet-top" id="wants-to-meet-top" 
+                                  {% if wants_to_meet %}checked{% endif %}>
+                            <label class="form-check-label" for="wants-to-meet-top">
+                                👋 I'm open to meeting up with other fans
+                            </label>
+                        </div>
+                        
+                        <!-- Lanyard Button -->
+                        {% if not current_user.lanyard_ordered %}
+                        <div>
+                            <a href="{{ url_for('user.lanyard') }}" class="btn btn-outline-success btn-sm">
+                                <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
                     {% if tournament.about %}
                     <div class="tournament-description mt-4">
                         <h4 class="h5">About the Tournament</h4>
@@ -113,68 +158,12 @@
             <!-- Tournament Attendance Section -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h3 class="card-title h5 mb-0">Your Tournament Attendance</h3>
+                    <h3 class="card-title h5 mb-0">Your Tournament Sessions</h3>
                 </div>
                 <div class="card-body">
-                    <!-- Attendance Controls and Stats in One Panel -->
-                    <div class="attendance-control-panel p-3 mb-3 bg-light rounded">
-                        <h5 class="mb-3">Your Attendance</h5>
-                        
-                        <!-- Attendance Toggle Buttons --> 
-                        <div class="attendance-buttons d-flex flex-wrap gap-2 mb-3">
-                            <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mr-2 mb-2">
-                                <button type="submit" class="btn {% if user_tournament and user_tournament.attending %}btn-success{% else %}btn-outline-success{% endif %}">
-                                    <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
-                                </button>
-                            </form>
-                            
-                            <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mr-2 mb-2">
-                                <input type="hidden" name="attendance_type" value="maybe">
-                                <button type="submit" class="btn btn-outline-secondary">
-                                    <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
-                                </button>
-                            </form>
-                            
-                            <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-2">
-                                <button type="submit" class="btn btn-outline-danger">
-                                    <i data-feather="x-circle" class="icon-sm"></i> Not Attending
-                                </button>
-                            </form>
-                        </div>
-                        
-                        <!-- Open to Meeting Checkbox -->
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="wants-to-meet-top" id="wants-to-meet-top" 
-                                  {% if wants_to_meet %}checked{% endif %}>
-                            <label class="form-check-label" for="wants-to-meet-top">
-                                👋 I'm open to meeting up with other fans
-                            </label>
-                        </div>
-                        
-                        <!-- Lanyard Button -->
-                        {% if not current_user.lanyard_ordered %}
-                        <div class="mt-2">
-                            <a href="{{ url_for('user.lanyard') }}" class="btn btn-outline-success btn-sm">
-                                <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard
-                            </a>
-                        </div>
-                        {% endif %}
-                    </div>
-
                     <!-- Session Selection UI -->
-                    <div class="session-selection-ui mt-3">
+                    <div class="session-selection-ui">
                         <h4 class="h5 mb-3">Select sessions you'll attend:</h4>
-                        
-                        <!-- Debug Info -->
-                        <div class="alert alert-info mb-3 small">
-                            <p><strong>Debug info:</strong></p>
-                            <p>Selected sessions: {{ selected_sessions|join(', ') if selected_sessions else 'None' }}</p>
-                            <p>Tournament sessions count: {{ tournament.sessions|length }}</p>
-                            <p>User tournament exists: {{ 'Yes' if user_tournament else 'No' }}</p>
-                            {% if user_tournament %}
-                                <p>User attending: {{ 'Yes' if user_tournament.attending else 'No' }}</p>
-                            {% endif %}
-                        </div>
                         
                         <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
                             <!-- Create session day groups with actual dates -->
