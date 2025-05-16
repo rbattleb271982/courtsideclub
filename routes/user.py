@@ -146,8 +146,14 @@ def tournament_detail(tournament_slug):
     
     print(f"DEBUG: user_tournament = {user_tournament}")
     if user_tournament:
+        # Ensure attendance is properly set (might be None in some cases)
+        if user_tournament.attending is None:
+            user_tournament.attending = True
+            db.session.commit()
+            print("DEBUG: Fixed null attending value to True")
+        
         user_attending = user_tournament.attending
-        wants_to_meet = user_tournament.wants_to_meet
+        wants_to_meet = user_tournament.wants_to_meet if user_tournament.wants_to_meet is not None else False
         print(f"DEBUG: user_attending = {user_attending}, wants_to_meet = {wants_to_meet}")
         print(f"DEBUG: tournament.sessions = {tournament.sessions}")
         if user_tournament.session_label:

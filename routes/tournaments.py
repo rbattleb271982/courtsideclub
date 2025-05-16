@@ -218,9 +218,16 @@ def attend_tournament_new(tournament_slug):
     # Important - mark this user as attending
     user_tourney.attending = True
     
-    # Add default session if none selected (first day/session)
-    if not user_tourney.session_label and tournament.sessions and len(tournament.sessions) > 0:
+    # Force-add default session (first day/session) to ensure the session selector displays
+    if tournament.sessions and len(tournament.sessions) > 0:
         user_tourney.session_label = tournament.sessions[0]
+    else:
+        # If no sessions are defined, add a default one
+        default_session = "Day 1 - Day"
+        if not tournament.sessions:
+            tournament.sessions = [default_session, "Day 1 - Night", "Day 2 - Day"]
+            db.session.flush()  # Save tournament changes first
+        user_tourney.session_label = default_session
     
     # Log the event
     event_data = {
