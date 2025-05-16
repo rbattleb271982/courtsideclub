@@ -793,23 +793,16 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 14px 20px;
-  flex-wrap: nowrap;
   width: 100%;
   box-sizing: border-box;
-}
-
-@media (min-width: 768px) {
-  .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .logo {
   color: #004d26;
   font-weight: bold;
   font-size: 20px;
-  white-space: nowrap;
   white-space: nowrap;
 }
 
@@ -852,21 +845,34 @@ body {
     display: none;
   }
 
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 70px;
+  }
+
+  .logo {
+    margin-right: 20px;
+  }
+
   .mobile-menu {
     display: flex !important;
     flex-direction: row;
     justify-content: flex-end;
     background-color: transparent;
     padding: 0;
+    position: static;
+    width: auto;
+    box-shadow: none;
   }
 
   .mobile-menu a {
     border-top: none;
     padding: 10px 15px;
-  }
-
-  .nav-container {
-    padding: 0 16px;
+    margin: 0;
+    font-weight: normal;
   }
 }
 
