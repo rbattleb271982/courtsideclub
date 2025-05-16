@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: {{ url_for('main.sitemap', _external=True) }}
+Sitemap: https://courtside.repl.co/sitemap.xml
