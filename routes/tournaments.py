@@ -414,11 +414,16 @@ def save_sessions(tournament_slug):
     # This ensures the user's attendance status is preserved
     user_tournament.attending = True
     
+    # Make sure we don't lose the attendance_type value
+    # If a user is "maybe" attending, preserve that setting when saving sessions
+    if not user_tournament.attendance_type or user_tournament.attendance_type == '':
+        user_tournament.attendance_type = 'attending'  # Default to attending if not set
+    
     # Log the session selection count
     if selected_sessions:
-        print(f"DEBUG: User {current_user.id} saved {len(selected_sessions)} sessions")
+        print(f"DEBUG: User {current_user.id} saved {len(selected_sessions)} sessions with type {user_tournament.attendance_type}")
     else:
-        print(f"DEBUG: User {current_user.id} saved with no specific sessions")
+        print(f"DEBUG: User {current_user.id} saved with no specific sessions with type {user_tournament.attendance_type}")
     
     user_tournament.wants_to_meet = wants_to_meet
     user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
@@ -433,7 +438,8 @@ def save_sessions(tournament_slug):
         'previous_sessions': previous_sessions,
         'previous_wants_to_meet': previous_wants_to_meet,
         'previous_attending': previous_attending,
-        'attending': user_tournament.attending
+        'attending': user_tournament.attending,
+        'attendance_type': user_tournament.attendance_type
     }
     log_event(current_user.id, 'tournament_session_update', event_data)
     
