@@ -240,15 +240,15 @@
                         </form>
                     </div>
                     
-                    <!-- Message for "Thinking About It" status -->
-                    <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" {% if not is_thinking or is_attending %}style="display: none;"{% endif %}>
+                    <!-- Message for "Thinking About It" status - Now hidden for all attending users -->
+                    <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" style="display: none;">
                         <p class="text-muted mb-0">When you decide to attend, you'll be able to select your specific sessions.</p>
                     </div>
                     
                     <!-- Sticky Save Bar -->
                     <div class="save-container" id="saveBar">
-                        <!-- Selected Session Count -->
-                        <div class="save-message" id="sessionCountMessage" {% if not is_attending %}style="display: none;"{% endif %}>
+                        <!-- Selected Session Count - visible for all attending users -->
+                        <div class="save-message" id="sessionCountMessage" {% if not user_tournament or user_tournament.attending != True %}style="display: none;"{% endif %}>
                             {% if selected_sessions|length > 0 %}
                             <span class="text-success font-weight-bold">
                                 <i data-feather="check-circle" class="icon-sm"></i>
@@ -268,8 +268,8 @@
                             <i data-feather="save" class="icon-sm"></i> Save My Selections
                         </button>
                         
-                        <!-- Lanyard Button moved here - Visible after any save for attending users -->
-                        {% if not current_user.lanyard_ordered and is_attending and session_saved %}
+                        <!-- Lanyard Button moved here - Visible after any save for all attending users (both full attending and maybe) -->
+                        {% if not current_user.lanyard_ordered and user_tournament and user_tournament.attending == True and session_saved %}
                         <div class="mt-3">
                             <a href="{{ url_for('user.lanyard') }}" class="btn btn-success btn-lg w-100 rounded shadow-sm hover-grow">
                                 <i data-feather="tag" class="icon-sm"></i> Order Free CourtSide Lanyard
