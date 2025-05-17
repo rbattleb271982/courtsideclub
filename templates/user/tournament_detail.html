@@ -121,13 +121,13 @@
                                       </div>
                                       <label class="switch">
                                         <input type="checkbox" id="wants-to-meet-top" 
-                                          {% if wants_to_meet %}checked{% endif %}>
+                                          {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}>
                                         <span class="slider round"></span>
                                       </label>
                                       
                                       <!-- Hidden form for the toggle switch (connected to existing JS) -->
                                       <form id="meeting-toggle-form" class="d-none" method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
-                                        <input type="hidden" name="wants_to_meet" id="wants-to-meet-hidden" value="{{ 'true' if wants_to_meet else 'false' }}">
+                                        <input type="hidden" name="wants_to_meet" id="wants-to-meet-hidden" value="{{ 'true' if wants_to_meet is not defined or wants_to_meet else 'false' }}">
                                       </form>
                                     </div>
                                     {% endif %}
@@ -182,8 +182,8 @@
                     <h3 class="card-title h5 mb-0">Your Tournament Sessions</h3>
                 </div>
                 <div class="card-body">
-                    <!-- Session Selection UI - Only visible when "I'm Going!" is selected -->
-                    <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or user_tournament.attending != True %}style="display: none;"{% endif %}>
+                    <!-- Session Selection UI - Visible for both "I'm Attending" and "Maybe Attending" users -->
+                    <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or not user_tournament.attending %}style="display: none;"{% endif %}>
                         <h4 class="h5 mb-3">Which sessions will you attend?</h4>
                         
                         <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="sessionForm">
@@ -195,7 +195,7 @@
                                 {% endfor %}
                             </div>
                             <!-- Hidden field for wants_to_meet -->
-                            <input type="hidden" name="wants_to_meet" id="wants_to_meet_hidden" value="{{ 'true' if wants_to_meet else 'false' }}">
+                            <input type="hidden" name="wants_to_meet" id="wants_to_meet_hidden" value="{{ 'true' if wants_to_meet is not defined or wants_to_meet else 'false' }}">
                             
                             <!-- Create session day groups with actual dates -->
                             <div class="session-groups">
