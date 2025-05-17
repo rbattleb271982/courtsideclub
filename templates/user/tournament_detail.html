@@ -183,7 +183,7 @@
                 </div>
                 <div class="card-body">
                     <!-- Session Selection UI - Only visible when "I'm Going!" is selected -->
-                    <div class="session-selection-ui" id="session-selection-ui" {% if not is_attending %}style="display: none;"{% endif %}>
+                    <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or user_tournament.attending != True %}style="display: none;"{% endif %}>
                         <h4 class="h5 mb-3">Which sessions will you attend?</h4>
                         
                         <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="sessionForm">

@@ -211,11 +211,12 @@ function updateSessionUIVisibility() {
   }
   
   if (sessionSelectionUI) {
+    // Show session UI for both attending and maybe attending users
     sessionSelectionUI.style.display = (isAttending || isMaybe) ? 'block' : 'none';
   }
   
   if (meetingToggleContainer) {
-    // Only show meeting toggle for fully attending users
+    // Show meeting toggle for both attending and maybe attending users
     meetingToggleContainer.style.display = (isAttending || isMaybe) ? 'block' : 'none';
   }
   
