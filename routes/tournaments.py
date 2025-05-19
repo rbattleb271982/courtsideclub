@@ -249,6 +249,35 @@ def view_tournament(tournament_slug):
     today = datetime.date.today()
     days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
     
+    # Get shared past tournaments for users attending this tournament
+    shared_past_tournaments = {}
+    
+    # 1. Get all users attending this tournament
+    attending_users = db.session.query(UserTournament.user_id).filter(
+        UserTournament.tournament_id == tournament.id,
+        UserTournament.attending == True
+    ).all()
+    
+    attending_user_ids = [user.user_id for user in attending_users]
+    
+    # 2. Only proceed if there are attending users
+    if attending_user_ids:
+        # 3. Get past tournaments for these users
+        past_tournament_counts = db.session.query(
+            Tournament.name, db.func.count(UserPastTournament.user_id).label('count')
+        ).join(
+            UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+        ).filter(
+            UserPastTournament.user_id.in_(attending_user_ids)
+        ).group_by(
+            Tournament.name
+        ).order_by(
+            db.desc('count')
+        ).all()
+        
+        # 4. Format the results as a dictionary
+        shared_past_tournaments = {name: count for name, count in past_tournament_counts}
+    
     # Pass session_saved flag to show lanyard button conditionally
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
@@ -264,7 +293,8 @@ def view_tournament(tournament_slug):
                          is_full_attending=is_full_attending,
                          session_saved=session_saved,
                          days_until=days_until,
-                         tournament_days=tournament_days)  # Pass the complete list of tournament days
+                         tournament_days=tournament_days,  # Pass the complete list of tournament days
+                         shared_past_tournaments=shared_past_tournaments)  # Pass shared past tournaments
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])

@@ -137,6 +137,22 @@
                         </div>
                         {% endif %}
                     </div>
+                    
+                    <!-- Shared Past Tournaments Section -->
+                    {% if shared_past_tournaments %}
+                    <div class="shared-history-box mt-4">
+                        <h4 class="h5">Other tournaments attendees have visited:</h4>
+                        <ul class="shared-history-list">
+                            {% for name, count in shared_past_tournaments.items() %}
+                            <li>{{ name }} – {{ count }} {{ 'people have' if count > 1 else 'person has' }} attended</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="mt-4">
+                        <p class="text-muted small empty-note">We'll show shared past tournaments once more attendees are confirmed.</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
