@@ -25,12 +25,11 @@ def get_tournament_attendance_stats(tournament_id, include_current_user=True):
     """
     from flask_login import current_user
     
-    # Base query to get valid attendance records
+    # Base query to get valid attendance records - don't filter by session_label anymore
+    # This ensures we count all users who are marked as attending
     query = UserTournament.query.filter(
         UserTournament.tournament_id == tournament_id,
-        UserTournament.attending == True,
-        UserTournament.session_label.isnot(None),
-        UserTournament.session_label != ''
+        UserTournament.attending == True
     )
     
     # Optionally exclude current user
