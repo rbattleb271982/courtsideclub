@@ -139,7 +139,7 @@
                     </div>
                     
                     <!-- Shared Past Tournaments Section -->
-                    {% if shared_past_tournaments %}
+                    {% if stats.attending > 0 and shared_past_tournaments %}
                     <div class="shared-history-box mt-4">
                         <h4 class="h5">Other tournaments attendees have visited:</h4>
                         <ul class="shared-history-list">
