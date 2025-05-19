@@ -9,21 +9,23 @@
   
   <div class="session-chips">
     <!-- Day Session Toggle -->
-    <label class="session-checkbox {% if label_day in selected_sessions %}active{% endif %}">
+    <label class="session-checkbox {% if label_day in selected_sessions %}active{% endif %}"
+           style="{% if label_day in selected_sessions %}background-color: #4CAF50; color: white; border-color: #4CAF50;{% endif %}">
       <input type="checkbox" name="sessions" value="{{ label_day }}" 
         {% if label_day in selected_sessions %}checked{% endif %} class="session-checkbox-input">
       <span class="session-name">Day Session</span>
       <span class="fan-count">{{ session_counts.get(label_day, 0) }}</span>
-      <span class="check-icon">✓</span>
+      <span class="check-icon" style="{% if label_day in selected_sessions %}display: inline-flex;{% else %}display: none;{% endif %}">✓</span>
     </label>
     
     <!-- Night Session Toggle -->
-    <label class="session-checkbox {% if label_night in selected_sessions %}active{% endif %}">
+    <label class="session-checkbox {% if label_night in selected_sessions %}active{% endif %}"
+           style="{% if label_night in selected_sessions %}background-color: #4CAF50; color: white; border-color: #4CAF50;{% endif %}">
       <input type="checkbox" name="sessions" value="{{ label_night }}" 
         {% if label_night in selected_sessions %}checked{% endif %} class="session-checkbox-input">
       <span class="session-name">Night Session</span>
       <span class="fan-count">{{ session_counts.get(label_night, 0) }}</span>
-      <span class="check-icon">✓</span>
+      <span class="check-icon" style="{% if label_night in selected_sessions %}display: inline-flex;{% else %}display: none;{% endif %}">✓</span>
     </label>
   </div>
   

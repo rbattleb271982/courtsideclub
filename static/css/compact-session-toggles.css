@@ -91,6 +91,17 @@
   background-color: #4CAF50;
 }
 
+.session-checkbox input[type="checkbox"]:checked ~ .session-checkbox {
+  background-color: #4CAF50;
+}
+
+/* Apply styles directly to the label when it contains a checked input */
+.session-checkbox:has(input[type="checkbox"]:checked) {
+  background-color: #4CAF50 !important;
+  color: white !important;
+  border-color: #4CAF50 !important;
+}
+
 /* Container background color when checkbox is checked */
 input[type="checkbox"]:checked ~ .check-icon {
   display: inline-flex;

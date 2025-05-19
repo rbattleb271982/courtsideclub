@@ -45,6 +45,55 @@ function initializeSessionToggles() {
       updateCheckboxLabel(this);
     });
   });
+
+  // Initialize attendance buttons if they exist
+  const attendingBtn = document.querySelector('.btn-attending');
+  const maybeBtn = document.querySelector('.btn-maybe');
+  const notBtn = document.querySelector('.btn-not');
+  
+  if (attendingBtn && maybeBtn && notBtn) {
+    // Add event listeners to attendance buttons
+    attendingBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      setActiveAttendanceButton(attendingBtn);
+      // Show session UI
+      document.querySelector('.session-selector').style.display = 'block';
+      document.querySelector('.wants-to-meet-container').style.display = 'flex';
+    });
+    
+    maybeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      setActiveAttendanceButton(maybeBtn);
+      // Show session UI
+      document.querySelector('.session-selector').style.display = 'block';
+      document.querySelector('.wants-to-meet-container').style.display = 'flex';
+    });
+    
+    notBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      setActiveAttendanceButton(notBtn);
+      // Hide session UI
+      document.querySelector('.session-selector').style.display = 'none';
+      document.querySelector('.wants-to-meet-container').style.display = 'none';
+    });
+  }
+}
+
+// Set active state for attendance buttons
+function setActiveAttendanceButton(activeBtn) {
+  const buttons = [
+    document.querySelector('.btn-attending'),
+    document.querySelector('.btn-maybe'),
+    document.querySelector('.btn-not')
+  ];
+  
+  buttons.forEach(btn => {
+    if (btn === activeBtn) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
 }
 
 // Update the styling of the checkbox label based on checked state
@@ -56,11 +105,21 @@ function updateCheckboxLabel(checkbox) {
       label.style.backgroundColor = '#4CAF50';
       label.style.color = 'white';
       label.style.borderColor = '#4CAF50';
+      // Show checkmark
+      const checkIcon = label.querySelector('.check-icon');
+      if (checkIcon) {
+        checkIcon.style.display = 'inline-flex';
+      }
     } else {
       label.classList.remove('active');
       label.style.backgroundColor = 'white';
       label.style.color = '#555';
       label.style.borderColor = '#e9ecef';
+      // Hide checkmark
+      const checkIcon = label.querySelector('.check-icon');
+      if (checkIcon) {
+        checkIcon.style.display = 'none';
+      }
     }
   }
 }
