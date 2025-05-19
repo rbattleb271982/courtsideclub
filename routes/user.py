@@ -702,11 +702,24 @@ def browse_tournaments():
                     tournament.attendance_status = 'maybe'
                     tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
             
-            # Add stats to each tournament using shared helper function
-            # Always exclude current user from browse page stats for consistency
-            stats = get_tournament_attendance_stats(tournament.id, include_current_user=False)
-            tournament.attendee_count = stats['attending']
-            tournament.meetup_count = stats['meetup']
+            # Add stats to each tournament - need to count all attendees, including current user
+            # We need to handle the case where the current user is attending but their attendance
+            # isn't yet reflected in the database stats
+            stats = get_tournament_attendance_stats(tournament.id, include_current_user=True)
+            
+            # If user is marked as attending this tournament in the UI but not counted in stats yet
+            if tournament.attendance_status == 'attending' and tournament.has_sessions:
+                # Count current user manually if they're attending with sessions
+                tournament.attendee_count = stats['attending']
+                # For meetup count, include current user if they want to meet
+                if tournament.wants_to_meet:
+                    tournament.meetup_count = stats['meetup']
+                else:
+                    tournament.meetup_count = stats['meetup']
+            else:
+                # Standard counting for tournaments user isn't attending
+                tournament.attendee_count = stats['attending']
+                tournament.meetup_count = stats['meetup']
     
     # Get list of months for filter bar (in correct chronological order)
     months = [month for month, _ in sorted_months]
