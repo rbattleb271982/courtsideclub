@@ -6,145 +6,54 @@ document.addEventListener('DOMContentLoaded', function() {
     feather.replace();
   }
   
-  // Initialize session toggles
-  initializeSessionToggles();
-  
   // Initialize UI visibility based on attendance state
   updateSessionUIVisibility();
   
   // Add event listener to the meeting toggle
-  const meetingToggle = document.getElementById('wants_to_meet');
+  const meetingToggle = document.getElementById('wants-to-meet-top');
+  const wantsToMeetHidden = document.getElementById('wants_to_meet_hidden');
   
-  if (meetingToggle) {
+  if (meetingToggle && wantsToMeetHidden) {
     meetingToggle.addEventListener('change', function() {
-      // Visual feedback when toggled
-      const label = this.closest('.meeting-toggle-container');
-      if (label) {
-        if (this.checked) {
-          label.classList.add('active');
-        } else {
-          label.classList.remove('active');
-        }
-      }
+      wantsToMeetHidden.value = this.checked ? 'true' : 'false';
     });
   }
 });
 
-// Initialize session toggle buttons
-function initializeSessionToggles() {
-  // Get all session checkboxes
-  const sessionCheckboxes = document.querySelectorAll('.session-checkbox input[type="checkbox"]');
-  
-  // Add click event to each session checkbox
-  sessionCheckboxes.forEach(checkbox => {
-    // Initialize classes based on checked state
-    updateCheckboxLabel(checkbox);
-    
-    // Add change event listener
-    checkbox.addEventListener('change', function() {
-      updateCheckboxLabel(this);
-    });
-  });
-
-  // Initialize attendance buttons if they exist
-  const attendingBtn = document.querySelector('.btn-attending');
-  const maybeBtn = document.querySelector('.btn-maybe');
-  const notBtn = document.querySelector('.btn-not');
-  
-  if (attendingBtn && maybeBtn && notBtn) {
-    // Add event listeners to attendance buttons
-    attendingBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      setActiveAttendanceButton(attendingBtn);
-      // Show session UI
-      document.querySelector('.session-selector').style.display = 'block';
-      document.querySelector('.wants-to-meet-container').style.display = 'flex';
-    });
-    
-    maybeBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      setActiveAttendanceButton(maybeBtn);
-      // Show session UI
-      document.querySelector('.session-selector').style.display = 'block';
-      document.querySelector('.wants-to-meet-container').style.display = 'flex';
-    });
-    
-    notBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      setActiveAttendanceButton(notBtn);
-      // Hide session UI
-      document.querySelector('.session-selector').style.display = 'none';
-      document.querySelector('.wants-to-meet-container').style.display = 'none';
-    });
-  }
-}
-
-// Set active state for attendance buttons
-function setActiveAttendanceButton(activeBtn) {
-  const buttons = [
-    document.querySelector('.btn-attending'),
-    document.querySelector('.btn-maybe'),
-    document.querySelector('.btn-not')
-  ];
-  
-  buttons.forEach(btn => {
-    if (btn === activeBtn) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
-}
-
-// Update the styling of the checkbox label based on checked state
-function updateCheckboxLabel(checkbox) {
-  const label = checkbox.closest('.session-checkbox');
-  if (label) {
-    if (checkbox.checked) {
-      label.classList.add('active');
-      label.style.backgroundColor = '#4CAF50';
-      label.style.color = 'white';
-      label.style.borderColor = '#4CAF50';
-      // Show checkmark
-      const checkIcon = label.querySelector('.check-icon');
-      if (checkIcon) {
-        checkIcon.style.display = 'inline-flex';
-      }
-    } else {
-      label.classList.remove('active');
-      label.style.backgroundColor = 'white';
-      label.style.color = '#555';
-      label.style.borderColor = '#e9ecef';
-      // Hide checkmark
-      const checkIcon = label.querySelector('.check-icon');
-      if (checkIcon) {
-        checkIcon.style.display = 'none';
-      }
-    }
-  }
-}
-
 // Function to toggle the session UI based on attendance state
 function updateSessionUIVisibility() {
-  // Get attendance buttons - using the new class names
-  const attendingBtn = document.querySelector('.btn-attending');
-  const maybeBtn = document.querySelector('.btn-maybe');
+  // Get attendance buttons
+  const goingBtn = document.getElementById('btn-going');
+  const thinkingBtn = document.getElementById('btn-thinking');
   
   // Get UI sections
-  const sessionSelector = document.querySelector('.session-selector');
-  const meetingToggleContainer = document.querySelector('.wants-to-meet-container');
+  const sessionSelectionUI = document.getElementById('session-selection-ui');
+  const sessionSelectionCard = document.getElementById('session-selection-card');
+  const meetingToggleContainer = document.getElementById('meeting-toggle-container');
+  const thinkingMessage = document.getElementById('thinking-message');
   
   // Determine current attendance state
-  const isAttending = attendingBtn && attendingBtn.classList.contains('active');
-  const isMaybe = maybeBtn && maybeBtn.classList.contains('active');
+  const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
+  const isMaybe = thinkingBtn && thinkingBtn.classList.contains('btn-success');
   const isNotAttending = !isAttending && !isMaybe;
   
-  // Show session selection for both attending and maybe attending users
-  if (sessionSelector) {
-    sessionSelector.style.display = isNotAttending ? 'none' : 'block';
+  // Update UI visibility based on attendance state
+  if (sessionSelectionCard) {
+    sessionSelectionCard.style.display = isNotAttending ? 'none' : 'block';
+  }
+  
+  if (sessionSelectionUI) {
+    // Show session UI for both attending and maybe attending users
+    sessionSelectionUI.style.display = (isAttending || isMaybe) ? 'block' : 'none';
   }
   
   if (meetingToggleContainer) {
-    meetingToggleContainer.style.display = isNotAttending ? 'none' : 'block';
+    // Show meeting toggle for both attending and maybe attending users
+    meetingToggleContainer.style.display = (isAttending || isMaybe) ? 'block' : 'none';
+  }
+  
+  if (thinkingMessage) {
+    // Hide thinking message - we always show session selection UI now
+    thinkingMessage.style.display = 'none';
   }
 }
