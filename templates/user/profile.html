@@ -145,241 +145,44 @@
         </div>
       </div>
       
-      <!-- Past Tournaments Selection with Search -->
+      <!-- Past Tournaments Selection -->
       <div class="profile-section">
-        <p class="mb-3">Select tournaments you've attended in the past</p>
+        <h3>Past Tournaments</h3>
+        <p>Select tournaments you've attended in the past</p>
         
-        <div class="past-tournaments-container mb-3">
-          {% if past_tournaments %}
-            <!-- Hidden form field to store selected tournament IDs -->
-            <div id="selected-tournaments-container">
-              {% for tournament_id in user_past_tournament_ids %}
-                <input type="hidden" name="past_tournaments" value="{{ tournament_id }}">
-              {% endfor %}
-            </div>
-            
-            <!-- Search input -->
-            <div class="input-group mb-3">
-              <input type="text" id="tournament-search" class="form-control" placeholder="Search tournaments..." aria-label="Search tournaments">
-              <button class="btn btn-outline-secondary" type="button" id="clear-search">Clear</button>
-            </div>
-            
-            <!-- Tournament search results -->
-            <div id="tournament-results" class="mb-3 scroll-box" style="display: none;"></div>
-            
-            <!-- Selected tournaments display -->
-            <div class="mb-2">
-              <h6>Selected Tournaments:</h6>
-              <div id="selected-tournaments" class="mt-2">
-                {% if user_past_tournament_ids %}
-                  {% for tournament in past_tournaments %}
-                    {% if tournament.id in user_past_tournament_ids %}
-                      <div class="selected-tournament mb-2" data-id="{{ tournament.id }}">
-                        <span class="tournament-name">{{ tournament.name }}</span>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-tournament">
-                          <small>×</small>
-                        </button>
-                      </div>
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  <p id="no-tournaments-selected">No tournaments selected</p>
-                {% endif %}
-              </div>
-            </div>
-            
-            <script>
-              // Store all tournaments in JavaScript
-              const allTournaments = [
-                {% for tournament in past_tournaments %}
-                  {
-                    id: '{{ tournament.id }}',
-                    name: '{{ tournament.name }}'
-                  },
-                {% endfor %}
-              ];
-              
-              // Track selected tournament IDs
-              const selectedTournamentIds = new Set([
-                {% for id in user_past_tournament_ids %}
-                  '{{ id }}',
-                {% endfor %}
-              ]);
-              
-              document.addEventListener('DOMContentLoaded', function() {
-                const searchInput = document.getElementById('tournament-search');
-                const clearButton = document.getElementById('clear-search');
-                const resultsContainer = document.getElementById('tournament-results');
-                const selectedContainer = document.getElementById('selected-tournaments');
-                const hiddenContainer = document.getElementById('selected-tournaments-container');
-                
-                // Search input handler
-                searchInput.addEventListener('input', function() {
-                  const query = this.value.toLowerCase().trim();
-                  
-                  if (query.length < 2) {
-                    resultsContainer.style.display = 'none';
-                    return;
-                  }
-                  
-                  // Filter tournaments based on query
-                  const matchingTournaments = allTournaments.filter(t => 
-                    t.name.toLowerCase().includes(query)
-                  );
-                  
-                  // Display results
-                  if (matchingTournaments.length > 0) {
-                    resultsContainer.innerHTML = '';
-                    matchingTournaments.forEach(tournament => {
-                      // Don't show already selected tournaments
-                      if (selectedTournamentIds.has(tournament.id)) return;
-                      
-                      const resultItem = document.createElement('div');
-                      resultItem.className = 'search-result p-2 d-flex justify-content-between align-items-center';
-                      resultItem.innerHTML = `
-                        <span>${tournament.name}</span>
-                        <button type="button" class="btn btn-sm btn-success add-tournament" data-id="${tournament.id}" data-name="${tournament.name}">
-                          Add
-                        </button>
-                      `;
-                      resultsContainer.appendChild(resultItem);
-                    });
-                    
-                    resultsContainer.style.display = 'block';
-                  } else {
-                    resultsContainer.innerHTML = '<p class="p-2">No matching tournaments found</p>';
-                    resultsContainer.style.display = 'block';
-                  }
-                });
-                
-                // Clear search
-                clearButton.addEventListener('click', function() {
-                  searchInput.value = '';
-                  resultsContainer.style.display = 'none';
-                });
-                
-                // Handle adding tournaments (delegation)
-                resultsContainer.addEventListener('click', function(e) {
-                  if (e.target.classList.contains('add-tournament') || 
-                      e.target.parentElement.classList.contains('add-tournament')) {
-                    
-                    const button = e.target.classList.contains('add-tournament') ? 
-                      e.target : e.target.parentElement;
-                    
-                    const tournamentId = button.dataset.id;
-                    const tournamentName = button.dataset.name;
-                    
-                    // Add to selected
-                    addTournament(tournamentId, tournamentName);
-                    
-                    // Remove from search results
-                    button.parentElement.remove();
-                  }
-                });
-                
-                // Handle removing tournaments (delegation)
-                selectedContainer.addEventListener('click', function(e) {
-                  if (e.target.classList.contains('remove-tournament') || 
-                      e.target.parentElement.classList.contains('remove-tournament')) {
-                    
-                    const button = e.target.classList.contains('remove-tournament') ? 
-                      e.target : e.target.parentElement;
-                    
-                    const tournamentElement = button.closest('.selected-tournament');
-                    const tournamentId = tournamentElement.dataset.id;
-                    
-                    // Remove from selected
-                    removeTournament(tournamentId);
-                    
-                    // Remove the element
-                    tournamentElement.remove();
-                    
-                    // Show "No tournaments selected" if none are selected
-                    if (selectedTournamentIds.size === 0) {
-                      const noTournamentsMsg = document.createElement('p');
-                      noTournamentsMsg.id = 'no-tournaments-selected';
-                      noTournamentsMsg.textContent = 'No tournaments selected';
-                      selectedContainer.appendChild(noTournamentsMsg);
-                    }
-                  }
-                });
-                
-                // Function to add a tournament
-                function addTournament(id, name) {
-                  // Add to the set
-                  selectedTournamentIds.add(id);
-                  
-                  // Create the visual element
-                  const tournamentElement = document.createElement('div');
-                  tournamentElement.className = 'selected-tournament mb-2';
-                  tournamentElement.dataset.id = id;
-                  tournamentElement.innerHTML = `
-                    <span class="tournament-name">${name}</span>
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-tournament">
-                      <small>×</small>
-                    </button>
-                  `;
-                  
-                  // Remove "No tournaments selected" message if present
-                  const noTournamentsMsg = document.getElementById('no-tournaments-selected');
-                  if (noTournamentsMsg) {
-                    noTournamentsMsg.remove();
-                  }
-                  
-                  // Add to selected container
-                  selectedContainer.appendChild(tournamentElement);
-                  
-                  // Add hidden input
-                  const hiddenInput = document.createElement('input');
-                  hiddenInput.type = 'hidden';
-                  hiddenInput.name = 'past_tournaments';
-                  hiddenInput.value = id;
-                  hiddenInput.dataset.id = id;
-                  hiddenContainer.appendChild(hiddenInput);
-                }
-                
-                // Function to remove a tournament
-                function removeTournament(id) {
-                  // Remove from the set
-                  selectedTournamentIds.delete(id);
-                  
-                  // Remove hidden input
-                  const input = hiddenContainer.querySelector(`input[data-id="${id}"]`);
-                  if (input) {
-                    input.remove();
-                  }
-                }
-              });
-            </script>
-            
-            <style>
-              .selected-tournament {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #f8f9fa;
-                padding: 8px 12px;
-                border-radius: 4px;
-                border: 1px solid #dee2e6;
-              }
-              
-              .search-result {
-                border-bottom: 1px solid #eee;
-                cursor: pointer;
-              }
-              
-              .search-result:hover {
-                background-color: #f8f9fa;
-              }
-              
-              .tournament-name {
-                flex-grow: 1;
-              }
-            </style>
-          {% else %}
-            <p class="text-muted">No tournaments available for selection.</p>
-          {% endif %}
+        <div class="past-tournaments-box">
+          {% for tournament in past_tournaments %}
+            <label class="checkbox-row">
+              <input type="checkbox" name="past_tournaments" value="{{ tournament.id }}"
+                    {% if tournament.id in user_past_tournament_ids %}checked{% endif %}>
+              {{ tournament.name }}
+            </label>
+          {% endfor %}
         </div>
+
+        <style>
+          .past-tournaments-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #fefefe;
+            margin-bottom: 1rem;
+          }
+
+          .checkbox-row {
+            display: flex;
+            align-items: center;
+            padding: 0.4rem 0;
+            font-size: 1rem;
+          }
+
+          .checkbox-row input[type="checkbox"] {
+            margin-right: 0.75rem;
+            transform: scale(1.3);
+          }
+        </style>
       </div>
       
       <div class="profile-section">
