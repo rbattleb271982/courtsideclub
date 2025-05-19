@@ -360,11 +360,12 @@ def update_sessions(tournament_slug):
     user_tourney.session_label = ", ".join(selected_sessions) if selected_sessions else None
     user_tourney.wants_to_meet = wants_to_meet
 
-    # Only mark as attending if they selected at least one session
-    if selected_sessions:
-        user_tourney.attending = True
-    else:
-        user_tourney.attending = False
+    # ALWAYS mark as attending regardless of session selection
+    # This ensures users can see their tournament in My Tournaments
+    user_tourney.attending = True
+    
+    # Set the attendance type explicitly
+    user_tourney.attendance_type = 'attending'
 
     db.session.commit()
 
@@ -428,14 +429,9 @@ def save_sessions(tournament_slug):
     # This ensures the user's attendance status is preserved
     user_tournament.attending = True
     
-    # Also explicitly mark the attendance_type as 'attending'
+    # Always mark the attendance_type as 'attending' explicitly
     # This is critical for proper display on My Tournaments page
     user_tournament.attendance_type = 'attending'
-    
-    # Make sure we don't lose the attendance_type value
-    # If a user is "maybe" attending, preserve that setting when saving sessions
-    if not user_tournament.attendance_type or user_tournament.attendance_type == '':
-        user_tournament.attendance_type = 'attending'  # Default to attending if not set
     
     # Log the session selection count
     if selected_sessions:
