@@ -151,12 +151,7 @@
         
         <div class="past-tournaments-container mb-3">
           {% if past_tournaments %}
-            <!-- Hidden form field to store selected tournament IDs -->
-            <div id="selected-tournaments-container">
-              {% for tournament_id in user_past_tournament_ids %}
-                <input type="hidden" name="past_tournaments" value="{{ tournament_id }}">
-              {% endfor %}
-            </div>
+            <!-- No initial hidden fields - we'll add them dynamically -->
             
             <!-- Search input -->
             <div class="input-group mb-3">
@@ -211,7 +206,7 @@
                 const clearButton = document.getElementById('clear-search');
                 const resultsContainer = document.getElementById('tournament-results');
                 const selectedContainer = document.getElementById('selected-tournaments');
-                const hiddenContainer = document.getElementById('selected-tournaments-container');
+                const form = document.querySelector('form[action*="profile"]');
                 
                 // Search input handler
                 searchInput.addEventListener('input', function() {
@@ -329,26 +324,28 @@
                   
                   // Add to selected container
                   selectedContainer.appendChild(tournamentElement);
-                  
-                  // Add hidden input
-                  const hiddenInput = document.createElement('input');
-                  hiddenInput.type = 'hidden';
-                  hiddenInput.name = 'past_tournaments';
-                  hiddenInput.value = id;
-                  hiddenInput.dataset.id = id;
-                  hiddenContainer.appendChild(hiddenInput);
                 }
+                
+                // Before form submit, update hidden fields for tournaments
+                form.addEventListener('submit', function(e) {
+                  // Remove any existing hidden fields for past_tournaments
+                  const existingFields = form.querySelectorAll('input[name="past_tournaments"]');
+                  existingFields.forEach(field => field.remove());
+                  
+                  // Add a hidden field for each selected tournament
+                  selectedTournamentIds.forEach(id => {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'past_tournaments';
+                    hiddenInput.value = id;
+                    form.appendChild(hiddenInput);
+                  });
+                });
                 
                 // Function to remove a tournament
                 function removeTournament(id) {
                   // Remove from the set
                   selectedTournamentIds.delete(id);
-                  
-                  // Remove hidden input
-                  const input = hiddenContainer.querySelector(`input[data-id="${id}"]`);
-                  if (input) {
-                    input.remove();
-                  }
                 }
               });
             </script>
