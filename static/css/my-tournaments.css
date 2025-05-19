@@ -1,34 +1,41 @@
 /* Mobile-optimized styles for My Tournaments page */
 
 .my-tournament-list {
-    margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.month-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .month-heading {
-    font-size: 1.5rem;
-    margin: 2rem 0 1rem;
-    color: #333;
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 0.5rem;
 }
 
 .tournament-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
 }
 
-/* Card Structure */
 .tournament-card {
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    background: #fff;
-    height: 100%;
-    transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .tournament-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 /* Tournament Headlines */

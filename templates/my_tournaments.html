@@ -26,6 +26,7 @@
     {% if grouped_tournaments %}
         <div class="my-tournament-list">
             {% for month, tournaments in grouped_tournaments.items() %}
+            <div class="month-section">
                 <h2 class="month-heading">{{ month }}</h2>
                 <div class="tournament-grid">
                     {% for ut in tournaments %}
