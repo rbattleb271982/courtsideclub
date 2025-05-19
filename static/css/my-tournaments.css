@@ -146,6 +146,20 @@
   margin: 0.5rem 0;
 }
 
+/* Session toggle styling */
+.session-toggle-label {
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.caret {
+  font-size: 0.9rem;
+  transform: translateY(1px);
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px) {
   .tournament-title {
