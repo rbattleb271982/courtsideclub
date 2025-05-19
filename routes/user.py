@@ -529,15 +529,19 @@ def browse_tournaments():
                 if ut.attending and ut.attendance_type == 'attending':
                     tournament.attendance_status = 'attending'
                     tournament.has_sessions = bool(ut.session_label)  # Track if they have sessions
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
                 elif ut.attending and ut.attendance_type == 'maybe':
                     tournament.attendance_status = 'maybe'
                     tournament.has_sessions = bool(ut.session_label)  # They might have sessions
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
                 # Fall back to legacy logic for any records without attendance_type
                 elif ut.attending and ut.session_label:
                     tournament.attendance_status = 'attending'
                     tournament.has_sessions = True
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
                 elif ut.attending and not ut.session_label:
                     tournament.attendance_status = 'maybe'
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
             
             # Add stats to each tournament
             tournament.attendee_count = UserTournament.query.filter(
