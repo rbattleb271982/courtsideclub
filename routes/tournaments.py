@@ -249,37 +249,55 @@ def view_tournament(tournament_slug):
     today = datetime.date.today()
     days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
     
-    # Get shared past tournaments for users attending this tournament
+    # Get past tournaments for users attending this tournament
     shared_past_tournaments = {}
     
-    # 1. Get all users attending this tournament (including current user)
-    attending_users = db.session.query(UserTournament.user_id).filter(
-        UserTournament.tournament_id == tournament.id,
-        UserTournament.attending == True
-    ).all()
-    
-    attending_user_ids = [user.user_id for user in attending_users]
-    
-    # 2. Always include the current user's past tournaments, even if they're the only attendee
-    if current_user.is_authenticated:
-        # 3. Get past tournaments for these users (excluding current tournament)
-        past_tournament_counts = db.session.query(
-            Tournament.name, db.func.count(UserPastTournament.user_id).label('count')
+    # If user is authenticated, show them past tournaments whether other attendees exist or not
+    if current_user.is_authenticated and current_user.id:
+        # Get current user's past tournaments (excluding current tournament)
+        user_past_tournaments = db.session.query(
+            Tournament.name
         ).join(
             UserPastTournament, Tournament.id == UserPastTournament.tournament_id
         ).filter(
-            # If there are other attendees, use their past tournaments too
-            # Otherwise just use the current user's past tournaments
-            UserPastTournament.user_id.in_(attending_user_ids),
+            UserPastTournament.user_id == current_user.id,
             Tournament.id != tournament.id  # Exclude current tournament
-        ).group_by(
-            Tournament.name
-        ).order_by(
-            db.desc('count')
         ).all()
         
-        # 4. Format the results as a dictionary
-        shared_past_tournaments = {name: count for name, count in past_tournament_counts}
+        # Format the results as a dictionary with count=1 for each tournament
+        shared_past_tournaments = {name: 1 for name, in user_past_tournaments}
+        
+        # Now get additional attendees' past tournaments (if any)
+        other_attendees = db.session.query(UserTournament.user_id).filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.user_id != current_user.id  # Exclude current user
+        ).all()
+        
+        other_attendee_ids = [user.user_id for user in other_attendees]
+        
+        if other_attendee_ids:
+            # Get past tournaments for other attendees
+            other_past_tournament_counts = db.session.query(
+                Tournament.name, db.func.count(UserPastTournament.user_id).label('count')
+            ).join(
+                UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+            ).filter(
+                UserPastTournament.user_id.in_(other_attendee_ids),
+                Tournament.id != tournament.id  # Exclude current tournament
+            ).group_by(
+                Tournament.name
+            ).all()
+            
+            # Update counts in the shared dictionary
+            for name, count in other_past_tournament_counts:
+                if name in shared_past_tournaments:
+                    shared_past_tournaments[name] += count
+                else:
+                    shared_past_tournaments[name] = count
+    
+    # Convert to sorted list of tuples for template rendering
+    sorted_shared_tournaments = sorted(shared_past_tournaments.items(), key=lambda x: x[1], reverse=True)
     
     # Pass session_saved flag to show lanyard button conditionally
     return render_template('user/tournament_detail.html',
@@ -297,7 +315,8 @@ def view_tournament(tournament_slug):
                          session_saved=session_saved,
                          days_until=days_until,
                          tournament_days=tournament_days,  # Pass the complete list of tournament days
-                         shared_past_tournaments=shared_past_tournaments)  # Pass shared past tournaments
+                         shared_past_tournaments=shared_past_tournaments,  # Pass shared past tournaments
+                         sorted_shared_tournaments=sorted_shared_tournaments)  # Pass sorted list for template
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
