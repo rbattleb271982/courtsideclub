@@ -34,7 +34,9 @@
                         <div class="card tournament-card h-100">
                             <div class="card-body p-3">
                                 <!-- Tournament title with mobile-optimized size -->
-                                <h5 class="tournament-title">{{ ut.tournament.name }}</h5>
+                                <h5 class="tournament-title">
+                                    <a href="{{ url_for('tournaments.view_tournament', tournament_slug=ut.tournament.slug) }}">{{ ut.tournament.name }}</a>
+                                </h5>
                                 
                                 <!-- Tournament metadata with mobile-optimized styling -->
                                 <div class="tournament-subtext mb-2">

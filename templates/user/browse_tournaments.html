@@ -34,7 +34,9 @@
         {% for tournament in tournaments %}
           <div class="tournament-card">
             <div class="tournament-header">
-              <h3 class="tournament-name">{{ tournament.name }}</h3>
+              <h3 class="tournament-name">
+                <a href="{{ url_for('tournaments.view_tournament', tournament_slug=tournament.slug) }}">{{ tournament.name }}</a>
+              </h3>
               <div class="tournament-meta">
                 {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d') }} · {{ tournament.city }}, {{ tournament.country }}
               </div>

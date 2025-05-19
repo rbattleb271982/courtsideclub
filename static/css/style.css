@@ -4,6 +4,18 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
+/* Tournament name link styles */
+.tournament-name a, .tournament-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.tournament-name a:hover, .tournament-title a:hover {
+  color: #2c8c56;
+  text-decoration: underline;
+}
+
 .nav {
   display: flex;
   justify-content: space-between;
