@@ -39,7 +39,9 @@ def login():
             logging.info(f"Password check result: {is_valid}")
 
             if is_valid:
-                login_user(user)
+                # Check if the remember checkbox was selected
+                remember = 'remember' in request.form
+                login_user(user, remember=remember)
 
                 # Log the successful login event
                 from services.event_logger import log_event

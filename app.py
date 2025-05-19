@@ -4,6 +4,7 @@ from flask_login import LoginManager
 import logging
 from models import db, User, load_user, Tournament
 import datetime
+from datetime import timedelta
 
 # Configure logging
 logging.basicConfig(
@@ -15,6 +16,9 @@ logging.basicConfig(
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object('config.Config')
+
+# Set the remember me cookie duration to 30 days
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)
 
 # Add custom Jinja2 filters
 @app.template_filter('timedelta')
