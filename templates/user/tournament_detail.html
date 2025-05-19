@@ -186,7 +186,7 @@
                     <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or not user_tournament.attending %}style="display: none;"{% endif %}>
                         <h4 class="h5 mb-3">Which sessions will you attend?</h4>
                         
-                        <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="sessionForm">
+                        <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="session-form">
                             <!-- Hidden inputs for selected sessions - will be populated by JS -->
                             <div id="hiddenSessionInputs">
                                 <!-- Preselected sessions -->
@@ -262,7 +262,7 @@
                         </div>
                         
                         {% set has_sessions_selected = selected_sessions|length > 0 %}
-                        <button type="submit" form="sessionForm"
+                        <button type="submit" form="session-form"
                             class="btn {% if has_sessions_selected %}btn-success{% else %}btn-outline-success{% endif %} save-btn" 
                             id="saveButton">
                             <i data-feather="save" class="icon-sm"></i> Save My Selections
@@ -453,4 +453,10 @@
         }
     }
 </style>
+
+<!-- New Session Save Bar -->
+<div id="session-save-bar">
+  <span id="session-count">✔️ 1 session selected</span>
+  <button type="submit" form="session-form">Save My Selections</button>
+</div>
 {% endblock %}
