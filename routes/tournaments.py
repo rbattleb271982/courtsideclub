@@ -231,19 +231,14 @@ def view_tournament(tournament_slug):
     
     # Generate a complete list of days from tournament start to end date
     from datetime import timedelta
-    tournament_days = []
+    day_dates = []
     current_date = tournament.start_date
-    day_num = 1
     
     # Loop through each day of the tournament
+    # Create a simple list of date objects that the template expects
     while current_date <= tournament.end_date:
-        tournament_days.append({
-            'date': current_date,
-            'day_num': day_num,
-            'formatted': current_date.strftime('%A, %b %d')
-        })
+        day_dates.append(current_date)
         current_date += timedelta(days=1)
-        day_num += 1
     
     # Calculate days until tournament for lanyard reminder
     today = datetime.date.today()
@@ -264,7 +259,7 @@ def view_tournament(tournament_slug):
                          is_full_attending=is_full_attending,
                          session_saved=session_saved,
                          days_until=days_until,
-                         tournament_days=tournament_days)  # Pass the complete list of tournament days
+                         day_dates=day_dates)  # Pass the correct day_dates list
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
