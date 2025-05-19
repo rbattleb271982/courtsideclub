@@ -72,12 +72,43 @@
 .attendance-buttons .btn {
   transition: all 0.2s ease;
   margin-right: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .attendance-buttons .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Attendance container styling */
+.attendance-container {
+  margin-top: 0.75rem !important;
+}
+
+/* Label for attendance buttons */
+.attendance-buttons label {
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .attendance-buttons .btn {
+    margin-bottom: 4px;
+  }
+  
+  .attendance-container {
+    margin-top: 0.5rem !important;
+  }
+  
+  .attendance-buttons label {
+    margin-bottom: 0.4rem;
+    font-size: 13.5px;
+  }
+  
+  .attendance-button-group {
+    margin-bottom: 0.4rem;
+  }
 }
 
 /* Make hover states more interactive */
