@@ -18,6 +18,23 @@
   text-decoration: underline;
 }
 
+/* Shared history link styles */
+.shared-history-link {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.shared-history-link a {
+  color: #1a5cff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.shared-history-link a:hover {
+  text-decoration: underline;
+}
+
 .nav {
   display: flex;
   justify-content: space-between;
