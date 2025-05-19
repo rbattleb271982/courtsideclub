@@ -134,19 +134,19 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Shared Past Tournaments Section -->
+                    <!-- Shared Tournament History Section -->
                     {% if stats.attending > 0 and shared_past_tournaments %}
                     <div class="shared-history-box mt-4">
-                        <h4 class="h5">Other tournaments attendees have visited:</h4>
+                        <h4 class="h5">Other tournaments attendees have been to:</h4>
                         <ul class="shared-history-list">
                             {% for name, count in shared_past_tournaments.items() %}
-                            <li>{{ name }} – {{ count }} {{ 'people have' if count > 1 else 'person has' }} attended</li>
+                            <li>{{ name }} – {{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament</li>
                             {% endfor %}
                         </ul>
                     </div>
                     {% else %}
                     <div class="mt-4">
-                        <p class="text-muted small empty-note">We'll show shared past tournaments once more attendees are confirmed.</p>
+                        <p class="text-muted small empty-note">We'll show tournaments attendees have been to once more people confirm attendance.</p>
                     </div>
                     {% endif %}
                 </div>
