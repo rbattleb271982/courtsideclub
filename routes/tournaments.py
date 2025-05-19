@@ -262,13 +262,14 @@ def view_tournament(tournament_slug):
     
     # 2. Only proceed if there are attending users
     if attending_user_ids:
-        # 3. Get past tournaments for these users
+        # 3. Get past tournaments for these users (excluding current tournament)
         past_tournament_counts = db.session.query(
             Tournament.name, db.func.count(UserPastTournament.user_id).label('count')
         ).join(
             UserPastTournament, Tournament.id == UserPastTournament.tournament_id
         ).filter(
-            UserPastTournament.user_id.in_(attending_user_ids)
+            UserPastTournament.user_id.in_(attending_user_ids),
+            Tournament.id != tournament.id  # Exclude current tournament
         ).group_by(
             Tournament.name
         ).order_by(
