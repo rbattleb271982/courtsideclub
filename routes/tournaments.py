@@ -454,9 +454,9 @@ def save_sessions(tournament_slug):
     else:
         flash('Your tournament preferences have been saved.', 'success')
     
-    # Always include session_saved parameter to ensure lanyard button appears
-    # This fixes the issue where the lanyard button doesn't show up
-    return redirect(url_for('tournaments.view_tournament', tournament_slug=tournament_slug, session_saved=1))
+    # Redirect to My Tournaments page after saving sessions
+    # This ensures users see their tournaments and lanyard reminder (if eligible)
+    return redirect(url_for('user.my_tournaments'))
 
 @tournaments_bp.route("/tournaments/<tournament_slug>/attend/new", methods=['POST'])
 @login_required
