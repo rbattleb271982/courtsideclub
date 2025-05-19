@@ -178,12 +178,9 @@
                         <h4 class="h5 mb-3">Which sessions will you attend?</h4>
 
                         <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="session-form">
-                            <!-- Hidden inputs for selected sessions - will be populated by JS -->
+                            <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
                             <div id="hiddenSessionInputs">
-                                <!-- Preselected sessions -->
-                                {% for session in selected_sessions %}
-                                <input type="hidden" name="sessions" value="{{ session }}">
-                                {% endfor %}
+                                <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
                             </div>
                             <!-- No hidden field for wants_to_meet - we use the visible checkbox instead -->
 
