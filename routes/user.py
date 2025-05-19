@@ -502,16 +502,21 @@ def my_tournaments():
 
     today = datetime.now().date()
     
-    # Get future tournaments the user is fully attending with sessions selected
+    # Get all future tournaments the user is attending (regardless of session selection)
     # Log queries to debug tournament display issues
-    logging.debug(f"Finding tournaments for user {current_user.id} with sessions selected")
+    logging.debug(f"Finding tournaments for user {current_user.id}")
     
+    # First, check all user tournaments directly from database
+    all_user_tournaments = UserTournament.query.filter_by(user_id=current_user.id).all()
+    for ut in all_user_tournaments:
+        logging.debug(f"Database record: Tournament: {ut.tournament_id}, Attending: {ut.attending}, Label: {ut.session_label}")
+    
+    # Now perform the filtered query for the page
     user_tournaments = (
         db.session.query(UserTournament)
         .filter(
             UserTournament.user_id == current_user.id,
-            UserTournament.attending == True
-            # Removed session_label filters that were too restrictive
+            UserTournament.attending == True  # Keep only those marked as attending
         )
         .join(Tournament)
         .filter(Tournament.start_date >= today)
@@ -521,9 +526,9 @@ def my_tournaments():
     
     # Log more detailed information about what we found
     for ut in user_tournaments:
-        logging.debug(f"Found tournament: {ut.tournament.name}, session_label: {ut.session_label}")
+        logging.debug(f"Found for display: {ut.tournament.name}, session_label: {ut.session_label}")
     
-    logging.debug(f"Found {len(user_tournaments)} tournaments with sessions")
+    logging.debug(f"Found {len(user_tournaments)} tournaments to display")
 
     # Get stats for each tournament using shared helper function
     stats = {}
