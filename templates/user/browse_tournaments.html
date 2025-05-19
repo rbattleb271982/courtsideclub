@@ -43,21 +43,13 @@
             <div class="tournament-stats">
               <div class="stat-item">
                 <span class="stat-value">
-                  {% if tournament.attendance_status == 'attending' and tournament.has_sessions %}
-                    {{ tournament.attendee_count + 1 }}
-                  {% else %}
-                    {{ tournament.attendee_count }}
-                  {% endif %}
+                  {{ tournament.attendee_count }}
                 </span> 
                 <span class="stat-label">attending</span>
               </div>
               <div class="stat-item">
                 <span class="stat-value">
-                  {% if tournament.attendance_status == 'attending' and tournament.has_sessions %}
-                    {% if tournament.wants_to_meet == True %}1{% else %}0{% endif %}
-                  {% else %}
-                    0
-                  {% endif %}
+                  {{ tournament.meetup_count }}
                 </span> 
                 <span class="stat-label">open to meeting</span>
               </div>

@@ -168,28 +168,21 @@ def view_tournament(tournament_slug):
             return redirect(url_for('user.lanyard'))
         return redirect(url_for('user.my_tournaments'))
 
-    # Get tournament stats - exclude the current user for accurate display
-    other_users_filter = UserTournament.user_id != current_user.id if current_user.is_authenticated else True
+    # Import the shared attendance counter function
+    from routes.user import get_tournament_attendance_stats
     
-    stats = {
-        'attending': UserTournament.query.filter(
-            UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            other_users_filter
-        ).count(),
-        'meetup': UserTournament.query.filter(
-            UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            UserTournament.wants_to_meet == True,
-            other_users_filter
-        ).count(),
-        'lanyards': UserTournament.query.filter(
-            UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            other_users_filter
-        ).join(User).filter_by(lanyard_ordered=True).count()
-    }
-
+    # Get tournament stats using the shared helper function
+    # Exclude current user for consistent display across all views
+    stats = get_tournament_attendance_stats(tournament.id, include_current_user=False)
+    
+    # Add lanyards count (not part of standard stats)
+    other_users_filter = UserTournament.user_id != current_user.id if current_user.is_authenticated else True
+    stats['lanyards'] = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament.id,
+        UserTournament.attending == True,
+        other_users_filter
+    ).join(User).filter_by(lanyard_ordered=True).count()
+    
     # Use the authenticated template for logged-in users
     attending_count = stats.get('attending', 0) 
     meeting_count = stats.get('meetup', 0)
