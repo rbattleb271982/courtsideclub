@@ -136,16 +136,34 @@ input[type="checkbox"]:checked ~ .check-icon {
   display: none;
 }
 
-/* Custom checked styling */
+/* Modern browsers - :has selector */
 .session-checkbox:has(input[type="checkbox"]:checked) {
-  background-color: #4CAF50;
-  color: white;
-  border-color: #4CAF50;
+  background-color: #4CAF50 !important;
+  color: white !important;
+  border-color: #4CAF50 !important;
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+  transform: translateY(-2px);
+}
+
+.session-checkbox:has(input[type="checkbox"]:checked) .session-name,
+.session-checkbox:has(input[type="checkbox"]:checked) .fan-count,
+.session-checkbox:has(input[type="checkbox"]:checked) .check-icon {
+  color: white !important;
 }
 
 .session-checkbox:has(input[type="checkbox"]:checked) .check-icon {
   display: inline-flex;
+}
+
+/* Animation for checked state */
+.session-checkbox:has(input[type="checkbox"]:checked) {
+  animation: checkPulse 0.3s ease-in-out;
+}
+
+@keyframes checkPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }
 
 /* Save button container */
