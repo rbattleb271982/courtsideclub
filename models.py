@@ -129,8 +129,8 @@ class UserTournament(db.Model):
     # dates = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     # sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     
-    # Primary field for session information
-    session_label = db.Column(db.String(255))
+    # Primary field for session information - changed from String(255) to Text
+    session_label = db.Column(db.Text)
     
     # Whether the user is actually attending this tournament
     attending = db.Column(db.Boolean, default=False)
