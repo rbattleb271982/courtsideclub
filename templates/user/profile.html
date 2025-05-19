@@ -95,6 +95,15 @@
     padding-top: 1rem;
     border-top: 1px solid #eee;
   }
+  
+  /* Past Tournaments scroll box */
+  .scroll-box {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
 </style>
 {% endblock %}
 
@@ -145,7 +154,7 @@
         
         <div class="past-tournaments-container mb-3">
           {% if tournaments %}
-            <div class="past-tournament-list">
+            <div class="scroll-box">
               {% for tournament in tournaments %}
                 {% if tournament.end_date < today.date() %}
                 <div class="form-check mb-2">
@@ -155,8 +164,7 @@
                          value="{{ tournament.id }}"
                          {% if tournament.id in user_past_tournament_ids %}checked{% endif %}>
                   <label class="form-check-label" for="past_tournament_{{ tournament.id }}">
-                    {{ tournament.name }} ({{ tournament.start_date.strftime('%b %Y') }})
-                    <small class="text-muted">{{ tournament.city }}, {{ tournament.country }}</small>
+                    {{ tournament.name }}
                   </label>
                 </div>
                 {% endif %}
