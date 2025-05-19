@@ -48,8 +48,17 @@
                         <div class="location">{{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</div>
                     </div>
                     <div class="tournament-stats">
-                        <span class="pill">{{ attending_count }} fan{% if attending_count != 1 %}s{% endif %} attending</span>
-                        <span class="pill">{{ meeting_count }} open to meeting</span>
+                        {% if user_tournament and user_tournament.attending and user_tournament.session_label %}
+                        <span class="pill">1 fan attending</span>
+                        {% if user_tournament.wants_to_meet %}
+                        <span class="pill">1 open to meeting</span>
+                        {% else %}
+                        <span class="pill">0 open to meeting</span>
+                        {% endif %}
+                        {% else %}
+                        <span class="pill">0 fans attending</span>
+                        <span class="pill">0 open to meeting</span>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="card-body">
