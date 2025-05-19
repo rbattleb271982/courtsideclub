@@ -1,13 +1,29 @@
 {% extends "layout.html" %}
-```{% block title %}My Tournaments{% endblock %}
+{% block title %}My Tournaments{% endblock %}
 
 {% block content %}
 <div class="container">
     <h1 class="mb-4">My Tournaments</h1>
+    
+    {% if show_lanyard_reminder %}
+    <div class="alert alert-success mb-4">
+        <div class="d-flex align-items-center">
+            <div>
+                <h5 class="alert-heading">Don't forget your lanyard!</h5>
+                <p class="mb-0">The tournament is {{ days_away }} day{{ 's' if days_away != 1 else '' }} away. Order your free lanyard now to get it in time.</p>
+            </div>
+            <div class="ms-auto">
+                <a href="{{ url_for('user.lanyard') }}" class="btn btn-primary">Order My Lanyard</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
-    {% if user_tournaments %}
+    {% if grouped_tournaments %}
         <div class="row">
-            {% for ut in user_tournaments %}
+            {% for month, tournaments in grouped_tournaments.items() %}
+                <h2 class="col-12 mb-3">{{ month }}</h2>
+                {% for ut in tournaments %}
                 <div class="col-12 col-md-6 col-lg-4 mb-4">
                     <div class="card tournament-card h-100">
                         <div class="card-body">
@@ -34,12 +50,14 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             {% endfor %}
         </div>
     {% else %}
         <div class="alert alert-info">
             <p>You haven't registered for any upcoming tournaments yet.</p>
-            <a href="{{ url_for('user.browse_tournaments') }}" class="btn btn-primary mt-2">Browse Tournaments</a>
+            <p class="mb-0">Select specific sessions for tournaments you're attending to see them here.</p>
+            <a href="{{ url_for('user.browse_tournaments') }}" class="btn btn-primary mt-3">Browse Tournaments</a>
         </div>
     {% endif %}
 </div>

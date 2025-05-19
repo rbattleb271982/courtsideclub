@@ -446,7 +446,7 @@ def change_password():
 @login_required
 def my_tournaments():
     from models import Tournament, UserTournament
-    from datetime import datetime
+    from datetime import datetime, timedelta
 
     today = datetime.now().date()
     
@@ -482,7 +482,6 @@ def my_tournaments():
 
     # Group tournaments by month
     from itertools import groupby
-    from datetime import datetime
     
     def get_month_key(ut):
         return ut.tournament.start_date.strftime('%B %Y')
@@ -491,11 +490,26 @@ def my_tournaments():
     sorted_tournaments = sorted(user_tournaments, key=get_month_key)
     for month, group in groupby(sorted_tournaments, key=get_month_key):
         grouped_tournaments[month] = list(group)
+    
+    # Calculate lanyard reminder data
+    show_lanyard_reminder = False
+    days_away = None
+    soonest_tournament = None
+    
+    # Only show lanyard reminder if user has tournaments with sessions AND hasn't ordered a lanyard
+    if user_tournaments and not current_user.lanyard_ordered:
+        show_lanyard_reminder = True
+        # Find soonest upcoming tournament for days_away calculation
+        soonest_tournament = min(user_tournaments, key=lambda ut: ut.tournament.start_date)
+        days_away = (soonest_tournament.tournament.start_date - today).days
 
     return render_template(
         "my_tournaments.html",
         grouped_tournaments=grouped_tournaments,
-        stats=stats
+        stats=stats,
+        show_lanyard_reminder=show_lanyard_reminder,
+        days_away=days_away,
+        soonest_tournament=soonest_tournament.tournament if soonest_tournament else None
     )
 
 @user_bp.route('/browse-tournaments')
