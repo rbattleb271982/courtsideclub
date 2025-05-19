@@ -168,11 +168,20 @@ def tournament_detail(tournament_slug):
     # Get tournament stats - include the current user for their own page
     # This allows users to see themselves in the counts right after saving
     
+    # First get all attending users including the current user
+    attending_users = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament.id,
+        UserTournament.attending == True
+    ).all()
+    
+    # Debug output to verify
+    attendee_ids = [ut.user_id for ut in attending_users]
+    print(f"DEBUG: All attendee IDs: {attendee_ids}")
+    print(f"DEBUG: Current user ID: {current_user.id}")
+    
+    # Calculate stats with current user included
     stats = {
-        'attending': UserTournament.query.filter(
-            UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True
-        ).count(),
+        'attending': len(attending_users),
         'meetup': UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
@@ -183,6 +192,8 @@ def tournament_detail(tournament_slug):
             UserTournament.attending == True
         ).join(User).filter_by(lanyard_ordered=True).count()
     }
+    
+    print(f"DEBUG: Final stats: {stats}")
     
     # Get session-specific stats
     session_stats = {}
