@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/compact-session-toggles.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-buttons.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/toggle-switch.css') }}">
-<script src="{{ url_for('static', filename='js/tournament-detail.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/tournament-detail-new.js') }}" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -208,10 +208,10 @@
                                     </div>
                                     
                                     <div class="session-chips">
-                                        <!-- Day session -->
+                                        <!-- Day session with checkbox -->
                                         {% set day_key = "Day " + day_num|string + " - Day" %}
-                                        {% set is_selected = day_key in selected_sessions %}
-                                        <div class="session-chip {% if is_selected %}selected{% endif %}" data-session="{{ day_key }}">
+                                        <label class="session-checkbox">
+                                            <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
                                             <span class="session-name">Day Session</span>
                                             <span class="fan-count">
                                                 {% if day_key in session_stats and session_stats[day_key].attendees > 0 %}
@@ -219,12 +219,12 @@
                                                 {% endif %}
                                             </span>
                                             <span class="check-icon">✓</span>
-                                        </div>
+                                        </label>
                                         
-                                        <!-- Night session -->
+                                        <!-- Night session with checkbox -->
                                         {% set night_key = "Day " + day_num|string + " - Night" %}
-                                        {% set is_selected = night_key in selected_sessions %}
-                                        <div class="session-chip {% if is_selected %}selected{% endif %}" data-session="{{ night_key }}">
+                                        <label class="session-checkbox">
+                                            <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
                                             <span class="session-name">Night Session</span>
                                             <span class="fan-count">
                                                 {% if night_key in session_stats and session_stats[night_key].attendees > 0 %}
@@ -232,7 +232,7 @@
                                                 {% endif %}
                                             </span>
                                             <span class="check-icon">✓</span>
-                                        </div>
+                                        </label>
                                     </div>
                                 </div>
                                 {% endfor %}
