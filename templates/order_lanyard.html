@@ -7,8 +7,32 @@
     <div class="col-12 col-lg-8 mx-auto">
         <div class="card">
             <div class="card-header">
-                <h2>Order Your CourtSide Club Lanyard</h2>
+                <h2 class="mobile-title">Order Your CourtSide Club Lanyard</h2>
             </div>
+            <style>
+                @media (max-width: 480px) {
+                    .mobile-title {
+                        font-size: 1.4rem;
+                    }
+                    .form-label {
+                        font-size: 14px;
+                        margin-bottom: 0.25rem;
+                    }
+                    .form-group {
+                        margin-bottom: 0.75rem;
+                    }
+                    .form-control {
+                        padding: 0.35rem 0.5rem;
+                        font-size: 14px;
+                    }
+                    .alert {
+                        padding: 0.75rem;
+                    }
+                    .btn {
+                        padding: 0.4rem 0.75rem;
+                    }
+                }
+            </style>
             <div class="card-body">
                 {% if not current_user.is_admin and no_sessions %}
                 <div class="alert alert-info">
@@ -24,8 +48,8 @@
                     <a href="{{ url_for('user.home') }}" class="btn btn-primary">Back to Home</a>
                 </div>
                 {% else %}
-                <div class="lanyard-intro mb-4">
-                    <p>
+                <div class="lanyard-intro mb-3">
+                    <p style="font-size: 14px; line-height: 1.4;">
                         The CourtSide Club lanyard is more than just something to wear — it's a simple way to find your people. Whether you're going solo or with friends, spotting someone else wearing a lanyard means you're not alone. It's a quiet invitation to say hello, cheer together, or just share the moment. <strong>The lanyard will be shipped directly to you.</strong>
                     </p>
                 </div>
