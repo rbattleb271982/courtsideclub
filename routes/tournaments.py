@@ -428,6 +428,10 @@ def save_sessions(tournament_slug):
     # This ensures the user's attendance status is preserved
     user_tournament.attending = True
     
+    # Also explicitly mark the attendance_type as 'attending'
+    # This is critical for proper display on My Tournaments page
+    user_tournament.attendance_type = 'attending'
+    
     # Make sure we don't lose the attendance_type value
     # If a user is "maybe" attending, preserve that setting when saving sessions
     if not user_tournament.attendance_type or user_tournament.attendance_type == '':
@@ -440,7 +444,10 @@ def save_sessions(tournament_slug):
         print(f"DEBUG: User {current_user.id} saved with no specific sessions with type {user_tournament.attendance_type}")
     
     user_tournament.wants_to_meet = wants_to_meet
-    user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+    
+    # Store sessions with spaces after commas for better readability
+    # The comma-separated format is critical for proper display
+    user_tournament.session_label = ', '.join(selected_sessions) if selected_sessions else None
     
     # Log the event for tracking
     event_data = {
