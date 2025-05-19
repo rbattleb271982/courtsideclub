@@ -231,14 +231,19 @@ def view_tournament(tournament_slug):
     
     # Generate a complete list of days from tournament start to end date
     from datetime import timedelta
-    day_dates = []
+    tournament_days = []
     current_date = tournament.start_date
+    day_num = 1
     
     # Loop through each day of the tournament
-    # Create a simple list of date objects that the template expects
     while current_date <= tournament.end_date:
-        day_dates.append(current_date)
+        tournament_days.append({
+            'date': current_date,
+            'day_num': day_num,
+            'formatted': current_date.strftime('%A, %b %d')
+        })
         current_date += timedelta(days=1)
+        day_num += 1
     
     # Calculate days until tournament for lanyard reminder
     today = datetime.date.today()
@@ -259,7 +264,7 @@ def view_tournament(tournament_slug):
                          is_full_attending=is_full_attending,
                          session_saved=session_saved,
                          days_until=days_until,
-                         day_dates=day_dates)  # Pass the correct day_dates list
+                         tournament_days=tournament_days)  # Pass the complete list of tournament days
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
@@ -355,12 +360,11 @@ def update_sessions(tournament_slug):
     user_tourney.session_label = ", ".join(selected_sessions) if selected_sessions else None
     user_tourney.wants_to_meet = wants_to_meet
 
-    # ALWAYS mark as attending regardless of session selection
-    # This ensures users can see their tournament in My Tournaments
-    user_tourney.attending = True
-    
-    # Set the attendance type explicitly
-    user_tourney.attendance_type = 'attending'
+    # Only mark as attending if they selected at least one session
+    if selected_sessions:
+        user_tourney.attending = True
+    else:
+        user_tourney.attending = False
 
     db.session.commit()
 
@@ -424,9 +428,14 @@ def save_sessions(tournament_slug):
     # This ensures the user's attendance status is preserved
     user_tournament.attending = True
     
-    # Always mark the attendance_type as 'attending' explicitly
+    # Also explicitly mark the attendance_type as 'attending'
     # This is critical for proper display on My Tournaments page
     user_tournament.attendance_type = 'attending'
+    
+    # Make sure we don't lose the attendance_type value
+    # If a user is "maybe" attending, preserve that setting when saving sessions
+    if not user_tournament.attendance_type or user_tournament.attendance_type == '':
+        user_tournament.attendance_type = 'attending'  # Default to attending if not set
     
     # Log the session selection count
     if selected_sessions:

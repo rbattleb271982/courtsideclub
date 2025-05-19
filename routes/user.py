@@ -25,11 +25,12 @@ def get_tournament_attendance_stats(tournament_id, include_current_user=True):
     """
     from flask_login import current_user
     
-    # Base query to get valid attendance records - don't filter by session_label anymore
-    # This ensures we count all users who are marked as attending
+    # Base query to get valid attendance records
     query = UserTournament.query.filter(
         UserTournament.tournament_id == tournament_id,
-        UserTournament.attending == True
+        UserTournament.attending == True,
+        UserTournament.session_label.isnot(None),
+        UserTournament.session_label != ''
     )
     
     # Optionally exclude current user
@@ -586,27 +587,16 @@ def my_tournaments():
         # Store the days data for this tournament
         session_stats[tournament.id] = tournament_days
 
-    # Group tournaments by month using improved sorting
-    from collections import defaultdict
-    from calendar import month_name
-
-    grouped = defaultdict(list)
-    month_keys = []
-
-    for ut in user_tournaments:
-        year_month = (ut.tournament.start_date.year, ut.tournament.start_date.month)
-        grouped[year_month].append(ut)
-        if year_month not in month_keys:
-            month_keys.append(year_month)
-
-    # Sort by (year, month)
-    month_keys.sort()
-
-    # Create a dict with readable labels
-    grouped_tournaments = {
-        f"{month_name[month]} {year}": grouped[(year, month)]
-        for (year, month) in month_keys
-    }
+    # Group tournaments by month
+    from itertools import groupby
+    
+    def get_month_key(ut):
+        return ut.tournament.start_date.strftime('%B %Y')
+    
+    grouped_tournaments = {}
+    sorted_tournaments = sorted(user_tournaments, key=get_month_key)
+    for month, group in groupby(sorted_tournaments, key=get_month_key):
+        grouped_tournaments[month] = list(group)
     
     # Calculate lanyard reminder data
     show_lanyard_reminder = False
