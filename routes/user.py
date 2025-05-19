@@ -341,7 +341,6 @@ def profile():
         # Handle profile updates
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
-        location = request.form.get('location')
         notifications = 'notifications' in request.form
         
         # Get the past tournaments the user has selected
@@ -353,12 +352,6 @@ def profile():
             user.first_name = first_name
         if last_name:
             user.last_name = last_name
-        
-        # Track if location was updated
-        location_changed = False
-        if location is not None and location != user.location:
-            user.location = location
-            location_changed = True
         
         # Also update the name field for backward compatibility
         if first_name and last_name:
@@ -384,9 +377,6 @@ def profile():
         event_data = {
             'profile_updated': True
         }
-        if location_changed:
-            event_data['location_updated'] = True
-            event_data['new_location'] = location
         log_event(current_user.id, 'profile_updated', event_data)
         
         flash('Profile updated successfully!', 'success')
