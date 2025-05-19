@@ -441,17 +441,48 @@ def toggle_notifications():
 @user_bp.route('/cancel_attendance/<tournament_id>', methods=['POST'])
 @login_required
 def cancel_attendance(tournament_id):
-    user_tournament = UserTournament.query.filter_by(
-        user_id=current_user.id,
-        tournament_id=tournament_id
-    ).first()
+    # Log the user ID before making any changes
+    user_id = current_user.id
+    logging.debug(f"Cancel attendance initiated by user {user_id} for tournament {tournament_id}")
     
-    if user_tournament:
-        db.session.delete(user_tournament)
-        db.session.commit()
-        flash("Your tournament attendance has been cancelled.", "success")
-
-    return redirect(url_for('user.my_tournaments'))
+    try:
+        # Explicitly query by user_id value instead of using current_user directly
+        user_tournament = UserTournament.query.filter_by(
+            user_id=user_id,
+            tournament_id=tournament_id
+        ).first()
+        
+        if user_tournament:
+            # Save data for logging before deletion
+            tournament_name = user_tournament.tournament.name if user_tournament.tournament else "Unknown"
+            
+            # Use event logger to track deletion
+            from services.event_logger import log_event
+            log_event(user_id, 'unattend_tournament', {
+                'tournament_id': tournament_id,
+                'tournament_name': tournament_name
+            })
+            
+            # Instead of deleting the record, mark it as not attending
+            # This prevents potential issues with session management
+            user_tournament.attending = False
+            user_tournament.session_label = None
+            db.session.commit()
+            
+            flash("Your tournament attendance has been cancelled.", "success")
+        else:
+            logging.warning(f"No tournament registration found for user {user_id}, tournament {tournament_id}")
+            flash("No tournament registration found.", "warning")
+        
+        # Explicit return to my_tournaments page
+        return redirect(url_for('user.my_tournaments'))
+    
+    except Exception as e:
+        # Log any errors to help debug session issues
+        logging.error(f"Error cancelling attendance: {str(e)}")
+        db.session.rollback()
+        flash("An error occurred while cancelling your attendance.", "danger")
+        return redirect(url_for('user.my_tournaments'))
 
 @user_bp.route('/change_password', methods=['POST','GET'])
 @login_required

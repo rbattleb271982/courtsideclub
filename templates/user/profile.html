@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block head %}
+<style>
+  .profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  .profile-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .profile-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-section h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .profile-form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .profile-form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-right: 10px;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+    background-color: #4CAF50;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+  
+  .toggle-label {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 34px;
+  }
+  
+  .password-section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <div class="profile-container">
+    <div class="profile-header">
+      <h2>Your Profile</h2>
+      <p>Update your personal information and preferences</p>
+    </div>
+    
+    <form action="{{ url_for('user.update_profile') }}" method="POST">
+      <div class="profile-section">
+        <h3>Personal Information</h3>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <div class="profile-form-group">
+              <label for="first_name">First Name</label>
+              <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name or '' }}">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="profile-form-group">
+              <label for="last_name">Last Name</label>
+              <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name or '' }}">
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile-form-group">
+          <label for="email">Email Address</label>
+          <input type="email" class="form-control" id="email" value="{{ user.email }}" disabled>
+          <small class="text-muted">Your email address cannot be changed</small>
+        </div>
+        
+        <div class="profile-form-group">
+          <label for="location">Location (City, Country)</label>
+          <input type="text" class="form-control" id="location" name="location" value="{{ user.location or '' }}" placeholder="e.g. New York, USA">
+          <small class="text-muted">Help other tennis fans find you at tournaments</small>
+        </div>
+      </div>
+      
+      <div class="profile-section">
+        <h3>Preferences</h3>
+        
+        <div class="profile-form-group">
+          <div class="d-flex align-items-center">
+            <label class="switch">
+              <input type="checkbox" name="notifications" {% if user.notifications %}checked{% endif %}>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Email Notifications</span>
+          </div>
+          <small class="text-muted">Receive updates about tournaments you're attending</small>
+        </div>
+      </div>
+      
+      <div class="profile-form-group">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+    
+    <div class="password-section">
+      <h3>Password</h3>
+      <p>Want to change your password?</p>
+      <a href="{{ url_for('user.change_password') }}" class="btn btn-outline-secondary">Change Password</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
