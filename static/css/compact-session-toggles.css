@@ -39,12 +39,19 @@
   min-width: calc(50% - 0.5rem);
   max-width: 200px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  color: #555; /* Light gray text for unselected state */
 }
 
 .session-chip:hover {
   border-color: #4CAF50;
   transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
+}
+
+/* Only apply the green border hover effect to unselected chips */
+.session-chip:not(.selected):hover {
+  border-color: #4CAF50;
+  color: #2e7d32;
 }
 
 .session-chip.selected {
@@ -53,15 +60,18 @@
   border-color: #4CAF50;
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
   transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 
 .session-chip .session-name {
   font-weight: 500;
   margin-right: auto;
+  transition: font-weight 0.2s ease;
 }
 
 .session-chip.selected .session-name {
   font-weight: 700;
+  color: white;
 }
 
 .session-chip .fan-count {
@@ -81,12 +91,15 @@
 .session-chip .check-icon {
   margin-left: 0.5rem;
   display: none;
+  transition: all 0.2s ease;
 }
 
 .session-chip.selected .check-icon {
-  display: inline; /* Show checkmarks when selected */
+  display: inline-flex; /* Show checkmarks when selected */
   font-weight: bold;
   color: white;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Save button container */
