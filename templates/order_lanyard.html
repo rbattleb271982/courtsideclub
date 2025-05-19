@@ -24,7 +24,11 @@
                     <a href="{{ url_for('user.home') }}" class="btn btn-primary">Back to Home</a>
                 </div>
                 {% else %}
-                <p class="mb-4">Order your exclusive CourtSide Club lanyard to easily identify other community members at tournaments. The lanyard will be shipped directly to your address.</p>
+                <div class="lanyard-intro mb-4">
+                    <p>
+                        The CourtSide Club lanyard is more than just something to wear — it's a simple way to find your people. Whether you're going solo or with friends, spotting someone else wearing a lanyard means you're not alone. It's a quiet invitation to say hello, cheer together, or just share the moment. <strong>The lanyard will be shipped directly to you.</strong>
+                    </p>
+                </div>
 
                 <form action="{{ url_for('user.lanyard') }}" method="post" class="needs-validation" novalidate>
                     <div class="form-group">

@@ -35,6 +35,19 @@
   text-decoration: underline;
 }
 
+/* Lanyard introduction styling */
+.lanyard-intro {
+  max-width: 650px;
+  margin: 0 auto 1.5rem;
+}
+
+.lanyard-intro p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
 .nav {
   display: flex;
   justify-content: space-between;
