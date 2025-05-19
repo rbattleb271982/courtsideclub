@@ -94,19 +94,39 @@
   margin-bottom: 0;
 }
 
+/* Static session heading styling */
+.session-heading {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #212529;
+}
+
 .week-toggle {
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem;
   font-weight: 600;
   font-size: 0.85rem;
   color: #555;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
 .week-toggle:hover {
   background-color: #f0f0f0;
+}
+
+.toggle-icon {
+  transition: transform 0.2s ease;
+}
+
+.icon-rotated {
+  transform: rotate(180deg);
 }
 
 .week-days {

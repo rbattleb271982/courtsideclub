@@ -332,11 +332,11 @@ def tournament_detail(tournament_slug):
                          days_until=days_until,
                          session_saved=session_saved)
 
-# Keep the profile route for backward compatibility, redirecting to my_tournaments
+# Updated profile route to show user profile instead of redirecting
 @user_bp.route('/profile')
 @login_required
 def profile():
-    return redirect(url_for('user.my_tournaments'))
+    return render_template('user/profile.html', user=current_user)
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required
