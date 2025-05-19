@@ -104,15 +104,10 @@
                                         <label class="d-flex align-items-center">
                                           <input type="checkbox" name="wants_to_meet" value="true"
                                             {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}
-                                            id="wants-to-meet-top" class="me-2">
+                                            id="wants-to-meet-checkbox" class="me-2">
                                           <span><i data-feather="users" class="icon-sm text-success me-1"></i> I'm open to meeting other fans</span>
                                         </label>
                                       </div>
-                                      
-                                      <!-- Hidden form for the checkbox (connected to existing JS) -->
-                                      <form id="meeting-toggle-form" class="d-none" method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
-                                        <input type="hidden" name="wants_to_meet" id="wants-to-meet-hidden" value="{{ 'true' if wants_to_meet is not defined or wants_to_meet else 'false' }}">
-                                      </form>
                                     </div>
                                     {% endif %}
                                   </div>
@@ -221,8 +216,15 @@
                                 </div>
                                 {% endfor %}
                                 
-                                <!-- Hidden input for wants_to_meet -->
-                                <input type="hidden" name="wants_to_meet" id="wants_to_meet_hidden" value="{{ 'true' if wants_to_meet is not defined or wants_to_meet else 'false' }}">
+                                <!-- Open to meeting checkbox -->
+                                <div class="mb-3 mt-4">
+                                  <label class="d-flex align-items-center">
+                                    <input type="checkbox" name="wants_to_meet" value="true"
+                                      {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}
+                                      class="me-2">
+                                    <span><i data-feather="users" class="icon-sm text-success me-1"></i> I'm open to meeting other fans</span>
+                                  </label>
+                                </div>
                             </div>
                             
                             <!-- Static save button -->

@@ -93,10 +93,11 @@ def tournament_detail(tournament_slug):
     
     # Process form submission for session selection
     if request.method == 'POST':
-        # Get selected sessions and wants_to_meet preference (from either top or bottom checkbox)
+        # Get selected sessions
         selected_sessions = request.form.getlist('sessions')
-        # Check for wants_to_meet from either the top section or the form section
-        wants_to_meet = bool(request.form.get('wants-to-meet-top', False)) or bool(request.form.get('wants_to_meet', False))
+        # Get wants_to_meet preference using standardized field name
+        wants_to_meet_value = request.form.get('wants_to_meet')
+        wants_to_meet = wants_to_meet_value == 'true' if wants_to_meet_value else False
         
         # Get or create user tournament registration
         user_tournament = UserTournament.query.filter_by(
@@ -173,13 +174,14 @@ def tournament_detail(tournament_slug):
     my_attending = False
     my_wants_to_meet = False
     
-    # Check if the current user should be counted
-    if user_tournament and user_tournament.attending and user_tournament.session_label:
+    # Check if the current user should be counted - must have session(s) selected
+    if user_tournament and user_tournament.attending and user_tournament.session_label and user_tournament.session_label != '':
         my_attending = True
         my_wants_to_meet = user_tournament.wants_to_meet
         
     # Calculate total stats including the current user if they're attending with sessions
     attending_count = 1 if my_attending else 0
+    # Only count as "open to meeting" if they have sessions selected AND wants_to_meet is True
     meetup_count = 1 if (my_attending and my_wants_to_meet) else 0
     lanyard_count = 1 if (my_attending and current_user.lanyard_ordered) else 0
     
