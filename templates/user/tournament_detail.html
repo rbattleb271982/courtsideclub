@@ -38,8 +38,8 @@
 
 {% block content %}
 <div class="container tournament-detail">
-    <div class="row">
-        <div class="col-md-8">
+    <div class="tournament-detail-container">
+        <div class="tournament-detail-main">
             <div class="card tournament-card mb-4">
                 <div class="tournament-header">
                     <h1 class="tournament-name">{{ tournament.name }}</h1>
@@ -240,7 +240,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="tournament-detail-sidebar">
             
             {% if days_until <= 30 and not current_user.lanyard_ordered %}
             <!-- Lanyard Reminder -->
@@ -260,6 +260,38 @@
     .tournament-detail {
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
+    }
+    
+    /* Tournament layout container */
+    .tournament-detail-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    /* Main content area */
+    .tournament-detail-main {
+        flex: 1 1 60%;
+        min-width: 0;
+    }
+    
+    /* Sidebar area */
+    .tournament-detail-sidebar {
+        flex: 1 1 30%;
+        min-width: 300px;
+    }
+    
+    /* On mobile screens, stack vertically */
+    @media (max-width: 767px) {
+        .tournament-detail-container {
+            flex-direction: column;
+        }
+        
+        .tournament-detail-main,
+        .tournament-detail-sidebar {
+            width: 100%;
+            flex-basis: 100%;
+        }
     }
     
     .tournament-details {
