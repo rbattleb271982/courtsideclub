@@ -17,6 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Track selected sessions
   let selectedSessions = [];
   
+  // Initialize session save bar
+  const sessionSaveBar = document.getElementById('session-save-bar');
+  const sessionCount = document.getElementById('session-count');
+  
   // Initialize selected sessions from existing state
   document.querySelectorAll('.session-chip.selected').forEach(chip => {
     selectedSessions.push(chip.dataset.session);
@@ -25,6 +29,16 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update the UI based on initial state and selected sessions
   updateSessionCountDisplay();
   updateSaveButtonState();
+  
+  // Check initial state of the session save bar
+  if (sessionSaveBar && sessionCount) {
+    if (selectedSessions.length > 0) {
+      sessionSaveBar.classList.add('visible');
+      sessionCount.textContent = `✔️ ${selectedSessions.length} session${selectedSessions.length !== 1 ? 's' : ''} selected`;
+    } else {
+      sessionSaveBar.classList.remove('visible');
+    }
+  }
   
   // Make sure visibility is correct on page load for desktop 
   // Fix for the desktop issue where session picker gets hidden
@@ -70,7 +84,10 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateSessionCountDisplay() {
     const sessionCount = selectedSessions.length;
     const sessionCountElement = document.getElementById('sessionCountMessage');
+    const sessionSaveBar = document.getElementById('session-save-bar');
+    const sessionCountBar = document.getElementById('session-count');
     
+    // Update the regular session count message
     if (sessionCountElement) {
       if (sessionCount > 0) {
         sessionCountElement.innerHTML = `
@@ -90,6 +107,16 @@ document.addEventListener('DOMContentLoaded', function() {
       // Re-initialize feather icons
       if (typeof feather !== 'undefined') {
         feather.replace();
+      }
+    }
+    
+    // Update the new session save bar
+    if (sessionSaveBar && sessionCountBar) {
+      if (sessionCount > 0) {
+        sessionSaveBar.classList.add('visible');
+        sessionCountBar.textContent = `✔️ ${sessionCount} session${sessionCount !== 1 ? 's' : ''} selected`;
+      } else {
+        sessionSaveBar.classList.remove('visible');
       }
     }
   }
