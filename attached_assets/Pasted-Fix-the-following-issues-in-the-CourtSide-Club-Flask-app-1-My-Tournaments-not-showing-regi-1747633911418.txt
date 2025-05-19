@@ -1,0 +1,65 @@
+Fix the following issues in the CourtSide Club Flask app:
+
+---
+
+✅ 1. My Tournaments not showing registered tournaments  
+File: `routes/user.py`  
+Route: `@user_bp.route('/my_tournaments')`
+
+Update the query so that tournaments show up if:
+- The user has a related UserTournament where:
+   - `attending == True`
+   - `session_label IS NOT NULL AND session_label != ''`
+   - `user_id == current_user.id`
+
+Ensure the template renders these tournaments. Right now, it falsely says “You haven’t registered…” even when sessions have been saved.
+
+---
+
+✅ 2. Move “Order Lanyard” callout to My Tournaments  
+File: `templates/user/my_tournaments.html`  
+Logic: Add a green callout box **after the list of tournaments**
+
+Only show it if:
+- The user has **at least one** UserTournament with:
+   - `attending == True`
+   - `session_label IS NOT NULL AND session_label != ''`
+- The user has NOT already ordered a lanyard (`User.lanyard_ordered == False`)
+
+Callout text:
+
+🎾 Ready to connect in person?  
+Order your free CourtSide Club lanyard so other members can find you at the tournament.  
+→ [Order My Lanyard] (links to `/order_lanyard`)
+
+---
+
+✅ 3. Redirect to My Tournaments after saving  
+File: `routes/user.py`, likely inside the `@user_bp.route('/tournaments/<slug>', methods=['POST'])`
+
+After a user submits session selections:
+- Skip the flash message
+- Redirect them to `url_for('user.my_tournaments')`  
+This confirms their choices and keeps them in the correct flow.
+
+---
+
+✅ 4. Fix session layout on mobile (reduce vertical space)  
+File: Likely `templates/user/tournament_detail.html` and associated CSS
+
+On mobile, the session toggles (“Day Session” and “Night Session”) appear on **separate lines** under each day. This makes the form extremely tall and hard to scroll.
+
+Fix the layout so that:
+- “Day Session” and “Night Session” appear on the **same row**
+- Padding/margins are adjusted to make it more compact
+- It works cleanly across typical mobile screen sizes
+
+---
+
+⛔ Do not finish until:
+- Registered tournaments appear in /my_tournaments
+- The lanyard CTA shows only when expected and links correctly
+- Saving a tournament redirects the user to My Tournaments
+- Day/Night session buttons appear on the same line and reduce vertical scroll on mobile
+
+✅ Use checkpoints sparingly.
