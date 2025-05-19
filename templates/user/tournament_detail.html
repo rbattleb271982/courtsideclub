@@ -72,22 +72,22 @@
                                 {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
                                 {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
 
-                                <!-- Simplified Attendance UI -->
+                                <!-- Simplified Attendance UI with reduced spacing -->
                                 <div class="attendance-buttons">
-                                  <label class="mb-2 font-weight-bold">Will you be there?</label>
+                                  <label class="mb-1 font-weight-bold">Will you be there?</label>
 
                                   <div class="attendance-button-group">
                                     <!-- I'm Attending -->
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2">
-                                      <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
+                                      <button type="submit" class="btn py-1 {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
                                         <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
                                       </button>
                                     </form>
 
                                     <!-- Maybe Attending -->
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2">
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
                                       <input type="hidden" name="attendance_type" value="maybe">
-                                      <button type="submit" class="btn {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
+                                      <button type="submit" class="btn py-1 {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
                                         <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
                                       </button>
                                     </form>
@@ -134,15 +134,20 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Shared Tournament History Section -->
+                    <!-- Shared Tournament History Section with collapsible functionality -->
                     {% if current_user.is_authenticated and sorted_shared_tournaments %}
                     <div class="shared-history-box mt-4" id="shared-history">
-                        <h4 class="h5">Previous tournaments people have attended:</h4>
-                        <ul class="shared-history-list">
-                            {% for name, count in sorted_shared_tournaments %}
-                            <li>{{ name }} <span class="small text-muted">({{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament)</span></li>
-                            {% endfor %}
-                        </ul>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="h5 mb-0">Previous tournaments people have attended:</h4>
+                            <button id="toggleButton" class="btn btn-sm btn-outline-secondary">Show All Previous Tournaments</button>
+                        </div>
+                        <div id="tournamentList" class="collapsed mt-2" style="display:none;">
+                            <ul class="shared-history-list">
+                                {% for name, count in sorted_shared_tournaments %}
+                                <li>{{ name }} <span class="small text-muted">({{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament)</span></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                     {% elif current_user.is_authenticated %}
                     <div class="mt-4">
@@ -513,4 +518,24 @@
 </style>
 
 <!-- Removed floating session save bar -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButton = document.getElementById('toggleButton');
+        const tournamentList = document.getElementById('tournamentList');
+        
+        if (toggleButton && tournamentList) {
+            toggleButton.addEventListener('click', function() {
+                // Toggle visibility
+                if (tournamentList.style.display === 'none') {
+                    tournamentList.style.display = 'block';
+                    toggleButton.textContent = 'Hide Tournament List';
+                } else {
+                    tournamentList.style.display = 'none';
+                    toggleButton.textContent = 'Show All Previous Tournaments';
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

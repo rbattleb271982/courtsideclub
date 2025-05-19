@@ -1,0 +1,58 @@
+Apply the following UI updates to the CourtSide Club project. All changes are for the logged-in, mobile-first experience. Only use checkpoints if absolutely necessary. Do not finish until you’ve fully tested the result visually and in the browser.
+1. Collapsible List – Past Tournaments People Have Attended
+
+File: templates/user/tournament_detail.html
+Where: Near the section that lists "Previous tournaments people have attended"
+
+Wrap the tournament list in a container with id="tournamentList" and class="collapsed".
+Use a button with id="toggleButton" to toggle visibility.
+Start with the list collapsed, and toggle between:
+Show All Previous Tournaments
+Hide Tournament List
+Add a <script> block at the bottom of the template with JavaScript to handle the toggle.
+2. Fix Mobile Spacing – “Will You Be There?” Section
+
+File: templates/user/tournament_detail.html
+Where: Inside the attendance selection section
+
+Reduce vertical space between the “Will you be there?” heading and the attendance buttons.
+Use tighter spacing classes or inline styles to shrink button and section padding/margin.
+Do not remove or restyle the red “Not Attending” text — it should remain large and visible.
+3. Fix Navbar Alignment
+
+File: templates/layout.html (or wherever the main navbar is defined)
+Where: Inside the <nav> or header section
+
+Remove the tennis ball logo/icon.
+Left-align the “CourtSide Club” text.
+Right-align the hamburger menu icon.
+Use display: flex; justify-content: space-between; align-items: center; on the nav container.
+Ensure it works well on mobile.
+4. Add “Invite via Text” to Profile Page (Mobile Only)
+
+File: templates/user/profile.html
+Where: Directly below the lanyard section
+
+Add a centered paragraph:
+“Know someone going to a tournament? Invite them to join CourtSide Club!”
+Add a button/link:
+<a href="sms:?&body=I'm%20using%20CourtSide%20Club%20to%20see%20who’s%20going%20to%20tennis%20tournaments%20this%20season.%20Join%20me%20here%20–%20it’s%20free!%20https://courtsideclub.com" class="invite-btn">
+  Invite via Text
+</a>
+In your CSS (probably static/styles.css or equivalent):
+.invite-btn {
+  display: inline-block;
+  background-color: #007c5f;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  .invite-btn {
+    display: none; /* Hide on desktop */
+  }
+}
+Reminder: Only use checkpoints if absolutely necessary. Do not finish until you’ve fully tested each change in the live app preview. Ensure all new layout and button behavior works correctly in mobile view and the invite button is hidden on desktop.

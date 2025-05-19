@@ -25,8 +25,8 @@
 </head>
 <body>
     <header class="mobile-header">
-      <div class="nav-container">
-        <div class="logo">🎾 CourtSide Club</div>
+      <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo">CourtSide Club</div>
         <nav id="mobile-menu" class="mobile-menu">
           {% if current_user.is_authenticated %}
             {% if current_user.is_admin %}
