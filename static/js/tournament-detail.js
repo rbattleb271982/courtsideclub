@@ -58,6 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
       // Toggle the selected state
       this.classList.toggle('selected');
       
+      // Enhance visual feedback
+      this.classList.remove('just-toggled'); // Reset
+      void this.offsetWidth; // Force reflow
+      this.classList.add('just-toggled'); // Trigger transition again
+      
       // Update the selectedSessions array
       if (this.classList.contains('selected')) {
         // Add to array if not already there

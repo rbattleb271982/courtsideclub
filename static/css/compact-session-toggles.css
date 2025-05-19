@@ -32,46 +32,49 @@
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   position: relative;
-  overflow: hidden;
   flex: 1;
   min-width: calc(50% - 0.5rem);
   max-width: 200px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  color: #555; /* Light gray text for unselected state */
+  color: #555;
 }
 
 .session-chip:hover {
   border-color: #4CAF50;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(76, 175, 80, 0.2);
-}
-
-/* Only apply the green border hover effect to unselected chips */
-.session-chip:not(.selected):hover {
-  border-color: #4CAF50;
-  color: #2e7d32;
 }
 
 .session-chip.selected {
-  background-color: #4CAF50;
-  color: white;
-  border-color: #4CAF50;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
-  transform: translateY(-2px);
-  transition: all 0.2s ease;
+  background-color: #4CAF50 !important;
+  color: white !important;
+  border-color: #4CAF50 !important;
+}
+
+.session-chip.selected .session-name,
+.session-chip.selected .fan-count,
+.session-chip.selected .check-icon {
+  color: white !important;
+  font-weight: 600;
+}
+
+.session-chip .check-icon {
+  margin-left: 0.5rem;
+  display: none;
+}
+
+.session-chip.selected .check-icon {
+  display: inline-flex;
+}
+
+.session-chip.just-toggled {
+  transition: transform 0.2s ease;
+  transform: scale(1.03);
 }
 
 .session-chip .session-name {
   font-weight: 500;
   margin-right: auto;
   transition: font-weight 0.2s ease;
-}
-
-.session-chip.selected .session-name {
-  font-weight: 700;
-  color: white;
 }
 
 .session-chip .fan-count {
@@ -81,25 +84,6 @@
   padding: 0.15rem 0.5rem;
   margin-left: 0.5rem;
   white-space: nowrap;
-}
-
-.session-chip.selected .fan-count {
-  background-color: rgba(255,255,255,0.2);
-  color: white;
-}
-
-.session-chip .check-icon {
-  margin-left: 0.5rem;
-  display: none;
-  transition: all 0.2s ease;
-}
-
-.session-chip.selected .check-icon {
-  display: inline-flex; /* Show checkmarks when selected */
-  font-weight: bold;
-  color: white;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Save button container */
