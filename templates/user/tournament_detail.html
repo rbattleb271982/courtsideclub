@@ -175,17 +175,12 @@
                 <div class="card-body">
                     <!-- Session Selection UI - Visible for both "I'm Attending" and "Maybe Attending" users -->
                     <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or not user_tournament.attending %}style="display: none;"{% endif %}>
-                        <h4 class="h5 mb-3">Which sessions will you attend?</h4>
-
                         <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="session-form">
                             <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
                             <div id="hiddenSessionInputs">
                                 <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
                             </div>
                             <!-- No hidden field for wants_to_meet - we use the visible checkbox instead -->
-
-                            <!-- Session Attendance heading above day groups -->
-                            <h5 class="mb-3">Session Attendance (Tap a Week Below)</h5>
                             
                             <!-- Create session day groups with all tournament days -->
                             <div class="session-groups">
