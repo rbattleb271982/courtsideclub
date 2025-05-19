@@ -2,6 +2,10 @@
 {% block title %}Profile{% endblock %}
 
 {% block head %}
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <style>
   .profile-container {
     max-width: 600px;
@@ -148,25 +152,32 @@
         
         <div class="past-tournaments-container mb-3">
           {% if past_tournaments %}
-            <div class="scroll-box">
-              {% for tournament in past_tournaments %}
-                <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" 
-                         name="past_tournaments" 
-                         id="past_tournament_{{ tournament.id }}" 
-                         value="{{ tournament.id }}"
-                         {% if tournament.id in user_past_tournament_ids %}checked{% endif %}>
-                  <label class="form-check-label" for="past_tournament_{{ tournament.id }}">
+            <div class="form-group">
+              <select class="form-control" id="past-tournaments-select" name="past_tournaments" multiple="multiple" style="width: 100%;">
+                {% for tournament in past_tournaments %}
+                  <option value="{{ tournament.id }}" {% if tournament.id in user_past_tournament_ids %}selected{% endif %}>
                     {{ tournament.name }}
-                  </label>
-                </div>
-              {% endfor %}
+                  </option>
+                {% endfor %}
+              </select>
             </div>
+            <small class="text-muted">You can select multiple tournaments from the dropdown above</small>
           {% else %}
             <p class="text-muted">No past tournaments available for selection.</p>
           {% endif %}
         </div>
       </div>
+      
+      <!-- Add select2 initialization -->
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          $('#past-tournaments-select').select2({
+            placeholder: 'Select tournaments you have attended',
+            allowClear: true,
+            width: '100%'
+          });
+        });
+      </script>
       
       <div class="profile-section">
         <h3>Preferences</h3>
