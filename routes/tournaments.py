@@ -33,53 +33,42 @@ def list_tournaments():
     # Get the filtered tournaments, in chronological order by start date
     tournaments = query.all()
 
-    # Add stats to each tournament - exclude current user from counts
-    other_users_filter = UserTournament.user_id != current_user.id if current_user.is_authenticated else True
+    # Add stats to each tournament - exclude current user from counts consistently
+    # Only calculate these stats once and use the same values everywhere
     
+    attendance_counts = {}
     for tournament in tournaments:
-        # Count users who are attending (excluding current user until they select sessions)
+        # Always exclude the current user from browse page stats for consistency
+        # Count users who are attending (excluding current user)
         tournament.attendee_count = UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
-            other_users_filter
+            UserTournament.user_id != current_user.id
         ).count()
 
-        # Count users who are open to meeting (excluding current user until they select sessions)
+        # Count users who are open to meeting (excluding current user)
         tournament.hand_raised_count = UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
-            UserTournament.open_to_meet == True,
-            other_users_filter
+            UserTournament.wants_to_meet == True, 
+            UserTournament.user_id != current_user.id
         ).count()
 
-        # Count users who ordered lanyards (excluding current user until they select sessions)
+        # Count users who ordered lanyards (excluding current user)
         tournament.lanyard_count = UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
-            other_users_filter
+            UserTournament.user_id != current_user.id
         ).join(User).filter_by(lanyard_ordered=True).count()
+        
+        # Store consistent stats in the attendance_counts dictionary
+        attendance_counts[tournament.id] = {
+            'attending': tournament.attendee_count,
+            'meeting': tournament.hand_raised_count
+        }
 
     # Get today's date for highlighting current tournaments
     today = datetime.datetime.now().date()
-
-    # Calculate attendance and meetup counts for each tournament
-    attendance_counts = {}
-    for tournament in tournaments:
-        # Count users who have registered for this tournament
-        attending_users = UserTournament.query.filter_by(
-            tournament_id=tournament.id
-        ).count()
-
-        # Count users who are open to meeting
-        meeting_users = UserTournament.query.filter_by(
-            tournament_id=tournament.id,
-            open_to_meet=True
-        ).count()
-
-        attendance_counts[tournament.id] = {
-            'attending': attending_users,
-            'meeting': meeting_users
-        }
 
     return render_template('tournaments.html',
                           tournaments=tournaments,
