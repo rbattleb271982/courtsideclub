@@ -504,12 +504,27 @@ def save_sessions(tournament_slug):
     # First, get all possible sessions for this tournament
     all_tournament_sessions = []
     if hasattr(tournament, 'sessions') and tournament.sessions:
-        days = tournament.sessions
-        for day in days:
-            day_key = f"Day {day['day_num']} - Day"
-            night_key = f"Day {day['day_num']} - Night"
-            all_tournament_sessions.append(day_key)
-            all_tournament_sessions.append(night_key)
+        # The sessions data structure depends on how it was defined
+        # If it's already a list of day/night sessions, use it directly
+        if isinstance(tournament.sessions, list) and all(isinstance(s, str) for s in tournament.sessions):
+            all_tournament_sessions = tournament.sessions
+        # Otherwise, if it's a list of day objects with day_num
+        else:
+            try:
+                days = tournament.sessions
+                for day in days:
+                    if isinstance(day, dict) and 'day_num' in day:
+                        day_key = f"Day {day['day_num']} - Day"
+                        night_key = f"Day {day['day_num']} - Night"
+                        all_tournament_sessions.append(day_key)
+                        all_tournament_sessions.append(night_key)
+            except Exception as e:
+                print(f"DEBUG: Error processing tournament sessions: {e}")
+                print(f"DEBUG: Session data type: {type(tournament.sessions)}")
+                # Fallback - use basic days 1-7 if we can't process the sessions
+                for i in range(1, 8):
+                    all_tournament_sessions.append(f"Day {i} - Day")
+                    all_tournament_sessions.append(f"Day {i} - Night")
 
     print(f"DEBUG: All possible sessions for {tournament.id}: {all_tournament_sessions}")
     print(f"DEBUG: User selected sessions: {selected_sessions}")
