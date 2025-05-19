@@ -28,9 +28,8 @@ def get_tournament_attendance_stats(tournament_id, include_current_user=True):
     # Base query to get valid attendance records
     query = UserTournament.query.filter(
         UserTournament.tournament_id == tournament_id,
-        UserTournament.attending == True,
-        UserTournament.session_label.isnot(None),
-        UserTournament.session_label != ''
+        UserTournament.attending == True
+        # Removed session_label filters that were causing the "0 attending" issue
     )
     
     # Optionally exclude current user
