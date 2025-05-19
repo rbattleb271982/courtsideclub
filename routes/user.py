@@ -420,10 +420,15 @@ def my_tournaments():
 
     today = datetime.now().date()
     
-    # Get future tournaments the user is registered for
+    # Get future tournaments the user is fully attending with sessions selected
     user_tournaments = (
         db.session.query(UserTournament)
-        .filter_by(user_id=current_user.id, attending=True)
+        .filter(
+            UserTournament.user_id == current_user.id,
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None),
+            UserTournament.session_label != ''
+        )
         .join(Tournament)
         .filter(Tournament.start_date >= today)
         .order_by(Tournament.start_date)
