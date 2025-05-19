@@ -447,23 +447,29 @@ def change_password():
 def my_tournaments():
     from models import Tournament, UserTournament
     from datetime import datetime, timedelta
+    import logging
 
     today = datetime.now().date()
     
     # Get future tournaments the user is fully attending with sessions selected
+    # Log queries to debug tournament display issues
+    logging.debug(f"Finding tournaments for user {current_user.id} with sessions selected")
+    
     user_tournaments = (
         db.session.query(UserTournament)
         .filter(
             UserTournament.user_id == current_user.id,
-            UserTournament.attending == True,
-            UserTournament.session_label.isnot(None),
-            UserTournament.session_label != ''
+            UserTournament.attending == True, 
+            UserTournament.session_label.isnot(None),  # Has a session_label
+            UserTournament.session_label != ''         # Session label is not empty
         )
         .join(Tournament)
         .filter(Tournament.start_date >= today)
         .order_by(Tournament.start_date)
         .all()
     )
+    
+    logging.debug(f"Found {len(user_tournaments)} tournaments with sessions")
 
     # Get stats for each tournament
     stats = {}
