@@ -500,7 +500,8 @@ def save_sessions(tournament_slug):
     
     # Store sessions with consistent comma-only formatting to avoid matching issues
     # The comma-separated format without extra spaces ensures proper highlighting
-    user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+    # When a checkbox is unchecked, it won't be in the form data, so this correctly handles removals
+    user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else ''
     
     # Log the event for tracking
     event_data = {
