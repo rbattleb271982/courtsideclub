@@ -211,19 +211,19 @@
                                 </div>
                                 {% endfor %}
                                 
-                                <!-- Open to meeting checkbox - styled prominently -->
-                                <div class="mb-3 mt-4 p-3 border rounded bg-light">
-                                  <label class="d-flex align-items-center">
-                                    <input type="checkbox" name="wants_to_meet" value="true"
-                                      {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}
-                                      class="me-2 form-check-input">
-                                    <span class="fw-bold"><i data-feather="users" class="icon-sm text-success me-1"></i> I'm open to meeting other fans</span>
-                                  </label>
-                                </div>
+
+                            </div>
+                            
+                            <!-- Want to meet checkbox -->
+                            <div class="mt-4 mb-2 text-center">
+                                <label>
+                                  <input type="checkbox" name="wants_to_meet" {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}>
+                                  I'm open to meeting other fans
+                                </label>
                             </div>
                             
                             <!-- Static save button -->
-                            <div class="text-center mt-4 mb-3">
+                            <div class="text-center mt-2 mb-3">
                                 <button type="submit" class="btn btn-primary" style="width: 100%; max-width: 300px;">Save My Selections</button>
                             </div>
                         </form>

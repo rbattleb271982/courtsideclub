@@ -374,7 +374,8 @@ def save_sessions(tournament_slug):
     
     # Get selected sessions and wants_to_meet preference
     selected_sessions = request.form.getlist('sessions')
-    wants_to_meet = request.form.get('wants_to_meet') == 'true'
+    # Standard checkbox handling - it's present in the form data only when checked
+    wants_to_meet = 'wants_to_meet' in request.form
     
     # Get or create user tournament registration
     user_tournament = UserTournament.query.filter_by(
