@@ -7,7 +7,10 @@
   <p>From Grand Slams to Masters 1000s and 500s, discover who's attending, meet up in person, and make match days unforgettable. Built for real fans who want genuine, in-person connections.</p>
   <p>CourtSide Club helps tennis fans connect at the world's biggest tournaments.</p>
   <p>Whether you're attending solo or with friends, we make it easy to discover who's going and feel part of something bigger.</p>
-  <a href="{{ url_for('auth.signup') }}" class="hero-cta-button">Join Now</a>
+  <div class="hero-buttons">
+    <a href="{{ url_for('auth.signup') }}" class="hero-cta-button">Join Now</a>
+    <a href="{{ url_for('auth.login') }}" class="hero-cta-button hero-secondary-button">Log In</a>
+  </div>
 </div>
 
 <footer class="text-center text-sm text-gray-500 mt-12 p-6">

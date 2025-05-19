@@ -992,6 +992,14 @@ body {
   line-height: 1.6;
 }
 
+/* Hero Buttons Container */
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
 /* CTA Buttons */
 .howitworks-cta-button, .hero-cta-button {
   display: inline-block;
@@ -1001,11 +1009,26 @@ body {
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
-  margin-top: 20px;
+  min-width: 120px;
+  text-align: center;
 }
 
 .howitworks-cta-button:hover, .hero-cta-button:hover {
   background-color: #005f39;
+  color: white;
+  text-decoration: none;
+}
+
+/* Secondary button style for login */
+.hero-secondary-button {
+  background-color: white;
+  color: #007a4d;
+  border: 2px solid #007a4d;
+}
+
+.hero-secondary-button:hover {
+  background-color: #e8f5e9;
+  color: #007a4d;
 }
 
 /* Utilities */
