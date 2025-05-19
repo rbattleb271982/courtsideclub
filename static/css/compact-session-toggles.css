@@ -125,9 +125,20 @@ input[type="checkbox"]:checked ~ .check-icon {
 .session-count {
   font-size: 0.75rem;
   font-weight: normal;
-  opacity: 0.85;
+  opacity: 0.95;
   display: inline-block;
   margin-left: 0.25rem;
+  color: white !important;
+}
+
+/* Make sure the text appears white when the button is selected */
+.session-checkbox-input:checked ~ * .session-count {
+  color: white !important;
+}
+
+/* Also make it visible on unselected buttons */
+.session-checkbox .session-count {
+  color: #555 !important;
 }
 
 .session-checkbox .fan-count {
@@ -137,6 +148,24 @@ input[type="checkbox"]:checked ~ .check-icon {
   padding: 0.15rem 0.5rem;
   margin-left: 0.5rem;
   white-space: nowrap;
+}
+
+/* Style for attendance badge */
+.attendance-badge {
+  font-size: 0.7rem;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 0.1rem 0.4rem;
+  margin-top: 0.25rem;
+  color: #555;
+  display: inline-block;
+  font-weight: normal;
+}
+
+/* White text on green background for selected sessions */
+.session-checkbox-input:checked ~ .attendance-badge {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .session-checkbox .check-icon {
