@@ -168,56 +168,66 @@ def tournament_detail(tournament_slug):
     # Get tournament stats - include the current user for their own page
     # This allows users to see themselves in the counts right after saving
     
-    # First get all attending users including the current user
-    # Only count users who are attending AND have selected at least one session
-    attending_users = UserTournament.query.filter(
+    # Temporarily add specific debug output
+    user_session = "none"
+    if user_tournament and user_tournament.session_label:
+        user_session = user_tournament.session_label
+    print(f"DEBUG: Current user {current_user.id} session label: '{user_session}'")
+    
+    # Get all attending users who have selected sessions
+    # Use a simpler approach with fewer conditions to start
+    query = UserTournament.query.filter(
         UserTournament.tournament_id == tournament.id,
-        UserTournament.attending == True,
-        UserTournament.session_label.isnot(None),
-        UserTournament.session_label != ''
-    ).all()
+        UserTournament.attending == True
+    )
+    
+    # Add the filter for non-empty session labels
+    attending_users = []
+    for ut in query.all():
+        if ut.session_label:  # This handles both None and empty string
+            attending_users.append(ut)
+            print(f"DEBUG: Found user {ut.user_id} with sessions: '{ut.session_label}'")
     
     # Debug output to verify
     attendee_ids = [ut.user_id for ut in attending_users]
-    print(f"DEBUG: All attendee IDs: {attendee_ids}")
+    print(f"DEBUG: Final attendee IDs: {attendee_ids}")
     print(f"DEBUG: Current user ID: {current_user.id}")
     
     # Calculate stats with current user included, but only if they've selected sessions
     stats = {
         'attending': len(attending_users),
-        'meetup': UserTournament.query.filter(
-            UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            UserTournament.wants_to_meet == True,
-            UserTournament.session_label.isnot(None),
-            UserTournament.session_label != ''
-        ).count(),
-        'lanyards': UserTournament.query.filter(
-            UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            UserTournament.session_label.isnot(None),
-            UserTournament.session_label != ''
-        ).join(User).filter_by(lanyard_ordered=True).count()
+        'meetup': 0,  # We'll calculate this below
+        'lanyards': 0  # We'll calculate this below
     }
+    
+    # Count 'meetup' users with the same approach (for consistency)
+    for ut in attending_users:
+        if ut.wants_to_meet:
+            stats['meetup'] += 1
+        
+        # Count lanyards
+        if ut.user.lanyard_ordered:
+            stats['lanyards'] += 1
     
     print(f"DEBUG: Final stats: {stats}")
     
-    # Get session-specific stats
+    # Get session-specific stats using the same approach
     session_stats = {}
     if tournament.sessions:
         for session in tournament.sessions:
-            # Count users attending this specific session - including current user
-            # Only count those who have selected at least one session
-            session_attendees = UserTournament.query.filter(
-                UserTournament.tournament_id == tournament.id,
-                UserTournament.attending == True,
-                UserTournament.session_label.isnot(None),
-                UserTournament.session_label != '',
-                UserTournament.session_label.like(f'%{session}%')
-            ).count()
+            # Initialize count for this session
+            session_count = 0
             
+            # Loop through users already filtered above
+            for ut in attending_users:
+                # Check if this session is in the user's selections
+                if ut.session_label and session in ut.session_label.split(','):
+                    session_count += 1
+                    print(f"DEBUG: User {ut.user_id} has selected session {session}")
+            
+            # Store the count
             session_stats[session] = {
-                'attendees': session_attendees
+                'attendees': session_count
             }
     
     # Calculate days until tournament
