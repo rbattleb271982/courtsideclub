@@ -501,6 +501,19 @@ def save_sessions(tournament_slug):
     # Store sessions with consistent comma-only formatting to avoid matching issues
     # The comma-separated format without extra spaces ensures proper highlighting
     # When a checkbox is unchecked, it won't be in the form data, so this correctly handles removals
+    # First, get all possible sessions for this tournament
+    all_tournament_sessions = []
+    if hasattr(tournament, 'sessions') and tournament.sessions:
+        days = tournament.sessions
+        for day in days:
+            day_key = f"Day {day['day_num']} - Day"
+            night_key = f"Day {day['day_num']} - Night"
+            all_tournament_sessions.append(day_key)
+            all_tournament_sessions.append(night_key)
+
+    print(f"DEBUG: All possible sessions for {tournament.id}: {all_tournament_sessions}")
+    print(f"DEBUG: User selected sessions: {selected_sessions}")
+    
     # Store a clean comma-separated list of selected sessions
     # Using a set to remove any duplicate values that might have been selected
     unique_sessions = list(set(selected_sessions)) if selected_sessions else []
@@ -508,7 +521,6 @@ def save_sessions(tournament_slug):
     
     # Debug the session label being saved
     print(f"DEBUG: Saving sessions for user {current_user.id}, Tournament: {tournament.id}")
-    print(f"DEBUG: Selected sessions: {selected_sessions}")
     print(f"DEBUG: Final session_label: {user_tournament.session_label}")
     
     # Log the event for tracking

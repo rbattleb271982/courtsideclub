@@ -203,7 +203,7 @@
                                         <!-- Day session with checkbox -->
                                         {% set day_key = "Day " + day.day_num|string + " - Day" %}
                                         <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions or day_key|trim in selected_sessions %}checked{% endif %} class="session-checkbox-input">
+                                            <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
                                             <span class="session-name">Day Session</span>
                                             <span class="check-icon check-icon-only">✓</span>
                                         </label>
@@ -211,7 +211,7 @@
                                         <!-- Night session with checkbox -->
                                         {% set night_key = "Day " + day.day_num|string + " - Night" %}
                                         <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions or night_key|trim in selected_sessions %}checked{% endif %} class="session-checkbox-input">
+                                            <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
                                             <span class="session-name">Night Session</span>
                                             <span class="check-icon check-icon-only">✓</span>
                                         </label>
