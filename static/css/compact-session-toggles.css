@@ -152,20 +152,26 @@ input[type="checkbox"]:checked ~ .check-icon {
 
 /* Style for attendance badge */
 .attendance-badge {
-  font-size: 0.7rem;
-  background-color: rgba(0, 0, 0, 0.15);
-  border-radius: 12px;
-  padding: 0.1rem 0.4rem;
-  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  background-color: #f2f2f2;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 0.15rem 0.6rem;
+  margin: 0.4rem auto 0;
   color: #555;
-  display: inline-block;
-  font-weight: normal;
+  display: block;
+  font-weight: 600;
+  text-align: center;
+  width: fit-content;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 /* White text on green background for selected sessions */
 .session-checkbox-input:checked ~ .attendance-badge {
   color: white;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .session-checkbox .check-icon {

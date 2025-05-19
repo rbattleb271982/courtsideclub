@@ -1,0 +1,119 @@
+Full Replit Agent Prompt — FINAL VERSION (May 18)
+Fix the following issues in the CourtSide Club Flask app:
+
+---
+
+✅ 1. “My Tournaments” page is blank after saving  
+File: `routes/user.py`  
+Route: `@user_bp.route('/my_tournaments')`
+
+The “My Tournaments” tab is still blank even after a user selects “Attending” and saves at least one session. This is incorrect — the saved tournament should appear.
+
+Update the query so it shows tournaments where the user has:
+- A UserTournament with `attending == True`
+- A non-empty `session_label`
+- `user_id == current_user.id`
+
+Render those tournaments in the template. This must be fixed first.
+
+---
+
+✅ 2. Add lanyard reminder CTA to the top of My Tournaments  
+File: `templates/user/my_tournaments.html`
+
+At the **top of the page**, above the list of tournaments, show a green callout that says:
+
+Don’t forget your lanyard!
+The tournament is {{ days_away }} days away. Order your free lanyard now to get it in time.
+
+[Order My Lanyard] (button linking to /order_lanyard)
+
+
+Only show this CTA if:
+- The user has **at least one** UserTournament where:
+   - `attending == True`
+   - `session_label IS NOT NULL AND != ''`
+- The user has NOT already ordered a lanyard (`User.lanyard_ordered == False`)
+
+Use the soonest upcoming tournament the user is attending to calculate `days_away`. If no valid tournaments, do not show the CTA.
+
+---
+
+✅ 3. Redirect after saving sessions  
+File: `routes/user.py`, inside the `@user_bp.route('/tournaments/<slug>', methods=['POST'])`
+
+After a user saves their session selections:
+- Redirect them to `url_for('user.my_tournaments')`
+- Do NOT show a flash message
+- This confirms the save and immediately brings them to the page with the lanyard CTA (if eligible)
+
+---
+
+✅ 4. Show attendance counts for each session  
+File: `routes/user.py` inside the tournament detail route
+
+Add code to count how many users have selected each session:
+
+- Query all `UserTournament.session_label` values where:
+   - `attending == True`
+   - `session_label IS NOT NULL`
+   - `tournament_id == tournament.id`
+
+- Split each `session_label` string and use `collections.Counter` to count how many users picked each session (e.g., `"2025-06-19 Day"`)
+
+Pass this `session_counts` dict to the template.
+
+In `templates/user/tournament_detail.html`, show the count next to each session button only if count > 0:
+```jinja
+{% set label = day.isoformat() ~ " Day" %}
+Day Session
+{% if session_counts[label] %}
+  ({{ session_counts[label] }} attending)
+{% endif %}
+Repeat for " Night".
+
+✅ 5. Fix Day/Night session layout on mobile
+Currently on mobile, Day Session and Night Session appear on separate lines.
+
+Fix the HTML/CSS so:
+
+Day and Night session buttons are side-by-side
+The component is compact and mobile-friendly
+Layout reduces vertical scroll height
+✅ 6. Show correct number of tournament days
+File: routes/user.py and templates/user/tournament_detail.html
+
+Right now, only 4 days are shown for each tournament, but each tournament has a real start and end date.
+
+Fix this by generating a list of dates from tournament.start_date to tournament.end_date (inclusive). Example:
+
+from datetime import timedelta
+
+days = []
+current = tournament.start_date
+while current <= tournament.end_date:
+    days.append(current)
+    current += timedelta(days=1)
+Pass this days list to the template and use it to render session options per day.
+
+⛔ Do not hardcode or limit to only 4 days. Each tournament should show the full range of available days.
+
+✅ 7. Remove unnecessary UI instruction text
+File: templates/user/tournament_detail.html
+
+Remove the sentence that says:
+
+“After selecting sessions below, you can choose whether you're open to meeting other fans.”
+
+This line is no longer needed and takes up extra space. Its removal will clean up the UI and reduce vertical scrolling, especially on mobile.
+
+⛔ Do not finish until:
+
+“My Tournaments” displays correctly after saving sessions
+Lanyard CTA appears only if the user has saved at least one session and has not yet ordered a lanyard
+Saving sessions redirects to My Tournaments
+Day/Night session counts are shown next to each button
+Day/Night buttons sit side-by-side on mobile
+Each tournament shows the correct number of days (based on start_date to end_date)
+Instructional sentence is removed from the session selection page
+✅ Use checkpoints sparingly.

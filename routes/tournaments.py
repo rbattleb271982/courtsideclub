@@ -207,16 +207,15 @@ def view_tournament(tournament_slug):
             # User is fully attending if they are attending and have selected sessions
             is_full_attending = user_attending and len(selected_sessions) > 0
     
-    # Get session-specific stats
+    # Get session-specific stats - INCLUDE all users for accurate session counts
     session_stats = {}
     if tournament.sessions:
         for session in tournament.sessions:
-            # Count users attending this specific session
+            # Count ALL users attending this specific session (including current user)
             session_attendees = UserTournament.query.filter(
                 UserTournament.tournament_id == tournament.id,
                 UserTournament.attending == True,
-                UserTournament.session_label.like(f'%{session}%'),
-                other_users_filter
+                UserTournament.session_label.like(f'%{session}%')
             ).count()
             
             session_stats[session] = {
