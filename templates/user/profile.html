@@ -164,8 +164,8 @@
               <button class="btn btn-outline-secondary" type="button" id="clear-search">Clear</button>
             </div>
             
-            <!-- Tournament search results -->
-            <div id="tournament-results" class="mb-3 scroll-box" style="display: none;"></div>
+            <!-- Tournament search results (only shown when searching) -->
+            <div id="tournament-results" class="mb-3 scroll-box"></div>
             
             <!-- Selected tournaments display -->
             <div class="mb-2">
@@ -218,6 +218,7 @@
                   const query = this.value.toLowerCase().trim();
                   
                   if (query.length < 2) {
+                    resultsContainer.innerHTML = '';
                     resultsContainer.style.display = 'none';
                     return;
                   }
