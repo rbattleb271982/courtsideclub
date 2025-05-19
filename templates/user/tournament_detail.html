@@ -106,7 +106,7 @@
                                       <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="w-50 ps-1">
                                         <input type="hidden" name="attendance_type" value="maybe">
                                         <button type="submit" class="btn {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
-                                          <i data-feather="help-circle" class="icon-sm"></i> Maybe
+                                          <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
                                         </button>
                                       </form>
                                     </div>
