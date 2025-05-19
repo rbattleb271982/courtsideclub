@@ -15,6 +15,18 @@
   font-size: 0.95rem;
 }
 
+@media (max-width: 576px) {
+  .session-day-group {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+  }
+  
+  .day-title {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
 /* Session toggle container */
 .session-chips {
   display: flex;
@@ -39,6 +51,14 @@
   max-width: 200px;
   color: #555;
   user-select: none;
+}
+
+@media (max-width: 576px) {
+  .session-checkbox {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    min-width: calc(50% - 0.5rem);
+  }
 }
 
 /* Hide the default checkbox */
@@ -167,6 +187,19 @@ input[type="checkbox"]:checked ~ .check-icon {
 .session-counts small {
   display: inline-block;
   margin: 0 0.25rem;
+}
+
+@media (max-width: 576px) {
+  .session-counts {
+    font-size: 0.75rem;
+    margin: 0.5rem 0 0.75rem;
+    padding: 0.35rem;
+    line-height: 1.4;
+  }
+  
+  .session-counts small {
+    margin: 0 0.15rem;
+  }
 }
 
 /* Highlight counts with at least one fan */
