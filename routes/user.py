@@ -439,6 +439,21 @@ def toggle_notifications():
     flash(f'Notifications {status}!', 'success')
     return redirect(url_for('user.profile'))
 
+@user_bp.route('/cancel_attendance/<tournament_id>', methods=['POST'])
+@login_required
+def cancel_attendance(tournament_id):
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament_id
+    ).first()
+    
+    if user_tournament:
+        db.session.delete(user_tournament)
+        db.session.commit()
+        flash("Your tournament attendance has been cancelled.", "success")
+
+    return redirect(url_for('user.my_tournaments'))
+
 @user_bp.route('/change_password', methods=['POST','GET'])
 @login_required
 def change_password():
