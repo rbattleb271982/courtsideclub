@@ -216,6 +216,12 @@ def tournament_detail(tournament_slug):
     # Count occurrences of each session
     session_counts = Counter(all_labels)
     
+    # Make sure to count the current user's selections
+    if user_tournament and user_tournament.attending and user_tournament.session_label:
+        current_user_sessions = [s.strip() for s in user_tournament.session_label.split(',') if s.strip()]
+        for session in current_user_sessions:
+            session_counts[session] += 1
+    
     # Add debugging to see what session_counts contains
     print(f"DEBUG: session_counts = {dict(session_counts)}")
     
@@ -223,13 +229,8 @@ def tournament_detail(tournament_slug):
     session_stats = {}
     if tournament.sessions:
         for session in tournament.sessions:
-            # Get the count from our Counter
+            # Get the count directly from our Counter (already includes current user)
             attendee_count = session_counts.get(session, 0)
-            
-            # Add the current user if they selected this session
-            if my_attending and user_tournament and user_tournament.session_label:
-                if session in user_tournament.session_label.split(','):
-                    attendee_count += 1
             
             # Store the count
             session_stats[session] = {
