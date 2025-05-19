@@ -242,30 +242,14 @@
                         <p class="text-muted mb-0">When you decide to attend, you'll be able to select your specific sessions.</p>
                     </div>
                     
-                    <!-- Lanyard Section -->
-                    {% if not current_user.lanyard_ordered and user_tournament and user_tournament.attending == True and session_saved %}
-                    <div class="mt-3">
-                        <a href="{{ url_for('user.lanyard') }}" class="btn btn-success btn-lg w-100 rounded shadow-sm hover-grow">
-                            <i data-feather="tag" class="icon-sm"></i> Order Free CourtSide Lanyard
-                        </a>
-                    </div>
-                    {% endif %}
+                    <!-- Lanyard CTA removed from tournament detail page -->
                 </div>
             </div>
         </div>
 
         <div class="tournament-detail-sidebar">
             
-            {% if days_until <= 30 and not current_user.lanyard_ordered %}
-            <!-- Lanyard Reminder -->
-            <div class="card mb-4 lanyard-reminder">
-                <div class="card-body">
-                    <h4 class="h5 card-title">Don't forget your lanyard!</h4>
-                    <p>The tournament is {{ days_until }} day{% if days_until != 1 %}s{% endif %} away. Order your free lanyard now to get it in time.</p>
-                    <a href="{{ url_for('user.lanyard') }}" class="btn btn-primary">Order My Lanyard</a>
-                </div>
-            </div>
-            {% endif %}
+            <!-- Lanyard reminder moved to My Tournaments page only -->
         </div>
     </div>
 </div>
