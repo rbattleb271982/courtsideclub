@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
-
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/compact-session-toggles.css') }}">
@@ -37,410 +36,48 @@
 {% endblock %}
 
 {% block content %}
-<div class="container tournament-detail">
-    <div class="tournament-detail-container">
-        <div class="tournament-detail-main">
-            <div class="card tournament-card mb-4">
-                <div class="tournament-header">
-                    <h1 class="tournament-name">{{ tournament.name }}</h1>
-                    <div class="tournament-meta">
-                        <div class="date-range">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</div>
-                        <div class="location">{{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</div>
-                    </div>
-                    <div class="tournament-stats">
-                        {% if user_tournament and user_tournament.attending and user_tournament.session_label %}
-                        <span class="pill">1 fan attending</span>
-                        {% if user_tournament.wants_to_meet %}
-                        <span class="pill">1 open to meeting</span>
-                        {% else %}
-                        <span class="pill">0 open to meeting</span>
-                        {% endif %}
-                        {% else %}
-                        <span class="pill">0 fans attending</span>
-                        <span class="pill">0 open to meeting</span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="card-body">
+<div class="tournament-detail-page">
 
-                        <!-- Attendance Controls MOVED INTO MAIN CARD -->
-                        <div class="detail-item mt-3 attendance-container">
-                            <i data-feather="calendar-check" class="icon-sm"></i>
-                            <div class="w-100">
+  <!-- Tournament Overview Section -->
+  <div class="tournament-overview">
+    <h1 class="tournament-title">{{ tournament.name }}</h1>
+    <p class="tournament-dates">
+      {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}
+    </p>
+    <p class="tournament-location">{{ tournament.city }}, {{ tournament.country }}</p>
 
-                                {# Use attendance_type directly #}
-                                {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
-                                {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
-
-                                <!-- New Card-Style Attendance UI -->
-                                <div class="attendance-card shadow p-3 rounded">
-                                  <div class="d-flex flex-column align-items-start">
-                                    <label class="mb-2 font-weight-bold">Will you be there?</label>
-
-                                    <div class="btn-group mb-2 w-100" role="group">
-                                      <!-- I'm Attending -->
-                                      <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="w-50 pe-1">
-                                        <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
-                                          <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
-                                        </button>
-                                      </form>
-
-                                      <!-- Maybe Attending -->
-                                      <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="w-50 ps-1">
-                                        <input type="hidden" name="attendance_type" value="maybe">
-                                        <button type="submit" class="btn {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
-                                          <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
-                                        </button>
-                                      </form>
-                                    </div>
-
-                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
-                                      <button type="submit" class="btn-clear text-danger small-text">Not Attending</button>
-                                    </form>
-
-                                    {% if user_tournament and user_tournament.attending %}
-                                    <div class="mt-3 p-2 bg-light rounded d-flex justify-content-between align-items-center w-100 border">
-                                      <div class="text-center text-muted small">
-                                        <i data-feather="info" class="icon-sm me-1"></i>
-                                        After selecting sessions below, you can choose whether you're open to meeting other fans
-                                      </div>
-                                    </div>
-                                    {% endif %}
-                                  </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% if tournament.about %}
-                    <div class="tournament-description mt-4">
-                        <h4 class="h5">About the Tournament</h4>
-                        <p>{{ tournament.about }}</p>
-                    </div>
-                    {% endif %}
-
-                    <div class="tournament-links mt-4">
-                        {% if tournament.draw_url or tournament.schedule_url %}
-                        <h4 class="h5">Tournament Links</h4>
-                        <div class="links-container">
-                            {% if tournament.draw_url %}
-                            <a href="{{ tournament.draw_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                                <i data-feather="external-link" class="icon-sm"></i> View Tournament Draw
-                            </a>
-                            {% endif %}
-
-                            {% if tournament.schedule_url %}
-                            <a href="{{ tournament.schedule_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                                <i data-feather="external-link" class="icon-sm"></i> View Tournament Schedule
-                            </a>
-                            {% endif %}
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            {% if current_user.lanyard_ordered %}
-            <div class="alert alert-success mb-4">
-                <i data-feather="package" class="icon-sm"></i> Your lanyard is on its way!
-            </div>
-            {% endif %}
-
-            <!-- Tournament Attendance Section -->
-            {% set is_full_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
-            {% set is_attending = user_tournament and user_tournament.attending == True %}
-            {% set is_thinking = user_tournament and user_tournament.attendance_type == 'maybe' %}
-            {% set is_not_going = not user_tournament or user_tournament.attending == False %}
-
-            <div class="card mb-4" id="session-selection-card" {% if is_not_going %}style="display: none;"{% endif %}>
-                <div class="card-header">
-                    <h3 class="card-title h5 mb-0">Your Tournament Sessions</h3>
-                </div>
-                <div class="card-body">
-                    <!-- Session Selection UI - Visible for both "I'm Attending" and "Maybe Attending" users -->
-                    <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or not user_tournament.attending %}style="display: none;"{% endif %}>
-                        <h4 class="h5 mb-3">Which sessions will you attend?</h4>
-
-                        <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="session-form">
-                            <!-- Hidden inputs for selected sessions - will be populated by JS -->
-                            <div id="hiddenSessionInputs">
-                                <!-- Preselected sessions -->
-                                {% for session in selected_sessions %}
-                                <input type="hidden" name="sessions" value="{{ session }}">
-                                {% endfor %}
-                            </div>
-                            <!-- No hidden field for wants_to_meet - we use the visible checkbox instead -->
-
-                            <!-- Create session day groups with all tournament days -->
-                            <div class="session-groups">
-                                {% for day in tournament_days %}
-                                {% set day_num = loop.index %}
-                                <div class="session-day-group">
-                                    <div class="day-title">
-                                        {{ day.formatted }} (Day {{ day.day_num }})
-                                    </div>
-
-                                    <div class="session-chips">
-                                        <!-- Day session with checkbox -->
-                                        {% set day_key = "Day " + day.day_num|string + " - Day" %}
-                                        <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Day Session</span>
-                                            <span class="check-icon check-icon-only">✓</span>
-                                        </label>
-
-                                        <!-- Night session with checkbox -->
-                                        {% set night_key = "Day " + day.day_num|string + " - Night" %}
-                                        <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Night Session</span>
-                                            <span class="check-icon check-icon-only">✓</span>
-                                        </label>
-                                    </div>
-
-                                    <!-- Session attendance counts shown below the buttons -->
-                                    <p class="session-counts">
-                                        <small>
-                                            {% if session_counts.get(day_key, 0) > 0 %}
-                                                <strong>{{ session_counts.get(day_key, 0) }}</strong> fan{{ 's' if session_counts.get(day_key, 0) != 1 else '' }} attending Day Session
-                                            {% else %}
-                                                {{ session_counts.get(day_key, 0) }} fans attending Day Session
-                                            {% endif %}
-                                        </small><br>
-                                        <small>
-                                            {% if session_counts.get(night_key, 0) > 0 %}
-                                                <strong>{{ session_counts.get(night_key, 0) }}</strong> fan{{ 's' if session_counts.get(night_key, 0) != 1 else '' }} attending Night Session
-                                            {% else %}
-                                                {{ session_counts.get(night_key, 0) }} fans attending Night Session
-                                            {% endif %}
-                                        </small>
-                                    </p>
-                                </div>
-                                {% endfor %}
-
-
-                            </div>
-
-                            <!-- Want to meet checkbox -->
-                            <div class="mt-4 mb-2 text-center">
-                                <label>
-                                  <input type="checkbox" name="wants_to_meet" {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}>
-                                  I'm open to meeting other fans
-                                </label>
-                            </div>
-
-                            <!-- Static save button -->
-                            <div class="text-center mt-2 mb-3">
-                                <button type="submit" class="btn btn-primary" style="width: 100%; max-width: 300px;">Save My Selections</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Message for "Thinking About It" status - Now hidden for all attending users -->
-                    <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" style="display: none;">
-                        <p class="text-muted mb-0">When you decide to attend, you'll be able to select your specific sessions.</p>
-                    </div>
-
-                    <!-- Lanyard CTA removed from tournament detail page -->
-                </div>
-            </div>
-        </div>
-
-        <div class="tournament-detail-sidebar">
-
-            <!-- Lanyard reminder moved to My Tournaments page only -->
-        </div>
+    <div class="tournament-stats">
+      <span>{{ attending_count }} fan{{ 's' if attending_count != 1 else '' }} attending</span>
+      <span>{{ meeting_count }} open to meeting</span>
     </div>
+
+    <!-- Attendance Buttons -->
+    <form method="POST">
+      <button type="submit" name="attendance" value="attending" class="btn-attending">I'm Attending</button>
+      <button type="submit" name="attendance" value="maybe" class="btn-maybe">Maybe Attending</button>
+      <button type="submit" name="attendance" value="not" class="btn-not">Not Attending</button>
+    </form>
+
+    <!-- Meetup Checkbox -->
+    <div class="meetup-toggle">
+      <label>
+        <input type="checkbox" name="open_to_meet" {% if user_tournament and user_tournament.open_to_meet %}checked{% endif %}>
+        I'm open to meeting other fans
+      </label>
+    </div>
+  </div>
+
+  <!-- Session Selector Section -->
+  <div class="session-selector">
+    <h2 class="session-header">Your Tournament Sessions</h2>
+    <p class="session-subhead">Which sessions will you attend?</p>
+
+    {% for day in day_dates %}
+      {% include 'partials/session_day_block.html' %}
+    {% endfor %}
+
+    <button type="submit" class="save-sessions-button">Save My Selections</button>
+  </div>
+
 </div>
-
-<style>
-    .tournament-detail {
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    /* Tournament layout container */
-    .tournament-detail-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    /* Main content area */
-    .tournament-detail-main {
-        flex: 1 1 60%;
-        min-width: 0;
-    }
-
-    /* Sidebar area */
-    .tournament-detail-sidebar {
-        flex: 1 1 30%;
-        min-width: 300px;
-    }
-
-    /* On mobile screens, stack vertically */
-    @media (max-width: 767px) {
-        .tournament-detail-container {
-            flex-direction: column;
-        }
-
-        .tournament-detail-main,
-        .tournament-detail-sidebar {
-            width: 100%;
-            flex-basis: 100%;
-        }
-    }
-
-    .tournament-details {
-        display: flex;
-        flex-direction: column;
-        gap: 0.8rem;
-    }
-
-    .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .detail-item svg {
-        color: #004d26;
-    }
-
-    .detail-item div {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .detail-label {
-        font-size: 0.875rem;
-        color: #666;
-    }
-
-    .detail-value {
-        font-weight: 500;
-    }
-
-    .links-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
-    }
-
-    /* Improved session items styling */
-    .session-item {
-        padding: 8px 12px;
-        background-color: #f8f9fa;
-        border-radius: 6px;
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .form-check-input {
-        margin-right: 8px;
-        transform: scale(1.2);
-        cursor: pointer;
-    }
-
-    label.form-check-label {
-        cursor: pointer;
-        font-weight: 500;
-    }
-
-    .session-day-group {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 14px;
-    }
-
-    /* Badge styling for session counts */
-    .session-badge {
-        font-size: 12px;
-        background-color: #004d26;
-        color: white;
-        font-weight: normal;
-        padding: 4px 8px;
-        border-radius: 12px;
-        margin-left: auto;
-    }
-
-    /* Styling for tournament stats badges */
-    .stat-badge {
-        display: inline-block;
-        background-color: rgba(0, 77, 38, 0.1);
-        color: #004d26;
-        font-weight: 500;
-        font-size: 13px;
-        padding: 3px 8px;
-        border-radius: 12px;
-        margin-right: 8px;
-        margin-top: 4px;
-    }
-
-    .stat-item {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 0.8rem;
-    }
-
-    .stat-label {
-        font-size: 0.875rem;
-        color: #666;
-    }
-
-    .stat-value {
-        font-size: 1.375rem;
-        font-weight: 600;
-        color: #004d26;
-    }
-
-    .lanyard-reminder {
-        background-color: #e0f2eb;
-        border-color: #004d26;
-    }
-
-    .icon-sm {
-        width: 18px;
-        height: 18px;
-    }
-
-    /* Improved form spacing */
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-check {
-        display: flex;
-        align-items: center;
-    }
-
-    @media (max-width: 767px) {
-        .tournament-detail .row > div {
-            margin-bottom: 0.75rem;
-        }
-
-        .links-container {
-            flex-direction: column;
-        }
-
-        .links-container a {
-            width: 100%;
-        }
-
-        /* More compact mobile layout */
-        .card-body {
-            padding: 1rem;
-        }
-
-        .session-day-group {
-            padding: 10px;
-        }
-    }
-</style>
-
-<!-- Removed floating session save bar -->
 {% endblock %}

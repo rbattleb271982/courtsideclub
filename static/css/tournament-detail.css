@@ -39,20 +39,20 @@
   .tournament-header {
     padding: 0.75rem;
   }
-  
+
   .tournament-name {
     font-size: 1.1rem;
   }
-  
+
   .tournament-meta {
     font-size: 0.8rem;
   }
-  
+
   .pill {
     padding: 0.2rem 0.6rem;
     font-size: 0.7rem;
   }
-  
+
   .card.tournament-card {
     border-radius: 0;
   }
@@ -147,4 +147,79 @@
 .btn-success:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+}
+
+.tournament-detail-page {
+  display: block;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.tournament-overview {
+  margin-bottom: 2rem;
+}
+
+.tournament-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.tournament-dates,
+.tournament-location {
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.tournament-stats {
+  margin: 1rem 0;
+}
+
+.tournament-stats span {
+  display: inline-block;
+  margin-right: 1rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.session-selector {
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
+.session-header {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.session-subhead {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.save-sessions-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.save-sessions-button:hover {
+  background-color: #0052a3;
+}
+
+.meetup-toggle {
+  margin: 1rem 0;
+}
+
+.meetup-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
 }
