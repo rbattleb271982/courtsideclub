@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Tournament, UserTournament, past_tournaments, ShippingAddress
+from models import db, User, Tournament, UserTournament, UserPastTournament, ShippingAddress
 from services.sendgrid_service import send_email
 from services.event_logger import log_event
 import json

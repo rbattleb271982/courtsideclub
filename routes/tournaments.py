@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
-from models import db, Tournament, UserTournament, User, past_tournaments
+from models import db, Tournament, UserTournament, User, UserPastTournament
 import datetime
 from services.event_logger import log_event
 from collections import Counter

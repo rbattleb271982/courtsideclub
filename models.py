@@ -35,13 +35,17 @@ class JsonEncodedDict(types.TypeDecorator):
             return {}
         return json.loads(value)
 
-# Many-to-many association table for past tournaments
-past_tournaments = Table(
-    'past_tournaments',
-    db.metadata,
-    Column('user_id', Integer, ForeignKey('users.id', ondelete='CASCADE')),
-    Column('tournament_id', db.String(50), ForeignKey('tournaments.id', ondelete='CASCADE'))
-)
+# Create a proper UserPastTournament model for the many-to-many relationship
+class UserPastTournament(db.Model):
+    __tablename__ = 'user_past_tournament'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    tournament_id = db.Column(db.String(50), db.ForeignKey('tournaments.id', ondelete='CASCADE'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship("User", back_populates="past_tournaments")
+    tournament = db.relationship("Tournament")
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -60,11 +64,15 @@ class User(UserMixin, db.Model):
     # raised_hand = db.Column(MutableDict.as_mutable(JsonEncodedDict), default={})
     # past_tournaments_json = db.Column('past_tournaments', MutableList.as_mutable(JsonEncodedList), default=[])
     
-    # This relationship has been removed per cleanup request
-    
+    # Relationship for current tournament registrations
     tournament_registrations = relationship('UserTournament', 
                                            back_populates='user',
                                            cascade="all, delete-orphan")
+    
+    # Relationship for past tournaments the user has attended
+    past_tournaments = relationship('UserPastTournament',
+                                   back_populates='user',
+                                   cascade="all, delete-orphan")
     
     location = db.Column(db.String(100))
     lanyard_ordered = db.Column(db.Boolean, default=False)

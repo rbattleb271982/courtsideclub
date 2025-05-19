@@ -1,0 +1,73 @@
+Step 1: Add Past Tournaments Selection to Profile
+
+1. Model
+Create a UserPastTournament table to store many-to-many records:
+
+# models.py
+
+class UserPastTournament(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    tournament_id = db.Column(db.Integer, db.ForeignKey('tournament.id'), nullable=False)
+
+    user = db.relationship("User", back_populates="past_tournaments")
+    tournament = db.relationship("Tournament")
+Then in your User model:
+
+# models.py
+
+past_tournaments = db.relationship(
+    "UserPastTournament",
+    back_populates="user",
+    cascade="all, delete-orphan"
+)
+2. Profile Form HTML
+Add this to your profile.html (or wherever users edit their profile):
+
+<form method="POST" action="{{ url_for('user.update_profile') }}">
+  <!-- other profile fields -->
+
+  <h3>Tournaments You’ve Attended</h3>
+  <div class="past-tournaments-form">
+    {% for tournament in tournaments %}
+      <label>
+        <input type="checkbox" name="past_tournaments" value="{{ tournament.id }}"
+          {% if tournament.id in user_past_tournament_ids %}checked{% endif %}>
+        {{ tournament.name }}
+      </label><br>
+    {% endfor %}
+  </div>
+
+  <button type="submit">Save Profile</button>
+</form>
+3. Backend Logic to Save
+Update the route that handles profile updates:
+
+# routes/user.py
+
+@user_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def update_profile():
+    if request.method == 'POST':
+        selected_ids = request.form.getlist('past_tournaments')
+
+        # Clear existing
+        UserPastTournament.query.filter_by(user_id=current_user.id).delete()
+
+        # Re-add selected
+        for tid in selected_ids:
+            db.session.add(UserPastTournament(user_id=current_user.id, tournament_id=int(tid)))
+
+        db.session.commit()
+        flash('Profile updated.')
+
+    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    user_past_tournament_ids = {t.tournament_id for t in current_user.past_tournaments}
+    return render_template('profile.html',
+                           tournaments=tournaments,
+                           user_past_tournament_ids=user_past_tournament_ids)
+4. Migration
+If you're using Flask-Migrate:
+
+flask db migrate -m "add user_past_tournaments table"
+flask db upgrade
