@@ -165,25 +165,22 @@ def tournament_detail(tournament_slug):
             selected_sessions = user_tournament.session_label.split(',')
             print(f"DEBUG: selected_sessions = {selected_sessions}")
     
-    # Get tournament stats - exclude the current user for accurate display
-    other_users_filter = UserTournament.user_id != current_user.id
+    # Get tournament stats - include the current user for their own page
+    # This allows users to see themselves in the counts right after saving
     
     stats = {
         'attending': UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            other_users_filter
+            UserTournament.attending == True
         ).count(),
         'meetup': UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
-            UserTournament.wants_to_meet == True,
-            other_users_filter
+            UserTournament.wants_to_meet == True
         ).count(),
         'lanyards': UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            other_users_filter
+            UserTournament.attending == True
         ).join(User).filter_by(lanyard_ordered=True).count()
     }
     
@@ -191,12 +188,11 @@ def tournament_detail(tournament_slug):
     session_stats = {}
     if tournament.sessions:
         for session in tournament.sessions:
-            # Count users attending this specific session
+            # Count users attending this specific session - including current user
             session_attendees = UserTournament.query.filter(
                 UserTournament.tournament_id == tournament.id,
                 UserTournament.attending == True,
-                UserTournament.session_label.like(f'%{session}%'),
-                other_users_filter
+                UserTournament.session_label.like(f'%{session}%')
             ).count()
             
             session_stats[session] = {

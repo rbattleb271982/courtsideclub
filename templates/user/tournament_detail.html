@@ -111,8 +111,8 @@
                                       </form>
                                     </div>
                                     
-                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" class="mb-3">
-                                      <button type="submit" class="btn btn-link p-0 small text-success">Not Attending</button>
+                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
+                                      <button type="submit" class="btn-clear text-danger small-text">Not Attending</button>
                                     </form>
                                     
                                     {% if user_tournament and user_tournament.attending %}
