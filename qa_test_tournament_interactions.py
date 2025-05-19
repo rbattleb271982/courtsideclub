@@ -62,10 +62,10 @@ def create_test_interactions():
     for user in users:
         logger.info(f"Creating interactions for user: {user.email}")
         
-        # Each user will attend 3-6 tournaments with various configurations for more coverage
-        user_tournament_count = random.randint(3, 6)
+        # Each user will attend at least 5 tournaments (5-8 range) with various configurations for more coverage
+        user_tournament_count = random.randint(5, 8)
         
-        # Make sure at least two shared tournaments are included
+        # Make sure at least three shared tournaments are included
         user_tournaments = random.sample(shared_tournaments, min(3, len(shared_tournaments)))
         
         # Add some individual tournaments to reach desired count
