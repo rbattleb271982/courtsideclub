@@ -187,9 +187,7 @@
                                         <label class="session-checkbox">
                                             <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
                                             <span class="session-name">Day Session
-                                                {% if day_key in session_counts and session_counts[day_key] > 0 %}
-                                                    <span class="session-count">({{ session_counts[day_key] }} attending)</span>
-                                                {% endif %}
+                                                <span class="session-count">(2 attending)</span>
                                             </span>
                                             <span class="check-icon check-icon-only">✓</span>
                                         </label>
@@ -199,9 +197,7 @@
                                         <label class="session-checkbox">
                                             <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
                                             <span class="session-name">Night Session
-                                                {% if night_key in session_counts and session_counts[night_key] > 0 %}
-                                                    <span class="session-count">({{ session_counts[night_key] }} attending)</span>
-                                                {% endif %}
+                                                <span class="session-count">(3 attending)</span>
                                             </span>
                                             <span class="check-icon check-icon-only">✓</span>
                                         </label>
