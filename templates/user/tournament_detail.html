@@ -72,11 +72,27 @@
     <h2 class="session-header">Your Tournament Sessions</h2>
     <p class="session-subhead">Which sessions will you attend?</p>
 
-    {% for day in day_dates %}
-      {% include 'partials/session_day_block.html' %}
-    {% endfor %}
+    <form action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.slug) }}" method="POST" id="session-form">
+      <div class="session-days-container">
+        {% for day in day_dates %}
+          {% include 'partials/session_day_block.html' %}
+        {% endfor %}
+      </div>
 
-    <button type="submit" class="save-sessions-button">Save My Selections</button>
+      <div class="wants-to-meet-container">
+        <label class="meeting-toggle-container">
+          <input type="checkbox" name="wants_to_meet" id="wants_to_meet" 
+                 {% if wants_to_meet %}checked{% endif %}>
+          <span class="meeting-toggle-label">I'm open to meeting other fans</span>
+        </label>
+      </div>
+
+      <div class="save-container">
+        <button type="submit" class="btn btn-success btn-lg save-btn" id="save-sessions-btn">
+          Save My Selections
+        </button>
+      </div>
+    </form>
   </div>
 
 </div>

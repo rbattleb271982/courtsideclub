@@ -4,25 +4,31 @@
 {% set label_day = day.isoformat() ~ " Day" %}
 {% set label_night = day.isoformat() ~ " Night" %}
 
-<div class="session-day-block">
-  <p class="session-date">{{ day.strftime('%A, %b %d') }}</p>
-
+<div class="session-day-group">
+  <h4 class="day-title">{{ day.strftime('%A, %b %d') }}</h4>
+  
+  <div class="session-chips">
+    <!-- Day Session Toggle -->
+    <label class="session-checkbox {% if label_day in selected_sessions %}active{% endif %}">
+      <input type="checkbox" name="sessions" value="{{ label_day }}" 
+        {% if label_day in selected_sessions %}checked{% endif %} class="session-checkbox-input">
+      <span class="session-name">Day Session</span>
+      <span class="fan-count">{{ session_counts.get(label_day, 0) }}</span>
+      <span class="check-icon">✓</span>
+    </label>
+    
+    <!-- Night Session Toggle -->
+    <label class="session-checkbox {% if label_night in selected_sessions %}active{% endif %}">
+      <input type="checkbox" name="sessions" value="{{ label_night }}" 
+        {% if label_night in selected_sessions %}checked{% endif %} class="session-checkbox-input">
+      <span class="session-name">Night Session</span>
+      <span class="fan-count">{{ session_counts.get(label_night, 0) }}</span>
+      <span class="check-icon">✓</span>
+    </label>
+  </div>
+  
   <p class="session-counts">
     <small>{{ session_counts.get(label_day, 0) }} fan{{ 's' if session_counts.get(label_day, 0) != 1 else '' }} attending Day Session</small><br>
     <small>{{ session_counts.get(label_night, 0) }} fan{{ 's' if session_counts.get(label_night, 0) != 1 else '' }} attending Night Session</small>
   </p>
-
-  <div class="session-buttons">
-    <label>
-      <input type="checkbox" name="sessions" value="{{ label_day }}"
-        {% if label_day in selected_sessions %}checked{% endif %}>
-      Day Session
-    </label>
-
-    <label>
-      <input type="checkbox" name="sessions" value="{{ label_night }}"
-        {% if label_night in selected_sessions %}checked{% endif %}>
-      Night Session
-    </label>
-  </div>
 </div>
