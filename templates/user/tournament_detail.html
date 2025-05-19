@@ -169,8 +169,7 @@
                                 <input type="hidden" name="sessions" value="{{ session }}">
                                 {% endfor %}
                             </div>
-                            <!-- Hidden field for wants_to_meet -->
-                            <input type="hidden" name="wants_to_meet" id="wants_to_meet_hidden" value="{{ 'true' if wants_to_meet is not defined or wants_to_meet else 'false' }}">
+                            <!-- No hidden field for wants_to_meet - we use the visible checkbox instead -->
                             
                             <!-- Create session day groups with actual dates -->
                             <div class="session-groups">
