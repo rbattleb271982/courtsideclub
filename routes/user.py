@@ -169,9 +169,12 @@ def tournament_detail(tournament_slug):
     # This allows users to see themselves in the counts right after saving
     
     # First get all attending users including the current user
+    # Only count users who are attending AND have selected at least one session
     attending_users = UserTournament.query.filter(
         UserTournament.tournament_id == tournament.id,
-        UserTournament.attending == True
+        UserTournament.attending == True,
+        UserTournament.session_label.isnot(None),
+        UserTournament.session_label != ''
     ).all()
     
     # Debug output to verify
@@ -179,17 +182,21 @@ def tournament_detail(tournament_slug):
     print(f"DEBUG: All attendee IDs: {attendee_ids}")
     print(f"DEBUG: Current user ID: {current_user.id}")
     
-    # Calculate stats with current user included
+    # Calculate stats with current user included, but only if they've selected sessions
     stats = {
         'attending': len(attending_users),
         'meetup': UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
-            UserTournament.wants_to_meet == True
+            UserTournament.wants_to_meet == True,
+            UserTournament.session_label.isnot(None),
+            UserTournament.session_label != ''
         ).count(),
         'lanyards': UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None),
+            UserTournament.session_label != ''
         ).join(User).filter_by(lanyard_ordered=True).count()
     }
     
@@ -200,9 +207,12 @@ def tournament_detail(tournament_slug):
     if tournament.sessions:
         for session in tournament.sessions:
             # Count users attending this specific session - including current user
+            # Only count those who have selected at least one session
             session_attendees = UserTournament.query.filter(
                 UserTournament.tournament_id == tournament.id,
                 UserTournament.attending == True,
+                UserTournament.session_label.isnot(None),
+                UserTournament.session_label != '',
                 UserTournament.session_label.like(f'%{session}%')
             ).count()
             
