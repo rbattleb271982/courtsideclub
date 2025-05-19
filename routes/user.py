@@ -459,15 +459,18 @@ def my_tournaments():
         db.session.query(UserTournament)
         .filter(
             UserTournament.user_id == current_user.id,
-            UserTournament.attending == True, 
-            UserTournament.session_label.isnot(None),  # Has a session_label
-            UserTournament.session_label != ''         # Session label is not empty
+            UserTournament.attending == True
+            # Removed session_label filters that were too restrictive
         )
         .join(Tournament)
         .filter(Tournament.start_date >= today)
         .order_by(Tournament.start_date)
         .all()
     )
+    
+    # Log more detailed information about what we found
+    for ut in user_tournaments:
+        logging.debug(f"Found tournament: {ut.tournament.name}, session_label: {ut.session_label}")
     
     logging.debug(f"Found {len(user_tournaments)} tournaments with sessions")
 
