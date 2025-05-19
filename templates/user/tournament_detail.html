@@ -135,7 +135,7 @@
                     </div>
                     
                     <!-- Shared Tournament History Section -->
-                    {% if stats.attending > 0 and shared_past_tournaments %}
+                    {% if current_user.is_authenticated and shared_past_tournaments %}
                     <div class="shared-history-box mt-4">
                         <h4 class="h5">Other tournaments attendees have been to:</h4>
                         <ul class="shared-history-list">
@@ -143,6 +143,10 @@
                             <li>{{ name }} – {{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament</li>
                             {% endfor %}
                         </ul>
+                    </div>
+                    {% elif current_user.is_authenticated %}
+                    <div class="mt-4">
+                        <p class="text-muted small empty-note">Add tournaments you've previously attended in your profile to see them here.</p>
                     </div>
                     {% else %}
                     <div class="mt-4">

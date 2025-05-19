@@ -252,7 +252,7 @@ def view_tournament(tournament_slug):
     # Get shared past tournaments for users attending this tournament
     shared_past_tournaments = {}
     
-    # 1. Get all users attending this tournament
+    # 1. Get all users attending this tournament (including current user)
     attending_users = db.session.query(UserTournament.user_id).filter(
         UserTournament.tournament_id == tournament.id,
         UserTournament.attending == True
@@ -260,14 +260,16 @@ def view_tournament(tournament_slug):
     
     attending_user_ids = [user.user_id for user in attending_users]
     
-    # 2. Only proceed if there are attending users
-    if attending_user_ids:
+    # 2. Always include the current user's past tournaments, even if they're the only attendee
+    if current_user.is_authenticated:
         # 3. Get past tournaments for these users (excluding current tournament)
         past_tournament_counts = db.session.query(
             Tournament.name, db.func.count(UserPastTournament.user_id).label('count')
         ).join(
             UserPastTournament, Tournament.id == UserPastTournament.tournament_id
         ).filter(
+            # If there are other attendees, use their past tournaments too
+            # Otherwise just use the current user's past tournaments
             UserPastTournament.user_id.in_(attending_user_ids),
             Tournament.id != tournament.id  # Exclude current tournament
         ).group_by(
