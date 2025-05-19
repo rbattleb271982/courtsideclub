@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from models import db, Tournament, UserTournament, User, past_tournaments
 import datetime
 from services.event_logger import log_event
+from collections import Counter
 
 tournaments_bp = Blueprint('tournaments', __name__)
 
@@ -207,19 +208,32 @@ def view_tournament(tournament_slug):
             # User is fully attending if they are attending and have selected sessions
             is_full_attending = user_attending and len(selected_sessions) > 0
     
-    # Get session-specific stats - INCLUDE all users for accurate session counts
+    # Get session-specific stats using collections.Counter
+    # First, get all session labels for users attending this tournament
+    user_sessions = (
+        db.session.query(UserTournament.session_label)
+        .filter_by(tournament_id=tournament.id)
+        .filter(UserTournament.attending == True)
+        .filter(UserTournament.session_label.isnot(None))
+        .all()
+    )
+    
+    # Extract and split all session labels
+    all_sessions = []
+    for ut in user_sessions:
+        if ut.session_label:
+            sessions = [session.strip() for session in ut.session_label.split(',') if session.strip()]
+            all_sessions.extend(sessions)
+    
+    # Use Counter to count occurrences of each session
+    session_counts = Counter(all_sessions)
+    
+    # Store in traditional session_stats format for compatibility
     session_stats = {}
     if tournament.sessions:
         for session in tournament.sessions:
-            # Count ALL users attending this specific session (including current user)
-            session_attendees = UserTournament.query.filter(
-                UserTournament.tournament_id == tournament.id,
-                UserTournament.attending == True,
-                UserTournament.session_label.like(f'%{session}%')
-            ).count()
-            
             session_stats[session] = {
-                'attendees': session_attendees
+                'attendees': session_counts.get(session, 0)
             }
     
     # Calculate days until tournament for lanyard reminder
@@ -235,6 +249,7 @@ def view_tournament(tournament_slug):
                          meeting_count=meeting_count,
                          selected_sessions=selected_sessions,
                          session_stats=session_stats,
+                         session_counts=session_counts,  # Pass the Counter object to the template
                          wants_to_meet=wants_to_meet,
                          user_attending=user_attending,
                          is_full_attending=is_full_attending,
