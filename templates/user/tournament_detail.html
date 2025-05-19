@@ -136,8 +136,8 @@
                     
                     <!-- Shared Tournament History Section -->
                     {% if current_user.is_authenticated and sorted_shared_tournaments %}
-                    <div class="shared-history-box mt-4">
-                        <h4 class="h5">Tournaments you've previously been to:</h4>
+                    <div class="shared-history-box mt-4" id="shared-history">
+                        <h4 class="h5">Previous tournaments people have attended:</h4>
                         <ul class="shared-history-list">
                             {% for name, count in sorted_shared_tournaments %}
                             <li>{{ name }} {% if count > 1 %}<span class="small text-muted">({{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament)</span>{% endif %}</li>
