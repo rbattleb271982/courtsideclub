@@ -11,6 +11,43 @@ from datetime import datetime
 # Initialize blueprint
 user_bp = Blueprint('user', __name__)
 
+# Shared helper function for consistent attendance and meetup counts
+def get_tournament_attendance_stats(tournament_id, include_current_user=True):
+    """
+    Get consistent attendance statistics for a tournament
+    
+    Args:
+        tournament_id: The ID of the tournament to get stats for
+        include_current_user: Whether to include the current user in the counts
+        
+    Returns:
+        Dict with keys 'attending' and 'meetup' containing the counts
+    """
+    from flask_login import current_user
+    
+    # Base query to get valid attendance records
+    query = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament_id,
+        UserTournament.attending == True,
+        UserTournament.session_label.isnot(None),
+        UserTournament.session_label != ''
+    )
+    
+    # Optionally exclude current user
+    if not include_current_user and current_user.is_authenticated:
+        query = query.filter(UserTournament.user_id != current_user.id)
+    
+    # Get all matching records
+    attendances = query.all()
+    
+    # Calculate stats
+    stats = {
+        'attending': len(attendances),
+        'meetup': sum(1 for a in attendances if a.wants_to_meet)
+    }
+    
+    return stats
+
 # Home route removed - users now go directly to my_tournaments
 @user_bp.route('/home')
 @login_required
@@ -474,7 +511,7 @@ def my_tournaments():
     
     logging.debug(f"Found {len(user_tournaments)} tournaments with sessions")
 
-    # Get stats for each tournament
+    # Get stats for each tournament using shared helper function
     stats = {}
     session_stats = {}
     from collections import Counter
@@ -482,19 +519,9 @@ def my_tournaments():
     
     for ut in user_tournaments:
         tournament = ut.tournament
-        # Count total attendees and those open to meeting
-        registrations = UserTournament.query.filter(
-            UserTournament.tournament_id == tournament.id,
-            UserTournament.attending == True,
-            UserTournament.session_label.isnot(None),
-            UserTournament.session_label != ''
-        ).all()
-        
-        stats[tournament.id] = {
-            'attending': len(registrations),
-            'meetup': sum(1 for r in registrations if r.wants_to_meet)
-            # Removed lanyards count as requested
-        }
+        # Use shared helper function to get consistent counts
+        tournament_stats = get_tournament_attendance_stats(tournament.id, include_current_user=True)
+        stats[tournament.id] = tournament_stats
         
         # Generate session stats by day
         # Get all session labels for this tournament
@@ -651,19 +678,11 @@ def browse_tournaments():
                     tournament.attendance_status = 'maybe'
                     tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
             
-            # Add stats to each tournament
-            tournament.attendee_count = UserTournament.query.filter(
-                UserTournament.tournament_id == tournament.id,
-                UserTournament.attending == True,
-                UserTournament.user_id != current_user.id  # Exclude current user
-            ).count()
-            
-            tournament.meetup_count = UserTournament.query.filter(
-                UserTournament.tournament_id == tournament.id,
-                UserTournament.attending == True,
-                UserTournament.wants_to_meet == True,
-                UserTournament.user_id != current_user.id  # Exclude current user
-            ).count()
+            # Add stats to each tournament using shared helper function
+            # Always exclude current user from browse page stats for consistency
+            stats = get_tournament_attendance_stats(tournament.id, include_current_user=False)
+            tournament.attendee_count = stats['attending']
+            tournament.meetup_count = stats['meetup']
     
     # Get list of months for filter bar (in correct chronological order)
     months = [month for month, _ in sorted_months]
