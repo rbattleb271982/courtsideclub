@@ -92,6 +92,22 @@
   transition: all 0.2s ease;
 }
 
+.session-day-block {
+  margin-bottom: 1rem;
+}
+
+.session-date {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.session-buttons label {
+  display: inline-block;
+  margin-right: 1rem;
+  font-size: 0.9rem;
+}
+
 .session-day-group:hover {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }

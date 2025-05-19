@@ -1,0 +1,28 @@
+
+{# Renders one day row in the tournament session selector #}
+
+{% set label_day = day.isoformat() ~ " Day" %}
+{% set label_night = day.isoformat() ~ " Night" %}
+
+<div class="session-day-block">
+  <p class="session-date">{{ day.strftime('%A, %b %d') }}</p>
+
+  <p class="session-counts">
+    <small>{{ session_counts.get(label_day, 0) }} fan{{ 's' if session_counts.get(label_day, 0) != 1 else '' }} attending Day Session</small><br>
+    <small>{{ session_counts.get(label_night, 0) }} fan{{ 's' if session_counts.get(label_night, 0) != 1 else '' }} attending Night Session</small>
+  </p>
+
+  <div class="session-buttons">
+    <label>
+      <input type="checkbox" name="sessions" value="{{ label_day }}"
+        {% if label_day in selected_sessions %}checked{% endif %}>
+      Day Session
+    </label>
+
+    <label>
+      <input type="checkbox" name="sessions" value="{{ label_night }}"
+        {% if label_night in selected_sessions %}checked{% endif %}>
+      Night Session
+    </label>
+  </div>
+</div>
