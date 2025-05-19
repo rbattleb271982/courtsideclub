@@ -122,6 +122,14 @@ input[type="checkbox"]:checked ~ .check-icon {
   transition: font-weight 0.2s ease;
 }
 
+.session-count {
+  font-size: 0.75rem;
+  font-weight: normal;
+  opacity: 0.85;
+  display: inline-block;
+  margin-left: 0.25rem;
+}
+
 .session-checkbox .fan-count {
   font-size: 0.7rem;
   background-color: rgba(0,0,0,0.1);

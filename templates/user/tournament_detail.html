@@ -186,10 +186,9 @@
                                         {% set day_key = "Day " + day_num|string + " - Day" %}
                                         <label class="session-checkbox">
                                             <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Day Session</span>
-                                            <span class="fan-count">
+                                            <span class="session-name">Day Session
                                                 {% if day_key in session_stats and session_stats[day_key].attendees > 0 %}
-                                                    {{ session_stats[day_key].attendees }} fan{% if session_stats[day_key].attendees != 1 %}s{% endif %}
+                                                    <span class="session-count">({{ session_stats[day_key].attendees }} attending)</span>
                                                 {% endif %}
                                             </span>
                                             <span class="check-icon check-icon-only">✓</span>
@@ -199,10 +198,9 @@
                                         {% set night_key = "Day " + day_num|string + " - Night" %}
                                         <label class="session-checkbox">
                                             <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Night Session</span>
-                                            <span class="fan-count">
+                                            <span class="session-name">Night Session
                                                 {% if night_key in session_stats and session_stats[night_key].attendees > 0 %}
-                                                    {{ session_stats[night_key].attendees }} fan{% if session_stats[night_key].attendees != 1 %}s{% endif %}
+                                                    <span class="session-count">({{ session_stats[night_key].attendees }} attending)</span>
                                                 {% endif %}
                                             </span>
                                             <span class="check-icon check-icon-only">✓</span>
