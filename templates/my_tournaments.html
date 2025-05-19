@@ -157,15 +157,18 @@
     function toggleWeek(weekId) {
         const daysElement = document.getElementById('days-' + weekId);
         if (daysElement) {
+            // Toggle active class to show/hide days
             daysElement.classList.toggle('active');
             
             // Update toggle icon
             const toggleElement = document.querySelector('#' + weekId + ' .week-toggle i');
             if (toggleElement) {
                 if (daysElement.classList.contains('active')) {
+                    // Change to up arrow when expanded
                     toggleElement.setAttribute('data-feather', 'chevron-up');
                     toggleElement.classList.add('icon-rotated');
                 } else {
+                    // Change to down arrow when collapsed
                     toggleElement.setAttribute('data-feather', 'chevron-down');
                     toggleElement.classList.remove('icon-rotated');
                 }
