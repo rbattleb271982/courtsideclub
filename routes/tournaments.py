@@ -236,6 +236,22 @@ def view_tournament(tournament_slug):
                 'attendees': session_counts.get(session, 0)
             }
     
+    # Generate a complete list of days from tournament start to end date
+    from datetime import timedelta
+    tournament_days = []
+    current_date = tournament.start_date
+    day_num = 1
+    
+    # Loop through each day of the tournament
+    while current_date <= tournament.end_date:
+        tournament_days.append({
+            'date': current_date,
+            'day_num': day_num,
+            'formatted': current_date.strftime('%A, %b %d')
+        })
+        current_date += timedelta(days=1)
+        day_num += 1
+    
     # Calculate days until tournament for lanyard reminder
     today = datetime.date.today()
     days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
@@ -254,7 +270,8 @@ def view_tournament(tournament_slug):
                          user_attending=user_attending,
                          is_full_attending=is_full_attending,
                          session_saved=session_saved,
-                         days_until=days_until)
+                         days_until=days_until,
+                         tournament_days=tournament_days)  # Pass the complete list of tournament days
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/attend', methods=['POST'])
