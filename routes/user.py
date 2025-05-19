@@ -383,11 +383,8 @@ def profile():
         return redirect(url_for('user.profile'))
     
     # GET request - show the profile form
-    # Get all past tournaments for selection (tournaments that have already ended)
-    today = datetime.now()
-    past_tournaments = Tournament.query.filter(
-        Tournament.end_date < today.date()
-    ).order_by(Tournament.name).all()
+    # Get all tournaments for selection, including future ones
+    past_tournaments = Tournament.query.order_by(Tournament.name).all()
     
     # Get the user's past tournament IDs for pre-checking the checkboxes
     user_past_tournament_ids = [pt.tournament_id for pt in current_user.past_tournaments]
