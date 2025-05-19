@@ -54,7 +54,7 @@
               <div class="stat-item">
                 <span class="stat-value">
                   {% if tournament.attendance_status == 'attending' and tournament.has_sessions %}
-                    {% if tournament.wants_to_meet or tournament.open_to_meet %}1{% else %}0{% endif %}
+                    {% if tournament.wants_to_meet == True %}1{% else %}0{% endif %}
                   {% else %}
                     0
                   {% endif %}
