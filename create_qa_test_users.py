@@ -20,6 +20,21 @@ def create_test_users():
         {"email": "qa_test4@example.com", "first_name": "QA", "last_name": "User 4", "password": "test1234"},
         {"email": "qa_test5@example.com", "first_name": "QA", "last_name": "User 5", "password": "test1234"},
         {"email": "qa_test6@example.com", "first_name": "QA", "last_name": "User 6", "password": "test1234"},
+        {"email": "qa_test7@example.com", "first_name": "QA", "last_name": "User 7", "password": "test1234"},
+        {"email": "qa_test8@example.com", "first_name": "QA", "last_name": "User 8", "password": "test1234"},
+        {"email": "qa_test9@example.com", "first_name": "QA", "last_name": "User 9", "password": "test1234"},
+        {"email": "qa_test10@example.com", "first_name": "QA", "last_name": "User 10", "password": "test1234"},
+        {"email": "qa_test11@example.com", "first_name": "QA", "last_name": "User 11", "password": "test1234"},
+        {"email": "qa_test12@example.com", "first_name": "QA", "last_name": "User 12", "password": "test1234"},
+        {"email": "qa_test13@example.com", "first_name": "QA", "last_name": "User 13", "password": "test1234"},
+        {"email": "qa_test14@example.com", "first_name": "QA", "last_name": "User 14", "password": "test1234"},
+        {"email": "qa_test15@example.com", "first_name": "QA", "last_name": "User 15", "password": "test1234"},
+        {"email": "qa_test16@example.com", "first_name": "QA", "last_name": "User 16", "password": "test1234"},
+        {"email": "qa_test17@example.com", "first_name": "QA", "last_name": "User 17", "password": "test1234"},
+        {"email": "qa_test18@example.com", "first_name": "QA", "last_name": "User 18", "password": "test1234"},
+        {"email": "qa_test19@example.com", "first_name": "QA", "last_name": "User 19", "password": "test1234"},
+        {"email": "qa_test20@example.com", "first_name": "QA", "last_name": "User 20", "password": "test1234"},
+        {"email": "qa_test21@example.com", "first_name": "QA", "last_name": "User 21", "password": "test1234"},
     ]
     
     created_count = 0

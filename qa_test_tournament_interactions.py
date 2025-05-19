@@ -54,23 +54,25 @@ def create_test_interactions():
     
     # Create predictable overlapping tournament selections to test shared attendance
     # These tournaments will have multiple users attending the same sessions
-    shared_tournaments = random.sample(tournaments, 3)
+    # Select more shared tournaments for greater testing coverage
+    shared_tournaments = random.sample(tournaments, min(6, len(tournaments)))
     logger.info(f"Selected shared tournaments: {[t.name for t in shared_tournaments]}")
     
     # Create individual interactions for each user
     for user in users:
         logger.info(f"Creating interactions for user: {user.email}")
         
-        # Each user will attend 2-4 tournaments with various configurations
-        user_tournament_count = random.randint(2, 4)
+        # Each user will attend 3-6 tournaments with various configurations for more coverage
+        user_tournament_count = random.randint(3, 6)
         
-        # Make sure at least one shared tournament is included
-        user_tournaments = random.sample(shared_tournaments, min(2, len(shared_tournaments)))
+        # Make sure at least two shared tournaments are included
+        user_tournaments = random.sample(shared_tournaments, min(3, len(shared_tournaments)))
         
         # Add some individual tournaments to reach desired count
         remaining_tournaments = [t for t in tournaments if t not in user_tournaments]
-        user_tournaments.extend(random.sample(remaining_tournaments, 
-                                             user_tournament_count - len(user_tournaments)))
+        if remaining_tournaments and len(user_tournaments) < user_tournament_count:
+            additional_count = min(user_tournament_count - len(user_tournaments), len(remaining_tournaments))
+            user_tournaments.extend(random.sample(remaining_tournaments, additional_count))
         
         # Create attendance records for each selected tournament
         for tournament in user_tournaments:
