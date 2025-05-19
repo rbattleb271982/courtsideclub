@@ -393,20 +393,19 @@ def profile():
         return redirect(url_for('user.profile'))
     
     # GET request - show the profile form
-    # Get all tournaments for the past tournaments selection
-    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    # Get all past tournaments for selection (tournaments that have already ended)
+    today = datetime.now()
+    past_tournaments = Tournament.query.filter(
+        Tournament.end_date < today.date()
+    ).order_by(Tournament.name).all()
     
     # Get the user's past tournament IDs for pre-checking the checkboxes
     user_past_tournament_ids = [pt.tournament_id for pt in current_user.past_tournaments]
     
-    # Get today's date for filtering past tournaments
-    today = datetime.now()
-    
     return render_template('user/profile.html', 
                           user=current_user,
-                          tournaments=tournaments,
-                          user_past_tournament_ids=user_past_tournament_ids,
-                          today=today)
+                          past_tournaments=past_tournaments,
+                          user_past_tournament_ids=user_past_tournament_ids)
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required

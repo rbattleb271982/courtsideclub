@@ -153,10 +153,9 @@
         <p class="mb-3">Select tournaments you've attended in the past</p>
         
         <div class="past-tournaments-container mb-3">
-          {% if tournaments %}
+          {% if past_tournaments %}
             <div class="scroll-box">
-              {% for tournament in tournaments %}
-                {% if tournament.end_date < today.date() %}
+              {% for tournament in past_tournaments %}
                 <div class="form-check mb-2">
                   <input class="form-check-input" type="checkbox" 
                          name="past_tournaments" 
@@ -167,11 +166,10 @@
                     {{ tournament.name }}
                   </label>
                 </div>
-                {% endif %}
               {% endfor %}
             </div>
           {% else %}
-            <p class="text-muted">No tournaments available for selection.</p>
+            <p class="text-muted">No past tournaments available for selection.</p>
           {% endif %}
         </div>
       </div>
