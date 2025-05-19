@@ -66,6 +66,41 @@
     margin-bottom: 6px;
     font-size: 13px;
   }
+  
+  /* More compact layout for informational boxes on mobile */
+  .shared-history-box {
+    margin-top: 1rem !important;
+    padding: 0.75rem !important;
+  }
+  
+  .shared-history-box h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .shared-history-list {
+    font-size: 13.5px;
+    margin-bottom: 0.25rem;
+  }
+  
+  .shared-history-list li {
+    margin-bottom: 0.25rem;
+  }
+  
+  .empty-note {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Session days also need to be more compact */
+  .session-day-block {
+    margin-bottom: 0.6rem;
+  }
+  
+  .session-counts {
+    margin-top: 0.4rem;
+    font-size: 12px;
+  }
 }
 
 /* Attendance controls */
@@ -131,6 +166,25 @@
 .session-day-group {
   border-radius: 8px;
   transition: all 0.2s ease;
+}
+
+/* Shared history box styling */
+.shared-history-box {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.shared-history-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 0.5rem;
+}
+
+.shared-history-list li {
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 }
 
 .session-day-block {
