@@ -24,11 +24,12 @@
     {% endif %}
 
     {% if grouped_tournaments %}
-        <div class="row">
+        <div class="my-tournament-list">
             {% for month, tournaments in grouped_tournaments.items() %}
-                <h2 class="col-12 mb-3">{{ month }}</h2>
-                {% for ut in tournaments %}
-                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <h2 class="month-heading">{{ month }}</h2>
+                <div class="tournament-grid">
+                    {% for ut in tournaments %}
+                    <div class="tournament-card">
                     <div class="card tournament-card h-100">
                         <div class="card-body p-3">
                             <!-- Tournament title with mobile-optimized size -->
