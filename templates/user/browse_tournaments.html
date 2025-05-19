@@ -244,10 +244,19 @@
   
   .month-heading {
     border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
     color: #333;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+  
+  @media (max-width: 480px) {
+    .month-heading {
+      font-size: 1.2rem;
+      padding-bottom: 6px;
+      margin-bottom: 14px;
+    }
   }
   
   /* Tournament Grid & Cards */
@@ -284,19 +293,28 @@
   /* Mobile-specific card adjustments */
   @media (max-width: 639px) {
     .tournament-card {
-      padding: 12px;
-      margin-bottom: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
       border-radius: 8px;
-      min-height: 190px;
+      min-height: 180px;
+    }
+    
+    .tournament-header {
+      margin-bottom: 6px;
     }
     
     .tournaments-grid {
       margin: 0 -5px; /* Reduce margins on smaller screens */
-      gap: 12px;
+      gap: 10px;
     }
     
     .month-section {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+    }
+    
+    .main-heading {
+      font-size: 1.5rem;
+      margin-bottom: 1.2rem;
     }
   }
   
@@ -311,23 +329,24 @@
   }
   
   .tournament-name {
-    margin: 0 0 4px 0;
-    font-size: 18px;
+    margin: 0 0 3px 0;
+    font-size: 16px;
     font-weight: 600;
     color: #004d26;
-    line-height: 1.2;
+    line-height: 1.25;
   }
   
   .tournament-meta {
     color: #555;
-    font-size: 14px;
-    margin-bottom: 6px;
+    font-size: 13.5px;
+    margin-bottom: 5px;
+    line-height: 1.3;
   }
   
   .tournament-stats {
     display: flex;
-    margin-bottom: 8px;
-    gap: 20px;
+    margin-bottom: 6px;
+    gap: 16px;
   }
   
   .stat-item {
@@ -337,14 +356,14 @@
   }
   
   .stat-value {
-    font-weight: bold;
-    font-size: 18px;
+    font-weight: 600;
+    font-size: 16px;
     color: #004d26;
     line-height: 1;
   }
   
   .stat-label {
-    font-size: 13px;
+    font-size: 12px;
     color: #666;
     margin-top: 2px;
   }
@@ -413,21 +432,23 @@
   
   /* Button status styles */
   .btn-success {
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     font-weight: 500;
-    min-height: 36px;
+    min-height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 14px;
   }
   
   .btn-outline-success {
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     font-weight: 500;
-    min-height: 36px;
+    min-height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 14px;
   }
   
   .btn-outline-success:hover, 
