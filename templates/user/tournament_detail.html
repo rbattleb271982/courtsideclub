@@ -72,11 +72,15 @@
     <h2 class="session-header">Your Tournament Sessions</h2>
     <p class="session-subhead">Which sessions will you attend?</p>
 
-    <form action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.slug) }}" method="POST" id="session-form">
+    <form action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" method="POST" id="session-form">
       <div class="session-days-container">
-        {% for day in day_dates %}
-          {% include 'partials/session_day_block.html' %}
-        {% endfor %}
+        {% if day_dates %}
+          {% for day in day_dates %}
+            {% include 'partials/session_day_block.html' %}
+          {% endfor %}
+        {% else %}
+          <p class="no-sessions-message">No session information available for this tournament.</p>
+        {% endif %}
       </div>
 
       <div class="wants-to-meet-container">
