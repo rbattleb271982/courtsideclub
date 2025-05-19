@@ -41,44 +41,18 @@
     <div class="row">
         <div class="col-md-8">
             <div class="card tournament-card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h1 class="card-title h4 mb-0">{{ tournament.name }}</h1>
+                <div class="tournament-header">
+                    <h1 class="tournament-name">{{ tournament.name }}</h1>
+                    <div class="tournament-meta">
+                        <div class="date-range">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</div>
+                        <div class="location">{{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</div>
+                    </div>
+                    <div class="tournament-stats">
+                        <span class="pill">{{ attending_count }} fan{% if attending_count != 1 %}s{% endif %} attending</span>
+                        <span class="pill">{{ meeting_count }} open to meeting</span>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <div class="tournament-details">
-                        <div class="detail-item">
-                            <i data-feather="calendar" class="icon-sm"></i>
-                            <div>
-                                <span class="detail-label">Dates</span>
-                                <span class="detail-value">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</span>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <i data-feather="map-pin" class="icon-sm"></i>
-                            <div>
-                                <span class="detail-label">Location</span>
-                                <span class="detail-value">{{ tournament.city }}, {{ tournament.country }}</span>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <i data-feather="award" class="icon-sm"></i>
-                            <div>
-                                <span class="detail-label">Tournament</span>
-                                <span class="detail-value">{{ tournament.event_type }} • {{ tournament.tour_type }}</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Tournament Stats moved from right sidebar -->
-                        <div class="detail-item mt-3">
-                            <i data-feather="users" class="icon-sm"></i>
-                            <div>
-                                <span class="detail-label">Tournament Stats</span>
-                                <span class="detail-value">
-                                    <span class="stat-badge">{{ attending_count }} fan{% if attending_count != 1 %}s{% endif %} attending</span>
-                                    <span class="stat-badge">{{ meeting_count }} open to meeting</span>
-                                </span>
-                            </div>
-                        </div>
 
                         <!-- Attendance Controls MOVED INTO MAIN CARD -->
                         <div class="detail-item mt-3 attendance-container">

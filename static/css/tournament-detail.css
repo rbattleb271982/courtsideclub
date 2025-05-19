@@ -1,5 +1,63 @@
 /* Tournament detail page specific styles */
 
+/* Minimalist Mobile Tournament Header */
+.tournament-header {
+  padding: 1rem;
+  border-radius: 0;
+  background: #fff;
+  font-size: 0.9rem;
+}
+
+.tournament-name {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.tournament-meta {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.tournament-stats {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+}
+
+.pill {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .tournament-header {
+    padding: 0.75rem;
+  }
+  
+  .tournament-name {
+    font-size: 1.1rem;
+  }
+  
+  .tournament-meta {
+    font-size: 0.8rem;
+  }
+  
+  .pill {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+  }
+  
+  .card.tournament-card {
+    border-radius: 0;
+  }
+}
+
 /* Attendance controls */
 .attendance-buttons .btn {
   transition: all 0.2s ease;
