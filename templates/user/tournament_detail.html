@@ -72,41 +72,37 @@
                                 {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
                                 {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
 
-                                <!-- New Card-Style Attendance UI -->
-                                <div class="attendance-card shadow p-3 rounded">
-                                  <div class="d-flex flex-column align-items-start">
-                                    <label class="mb-2 font-weight-bold">Will you be there?</label>
+                                <!-- Simplified Attendance UI -->
+                                <div class="attendance-buttons">
+                                  <label class="mb-2 font-weight-bold">Will you be there?</label>
 
-                                    <div class="btn-group mb-2 w-100" role="group">
-                                      <!-- I'm Attending -->
-                                      <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="w-50 pe-1">
-                                        <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
-                                          <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
-                                        </button>
-                                      </form>
-
-                                      <!-- Maybe Attending -->
-                                      <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="w-50 ps-1">
-                                        <input type="hidden" name="attendance_type" value="maybe">
-                                        <button type="submit" class="btn {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
-                                          <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
-                                        </button>
-                                      </form>
-                                    </div>
-
-                                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
-                                      <button type="submit" class="btn-clear text-danger small-text">Not Attending</button>
+                                  <div class="attendance-button-group">
+                                    <!-- I'm Attending -->
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2">
+                                      <button type="submit" class="btn {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
+                                        <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
+                                      </button>
                                     </form>
 
-                                    {% if user_tournament and user_tournament.attending %}
-                                    <div class="mt-3 p-2 bg-light rounded d-flex justify-content-between align-items-center w-100 border">
-                                      <div class="text-center text-muted small">
-                                        <i data-feather="info" class="icon-sm me-1"></i>
-                                        After selecting sessions below, you can choose whether you're open to meeting other fans
-                                      </div>
-                                    </div>
-                                    {% endif %}
+                                    <!-- Maybe Attending -->
+                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-2">
+                                      <input type="hidden" name="attendance_type" value="maybe">
+                                      <button type="submit" class="btn {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
+                                        <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
+                                      </button>
+                                    </form>
                                   </div>
+
+                                  <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
+                                    <button type="submit" class="btn-clear text-danger small-text">Not Attending</button>
+                                  </form>
+
+                                  {% if user_tournament and user_tournament.attending %}
+                                  <div class="session-note mt-3">
+                                    <i data-feather="info" class="icon-sm me-1"></i>
+                                    After selecting sessions below, you can choose whether you're open to meeting other fans
+                                  </div>
+                                  {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -459,6 +455,35 @@
         .shared-history-box {
             padding: 0.75rem;
         }
+    }
+    
+    /* Attendance buttons styling */
+    .attendance-buttons {
+        margin-bottom: 1.5rem;
+    }
+    
+    .attendance-button-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    /* Session note styling */
+    .session-note {
+        font-size: 0.9rem;
+        color: #555;
+        background: #f8f8f8;
+        border-radius: 6px;
+        padding: 0.75rem;
+        margin-top: 1rem;
+    }
+    
+    /* Tag groups for attendance stats */
+    .tag-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
     }
     
     /* Shared history box styling */
