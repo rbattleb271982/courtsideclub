@@ -197,7 +197,8 @@ def view_tournament(tournament_slug):
         user_attending = user_tournament.attending
         wants_to_meet = user_tournament.wants_to_meet
         if user_tournament.session_label:
-            selected_sessions = user_tournament.session_label.split(',')
+            # Strip spaces from each session to ensure consistent matching
+            selected_sessions = [session.strip() for session in user_tournament.session_label.split(',')]
             # User is fully attending if they are attending and have selected sessions
             is_full_attending = user_attending and len(selected_sessions) > 0
     
@@ -497,9 +498,9 @@ def save_sessions(tournament_slug):
     
     user_tournament.wants_to_meet = wants_to_meet
     
-    # Store sessions with spaces after commas for better readability
-    # The comma-separated format is critical for proper display
-    user_tournament.session_label = ', '.join(selected_sessions) if selected_sessions else None
+    # Store sessions with consistent comma-only formatting to avoid matching issues
+    # The comma-separated format without extra spaces ensures proper highlighting
+    user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
     
     # Log the event for tracking
     event_data = {
