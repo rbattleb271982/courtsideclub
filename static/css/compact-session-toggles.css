@@ -204,28 +204,9 @@ input[type="checkbox"]:checked ~ .check-icon {
   margin-right: 0.5rem;
 }
 
-/* Regular Save Button */
-.save-button-container {
-  margin-top: 20px;
-  padding: 10px 0;
-}
+/* Button styling is handled by Bootstrap classes */
 
-.save-button-container button {
-  width: 100%;
-  font-weight: 600;
-  padding: 10px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-.save-button-container button:hover {
-  background-color: #3d8b40;
-}
-
-/* Add padding to body when save container is fixed */
-body.has-fixed-save {
-  padding-bottom: 5rem;
-}
+/* No extra padding needed without floating save bar */
 
 /* Desktop Layout */
 @media (min-width: 768px) {
