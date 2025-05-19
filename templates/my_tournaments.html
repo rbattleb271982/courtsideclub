@@ -78,16 +78,29 @@
                                 <div class="accordion session-accordion" id="accordion-{{ ut.tournament.id }}">
                                     <div class="accordion-item border-0">
                                         <h2 class="accordion-header" id="heading-{{ ut.tournament.id }}">
-                                            <button class="accordion-button collapsed" type="button" 
-                                                    data-bs-toggle="collapse" data-bs-target="#collapse-{{ ut.tournament.id }}" 
-                                                    aria-expanded="false" aria-controls="collapse-{{ ut.tournament.id }}">
+                                            <button class="session-toggle-btn" onclick="toggleSession(this)" type="button">
                                                 <span class="d-flex align-items-center">
-                                                        <i data-feather="calendar" class="icon-sm me-1"></i>
-                                                        <span class="session-toggle-label">
-                                                            View Session Attendance <span class="caret">▼</span>
-                                                        </span>
-                                                    </span>
+                                                    <i data-feather="calendar" class="icon-sm me-1"></i>
+                                                    View Session Attendance <span class="caret">▼</span>
+                                                </span>
                                             </button>
+                                            <div class="session-details" style="display: none;">
+                                                <div class="session-weeks-container">
+                                                    {% for week_idx in range(num_weeks) %}
+                                                        {% set start_idx = week_idx * 7 %}
+                                                        {% set end_idx = [start_idx + 7, total_days]|min %}
+                                                        {% set week_days = session_stats[ut.tournament.id][start_idx:end_idx] %}
+
+                                                        {% if week_days|length > 0 %}
+                                                            {% set first_day = week_days[0] %}
+                                                            {% set last_day = week_days[-1] %}
+                                                            <div class="week-group">
+                                                                Week {{ week_idx + 1 }}: {{ first_day.date.strftime('%b %d') }} - {{ last_day.date.strftime('%b %d') }}
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
                                         </h2>
                                         <div id="collapse-{{ ut.tournament.id }}" class="accordion-collapse collapse" 
                                              aria-labelledby="heading-{{ ut.tournament.id }}" data-bs-parent="#accordion-{{ ut.tournament.id }}">

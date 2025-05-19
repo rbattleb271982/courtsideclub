@@ -1,3 +1,17 @@
+
+function toggleSession(button) {
+  const details = button.nextElementSibling;
+  const caret = button.querySelector(".caret");
+  
+  if (details.style.display === "none" || !details.style.display) {
+    details.style.display = "block";
+    caret.textContent = "▲";
+  } else {
+    details.style.display = "none"; 
+    caret.textContent = "▼";
+  }
+}
+
 // Tennis Fans App - Main JavaScript
 
 // Initialize the app when the DOM is loaded
