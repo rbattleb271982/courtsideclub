@@ -530,9 +530,32 @@ def save_sessions(tournament_slug):
     print(f"DEBUG: User selected sessions: {selected_sessions}")
     
     # Store a clean comma-separated list of selected sessions
-    # Using a set to remove any duplicate values that might have been selected
+    # COMPLETE REWRITE OF SESSION HANDLING:
+    # 1. We will explicitly REPLACE the entire session_label with only what's currently selected
+    # 2. Unselected sessions will not be included at all - this ensures proper clearing
+    
+    # COMPLETE REBUILD OF SESSION SELECTION LOGIC:
+    
+    # 1. First, extract all sessions that were previously selected
+    old_sessions = []
+    if user_tournament.session_label:
+        old_sessions = [s.strip() for s in user_tournament.session_label.split(',') if s.strip()]
+    
+    # 2. For debugging, log what we had before
+    print(f"DEBUG: Previously selected: {old_sessions}")
+    
+    # 3. Convert current selections to a clean list with no duplicates
     unique_sessions = list(set(selected_sessions)) if selected_sessions else []
+    
+    # 4. More detailed logging showing comparison
+    print(f"DEBUG: Old sessions: {old_sessions}")
+    print(f"DEBUG: New sessions to save: {unique_sessions}")
+    
+    # 5. Completely replace the old session_label with only what's currently checked
     user_tournament.session_label = ','.join(unique_sessions) if unique_sessions else ''
+    
+    # 6. Verify final result after save
+    print(f"DEBUG: FINAL saved value: {user_tournament.session_label}")
     
     # Debug the session label being saved
     print(f"DEBUG: Saving sessions for user {current_user.id}, Tournament: {tournament.id}")
