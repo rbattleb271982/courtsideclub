@@ -587,16 +587,26 @@ def my_tournaments():
         # Store the days data for this tournament
         session_stats[tournament.id] = tournament_days
 
-    # Group tournaments by month
-    from itertools import groupby
-    
-    def get_month_key(ut):
-        return ut.tournament.start_date.strftime('%B %Y')
-    
-    grouped_tournaments = {}
-    sorted_tournaments = sorted(user_tournaments, key=get_month_key)
-    for month, group in groupby(sorted_tournaments, key=get_month_key):
-        grouped_tournaments[month] = list(group)
+    # Group tournaments by month chronologically
+    from collections import defaultdict
+    from calendar import month_name
+
+    grouped = defaultdict(list)
+    month_keys = []
+
+    for ut in user_tournaments:
+        year_month = (ut.tournament.start_date.year, ut.tournament.start_date.month)
+        grouped[year_month].append(ut)
+        if year_month not in month_keys:
+            month_keys.append(year_month)
+
+    month_keys.sort()  # Sort chronologically by year and month
+
+    # Create final grouped dictionary with formatted month names
+    grouped_tournaments = {
+        f"{month_name[month]} {year}": grouped[(year, month)]
+        for (year, month) in month_keys
+    }
     
     # Calculate lanyard reminder data
     show_lanyard_reminder = False
