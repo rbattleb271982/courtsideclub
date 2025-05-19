@@ -134,6 +134,14 @@ input[type="checkbox"]:checked ~ .check-icon {
 .session-checkbox .check-icon {
   margin-left: 0.5rem;
   display: none;
+  font-family: sans-serif; /* Ensure consistent font for checkmark */
+}
+
+/* Remove any automatically generated content before the checkmark */
+.session-checkbox .check-icon::before,
+.session-checkbox .check-icon::after {
+  content: none;
+  display: none;
 }
 
 /* Modern browsers - :has selector */
