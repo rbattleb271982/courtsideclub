@@ -36,8 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const sessionValue = this.dataset.session;
       
       if (this.classList.contains('selected')) {
-        // Remove from selected sessions
+        // Remove from selected sessions with visual feedback
         this.classList.remove('selected');
+        
+        // Add a brief transition effect for visual feedback
+        this.style.transition = 'all 0.2s ease-out';
         
         // Remove from array
         const index = selectedSessions.indexOf(sessionValue);
@@ -45,8 +48,11 @@ document.addEventListener('DOMContentLoaded', function() {
           selectedSessions.splice(index, 1);
         }
       } else {
-        // Add to selected sessions
+        // Add to selected sessions with visual feedback
         this.classList.add('selected');
+        
+        // Add a brief transition effect for visual feedback
+        this.style.transition = 'all 0.2s ease-in';
         
         // Add to array if not already there
         if (!selectedSessions.includes(sessionValue)) {

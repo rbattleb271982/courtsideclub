@@ -32,7 +32,7 @@
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
   position: relative;
   overflow: hidden;
   flex: 1;
@@ -42,20 +42,26 @@
 }
 
 .session-chip:hover {
-  border-color: #28a745;
+  border-color: #4CAF50;
   transform: translateY(-2px);
   box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
 .session-chip.selected {
-  background-color: #28a745;
+  background-color: #4CAF50;
   color: white;
-  border-color: #28a745;
+  border-color: #4CAF50;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+  transform: translateY(-2px);
 }
 
 .session-chip .session-name {
   font-weight: 500;
   margin-right: auto;
+}
+
+.session-chip.selected .session-name {
+  font-weight: 700;
 }
 
 .session-chip .fan-count {
@@ -78,7 +84,9 @@
 }
 
 .session-chip.selected .check-icon {
-  display: none; /* Hide checkmarks even when selected */
+  display: inline; /* Show checkmarks when selected */
+  font-weight: bold;
+  color: white;
 }
 
 /* Save button container */
