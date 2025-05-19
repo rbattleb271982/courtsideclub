@@ -193,17 +193,40 @@ def tournament_detail(tournament_slug):
     
     print(f"DEBUG: Final stats: {stats}")
     
-    # Get session-specific stats using the same direct approach
+    # Count how many users are attending each session using Counter
+    from collections import Counter
+    
+    # Get all user sessions for this tournament
+    user_sessions = (
+        db.session.query(UserTournament.session_label)
+        .filter_by(tournament_id=tournament.id)
+        .filter(UserTournament.attending == True)
+        .filter(UserTournament.session_label.isnot(None))
+        .filter(UserTournament.session_label != '')
+        .all()
+    )
+    
+    # Collect all individual session labels
+    all_labels = []
+    for ut in user_sessions:
+        if ut.session_label:
+            labels = [label.strip() for label in ut.session_label.split(',') if label.strip()]
+            all_labels.extend(labels)
+    
+    # Count occurrences of each session
+    session_counts = Counter(all_labels)
+    
+    # Create session stats dictionary with actual counts
     session_stats = {}
     if tournament.sessions:
         for session in tournament.sessions:
-            # Check if the current user has selected this session
-            has_session = False
-            if my_attending and user_tournament.session_label:
-                has_session = session in user_tournament.session_label.split(',')
-                
-            # For demonstration, set the count to 1 if user has this session
-            attendee_count = 1 if has_session else 0
+            # Get the count from our Counter
+            attendee_count = session_counts.get(session, 0)
+            
+            # Add the current user if they selected this session
+            if my_attending and user_tournament and user_tournament.session_label:
+                if session in user_tournament.session_label.split(','):
+                    attendee_count += 1
             
             # Store the count
             session_stats[session] = {
