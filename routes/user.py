@@ -216,6 +216,9 @@ def tournament_detail(tournament_slug):
     # Count occurrences of each session
     session_counts = Counter(all_labels)
     
+    # Add debugging to see what session_counts contains
+    print(f"DEBUG: session_counts = {dict(session_counts)}")
+    
     # Create session stats dictionary with actual counts
     session_stats = {}
     if tournament.sessions:
@@ -286,6 +289,7 @@ def tournament_detail(tournament_slug):
                          meeting_count=stats['meetup'],
                          selected_sessions=selected_sessions,
                          session_stats=session_stats,
+                         session_counts=session_counts,  # Add session_counts to template context
                          wants_to_meet=wants_to_meet,
                          user_attending=user_attending,
                          days_until=days_until,
