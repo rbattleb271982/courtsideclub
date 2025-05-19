@@ -473,18 +473,74 @@ def my_tournaments():
 
     # Get stats for each tournament
     stats = {}
+    session_stats = {}
+    from collections import Counter
+    from datetime import timedelta
+    
     for ut in user_tournaments:
         tournament = ut.tournament
-        # Only count other attendees
+        # Count total attendees and those open to meeting
         registrations = UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
-            UserTournament.user_id != current_user.id
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None),
+            UserTournament.session_label != ''
         ).all()
+        
         stats[tournament.id] = {
-            'attending': sum(1 for r in registrations if r.attending),
-            'meetup': sum(1 for r in registrations if r.attending and r.wants_to_meet),
-            'lanyards': sum(1 for r in registrations if r.attending and r.session_label)
+            'attending': len(registrations),
+            'meetup': sum(1 for r in registrations if r.wants_to_meet)
+            # Removed lanyards count as requested
         }
+        
+        # Generate session stats by day
+        # Get all session labels for this tournament
+        user_sessions = (
+            db.session.query(UserTournament.session_label)
+            .filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.attending == True,
+                UserTournament.session_label.isnot(None),
+                UserTournament.session_label != ''
+            )
+            .all()
+        )
+        
+        # Extract and count all session labels
+        all_sessions = []
+        for registration in user_sessions:
+            if registration.session_label:
+                sessions = [session.strip() for session in registration.session_label.split(',') if session.strip()]
+                all_sessions.extend(sessions)
+        
+        # Count occurrences of each session
+        session_counts = Counter(all_sessions)
+        
+        # Generate all days between tournament start and end dates
+        tournament_days = []
+        current_date = tournament.start_date
+        day_num = 1
+        
+        while current_date <= tournament.end_date:
+            day_key = f"Day {day_num}"
+            day_session = f"{day_key} - Day"
+            night_session = f"{day_key} - Night"
+            
+            tournament_days.append({
+                'date': current_date,
+                'day_num': day_num,
+                'formatted': current_date.strftime('%A, %b %d'),
+                'day_session': day_session,
+                'night_session': night_session,
+                'day_count': session_counts.get(day_session, 0),
+                'night_count': session_counts.get(night_session, 0)
+            })
+            
+            current_date += timedelta(days=1)
+            day_num += 1
+        
+        # Store the days data for this tournament
+        session_stats[tournament.id] = tournament_days
 
     # Group tournaments by month
     from itertools import groupby
@@ -513,6 +569,7 @@ def my_tournaments():
         "my_tournaments.html",
         grouped_tournaments=grouped_tournaments,
         stats=stats,
+        session_stats=session_stats,
         show_lanyard_reminder=show_lanyard_reminder,
         days_away=days_away,
         soonest_tournament=soonest_tournament.tournament if soonest_tournament else None
