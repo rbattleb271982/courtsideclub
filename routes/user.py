@@ -511,6 +511,12 @@ def my_tournaments():
     for ut in all_user_tournaments:
         logging.debug(f"Database record: Tournament: {ut.tournament_id}, Attending: {ut.attending}, Label: {ut.session_label}")
     
+    # Query all tournaments to check dates
+    all_tournaments = Tournament.query.all()
+    for t in all_tournaments:
+        if t.id == 'rome_masters' or t.id == 'geneva_open':
+            logging.debug(f"Tournament dates check: {t.id}, Start: {t.start_date}, End: {t.end_date}, Days left: {(t.end_date - today).days}")
+    
     # Now perform the filtered query for the page
     user_tournaments = (
         db.session.query(UserTournament)
@@ -519,7 +525,7 @@ def my_tournaments():
             UserTournament.attending == True  # Keep only those marked as attending
         )
         .join(Tournament)
-        .filter(Tournament.start_date >= today)
+        .filter(Tournament.end_date >= today)  # Show tournaments ending today or in the future
         .order_by(Tournament.start_date)
         .all()
     )
