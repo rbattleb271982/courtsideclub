@@ -9,17 +9,11 @@
 <div class="container">
     <h1 class="mb-4">My Tournaments</h1>
     
-    {% if show_lanyard_reminder %}
-    <div class="alert alert-success mb-4">
-        <div class="d-flex align-items-center">
-            <div>
-                <h5 class="alert-heading">Don't forget your lanyard!</h5>
-                <p class="mb-0">The tournament is {{ days_away }} day{{ 's' if days_away != 1 else '' }} away. Order your free lanyard now to get it in time.</p>
-            </div>
-            <div class="ms-auto">
-                <a href="{{ url_for('user.lanyard') }}" class="btn btn-primary">Order My Lanyard</a>
-            </div>
-        </div>
+    {% if show_lanyard_reminder and days_away > 0 %}
+    <div class="lanyard-reminder">
+        <h4>Don't forget your lanyard!</h4>
+        <p>The tournament is {{ days_away }} day{{ 's' if days_away != 1 else '' }} away. Order your free lanyard now to get it in time.</p>
+        <a href="{{ url_for('user.lanyard') }}" class="button w-100 text-center">Order My Lanyard</a>
     </div>
     {% endif %}
 
