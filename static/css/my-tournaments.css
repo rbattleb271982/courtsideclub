@@ -1,0 +1,110 @@
+/* Mobile-optimized styles for My Tournaments page */
+
+/* Card Structure */
+.tournament-card {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* Tournament Headlines */
+.tournament-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Subtext for location, dates */
+.tournament-subtext {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+/* Session Attendance Section */
+.session-attendance {
+  margin-top: 0.75rem;
+}
+
+.accordion-button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #e9ecef;
+  color: #212529;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: rgba(0,0,0,.125);
+}
+
+/* Session counts styling */
+.session-counts {
+  margin: 0.5rem 0;
+  line-height: 1.4;
+  font-size: 0.875rem;
+}
+
+.session-day-info {
+  margin-bottom: 0.75rem;
+}
+
+.day-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.session-count {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin-bottom: 0.15rem;
+}
+
+/* Icons */
+.icon-sm {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+/* Attendance stats */
+.attendance-stats {
+  font-size: 0.875rem;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 0.5rem 0;
+  margin: 0.5rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .tournament-title {
+    font-size: 1rem;
+  }
+
+  .tournament-subtext {
+    font-size: 0.8rem;
+  }
+
+  .session-day-row {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .session-counts {
+    font-size: 0.8rem;
+  }
+  
+  .accordion-button {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
