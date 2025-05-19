@@ -43,42 +43,65 @@ document.addEventListener('DOMContentLoaded', function() {
   // Make sure visibility is correct on page load for desktop 
   // Fix for the desktop issue where session picker gets hidden
   
-  // Add click handlers for session chips
+  // Convert session-chip elements to function as session buttons
   const sessionChips = document.querySelectorAll('.session-chip');
   sessionChips.forEach(chip => {
-    chip.addEventListener('click', function() {
+    // Add the session-button class for JavaScript targeting
+    chip.classList.add('session-button');
+    
+    chip.addEventListener('click', function(e) {
+      // Prevent any default behaviors
+      e.preventDefault();
+      
       const sessionValue = this.dataset.session;
       
+      // Toggle the selected state
+      this.classList.toggle('selected');
+      
+      // Update the selectedSessions array
       if (this.classList.contains('selected')) {
-        // Remove from selected sessions with visual feedback
-        this.classList.remove('selected');
-        
-        // Add a brief transition effect for visual feedback
-        this.style.transition = 'all 0.2s ease-out';
-        
+        // Add to array if not already there
+        if (!selectedSessions.includes(sessionValue)) {
+          selectedSessions.push(sessionValue);
+        }
+        // Add visual feedback
+        this.style.transition = 'all 0.2s ease-in';
+      } else {
         // Remove from array
         const index = selectedSessions.indexOf(sessionValue);
         if (index > -1) {
           selectedSessions.splice(index, 1);
         }
-      } else {
-        // Add to selected sessions with visual feedback
-        this.classList.add('selected');
-        
-        // Add a brief transition effect for visual feedback
-        this.style.transition = 'all 0.2s ease-in';
-        
-        // Add to array if not already there
-        if (!selectedSessions.includes(sessionValue)) {
-          selectedSessions.push(sessionValue);
-        }
+        // Add visual feedback
+        this.style.transition = 'all 0.2s ease-out';
       }
       
-      // Update session count display and save button state
+      // Update save bar and button state
       updateSessionCountDisplay();
       updateSaveButtonState();
+      
+      // Update hidden inputs for form submission
+      updateHiddenInputs();
     });
   });
+  
+  // Function to update hidden inputs based on selected sessions
+  function updateHiddenInputs() {
+    const hiddenInputsContainer = document.getElementById('hiddenSessionInputs');
+    if (hiddenInputsContainer) {
+      // Clear current inputs
+      hiddenInputsContainer.innerHTML = '';
+      
+      // Create hidden inputs for each selected session
+      selectedSessions.forEach(session => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'sessions';
+        input.value = session;
+        hiddenInputsContainer.appendChild(input);
+      });
+    }
+  }
   
   // Function to update the session count message
   function updateSessionCountDisplay() {
@@ -113,10 +136,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update the new session save bar
     if (sessionSaveBar && sessionCountBar) {
       if (sessionCount > 0) {
-        sessionSaveBar.classList.add('visible');
+        // Show the save bar and update the text
+        sessionSaveBar.style.bottom = '0';
         sessionCountBar.textContent = `✔️ ${sessionCount} session${sessionCount !== 1 ? 's' : ''} selected`;
       } else {
-        sessionSaveBar.classList.remove('visible');
+        // Hide the save bar
+        sessionSaveBar.style.bottom = '-100px';
       }
     }
   }
