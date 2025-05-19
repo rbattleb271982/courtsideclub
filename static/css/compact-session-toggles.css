@@ -204,42 +204,22 @@ input[type="checkbox"]:checked ~ .check-icon {
   margin-right: 0.5rem;
 }
 
-/* New Session Save Bar */
-#session-save-bar {
-  position: fixed;
-  bottom: -100px;
-  left: 0;
-  right: 0;
-  background: #4CAF50;
-  color: white;
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  transition: bottom 0.3s ease-in-out;
-  z-index: 999;
+/* Regular Save Button */
+.save-button-container {
+  margin-top: 20px;
+  padding: 10px 0;
 }
 
-#session-save-bar.visible {
-  bottom: 0;
+.save-button-container button {
+  width: 100%;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
 
-#session-save-bar button {
-  background: white;
-  color: #4CAF50;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-#session-save-bar button:hover {
-  background: #f5f5f5;
-  transform: translateY(-2px);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+.save-button-container button:hover {
+  background-color: #3d8b40;
 }
 
 /* Add padding to body when save container is fixed */

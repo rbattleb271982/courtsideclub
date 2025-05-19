@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/compact-session-toggles.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-buttons.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/toggle-switch.css') }}">
-<script src="{{ url_for('static', filename='js/tournament-detail-new.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/tournament-detail-simplified.js') }}" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -240,6 +240,11 @@
                                 <!-- Hidden input for wants_to_meet -->
                                 <input type="hidden" name="wants_to_meet" id="wants_to_meet_hidden" value="{{ 'true' if wants_to_meet is not defined or wants_to_meet else 'false' }}">
                             </div>
+                            
+                            <!-- Regular non-floating save button -->
+                            <div class="save-button-container mt-3">
+                                <button type="submit" class="btn btn-success btn-block">Save My Selections</button>
+                            </div>
                         </form>
                     </div>
                     
@@ -457,9 +462,5 @@
     }
 </style>
 
-<!-- New Session Save Bar - initially hidden -->
-<div id="session-save-bar" style="bottom: -100px;">
-  <span id="session-count">✔️ 0 sessions selected</span>
-  <button type="submit" form="session-form">Save My Selections</button>
-</div>
+<!-- Removed floating session save bar -->
 {% endblock %}
