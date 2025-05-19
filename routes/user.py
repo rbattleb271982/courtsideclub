@@ -496,8 +496,21 @@ def browse_tournaments():
     for month, group in groupby(sorted_tournaments, key=get_month_key):
         grouped_tournaments[month] = list(group)
     
+    # Sort months chronologically using month_order
+    month_order = {
+        'January': 1, 'February': 2, 'March': 3, 'April': 4,
+        'May': 5, 'June': 6, 'July': 7, 'August': 8,
+        'September': 9, 'October': 10, 'November': 11, 'December': 12
+    }
+    
+    # Sort by year first, then by month
+    sorted_months = sorted(grouped_tournaments.items(), key=lambda x: (
+        int(x[0].split()[1]),  # Year (e.g., 2025)
+        month_order[x[0].split()[0]]  # Month (e.g., August = 8)
+    ))
+    
     # Add attendance status to each tournament
-    for month_group in grouped_tournaments.values():
+    for month, month_group in sorted_months:
         for tournament in month_group:
             # Default status
             tournament.attendance_status = 'not_attending'
@@ -533,13 +546,14 @@ def browse_tournaments():
                 UserTournament.user_id != current_user.id  # Exclude current user
             ).count()
     
-    # Get list of months for filter bar
-    months = list(grouped_tournaments.keys())
+    # Get list of months for filter bar (in correct chronological order)
+    months = [month for month, _ in sorted_months]
     
     return render_template(
         "user/browse_tournaments.html",
-        grouped_tournaments=grouped_tournaments,
-        months=months
+        grouped_tournaments=dict(sorted_months),
+        months=months,
+        sorted_months=sorted_months
     )
 
 @user_bp.route('/lanyard')

@@ -19,14 +19,14 @@
   <div class="month-filter-container mobile-filter">
     <select id="month-selector" class="month-selector">
       <option value="">Select Month</option>
-      {% for month in grouped_tournaments.keys() %}
+      {% for month in months %}
         <option value="#month-{{ month|replace(' ', '-') }}">{{ month }}</option>
       {% endfor %}
     </select>
   </div>
   
-  <!-- Tournaments Grouped by Month -->
-  {% for month, tournaments in grouped_tournaments.items() %}
+  <!-- Tournaments Grouped by Month (in chronological order) -->
+  {% for month, tournaments in sorted_months %}
     <div id="month-{{ month|replace(' ', '-') }}" class="month-section">
       <h2 class="month-heading">{{ month }}</h2>
       
