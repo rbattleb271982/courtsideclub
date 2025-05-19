@@ -55,11 +55,15 @@
                 <span class="stat-value">
                   {% if tournament.attendance_status == 'attending' and tournament.has_sessions and tournament.wants_to_meet %}
                     {{ tournament.hand_raised_count + 1 }}
-                  {% else %}
+                  {% elif tournament.hand_raised_count is defined %}
                     {{ tournament.hand_raised_count }}
+                  {% elif tournament.meetup_count is defined %}
+                    {{ tournament.meetup_count }}
+                  {% else %}
+                    0
                   {% endif %}
                 </span> 
-                <span class="stat-label">want to meet</span>
+                <span class="stat-label">open to meeting</span>
               </div>
             </div>
             
