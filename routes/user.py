@@ -332,11 +332,81 @@ def tournament_detail(tournament_slug):
                          days_until=days_until,
                          session_saved=session_saved)
 
-# Updated profile route to show user profile instead of redirecting
-@user_bp.route('/profile')
+# Updated profile route to show user profile with past tournaments selection
+@user_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('user/profile.html', user=current_user)
+    # If POST request, handle form submission
+    if request.method == 'POST':
+        # Handle profile updates
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        location = request.form.get('location')
+        notifications = 'notifications' in request.form
+        
+        # Get the past tournaments the user has selected
+        selected_tournament_ids = request.form.getlist('past_tournaments')
+        
+        # Update user in database
+        user = User.query.get(current_user.id)
+        if first_name:
+            user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
+        
+        # Track if location was updated
+        location_changed = False
+        if location is not None and location != user.location:
+            user.location = location
+            location_changed = True
+        
+        # Also update the name field for backward compatibility
+        if first_name and last_name:
+            user.name = f"{first_name} {last_name}"
+        
+        user.notifications = notifications
+        
+        # Clear existing past tournaments
+        UserPastTournament.query.filter_by(user_id=current_user.id).delete()
+        
+        # Add newly selected past tournaments
+        for tournament_id in selected_tournament_ids:
+            past_tournament = UserPastTournament(
+                user_id=current_user.id,
+                tournament_id=tournament_id
+            )
+            db.session.add(past_tournament)
+        
+        db.session.commit()
+        
+        # Log the profile update event
+        from services.event_logger import log_event
+        event_data = {
+            'profile_updated': True
+        }
+        if location_changed:
+            event_data['location_updated'] = True
+            event_data['new_location'] = location
+        log_event(current_user.id, 'profile_updated', event_data)
+        
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('user.profile'))
+    
+    # GET request - show the profile form
+    # Get all tournaments for the past tournaments selection
+    tournaments = Tournament.query.order_by(Tournament.start_date).all()
+    
+    # Get the user's past tournament IDs for pre-checking the checkboxes
+    user_past_tournament_ids = [pt.tournament_id for pt in current_user.past_tournaments]
+    
+    # Get today's date for filtering past tournaments
+    today = datetime.now()
+    
+    return render_template('user/profile.html', 
+                          user=current_user,
+                          tournaments=tournaments,
+                          user_past_tournament_ids=user_past_tournament_ids,
+                          today=today)
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required
