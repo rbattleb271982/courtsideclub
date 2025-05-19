@@ -45,6 +45,68 @@
   border-color: rgba(0,0,0,.125);
 }
 
+/* Compact session display with week groupings */
+.session-weeks-container {
+  max-height: 220px;
+  overflow-y: auto;
+  border-radius: 6px;
+  background-color: #fafafa;
+  padding: 0.5rem 0;
+}
+
+.week-group {
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.week-group:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.week-toggle {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.week-toggle:hover {
+  background-color: #f0f0f0;
+}
+
+.week-days {
+  padding-left: 1rem;
+  display: none;
+}
+
+.week-days.active {
+  display: block;
+}
+
+.compact-day {
+  display: flex;
+  align-items: center;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.compact-day-date {
+  min-width: 80px;
+  font-weight: 500;
+}
+
+.compact-day-sessions {
+  display: flex;
+  gap: 1rem;
+  color: #666;
+}
+
 /* Session counts styling */
 .session-counts {
   margin: 0.5rem 0;

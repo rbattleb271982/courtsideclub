@@ -58,7 +58,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Session attendance counts by day - accordion for mobile space saving -->
+                            <!-- Session attendance counts by day - with week grouping for better UX -->
                             {% if session_stats and ut.tournament.id in session_stats %}
                             <div class="session-attendance">
                                 <div class="accordion session-accordion" id="accordion-{{ ut.tournament.id }}">
@@ -68,27 +68,51 @@
                                                     data-bs-toggle="collapse" data-bs-target="#collapse-{{ ut.tournament.id }}" 
                                                     aria-expanded="false" aria-controls="collapse-{{ ut.tournament.id }}">
                                                 <span class="d-flex align-items-center">
-                                                    <i data-feather="chevron-down" class="icon-sm me-1"></i>
-                                                    Session Attendance
+                                                    <i data-feather="calendar" class="icon-sm me-1"></i>
+                                                    Session Attendance ({{ session_stats[ut.tournament.id]|length }} days)
                                                 </span>
                                             </button>
                                         </h2>
                                         <div id="collapse-{{ ut.tournament.id }}" class="accordion-collapse collapse" 
                                              aria-labelledby="heading-{{ ut.tournament.id }}" data-bs-parent="#accordion-{{ ut.tournament.id }}">
                                             <div class="accordion-body p-2">
-                                                {% for day in session_stats[ut.tournament.id] %}
-                                                <div class="session-day-info">
-                                                    <div class="day-label">Day {{ day.day_num }} - {{ day.date.strftime('%b %d') }}</div>
-                                                    <div class="ps-2">
-                                                        <div class="session-count">
-                                                            <span class="text-muted">• {{ day.day_count }} fan{% if day.day_count != 1 %}s{% endif %} attending Day Session</span>
-                                                        </div>
-                                                        <div class="session-count">
-                                                            <span class="text-muted">• {{ day.night_count }} fan{% if day.night_count != 1 %}s{% endif %} attending Night Session</span>
-                                                        </div>
-                                                    </div>
+                                                <!-- Grouped weeks for better UX -->
+                                                <div class="session-weeks-container">
+                                                    <!-- Group days into weeks -->
+                                                    {% set total_days = session_stats[ut.tournament.id]|length %}
+                                                    {% set num_weeks = ((total_days / 7)|round(0, 'ceil'))|int %}
+                                                    
+                                                    {% for week_idx in range(num_weeks) %}
+                                                        {% set start_idx = week_idx * 7 %}
+                                                        {% set end_idx = [start_idx + 7, total_days]|min %}
+                                                        {% set week_days = session_stats[ut.tournament.id][start_idx:end_idx] %}
+                                                        
+                                                        {% if week_days|length > 0 %}
+                                                            {% set first_day = week_days[0] %}
+                                                            {% set last_day = week_days[-1] %}
+                                                            
+                                                            <div class="week-group" id="week-{{ ut.tournament.id }}-{{ week_idx }}">
+                                                                <div class="week-toggle" onclick="toggleWeek('week-{{ ut.tournament.id }}-{{ week_idx }}')">
+                                                                    <span>Week {{ week_idx + 1 }}: {{ first_day.date.strftime('%b %d') }} - {{ last_day.date.strftime('%b %d') }}</span>
+                                                                    <i data-feather="chevron-down" class="icon-xs"></i>
+                                                                </div>
+                                                                <div class="week-days" id="days-week-{{ ut.tournament.id }}-{{ week_idx }}">
+                                                                    {% for day in week_days %}
+                                                                    <div class="compact-day">
+                                                                        <div class="compact-day-date">
+                                                                            {{ day.date.strftime('%a, %b %d') }}:
+                                                                        </div>
+                                                                        <div class="compact-day-sessions">
+                                                                            <span>{{ day.day_count }} Day</span>
+                                                                            <span>{{ day.night_count }} Night</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 </div>
-                                                {% endfor %}
                                             </div>
                                         </div>
                                     </div>
@@ -120,6 +144,33 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         feather.replace();
+        
+        // Open first week of each tournament by default
+        document.querySelectorAll('.week-group').forEach(group => {
+            const id = group.id;
+            if (id.endsWith('-0')) { // First week
+                toggleWeek(id);
+            }
+        });
     });
+    
+    // Toggle week display function
+    function toggleWeek(weekId) {
+        const daysElement = document.getElementById('days-' + weekId);
+        if (daysElement) {
+            daysElement.classList.toggle('active');
+            
+            // Update toggle icon
+            const toggleElement = document.querySelector('#' + weekId + ' .week-toggle i');
+            if (toggleElement) {
+                if (daysElement.classList.contains('active')) {
+                    toggleElement.setAttribute('data-feather', 'chevron-up');
+                } else {
+                    toggleElement.setAttribute('data-feather', 'chevron-down');
+                }
+                feather.replace();
+            }
+        }
+    }
 </script>
 {% endblock %}
