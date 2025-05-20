@@ -845,7 +845,8 @@ def lanyard_fulfillment():
         unsent_next_tournament=unsent_next_tournament,
         tournaments=all_tournaments,
         other_tournaments=other_tournaments,
-        get_shipping_address=get_shipping_address
+        get_shipping_address=get_shipping_address,
+        today_date=datetime.utcnow().date()
     )
 
 @admin_bp.route('/lanyards/update-status/<int:user_id>', methods=['POST'])
