@@ -16,6 +16,8 @@ def admin_dashboard():
         return redirect(url_for("main.public_home"))
 
     try:
+        # Get today's date for comparison
+        today = datetime.now().date()
         tournaments = Tournament.query.order_by(Tournament.start_date).all()
         dashboard_data = []
 
@@ -71,7 +73,14 @@ def admin_dashboard():
             })
 
         # Sort tournaments by start date
-        dashboard_data.sort(key=lambda x: x['start_date_unix'])
+        # Use try/except for timestamp conversion to avoid datetime errors
+        def safe_sort_key(item):
+            try:
+                return item['start_date_unix']
+            except (TypeError, AttributeError):
+                return 0
+                
+        dashboard_data.sort(key=safe_sort_key)
         
         return render_template('admin_dashboard.html', dashboard_data=dashboard_data)
     except Exception as e:
