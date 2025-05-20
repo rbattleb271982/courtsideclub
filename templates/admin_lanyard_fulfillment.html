@@ -85,7 +85,7 @@
       <div class="d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Lanyard Fulfillment Status</h5>
         <div>
-          <input type="text" id="fulfillment-search" class="form-control" placeholder="Search by name or email...">
+          <input type="text" id="search-input" class="form-control" placeholder="Search by name or email...">
         </div>
       </div>
     </div>
@@ -196,7 +196,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Initialize variables
-    const searchInput = document.getElementById('fulfillment-search');
+    const searchInput = document.getElementById('search-input');
     const table = document.getElementById('fulfillment-table');
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
     const exportCsvBtn = document.getElementById('export-csv-btn');
