@@ -195,15 +195,31 @@
 {% block scripts %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    console.log("Lanyard fulfillment page - DOM loaded");
+    console.log("Lanyard fulfillment page loaded");
     
-    // Initialize DOM elements
+    // Get DOM elements with careful checks
     const searchInput = document.getElementById('search-input');
-    const table = document.getElementById('fulfillment-table');
-    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-    const exportCsvBtn = document.getElementById('export-csv-btn');
     const saveChangesBtn = document.getElementById('save-changes-btn');
-    const addressModal = new bootstrap.Modal(document.getElementById('addressModal'));
+    const table = document.getElementById('fulfillment-table');
+    
+    // Check critical elements
+    if (!searchInput) console.error("Search input not found - check your HTML for id='search-input'");
+    if (!saveChangesBtn) console.error("Save Changes button not found - check your HTML for id='save-changes-btn'");
+    if (!table) console.error("Table not found - check your HTML for id='fulfillment-table'");
+    
+    // Get rows only if table exists
+    const rows = table ? table.getElementsByTagName('tbody')[0].getElementsByTagName('tr') : [];
+    
+    console.log("DOM elements loaded:", {
+      searchInput: !!searchInput,
+      saveChangesBtn: !!saveChangesBtn,
+      table: !!table,
+      rowCount: rows.length
+    });
+    
+    const exportCsvBtn = document.getElementById('export-csv-btn');
+    const addressModal = document.getElementById('addressModal') ? 
+                          new bootstrap.Modal(document.getElementById('addressModal')) : null;
     
     // Apply compact styles to make table fit better without horizontal scrolling
     document.querySelector('.table-responsive').style.maxWidth = '100%';
@@ -228,19 +244,32 @@
     });
     
     // 1. Search functionality
-    // Define a reusable filter function
+    // 1. Fix Search functionality
     function applyFilters() {
-      if (!searchInput) return;
+      if (!searchInput) {
+        console.error("Cannot apply filters - search input not found");
+        return;
+      }
+      
+      if (!table || !rows || rows.length === 0) {
+        console.error("Cannot apply filters - table or rows not found");
+        return;
+      }
       
       const query = searchInput.value.toLowerCase().trim();
-      debugLog("Applying filter for:", query);
+      console.log("Filtering table for:", query);
       
       let visibleCount = 0;
       
+      // Loop through each row carefully
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        // Get the text directly from the cells
+        if (!row) continue;
+        
+        // Get name and email from cells
         const cells = row.getElementsByTagName('td');
+        if (!cells || cells.length < 2) continue;
+        
         const name = cells[0].textContent.toLowerCase();
         const email = cells[1].textContent.toLowerCase();
         
@@ -253,18 +282,13 @@
         }
       }
       
-      debugLog(`Filter applied: ${visibleCount} rows visible out of ${rows.length}`);
+      console.log(`Filter applied: ${visibleCount} rows visible out of ${rows.length}`);
     }
     
     // Set up search event handlers
     if (searchInput) {
       // Apply filters on input (real-time)
       searchInput.addEventListener('input', function() {
-        applyFilters();
-      });
-      
-      // Apply filters on keyup (for backspace/delete)
-      searchInput.addEventListener('keyup', function() {
         applyFilters();
       });
       
@@ -276,9 +300,9 @@
         }
       });
       
-      debugLog("Search input event handlers attached");
+      console.log("Search input event handlers attached");
     } else {
-      console.error("Search input element not found");
+      console.error("Search input element not found - filter functionality disabled");
     }
     
     // 2. Mark as Sent button functionality
