@@ -879,7 +879,7 @@ def lanyard():
             address2=request.form.get('address2', ''),
             city=request.form['city'],
             state=request.form['state'],
-            zip_code=request.form['zip_code'],
+            zip_code=request.form['zip'],
             country=request.form['country']
         )
 
