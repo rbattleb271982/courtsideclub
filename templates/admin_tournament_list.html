@@ -8,6 +8,120 @@
   <h1>Admin: All Tournaments</h1>
   <p>From here you can edit tournament details that appear on tournament pages.</p>
   
+  <!-- Add New Tournament Form -->
+  <div class="card" style="margin-bottom: 2rem; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div class="card-header" style="background-color: #f8f9fa; padding: 1rem; border-bottom: 1px solid #ddd; border-radius: 8px 8px 0 0;">
+      <h2 style="margin: 0; font-size: 1.25rem;">Add New Tournament</h2>
+    </div>
+    <div class="card-body" style="padding: 1.5rem;">
+      <form method="POST" action="{{ url_for('admin.add_tournament') }}">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Tournament Name*</label>
+              <input type="text" id="name" name="name" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="id" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Tournament ID*</label>
+              <input type="text" id="id" name="id" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+              <small class="text-muted" style="font-size: 0.8rem;">Unique identifier (e.g., "wimbledon", "us_open")</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="start_date" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Start Date*</label>
+              <input type="date" id="start_date" name="start_date" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="end_date" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">End Date*</label>
+              <input type="date" id="end_date" name="end_date" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="city" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">City*</label>
+              <input type="text" id="city" name="city" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="country" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Country*</label>
+              <input type="text" id="country" name="country" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="event_type" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Event Level*</label>
+              <select id="event_type" name="event_type" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+                <option value="Grand Slam">Grand Slam</option>
+                <option value="Masters 1000">Masters 1000</option>
+                <option value="ATP 500">ATP 500</option>
+                <option value="ATP 250">ATP 250</option>
+                <option value="WTA 1000">WTA 1000</option>
+                <option value="WTA 500">WTA 500</option>
+                <option value="WTA 250">WTA 250</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="tour_type" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Tour*</label>
+              <select id="tour_type" name="tour_type" class="form-control" required style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+                <option value="ATP">ATP</option>
+                <option value="WTA">WTA</option>
+                <option value="Both">Both</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="surface" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Surface</label>
+              <select id="surface" name="surface" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+                <option value="">-- Select --</option>
+                <option value="Hard">Hard</option>
+                <option value="Clay">Clay</option>
+                <option value="Grass">Grass</option>
+                <option value="Carpet">Carpet</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="draw_url" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Draw URL</label>
+              <input type="url" id="draw_url" name="draw_url" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="schedule_url" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Schedule URL</label>
+              <input type="url" id="schedule_url" name="schedule_url" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #ced4da; border-radius: 4px;">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+          <button type="submit" class="btn btn-success" style="padding: 0.5rem 1.5rem; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Tournament</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
   <table class="admin-table" style="width: 100%; border-collapse: collapse; margin-top: 1.5rem;">
     <thead>
       <tr style="border-bottom: 2px solid #ddd; text-align: left;">

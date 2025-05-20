@@ -113,6 +113,9 @@ class Tournament(db.Model):
     schedule_url = db.Column(db.String(255))
     sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     
+    # New optional fields for admin use
+    surface = db.Column(db.String(50), nullable=True)  # e.g., "Hard", "Clay", "Grass"
+    
     user_registrations = relationship('UserTournament', back_populates='tournament')
     
     def __repr__(self):
