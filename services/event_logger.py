@@ -1,66 +1,110 @@
-from models import Event, db
-from flask_login import current_user
+
+from flask import request
+from models import db, Event
 from datetime import datetime
 
-"""
-Standard CourtSide Club Event Types
------------------------------------
+# Event type descriptions for documentation and logging
+EVENT_DESCRIPTIONS = {
+    # 🔐 Account & Profile
+    "user_signup": "User created an account",
+    "user_login": "User signed in",
+    "profile_updated": "User updated their profile",
+    "location_set": "User set or updated their city/state",
+    "user_skipped_profile": "User bypassed the profile setup",
+    "user_resumed_profile": "User resumed profile setup after skipping",
+    "user_fully_activated": "User completed profile, selected sessions, and opted in to meetups",
 
-ACCOUNT EVENTS:
-- user_signup: User creates an account
-- user_login: User logs in successfully
-- profile_updated: User updates their profile
-- location_set: User saves their location
-- user_opt_out_email: User disables email notifications
+    # 🎾 Tournament Engagement
+    "attend_tournament": "User RSVP'd to a tournament",
+    "tournament_unattend": "User removed their attendance",
+    "user_removed_attendance": "User completely backed out of a tournament",
+    "session_selected": "User selected sessions for a tournament",
+    "user_updated_sessions": "User updated their selected sessions",
+    "tournament_session_update": "User adjusted sessions",
+    "wants_to_meet_enabled": "User opted in to meet other fans",
+    "wants_to_meet_disabled": "User opted out of meetups",
+    "user_first_attendance_saved": "User marked their first tournament attendance",
 
-TOURNAMENT EVENTS:
-- attend_tournament: User indicates they're attending a tournament
-- tournament_unattend: User unselects attendance for a tournament
-- session_selected: User selects and saves sessions
-- wants_to_meet_enabled: User checks "Open to meeting" option
-- wants_to_meet_disabled: User unchecks "Open to meeting" option
-- past_tournament_added: User adds a past tournament to their profile
-- past_tournament_removed: User removes a past tournament from their profile
+    # 🏟️ Past Tournaments
+    "past_tournament_added": "User added a past tournament to their profile",
+    "past_tournament_removed": "User removed a past tournament from their profile",
+    "user_added_multiple_past_events": "User added 3 or more past tournaments",
 
-LANYARD EVENTS:
-- lanyard_order_eligible: User becomes eligible for a lanyard
-- lanyard_order_started: User visits the lanyard order page
-- shipping_address_submitted: User submits shipping information
+    # 🎁 Lanyard Funnel
+    "lanyard_order_eligible": "User became eligible to order a lanyard",
+    "lanyard_prompt_shown": "Lanyard eligibility prompt was shown",
+    "lanyard_order_started": "User visited the lanyard order page",
+    "shipping_address_submitted": "User submitted their shipping address",
+    "shipping_address_skipped": "User skipped entering a shipping address",
+    "lanyard_marked_sent": "Admin marked lanyard as sent",
+    "lanyard_abandoned": "User became eligible but never visited the lanyard page",
+    "lanyard_error_submission": "Shipping address submission failed",
+    "lanyard_page_viewed": "User viewed the lanyard order page",
+    "lanyard_export": "Admin exported the lanyard CSV",
+    "admin_bulk_lanyards_sent": "Admin used 'Mark All as Sent'",
+    "admin_lanyard_note_updated": "Admin updated internal note on a lanyard",
 
-ADMIN EVENTS:
-- lanyard_marked_sent: Admin marks a lanyard as sent
-- admin_meetup_set: Admin sets meetup location/time
-- admin_bulk_lanyards_sent: Admin uses "Mark All as Sent"
-- admin_tournament_updated: Admin edits tournament details
-- lanyard_export: Admin exports lanyard CSV
+    # 📬 Emails
+    "welcome_email_sent": "Welcome email sent to user",
+    "reminder_email_sent": "Reminder email sent before a tournament",
+    "meetup_email_sent": "Meet-up email sent with time/location",
+    "lanyard_shipped_email_sent": "Email sent confirming lanyard shipment",
+    "post_event_recap_sent": "Post-event recap email sent",
+    "user_opt_out_email": "User opted out of email notifications",
 
-EMAIL EVENTS:
-- welcome_email_sent: Welcome email is sent to user
-- reminder_email_sent: Reminder email is sent to user
-- meetup_email_sent: Meetup email is sent to user
-- post_event_email_sent: Post-event email or survey is sent to user
-"""
+    # 🗓️ Session Logic
+    "session_met_day_only": "User selected only day sessions",
+    "session_met_night_only": "User selected only night sessions",
+    "session_changed_last_minute": "User changed sessions within 3 days of event",
 
-def log_event(name, user=None, data=None):
+    # 🤝 Community Interaction
+    "user_viewed_meetup_list": "User viewed other attendees",
+    "meetup_feedback_submitted": "User submitted post-event feedback",
+
+    # 🛠 Admin/System Actions
+    "tournament_edit": "Admin edited tournament data",
+    "admin_tournament_updated": "Admin updated tournament description/surface",
+    "admin_created_tournament": "Admin created a new tournament",
+    "admin_edited_session_structure": "Admin edited session structure",
+    "admin_meetup_location_set": "Admin set a meetup time/place",
+    "admin_sent_test_email": "Admin sent a test email",
+    "admin_event_log_exported": "Admin exported the event log",
+    "event_summary_viewed": "Admin viewed the Event Summary page",
+    "tournament_stats_exported": "Admin exported tournament session stats"
+}
+
+def log_event(user_id, event_name, data=None):
     """
-    Log an event to the database
+    Log an event to the database with the given name and optional data
     
     Args:
-        name (str): The name of the event (see list of standard event types above)
-        user (User, optional): The user who performed the action. Defaults to current_user.
-        data (dict, optional): Additional data to store with the event. Defaults to None.
+        user_id (int): The ID of the user who triggered the event
+        event_name (str): The name/type of the event (must match EVENT_DESCRIPTIONS)
+        data (dict): Optional dictionary of additional event data
     """
-    try:
-        event = Event(
-            name=name,
-            user_id=user.id if user else current_user.id if current_user.is_authenticated else None,
-            timestamp=datetime.utcnow(),
-            event_data=data or {}
-        )
-        db.session.add(event)
-        db.session.commit()
-        return True
-    except Exception as e:
-        print(f"Error logging event: {str(e)}")
-        db.session.rollback()
-        return False
+    if event_name not in EVENT_DESCRIPTIONS:
+        raise ValueError(f"Invalid event name: {event_name}")
+        
+    if data is None:
+        data = {}
+        
+    # Add standard metadata
+    data.update({
+        'ip_address': request.remote_addr,
+        'user_agent': request.user_agent.string,
+        'timestamp': datetime.utcnow().isoformat()
+    })
+    
+    # Create and save the event
+    event = Event(
+        user_id=user_id,
+        name=event_name,
+        event_data=data
+    )
+    
+    db.session.add(event)
+    db.session.commit()
+
+def get_event_description(event_name):
+    """Get the human-readable description for an event type"""
+    return EVENT_DESCRIPTIONS.get(event_name, "Unknown event type")
