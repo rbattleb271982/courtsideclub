@@ -208,9 +208,9 @@
             <tr>
               <th onclick="sortTable(0)" style="cursor: pointer;">Name <i class="fas fa-sort"></i></th>
               <th onclick="sortTable(1)" style="cursor: pointer;">Email <i class="fas fa-sort"></i></th>
-              <th>Sessions</th>
-              <th onclick="sortTable(3)" style="cursor: pointer;">Open to Meet <i class="fas fa-sort"></i></th>
-              <th onclick="sortTable(4)" style="cursor: pointer;">Lanyard <i class="fas fa-sort"></i></th>
+              <th class="text-center">Sessions Count</th>
+              <th onclick="sortTable(3)" style="cursor: pointer;" class="text-center">Open to Meet <i class="fas fa-sort"></i></th>
+              <th onclick="sortTable(4)" style="cursor: pointer;" class="text-center">Lanyard <i class="fas fa-sort"></i></th>
             </tr>
           </thead>
           <tbody>
@@ -218,19 +218,22 @@
             <tr>
               <td>{{ attendee.name }}</td>
               <td>{{ attendee.email }}</td>
-              <td>{{ attendee.sessions }}</td>
+              <td class="text-center">
+                {% if attendee.sessions and attendee.sessions != "None" %}
+                  {% set sessions_list = attendee.sessions.split(',') %}
+                  {{ sessions_list|length }}
+                {% else %}
+                  0
+                {% endif %}
+              </td>
               <td class="text-center">
                 {% if attendee.wants_to_meet == "Yes" %}
-                <span class="badge bg-success">✓</span>
-                {% else %}
-                <span class="badge bg-secondary">✗</span>
+                Check
                 {% endif %}
               </td>
               <td class="text-center">
                 {% if attendee.lanyard == "Ordered" %}
-                <span class="badge bg-info">✓</span>
-                {% else %}
-                <span class="badge bg-secondary">✗</span>
+                Check
                 {% endif %}
               </td>
             </tr>
