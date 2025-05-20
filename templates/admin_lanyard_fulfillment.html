@@ -229,8 +229,16 @@
     }
     
     // Apply filters on search input
-    searchInput.addEventListener('keyup', function() {
+    searchInput.addEventListener('input', function() {
       applyFilters();
+    });
+    
+    // Also handle pressing Enter in the search box
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        applyFilters();
+      }
     });
     
     // Auto-filter to show only urgent users when urgent alert is present
@@ -252,27 +260,41 @@
     }
     
     // Mark as Sent button handlers
-    const markSentButtons = document.querySelectorAll('.mark-sent-btn');
-    
-    markSentButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const userId = this.dataset.userId;
-        const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+    function setupMarkSentButtons() {
+      // Get all current buttons
+      const markSentButtons = document.querySelectorAll('.mark-sent-btn');
+      
+      markSentButtons.forEach(button => {
+        // Remove any existing event listeners
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
         
-        // Register this change
-        lanyardChanges.set(userId, true);
-        saveChangesBtn.disabled = false; // Enable save button
-        
-        // Update UI immediately (will be confirmed on save)
-        row.classList.add('table-success');
-        
-        // Replace button with "Pending Save" badge
-        this.outerHTML = '<span class="badge bg-warning">Pending Save</span>';
-        
-        // Update row's needs-lanyard attribute
-        row.dataset.needsLanyard = 'false';
+        // Add the event listener
+        newButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          const userId = this.dataset.userId;
+          const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+          
+          // Register this change
+          lanyardChanges.set(userId, true);
+          saveChangesBtn.disabled = false; // Enable save button
+          
+          // Update UI immediately (will be confirmed on save)
+          row.classList.add('table-success');
+          
+          // Replace button with "Pending Save" badge
+          this.outerHTML = '<span class="badge bg-warning">Pending Save</span>';
+          
+          // Update row's needs-lanyard attribute
+          row.dataset.needsLanyard = 'false';
+          
+          console.log(`Marked user ${userId} for lanyard sent, pending save`);
+        });
       });
-    });
+    }
+    
+    // Setup the mark-sent buttons
+    setupMarkSentButtons();
     
     // Save all changes button
     saveChangesBtn.addEventListener('click', function() {
