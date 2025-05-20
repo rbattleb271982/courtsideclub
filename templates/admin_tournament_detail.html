@@ -119,21 +119,13 @@
                 <tr class="text-center fw-bold">
                   <th>Totals</th>
                   <th class="text-center">
-                    {% set day_total = 0 %}
-                    {% for day in days_data %}
-                      {% set day_total = day_total + day.day_session %}
-                    {% endfor %}
-                    {{ day_total }}
+                    {{ day_session_total }}
                   </th>
                   <th class="text-center">
-                    {% set night_total = 0 %}
-                    {% for day in days_data %}
-                      {% set night_total = night_total + day.night_session %}
-                    {% endfor %}
-                    {{ night_total }}
+                    {{ night_session_total }}
                   </th>
                   <th class="text-center">
-                    {{ day_total + night_total }}
+                    {{ overall_total }}
                   </th>
                 </tr>
               </tfoot>

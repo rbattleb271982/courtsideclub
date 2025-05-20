@@ -125,14 +125,27 @@ def view_tournament(tournament_slug):
     
     # Convert to sorted list for template rendering
     days_data = []
+    day_session_total = 0
+    night_session_total = 0
+    overall_total = 0
+    
     for day_num in sorted(day_counts.keys()):
+        day_session_count = day_counts[day_num]["Day"]
+        night_session_count = day_counts[day_num]["Night"]
+        day_total = day_session_count + night_session_count
+        
         day_data = {
             "day": day_num,
-            "day_session": day_counts[day_num]["Day"],
-            "night_session": day_counts[day_num]["Night"],
-            "total": day_counts[day_num]["Day"] + day_counts[day_num]["Night"]
+            "day_session": day_session_count,
+            "night_session": night_session_count,
+            "total": day_total
         }
         days_data.append(day_data)
+        
+        # Update totals
+        day_session_total += day_session_count
+        night_session_total += night_session_count
+        overall_total += day_total
     
     # Keep the original sessions data for backward compatibility
     sorted_sessions = []
@@ -154,7 +167,10 @@ def view_tournament(tournament_slug):
         total_attending=total_attending,
         sessions=sorted_sessions,
         user_tourneys=user_tourneys,
-        days_data=days_data
+        days_data=days_data,
+        day_session_total=day_session_total,
+        night_session_total=night_session_total,
+        overall_total=overall_total
     )
 
 @admin_bp.route('/tournament/<tournament_slug>/attendees')
