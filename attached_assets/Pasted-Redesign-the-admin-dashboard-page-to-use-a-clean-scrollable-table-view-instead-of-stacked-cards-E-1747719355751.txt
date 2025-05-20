@@ -1,0 +1,68 @@
+Redesign the /admin/dashboard page to use a clean, scrollable table view instead of stacked cards. Each row should represent one tournament with sortable columns, search/filter functionality, and expandable session details. Only use checkpoints if necessary. Do not finish until visually confirmed working."
+
+🔧 DETAILS TO IMPLEMENT
+✅ 1. Table Layout (1 row per tournament)
+
+Replace the card stack with a <table> containing the following columns:
+
+Tournament: tournament name and date
+Start Date: show start_date
+Attending: show total count — make this a clickable link that opens a modal or expandable view of attendees
+Open to Meet: count of users open to meeting
+Lanyards: total users who ordered lanyards
+Sessions: include a "View" toggle to expand or collapse session breakdowns per tournament
+Export: button or link to download lanyard CSV for that tournament
+Email Tools: two buttons per row — one for “Send Reminder” and one for “Send Welcome”
+Use a clean table layout (<thead>, <tbody>) styled for admin use (desktop-first, mobile responsive second).
+
+✅ 2. Sortable Columns
+
+Implement sorting (ASC/DESC toggle) when the admin clicks on:
+
+Start Date
+Attending
+Lanyards
+Optional: use JavaScript or server-side sort depending on existing stack.
+
+✅ 3. Search & Filter
+
+Above the table, add:
+
+A search input that filters by tournament name
+Optional dropdowns:
+Filter by date range
+Filter: Has attendees / Has lanyards
+✅ 4. Expandable Sessions View
+
+Each row has a Sessions column with a button or chevron icon (🔽). When clicked:
+
+Expand inline or pop up a modal showing:
+List of sessions (day + label)
+Number of attendees per session
+Percent of total
+Close on click again.
+
+✅ 5. Bulk Actions Toolbar (Above the Table)
+
+Add a floating or fixed bar with:
+
+Export All Lanyards (CSV)
+Send All Welcome Emails
+Send All Reminder Emails
+These should apply to all tournaments listed — make sure not to duplicate logic already present in per-tournament exports or emails.
+
+✅ 6. Sticky Table Header
+
+Ensure <thead> stays visible while scrolling through many tournaments using CSS or JS:
+
+thead th {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 2;
+}
+✅ 7. Don’t Touch
+
+Do not change any non-admin views
+Do not remove existing email logic or export backends
+This change is purely for /admin/dashboard layout and UX improvement

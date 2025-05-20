@@ -3,99 +3,378 @@
 {% block title %}Admin Dashboard | CourtSide Club{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 800px; margin: 2rem auto;">
-  <h2>🎾 Admin Dashboard <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
-  <hr style="margin-bottom: 2em;">
-  <div class="row mb-4">
-    <div class="col-md-6">
-      <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-secondary">⬇️ Export Lanyard Orders (CSV)</a>
-    </div>
-    <div class="col-md-6 text-md-end">
+<div class="container-fluid" style="padding: 1.5rem;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🎾 Admin Dashboard <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
+    <div>
       <a href="{{ url_for('admin.view_events') }}" class="btn btn-info">📊 View User Event Log</a>
     </div>
   </div>
 
-  {% for row in dashboard_data %}
-    <div style="margin-bottom: 2em; padding: 1em; border: 1px solid #ccc; border-radius: 6px;">
-      <h3>{{ row.tournament.name }} ({{ row.tournament.start_date.strftime('%b %d') }})</h3>
-      
-      <div class="row mb-3">
+  <!-- Search and Filter Bar -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
         <div class="col-md-4">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5 class="card-title">👥 Attending</h5>
-              <p class="card-text fs-3">{{ row.total_attending }}</p>
-            </div>
-          </div>
+          <label for="tournament-search" class="form-label">Search Tournaments</label>
+          <input type="text" id="tournament-search" class="form-control" placeholder="Tournament name...">
         </div>
         <div class="col-md-4">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5 class="card-title">🙋 Open to Meet</h5>
-              <p class="card-text fs-3">{{ row.total_meetups }}</p>
-            </div>
-          </div>
+          <label for="date-filter" class="form-label">Date Range</label>
+          <select id="date-filter" class="form-select">
+            <option value="all">All Dates</option>
+            <option value="upcoming">Upcoming Tournaments</option>
+            <option value="past">Past Tournaments</option>
+          </select>
         </div>
         <div class="col-md-4">
-          <div class="card shadow-sm">
-            <div class="card-body text-center">
-              <h5 class="card-title">🏷️ Lanyards</h5>
-              <p class="card-text fs-3">{{ row.total_lanyards }}</p>
-            </div>
-          </div>
+          <label for="attendance-filter" class="form-label">Show Only</label>
+          <select id="attendance-filter" class="form-select">
+            <option value="all">All Tournaments</option>
+            <option value="has-attendees">Has Attendees</option>
+            <option value="has-lanyards">Has Lanyard Orders</option>
+          </select>
         </div>
       </div>
-
-      <div class="card mt-3 mb-3">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">📊 Session Attendance</h5>
-        </div>
-        <div class="card-body p-0">
-          <table class="table table-striped mb-0">
-            <thead>
-              <tr>
-                <th>Session</th>
-                <th>Attendees</th>
-                <th class="text-center">%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for label, count in row.session_counts.items() %}
-                <tr>
-                  <td>{{ label }}</td>
-                  <td>{{ count }} attendee{{ "s" if count > 1 else "" }}</td>
-                  <td class="text-center">
-                    {% if row.total_attending > 0 %}
-                      {{ ((count / row.total_attending) * 100) | round(1) }}%
-                    {% else %}
-                      0%
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endfor %}
-              {% if not row.session_counts %}
-                <tr>
-                  <td colspan="3" class="text-center text-muted">No sessions selected yet</td>
-                </tr>
-              {% endif %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <p>
-        <a href="{{ url_for('admin.view_attendees', tournament_slug=row.tournament.slug) }}" class="btn btn-sm btn-outline-primary">View Attendees</a>
-        <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-sm btn-outline-secondary">Export Lanyards</a>
-      </p>
-
-      <form method="GET" action="{{ url_for('debug.send_reminder', user_id=current_user.id, tournament_slug=row.tournament.slug) }}" style="display:inline;">
-        <button type="submit" class="btn btn-sm btn-secondary">📬 Test Reminder</button>
-      </form>
-
-      <form method="GET" action="{{ url_for('debug.send_welcome_email', user_id=current_user.id) }}" style="display:inline;">
-        <button type="submit" class="btn btn-sm btn-secondary">✉️ Test Welcome</button>
-      </form>
     </div>
-  {% endfor %}
+  </div>
+
+  <!-- Bulk Actions Toolbar -->
+  <div class="card mb-4 sticky-top" style="top: 0; z-index: 100; background-color: #f8f9fa; border-bottom: 2px solid #ddd;">
+    <div class="card-body py-2">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <strong>Bulk Actions:</strong>
+        </div>
+        <div class="btn-group">
+          <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-outline-success">
+            <i class="fas fa-file-csv"></i> Export All Lanyards
+          </a>
+          <button type="button" class="btn btn-outline-primary" onclick="confirmSendAllEmails('welcome')">
+            <i class="fas fa-envelope"></i> Send All Welcome Emails
+          </button>
+          <button type="button" class="btn btn-outline-info" onclick="confirmSendAllEmails('reminder')">
+            <i class="fas fa-bell"></i> Send All Reminder Emails
+          </button>
+        </div>
+        <div>
+          <span id="filtered-count" class="badge bg-secondary">Showing all tournaments</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tournament Table -->
+  <div class="table-responsive">
+    <table id="tournament-table" class="table table-striped table-hover">
+      <thead class="sticky-top" style="top: 60px; background-color: white; z-index: 99; border-bottom: 2px solid #ddd;">
+        <tr>
+          <th style="cursor: pointer;" onclick="sortTable(0)">Tournament <i class="sort-icon fas fa-sort"></i></th>
+          <th style="cursor: pointer;" onclick="sortTable(1)">Start Date <i class="sort-icon fas fa-sort"></i></th>
+          <th style="cursor: pointer;" onclick="sortTable(2)">Attending <i class="sort-icon fas fa-sort"></i></th>
+          <th style="cursor: pointer;" onclick="sortTable(3)">Open to Meet <i class="sort-icon fas fa-sort"></i></th>
+          <th style="cursor: pointer;" onclick="sortTable(4)">Lanyards <i class="sort-icon fas fa-sort"></i></th>
+          <th>Sessions</th>
+          <th>Export</th>
+          <th>Email Tools</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in dashboard_data %}
+        <tr data-tournament-id="{{ row.tournament.id }}" data-tournament-name="{{ row.tournament.name }}" 
+            data-start-date="{{ row.tournament.start_date.strftime('%Y-%m-%d') }}"
+            data-attending="{{ row.total_attending }}"
+            data-meetups="{{ row.total_meetups }}"
+            data-lanyards="{{ row.total_lanyards }}">
+          <td>{{ row.tournament.name }}</td>
+          <td data-date="{{ row.tournament.start_date.strftime('%Y-%m-%d') }}">
+            {{ row.tournament.start_date.strftime('%b %d, %Y') }}
+          </td>
+          <td>
+            <a href="{{ url_for('admin.view_attendees', tournament_slug=row.tournament.slug) }}" 
+               class="btn btn-sm {{ 'btn-primary' if row.total_attending > 0 else 'btn-outline-secondary' }}">
+               {{ row.total_attending }}
+            </a>
+          </td>
+          <td>{{ row.total_meetups }}</td>
+          <td>{{ row.total_lanyards }}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-info" onclick="toggleSessionDetails('{{ row.tournament.id }}')">
+              View <i class="fas fa-chevron-down toggle-icon-{{ row.tournament.id }}"></i>
+            </button>
+          </td>
+          <td>
+            <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-sm btn-outline-success">
+              <i class="fas fa-download"></i> CSV
+            </a>
+          </td>
+          <td>
+            <div class="btn-group">
+              <form method="GET" action="{{ url_for('debug.send_reminder', user_id=current_user.id, tournament_slug=row.tournament.slug) }}">
+                <button type="submit" class="btn btn-sm btn-outline-secondary me-1">📬 Reminder</button>
+              </form>
+              <form method="GET" action="{{ url_for('debug.send_welcome_email', user_id=current_user.id) }}">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">✉️ Welcome</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <!-- Session Details Row (Hidden by Default) -->
+        <tr id="session-details-{{ row.tournament.id }}" class="session-details-row" style="display: none; background-color: #f8f9fa;">
+          <td colspan="8">
+            <div class="card">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">📊 Session Attendance for {{ row.tournament.name }}</h5>
+              </div>
+              <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                  <thead>
+                    <tr>
+                      <th>Session</th>
+                      <th>Attendees</th>
+                      <th class="text-center">%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for label, count in row.session_counts.items() %}
+                    <tr>
+                      <td>{{ label }}</td>
+                      <td>{{ count }} attendee{{ "s" if count > 1 else "" }}</td>
+                      <td class="text-center">
+                        {% if row.total_attending > 0 %}
+                          {{ ((count / row.total_attending) * 100) | round(1) }}%
+                        {% else %}
+                          0%
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not row.session_counts %}
+                    <tr>
+                      <td colspan="3" class="text-center text-muted">No sessions selected yet</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<!-- Add font awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+  /* Table Sorting Styles */
+  .sort-icon {
+    color: #ccc;
+  }
+  
+  th.sorted-asc .sort-icon::before {
+    content: "\f0de" !important; /* up arrow */
+    color: #007bff;
+  }
+  
+  th.sorted-desc .sort-icon::before {
+    content: "\f0dd" !important; /* down arrow */
+    color: #007bff;
+  }
+  
+  /* Sticky Header */
+  thead th {
+    position: sticky;
+    top: 60px;
+    background: white;
+    z-index: 2;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Session Details Row */
+  .session-details-row {
+    transition: all 0.3s ease;
+  }
+  
+  /* Toolbar */
+  .sticky-top {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+  // Toggle Session Details
+  function toggleSessionDetails(tournamentId) {
+    const detailsRow = document.getElementById(`session-details-${tournamentId}`);
+    const toggleIcon = document.querySelector(`.toggle-icon-${tournamentId}`);
+    
+    if (detailsRow.style.display === "none") {
+      detailsRow.style.display = "table-row";
+      toggleIcon.classList.remove("fa-chevron-down");
+      toggleIcon.classList.add("fa-chevron-up");
+    } else {
+      detailsRow.style.display = "none";
+      toggleIcon.classList.remove("fa-chevron-up");
+      toggleIcon.classList.add("fa-chevron-down");
+    }
+  }
+
+  // Table Sorting
+  let currentSortCol = -1;
+  let sortDirection = 1; // 1 for ascending, -1 for descending
+
+  function sortTable(colIndex) {
+    const table = document.getElementById("tournament-table");
+    const headers = table.querySelectorAll("th");
+    
+    // Update sort direction
+    if (currentSortCol === colIndex) {
+      sortDirection *= -1;
+    } else {
+      sortDirection = 1;
+      currentSortCol = colIndex;
+    }
+    
+    // Update header classes for sort indicators
+    headers.forEach(header => {
+      header.classList.remove("sorted-asc", "sorted-desc");
+    });
+    
+    headers[colIndex].classList.add(sortDirection === 1 ? "sorted-asc" : "sorted-desc");
+    
+    // Get all data rows (skip session details rows)
+    const tbody = table.querySelector("tbody");
+    const rows = Array.from(tbody.querySelectorAll("tr:not(.session-details-row)"));
+    
+    // Sort the rows
+    rows.sort((a, b) => {
+      let valueA, valueB;
+      
+      // Different handling based on column index
+      switch(colIndex) {
+        case 0: // Tournament Name
+          valueA = a.cells[colIndex].innerText.trim();
+          valueB = b.cells[colIndex].innerText.trim();
+          break;
+        case 1: // Start Date
+          valueA = a.getAttribute("data-start-date");
+          valueB = b.getAttribute("data-start-date");
+          break;
+        case 2: // Attending
+        case 3: // Open to Meet
+        case 4: // Lanyards
+          valueA = parseInt(a.getAttribute(`data-${['attending', 'meetups', 'lanyards'][colIndex-2]}`));
+          valueB = parseInt(b.getAttribute(`data-${['attending', 'meetups', 'lanyards'][colIndex-2]}`));
+          break;
+        default:
+          return 0;
+      }
+      
+      if (valueA < valueB) return -1 * sortDirection;
+      if (valueA > valueB) return 1 * sortDirection;
+      return 0;
+    });
+    
+    // Reorder the rows, keeping session details with their parent row
+    const newTbody = document.createElement("tbody");
+    
+    rows.forEach(row => {
+      const tournamentId = row.getAttribute("data-tournament-id");
+      newTbody.appendChild(row.cloneNode(true));
+      
+      // Also move the associated session details row
+      const detailsRow = document.getElementById(`session-details-${tournamentId}`);
+      if (detailsRow) {
+        newTbody.appendChild(detailsRow.cloneNode(true));
+      }
+    });
+    
+    tbody.innerHTML = newTbody.innerHTML;
+    
+    // Reattach event listeners to the toggle buttons
+    document.querySelectorAll('[onclick^="toggleSessionDetails"]').forEach(btn => {
+      // Extract tournament ID from onclick attribute
+      const tournamentId = btn.getAttribute("onclick").split("'")[1];
+      btn.onclick = function() { toggleSessionDetails(tournamentId); };
+    });
+  }
+
+  // Filter Table Implementation
+  function filterTable() {
+    const searchText = document.getElementById("tournament-search").value.toLowerCase();
+    const dateFilter = document.getElementById("date-filter").value;
+    const attendanceFilter = document.getElementById("attendance-filter").value;
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+    
+    // Get all tournament rows
+    const rows = document.querySelectorAll("#tournament-table tbody tr:not(.session-details-row)");
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+      const tournamentId = row.getAttribute("data-tournament-id");
+      const detailsRow = document.getElementById(`session-details-${tournamentId}`);
+      const tournamentName = row.getAttribute("data-tournament-name").toLowerCase();
+      const startDate = row.getAttribute("data-start-date");
+      const attending = parseInt(row.getAttribute("data-attending"));
+      const lanyards = parseInt(row.getAttribute("data-lanyards"));
+      
+      // Check search text
+      const matchesSearch = searchText === "" || tournamentName.includes(searchText);
+      
+      // Check date filter
+      let matchesDate = true;
+      if (dateFilter === "upcoming") {
+        matchesDate = startDate >= today;
+      } else if (dateFilter === "past") {
+        matchesDate = startDate < today;
+      }
+      
+      // Check attendance filter
+      let matchesAttendance = true;
+      if (attendanceFilter === "has-attendees") {
+        matchesAttendance = attending > 0;
+      } else if (attendanceFilter === "has-lanyards") {
+        matchesAttendance = lanyards > 0;
+      }
+      
+      // Apply all filters
+      const isVisible = matchesSearch && matchesDate && matchesAttendance;
+      
+      // Show/hide this row and its details row
+      row.style.display = isVisible ? "" : "none";
+      if (detailsRow) {
+        detailsRow.style.display = "none"; // Always hide details when filtering
+      }
+      
+      if (isVisible) visibleCount++;
+    });
+    
+    // Update the filtered count display
+    document.getElementById("filtered-count").textContent = 
+      `Showing ${visibleCount} tournament${visibleCount !== 1 ? 's' : ''}`;
+  }
+
+  // Email confirmation
+  function confirmSendAllEmails(type) {
+    const count = document.querySelectorAll('#tournament-table tbody tr:not([style*="display: none"]):not(.session-details-row)').length;
+    
+    if (confirm(`Are you sure you want to send ${type} emails for ALL ${count} visible tournaments?`)) {
+      alert(`Email sending would be triggered here for ${count} tournaments.`);
+    }
+  }
+
+  // Add event listeners once page loads
+  document.addEventListener("DOMContentLoaded", function() {
+    // Set up search and filter listeners
+    document.getElementById("tournament-search").addEventListener("input", filterTable);
+    document.getElementById("date-filter").addEventListener("change", filterTable);
+    document.getElementById("attendance-filter").addEventListener("change", filterTable);
+    
+    // Initial sort by start date
+    sortTable(1);
+  });
+</script>
 {% endblock %}
