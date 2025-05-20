@@ -1,0 +1,323 @@
+{% extends "layout.html" %}
+{% block title %}Lanyard Fulfillment | Admin | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="padding: 1.5rem;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🏷️ Lanyard Fulfillment <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
+    <div>
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+      <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-success ms-2">
+        <i class="fas fa-file-csv"></i> Export CSV
+      </a>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h4 class="card-title">Lanyard Fulfillment Summary</h4>
+      <div class="row text-center">
+        <div class="col-md-4">
+          <div class="p-3 rounded bg-success bg-opacity-10">
+            <h5 class="mb-0">🟢 {{ total_sent }}</h5>
+            <p class="mb-0">Sent</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 rounded bg-warning bg-opacity-10">
+            <h5 class="mb-0">🟡 {{ total_not_sent }}</h5>
+            <p class="mb-0">Not Sent</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 rounded bg-info bg-opacity-10">
+            <h5 class="mb-0">📦 {{ total_ordered }}</h5>
+            <p class="mb-0">Total Ordered</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Urgent Alert -->
+  {% if next_tournament and unsent_next_tournament %}
+  <div class="alert alert-danger" id="urgent-alert">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <i class="fas fa-exclamation-triangle"></i> 
+        <strong>🚨 {{ unsent_next_tournament|length }} unsent lanyards</strong> for users attending the next tournament: 
+        <strong>{{ next_tournament.name }}</strong> ({{ next_tournament.start_date.strftime('%b %d') }})
+      </div>
+      <button class="btn btn-sm btn-outline-danger" id="filter-next-tournament">Show Only These</button>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Fulfillment Table -->
+  <div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Lanyard Fulfillment</h5>
+      <div>
+        <span class="badge bg-light text-dark" id="filtered-count">{{ lanyard_data|length }} lanyards</span>
+        <button class="btn btn-sm btn-outline-light ms-2" id="reset-filters" style="display: none;">Reset Filters</button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table id="lanyard-table" class="table table-striped table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th style="cursor: pointer;" onclick="sortTable(0)">User Name <i class="sort-icon fas fa-sort"></i></th>
+              <th style="cursor: pointer;" onclick="sortTable(1)">Email <i class="sort-icon fas fa-sort"></i></th>
+              <th style="cursor: pointer;" onclick="sortTable(2)">Address Submitted <i class="sort-icon fas fa-sort"></i></th>
+              <th style="cursor: pointer;" onclick="sortTable(3)">First Tournament <i class="sort-icon fas fa-sort"></i></th>
+              <th>Sessions</th>
+              <th style="cursor: pointer;" onclick="sortTable(5)">Lanyard Sent <i class="sort-icon fas fa-sort"></i></th>
+              <th style="cursor: pointer;" onclick="sortTable(6)">Sent Date <i class="sort-icon fas fa-sort"></i></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in lanyard_data %}
+            <tr data-user-id="{{ item.user.id }}" {% if next_tournament and item.first_tournament and item.first_tournament.id == next_tournament.id and not item.user.lanyard_sent %}class="next-tournament"{% endif %}>
+              <td>{{ item.user.get_full_name() }}</td>
+              <td>{{ item.user.email }}</td>
+              <td class="text-center">
+                {% if item.has_address %}
+                  <span class="text-success">✅</span>
+                {% else %}
+                  <span class="text-danger">❌</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if item.first_tournament %}
+                  {{ item.first_tournament.name }} <small class="text-muted">({{ item.first_tournament_date.strftime('%b %d, %Y') }})</small>
+                {% else %}
+                  <span class="text-muted">None</span>
+                {% endif %}
+              </td>
+              <td class="small">
+                {% if item.sessions %}
+                  {{ item.sessions }}
+                {% else %}
+                  <span class="text-muted">None selected</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="form-check form-switch">
+                  <input class="form-check-input lanyard-sent-toggle" type="checkbox" 
+                         data-user-id="{{ item.user.id }}" 
+                         {% if item.user.lanyard_sent %}checked{% endif %}>
+                </div>
+              </td>
+              <td class="sent-date-{{ item.user.id }}">
+                {% if item.user.lanyard_sent_date %}
+                  {{ item.user.lanyard_sent_date.strftime('%b %d, %Y %H:%M UTC') }}
+                {% else %}
+                  <span class="text-muted">Not yet sent</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="7" class="text-center py-4">No lanyard orders found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add font awesome if not already included in layout -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+  /* Table Styling */
+  .sort-icon {
+    color: #ccc;
+  }
+  
+  th.sorted-asc .sort-icon::before {
+    content: "\f0de" !important; /* up arrow */
+    color: #007bff;
+  }
+  
+  th.sorted-desc .sort-icon::before {
+    content: "\f0dd" !important; /* down arrow */
+    color: #007bff;
+  }
+  
+  /* Highlight next tournament rows */
+  tr.next-tournament {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+  }
+  
+  tr.next-tournament:hover {
+    background-color: rgba(255, 193, 7, 0.2) !important;
+  }
+</style>
+
+<script>
+  // Setup event listeners
+  document.addEventListener('DOMContentLoaded', function() {
+    // Lanyard sent toggle functionality
+    document.querySelectorAll('.lanyard-sent-toggle').forEach(toggle => {
+      toggle.addEventListener('change', function() {
+        const userId = this.dataset.userId;
+        const status = this.checked;
+        updateLanyardStatus(userId, status);
+      });
+    });
+    
+    // Filter by next tournament button
+    const filterNextBtn = document.getElementById('filter-next-tournament');
+    if (filterNextBtn) {
+      filterNextBtn.addEventListener('click', function() {
+        filterByNextTournament();
+      });
+    }
+    
+    // Reset filters button
+    const resetFiltersBtn = document.getElementById('reset-filters');
+    if (resetFiltersBtn) {
+      resetFiltersBtn.addEventListener('click', function() {
+        resetFilters();
+      });
+    }
+  });
+  
+  // Update lanyard status via AJAX
+  function updateLanyardStatus(userId, status) {
+    // Create form data
+    const formData = new FormData();
+    formData.append('status', status);
+    
+    // Send AJAX request
+    fetch(`/admin/lanyards/update-status/${userId}`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Update the sent date display
+        const sentDateCell = document.querySelector(`.sent-date-${userId}`);
+        if (sentDateCell) {
+          sentDateCell.innerHTML = data.sent 
+            ? data.date 
+            : '<span class="text-muted">Not yet sent</span>';
+        }
+      } else {
+        alert('Error updating lanyard status. Please try again.');
+        // Toggle back the checkbox
+        const checkbox = document.querySelector(`.lanyard-sent-toggle[data-user-id="${userId}"]`);
+        if (checkbox) checkbox.checked = !status;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error updating lanyard status. Please try again.');
+      // Toggle back the checkbox
+      const checkbox = document.querySelector(`.lanyard-sent-toggle[data-user-id="${userId}"]`);
+      if (checkbox) checkbox.checked = !status;
+    });
+  }
+  
+  // Filter to show only next tournament attendees
+  function filterByNextTournament() {
+    const rows = document.querySelectorAll('#lanyard-table tbody tr');
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+      if (row.classList.contains('next-tournament')) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    
+    // Update counter and show reset button
+    document.getElementById('filtered-count').textContent = `${visibleCount} lanyards`;
+    document.getElementById('reset-filters').style.display = 'inline-block';
+  }
+  
+  // Reset filters to show all rows
+  function resetFilters() {
+    const rows = document.querySelectorAll('#lanyard-table tbody tr');
+    rows.forEach(row => {
+      row.style.display = '';
+    });
+    
+    // Update counter and hide reset button
+    document.getElementById('filtered-count').textContent = `${rows.length} lanyards`;
+    document.getElementById('reset-filters').style.display = 'none';
+  }
+  
+  // Table sorting functionality
+  let currentSortCol = -1;
+  let sortDirection = 1; // 1 for ascending, -1 for descending
+  
+  function sortTable(colIndex) {
+    const table = document.getElementById('lanyard-table');
+    const headers = table.querySelectorAll('th');
+    
+    // Update sort direction
+    if (currentSortCol === colIndex) {
+      sortDirection *= -1;
+    } else {
+      sortDirection = 1;
+      currentSortCol = colIndex;
+    }
+    
+    // Update header classes for sort indicators
+    headers.forEach(header => {
+      header.classList.remove('sorted-asc', 'sorted-desc');
+    });
+    
+    headers[colIndex].classList.add(sortDirection === 1 ? 'sorted-asc' : 'sorted-desc');
+    
+    // Get all table rows
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    // Skip empty message row if present
+    if (rows.length === 1 && rows[0].cells.length === 1 && rows[0].cells[0].getAttribute('colspan')) {
+      return;
+    }
+    
+    // Sort the rows
+    rows.sort((a, b) => {
+      let valueA, valueB;
+      
+      // Special handling for checkbox column
+      if (colIndex === 5) { // Lanyard Sent column
+        valueA = a.querySelector('.lanyard-sent-toggle').checked ? 1 : 0;
+        valueB = b.querySelector('.lanyard-sent-toggle').checked ? 1 : 0;
+      } 
+      // Special handling for address submitted column
+      else if (colIndex === 2) { // Address Submitted column
+        valueA = a.cells[colIndex].textContent.includes('✅') ? 1 : 0;
+        valueB = b.cells[colIndex].textContent.includes('✅') ? 1 : 0;
+      }
+      else {
+        valueA = a.cells[colIndex].textContent.trim().toLowerCase();
+        valueB = b.cells[colIndex].textContent.trim().toLowerCase();
+      }
+      
+      if (valueA < valueB) return -1 * sortDirection;
+      if (valueA > valueB) return 1 * sortDirection;
+      return 0;
+    });
+    
+    // Reorder the rows
+    rows.forEach(row => {
+      tbody.appendChild(row);
+    });
+  }
+</script>
+{% endblock %}
