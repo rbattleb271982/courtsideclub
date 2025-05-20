@@ -199,6 +199,7 @@ import csv
 from io import StringIO
 from flask import Response
 from models import ShippingAddress
+from sqlalchemy import func, desc
 
 @admin_bp.route('/export-lanyards')
 @login_required
