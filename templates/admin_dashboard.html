@@ -185,9 +185,9 @@
     
     headers[colIndex].classList.add(sortDirection === 1 ? "sorted-asc" : "sorted-desc");
     
-    // Get all data rows (skip session details rows)
+    // Get all table rows
     const tbody = table.querySelector("tbody");
-    const rows = Array.from(tbody.querySelectorAll("tr:not(.session-details-row)"));
+    const rows = Array.from(tbody.querySelectorAll("tr"));
     
     // Sort the rows
     rows.sort((a, b) => {
@@ -218,28 +218,14 @@
       return 0;
     });
     
-    // Reorder the rows, keeping session details with their parent row
+    // Reorder the rows
     const newTbody = document.createElement("tbody");
     
     rows.forEach(row => {
-      const tournamentId = row.getAttribute("data-tournament-id");
       newTbody.appendChild(row.cloneNode(true));
-      
-      // Also move the associated session details row
-      const detailsRow = document.getElementById(`session-details-${tournamentId}`);
-      if (detailsRow) {
-        newTbody.appendChild(detailsRow.cloneNode(true));
-      }
     });
     
     tbody.innerHTML = newTbody.innerHTML;
-    
-    // Reattach event listeners to the toggle buttons
-    document.querySelectorAll('[onclick^="toggleSessionDetails"]').forEach(btn => {
-      // Extract tournament ID from onclick attribute
-      const tournamentId = btn.getAttribute("onclick").split("'")[1];
-      btn.onclick = function() { toggleSessionDetails(tournamentId); };
-    });
   }
 
   // Filter Table Implementation
