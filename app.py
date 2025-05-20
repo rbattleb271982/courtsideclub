@@ -210,7 +210,45 @@ def page_not_found(e):
 @app.errorhandler(Exception)
 def handle_exception(e):
     """Global error handler for all exceptions"""
+    # Log the error to the standard logger first
     logging.error(f"Unhandled exception: {str(e)}", exc_info=True)
+    
+    # Track error in our event system with detailed information
+    try:
+        from flask import request, session
+        from flask_login import current_user
+        
+        # Get basic error information
+        error_type = type(e).__name__
+        error_message = str(e)
+        
+        # Get request context information when available
+        user_id = current_user.id if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated else None
+        user_email = current_user.email if hasattr(current_user, 'is_authenticated') and current_user.is_authenticated else None
+        
+        # Capture request details
+        request_data = {
+            'url': str(request.url) if hasattr(request, 'url') else None,
+            'method': request.method if hasattr(request, 'method') else None,
+            'path': request.path if hasattr(request, 'path') else None,
+            'user_agent': str(request.user_agent) if hasattr(request, 'user_agent') else None,
+            'remote_addr': request.remote_addr if hasattr(request, 'remote_addr') else None,
+        }
+        
+        # Log the error event
+        log_event('application_error', data={
+            'error_type': error_type,
+            'error_message': error_message,
+            'user_id': user_id,
+            'user_email': user_email,
+            'request': request_data,
+            'timestamp': datetime.datetime.utcnow().isoformat()
+        })
+    except Exception as log_error:
+        # Prevent error tracking from causing additional errors
+        logging.error(f"Error while tracking error event: {str(log_error)}")
+    
+    # Return the error template
     return render_template('error.html', error=str(e)), 500
 
 # Configure debug mode

@@ -426,10 +426,28 @@ def update_profile():
     # Log the profile update event
     from services.event_logger import log_event
     event_data = {}
+    
+    # Track location updates
     if location_changed:
         event_data['location_updated'] = True
         event_data['new_location'] = location
-    log_event(current_user.id, 'profile_updated', event_data)
+    
+    # Track notification preference changes
+    if 'notifications' in request.form:
+        # Check if the notification setting actually changed
+        if notifications != getattr(user, 'notifications', None):
+            event_data['notification_preference_changed'] = True
+            event_data['notifications_enabled'] = notifications
+            
+            # Log a specific notification preference event for better analytics
+            notification_event = 'user_opt_in_email' if notifications else 'user_opt_out_email'
+            log_event(notification_event, data={
+                'user_id': current_user.id,
+                'email': current_user.email,
+                'timestamp': datetime.utcnow().isoformat()
+            })
+            
+    log_event('profile_updated', data=event_data)
 
     # Clear temporary password after profile update (if exists)
     if 'temp_password' in session:
