@@ -134,20 +134,17 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Shared Tournament History Section with collapsible functionality -->
+                    <!-- Shared Tournament History Section with improved collapsible functionality -->
                     {% if current_user.is_authenticated and sorted_shared_tournaments %}
                     <div class="shared-history-box mt-4" id="shared-history">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4 class="h5 mb-0">Previous tournaments people have attended:</h4>
-                            <button id="toggleButton" class="btn btn-sm btn-outline-secondary">Show All Previous Tournaments</button>
-                        </div>
-                        <div id="tournamentList" class="collapsed mt-2" style="display:none;">
-                            <ul class="shared-history-list">
-                                {% for name, count in sorted_shared_tournaments %}
-                                <li>{{ name }} <span class="small text-muted">({{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament)</span></li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                        <p id="toggleTournaments" onclick="togglePreviousTournaments()" class="tournament-toggle">
+                            Tournaments others have attended <span id="chevron">▼</span>
+                        </p>
+                        <ul id="tournamentList" class="collapsed shared-history-list">
+                            {% for name, count in sorted_shared_tournaments %}
+                            <li>{{ name }} <span class="small text-muted">({{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament)</span></li>
+                            {% endfor %}
+                        </ul>
                     </div>
                     {% elif current_user.is_authenticated %}
                     <div class="mt-4">
@@ -515,27 +512,41 @@
         color: #6c757d;
         font-style: italic;
     }
+    
+    /* New styles for tournament toggle */
+    .tournament-toggle {
+        cursor: pointer;
+        font-weight: 500;
+        padding: 12px 0;
+        user-select: none;
+        margin-bottom: 0;
+    }
+    
+    #tournamentList.collapsed li {
+        display: none;
+    }
+    
+    #chevron {
+        font-size: 12px;
+        margin-left: 4px;
+    }
 </style>
 
 <!-- Removed floating session save bar -->
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toggleButton = document.getElementById('toggleButton');
-        const tournamentList = document.getElementById('tournamentList');
-        
-        if (toggleButton && tournamentList) {
-            toggleButton.addEventListener('click', function() {
-                // Toggle visibility
-                if (tournamentList.style.display === 'none') {
-                    tournamentList.style.display = 'block';
-                    toggleButton.textContent = 'Hide Tournament List';
-                } else {
-                    tournamentList.style.display = 'none';
-                    toggleButton.textContent = 'Show All Previous Tournaments';
-                }
-            });
-        }
-    });
+  function togglePreviousTournaments() {
+    const list = document.getElementById("tournamentList");
+    const toggle = document.getElementById("toggleTournaments");
+    const chevron = document.getElementById("chevron");
+
+    list.classList.toggle("collapsed");
+
+    if (list.classList.contains("collapsed")) {
+      toggle.innerHTML = 'Tournaments others have attended <span id="chevron">▼</span>';
+    } else {
+      toggle.innerHTML = 'Hide tournaments others have attended <span id="chevron">▲</span>';
+    }
+  }
 </script>
 {% endblock %}
