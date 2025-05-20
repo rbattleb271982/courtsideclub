@@ -71,24 +71,13 @@
   {% endif %}
   {% endif %}
 
-  <!-- Fulfillment Controls -->
+  <!-- Save Changes Button -->
   <div class="card mb-4">
     <div class="card-header bg-light">
-      <div class="d-flex justify-content-between align-items-center flex-wrap">
-        <h5 class="mb-0">Lanyard Fulfillment Controls</h5>
-        <div class="d-flex flex-wrap mt-2 mt-md-0">
-          <div class="form-check form-switch me-3">
-            <input class="form-check-input" type="checkbox" id="show-unsent-only">
-            <label class="form-check-label" for="show-unsent-only">Show unsent only</label>
-          </div>
-          <select id="tournament-filter" class="form-select me-3" style="width: auto;">
-            <option value="">All tournaments</option>
-            {% for t in tournaments %}
-            <option value="{{ t.id }}">{{ t.name }}</option>
-            {% endfor %}
-          </select>
-          <button id="reset-filters-btn" class="btn btn-outline-secondary btn-sm me-2">Reset Filters</button>
-          <button id="mark-all-sent-btn" class="btn btn-success btn-sm">Mark All Filtered as Sent</button>
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Lanyard Fulfillment Management</h5>
+        <div>
+          <button id="save-changes-btn" class="btn btn-success" disabled>💾 Save All Changes</button>
         </div>
       </div>
     </div>
@@ -170,14 +159,16 @@
                 <span class="text-muted">No tournaments</span>
                 {% endif %}
               </td>
-              <td class="status-cell">
-                <div class="form-check form-switch">
-                  <input class="form-check-input lanyard-toggle" type="checkbox" id="lanyard-{{ item.user.id }}" 
-                         {{ 'checked' if item.user.lanyard_sent else '' }}
-                         data-user-id="{{ item.user.id }}"
-                         data-original-state="{{ 'true' if item.user.lanyard_sent else 'false' }}">
-                  <label class="form-check-label" for="lanyard-{{ item.user.id }}">Sent</label>
-                </div>
+              <td class="text-center">
+                {% if item.user.lanyard_sent %}
+                <span class="badge bg-success">Sent</span>
+                {% else %}
+                <button class="btn btn-sm btn-outline-success mark-sent-btn" 
+                        data-user-id="{{ item.user.id }}"
+                        data-original-state="false">
+                  Mark as Sent
+                </button>
+                {% endif %}
               </td>
               <td>
                 <input type="text" class="form-control form-control-sm internal-note" 
@@ -304,35 +295,26 @@
       });
     }
     
-    // Lanyard status toggle handlers
-    const toggles = document.querySelectorAll('.lanyard-toggle');
+    // Mark as Sent button handlers
+    const markSentButtons = document.querySelectorAll('.mark-sent-btn');
     
-    toggles.forEach(toggle => {
-      toggle.addEventListener('change', function() {
+    markSentButtons.forEach(button => {
+      button.addEventListener('click', function() {
         const userId = this.dataset.userId;
-        const checked = this.checked;
-        const originalState = this.dataset.originalState === 'true';
         const row = document.querySelector(`tr[data-user-id="${userId}"]`);
         
-        // Only register a change if the value is different from the original
-        if (checked !== originalState) {
-          lanyardChanges.set(userId, checked);
-          saveChangesBtn.disabled = false; // Enable save button
-        } else {
-          // If toggled back to original state, remove from changes
-          lanyardChanges.delete(userId);
-          saveChangesBtn.disabled = lanyardChanges.size === 0; // Disable if no changes
-        }
+        // Register this change
+        lanyardChanges.set(userId, true);
+        saveChangesBtn.disabled = false; // Enable save button
         
         // Update UI immediately (will be confirmed on save)
-        if (checked) {
-          row.classList.add('table-success');
-        } else {
-          row.classList.remove('table-success');
-        }
+        row.classList.add('table-success');
         
-        // Update row's needs-lanyard attribute for filtering
-        row.dataset.needsLanyard = !checked && row.dataset.tournamentId === (tournamentFilter.value || '');
+        // Replace button with "Pending Save" badge
+        this.outerHTML = '<span class="badge bg-warning">Pending Save</span>';
+        
+        // Update row's needs-lanyard attribute
+        row.dataset.needsLanyard = 'false';
       });
     });
     
@@ -369,17 +351,18 @@
           data.results.forEach(result => {
             if (result.success) {
               const row = document.querySelector(`tr[data-user-id="${result.userId}"]`);
-              const toggle = row.querySelector('.lanyard-toggle');
-              
-              // Update the original state to match the new state
-              toggle.dataset.originalState = result.status;
               
               // Update row styling
               if (result.status) {
                 row.classList.add('table-success');
+                
+                // Replace the pending badge with a "Sent" badge
+                const cell = row.querySelector('td.text-center');
+                if (cell) {
+                  cell.innerHTML = '<span class="badge bg-success">Sent</span>';
+                }
+                
                 sentCount++;
-              } else {
-                row.classList.remove('table-success');
               }
             }
           });
