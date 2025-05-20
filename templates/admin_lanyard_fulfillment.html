@@ -195,7 +195,9 @@
 {% block scripts %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Initialize variables
+    console.log("Lanyard fulfillment page - DOM loaded");
+    
+    // Initialize DOM elements
     const searchInput = document.getElementById('search-input');
     const table = document.getElementById('fulfillment-table');
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
@@ -210,16 +212,34 @@
     // Track changes for batch saving
     const lanyardChanges = new Map(); // userId -> new status
     
+    // Enable debug mode
+    const debugMode = true;
+    function debugLog(...args) {
+      if (debugMode) {
+        console.log(...args);
+      }
+    }
+    
+    debugLog("Elements initialized:", { 
+      searchInput: !!searchInput, 
+      table: !!table, 
+      rows: rows.length, 
+      saveChangesBtn: !!saveChangesBtn 
+    });
+    
+    // 1. Search functionality
     // Define a reusable filter function
     function applyFilters() {
-      const query = searchInput.value.toLowerCase();
-      console.log("Searching for:", query);
+      if (!searchInput) return;
+      
+      const query = searchInput.value.toLowerCase().trim();
+      debugLog("Applying filter for:", query);
       
       let visibleCount = 0;
       
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        // Get the text from the cells directly instead of attributes
+        // Get the text directly from the cells
         const cells = row.getElementsByTagName('td');
         const name = cells[0].textContent.toLowerCase();
         const email = cells[1].textContent.toLowerCase();
@@ -233,21 +253,158 @@
         }
       }
       
-      console.log(`Filter applied: ${visibleCount} rows visible`);
+      debugLog(`Filter applied: ${visibleCount} rows visible out of ${rows.length}`);
     }
     
-    // Apply filters immediately when typed
-    searchInput.addEventListener('input', function() {
-      applyFilters();
-    });
-    
-    // Also handle pressing Enter in the search box
-    searchInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
+    // Set up search event handlers
+    if (searchInput) {
+      // Apply filters on input (real-time)
+      searchInput.addEventListener('input', function() {
         applyFilters();
-      }
-    });
+      });
+      
+      // Apply filters on keyup (for backspace/delete)
+      searchInput.addEventListener('keyup', function() {
+        applyFilters();
+      });
+      
+      // Handle Enter key
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          applyFilters();
+        }
+      });
+      
+      debugLog("Search input event handlers attached");
+    } else {
+      console.error("Search input element not found");
+    }
+    
+    // 2. Mark as Sent button functionality
+    function setupMarkSentButtons() {
+      const markSentButtons = document.querySelectorAll('.mark-sent-btn');
+      debugLog(`Setting up ${markSentButtons.length} 'Mark Sent' buttons`);
+      
+      markSentButtons.forEach(button => {
+        // Add click handler
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const userId = this.getAttribute('data-user-id');
+          debugLog(`Mark Sent clicked for user ID: ${userId}`);
+          
+          if (!userId) {
+            console.error("Missing user ID on Mark Sent button");
+            return false;
+          }
+          
+          // Get the row
+          const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+          if (!row) {
+            console.error(`Could not find row for user ID: ${userId}`);
+            return false;
+          }
+          
+          // Add to changes map
+          lanyardChanges.set(userId, true);
+          debugLog(`Added change for user ${userId}, total changes: ${lanyardChanges.size}`);
+          
+          // Update visual state
+          row.classList.add('table-success');
+          
+          // Replace button with pending badge
+          this.outerHTML = '<span class="badge bg-warning">Pending Save</span>';
+          
+          // Enable Save All Changes button
+          if (saveChangesBtn) {
+            saveChangesBtn.disabled = false;
+            debugLog("Save All Changes button enabled");
+          }
+          
+          return false;
+        });
+      });
+      
+      debugLog("Mark Sent buttons initialized");
+    }
+    
+    // Initialize Mark Sent buttons
+    setupMarkSentButtons();
+    
+    // 3. Save All Changes button functionality
+    if (saveChangesBtn) {
+      saveChangesBtn.addEventListener('click', function() {
+        debugLog(`Save Changes button clicked. Changes to save: ${lanyardChanges.size}`);
+        
+        if (lanyardChanges.size === 0) {
+          alert('No changes to save.');
+          return;
+        }
+        
+        // Show loading state
+        this.disabled = true;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+        
+        // Prepare updates to send
+        const updates = [];
+        lanyardChanges.forEach((status, userId) => {
+          updates.push({
+            userId: parseInt(userId),
+            status: status
+          });
+        });
+        
+        // Send batch update request
+        fetch('/admin/lanyards/batch-update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ updates: updates })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Server error: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          debugLog("Batch update response:", data);
+          
+          if (data.success) {
+            // Update UI to show success
+            const successCount = data.results.filter(r => r.success).length;
+            alert(`Successfully processed ${successCount} lanyard updates.`);
+            
+            // Reload the page to show updated data
+            setTimeout(() => {
+              location.reload();
+            }, 1000);
+          } else {
+            // Show error
+            alert(`Error: ${data.message || 'Unknown error occurred'}`);
+            
+            // Reset button state
+            this.disabled = false;
+            this.innerHTML = '💾 Save All Changes';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert(`Error: ${error.message}`);
+          
+          // Reset button state
+          this.disabled = false;
+          this.innerHTML = '💾 Save All Changes';
+        });
+      });
+      
+      debugLog("Save Changes button handler attached");
+    } else {
+      console.error("Save Changes button not found");
+    }
     
     // Auto-filter to show only urgent users when urgent alert is present
     if (document.getElementById('urgent-alert')) {
