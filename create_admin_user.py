@@ -32,12 +32,18 @@ def create_admin_user(email, password, first_name=None, last_name=None):
                 db.session.commit()
                 logger.info(f"Updated existing user {email} to admin with new password")
             else:
+                # Create display name (required field)
+                display_name = first_name if first_name else "Admin"
+                if first_name and last_name:
+                    display_name = f"{first_name} {last_name}"
+                
                 # Create new admin user
                 new_user = User(
                     email=email,
                     password_hash=generate_password_hash(password),
                     first_name=first_name,
                     last_name=last_name,
+                    name=display_name,  # Set name field (required)
                     is_admin=True,
                     notifications=True,
                     welcome_seen=True
