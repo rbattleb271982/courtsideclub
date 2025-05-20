@@ -1,0 +1,71 @@
+Create a new file called utils/event_meta.py and define a dictionary named event_descriptions that maps known event types to human-readable descriptions. Then, in the /admin/events/summary route, import this dictionary and pass it to the admin/event_summary.html template as event_descriptions. Use this to populate the 'Description' column in the event summary table. Only use checkpoints if necessary. Do not finish until the descriptions are showing correctly in the UI."
+
+🧾 Paste This in utils/event_meta.py:
+event_descriptions = {
+    # 🔐 Account & Profile
+    "user_signup": "User created an account",
+    "user_login": "User signed in",
+    "profile_updated": "User updated their profile",
+    "location_set": "User set or updated their city/state",
+    "user_skipped_profile": "User bypassed the profile setup",
+    "user_resumed_profile": "User resumed profile setup after skipping",
+    "user_fully_activated": "User completed profile, selected sessions, and opted in to meetups",
+
+    # 🎾 Tournament Engagement
+    "attend_tournament": "User RSVP'd to a tournament",
+    "tournament_unattend": "User removed their attendance",
+    "user_removed_attendance": "User completely backed out of a tournament",
+    "session_selected": "User selected sessions for a tournament",
+    "user_updated_sessions": "User updated their selected sessions",
+    "tournament_session_update": "User adjusted sessions",
+    "wants_to_meet_enabled": "User opted in to meet other fans",
+    "wants_to_meet_disabled": "User opted out of meetups",
+    "user_first_attendance_saved": "User marked their first tournament attendance",
+
+    # 🏟️ Past Tournaments
+    "past_tournament_added": "User added a past tournament to their profile",
+    "past_tournament_removed": "User removed a past tournament from their profile",
+    "user_added_multiple_past_events": "User added 3 or more past tournaments",
+
+    # 🎁 Lanyard Funnel
+    "lanyard_order_eligible": "User became eligible to order a lanyard",
+    "lanyard_prompt_shown": "Lanyard eligibility prompt was shown",
+    "lanyard_order_started": "User visited the lanyard order page",
+    "shipping_address_submitted": "User submitted their shipping address",
+    "shipping_address_skipped": "User skipped entering a shipping address",
+    "lanyard_marked_sent": "Admin marked lanyard as sent",
+    "lanyard_abandoned": "User became eligible but never visited the lanyard page",
+    "lanyard_error_submission": "Shipping address submission failed",
+    "lanyard_page_viewed": "User viewed the lanyard order page",
+    "lanyard_export": "Admin exported the lanyard CSV",
+    "admin_bulk_lanyards_sent": "Admin used 'Mark All as Sent'",
+    "admin_lanyard_note_updated": "Admin updated internal note on a lanyard",
+
+    # 📬 Emails
+    "welcome_email_sent": "Welcome email sent to user",
+    "reminder_email_sent": "Reminder email sent before a tournament",
+    "meetup_email_sent": "Meet-up email sent with time/location",
+    "lanyard_shipped_email_sent": "Email sent confirming lanyard shipment",
+    "post_event_recap_sent": "Post-event recap email sent",
+    "user_opt_out_email": "User opted out of email notifications",
+
+    # 🗓️ Session Logic
+    "session_met_day_only": "User selected only day sessions",
+    "session_met_night_only": "User selected only night sessions",
+    "session_changed_last_minute": "User changed sessions within 3 days of event",
+
+    # 🤝 Community Interaction
+    "user_viewed_meetup_list": "User viewed other attendees",
+    "meetup_feedback_submitted": "User submitted post-event feedback",
+
+    # 🛠 Admin/System Actions
+    "tournament_edit": "Admin edited tournament data",
+    "admin_tournament_updated": "Admin updated tournament description/surface",
+    "admin_created_tournament": "Admin created a new tournament",
+    "admin_edited_session_structure": "Admin edited session structure",
+    "admin_meetup_location_set": "Admin set a meetup time/place",
+    "admin_sent_test_email": "Admin sent a test email",
+    "admin_event_log_exported": "Admin exported the event log",
+    "event_summary_viewed": "Admin viewed the Event Summary page",
+    "tournament_stats_exported": "Admin exported tournament session stats"
+}
