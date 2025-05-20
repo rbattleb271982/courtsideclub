@@ -234,10 +234,12 @@
                       const resultItem = document.createElement('div');
                       resultItem.className = 'search-result p-2 d-flex justify-content-between align-items-center';
                       resultItem.innerHTML = `
-                        <span>${tournament.name}</span>
-                        <button type="button" class="btn btn-sm btn-success add-tournament" data-id="${tournament.id}" data-name="${tournament.name}">
-                          Add
-                        </button>
+                        <div class="autocomplete-result">
+                          <span>${tournament.name}</span>
+                          <button type="button" class="add-btn add-tournament" data-id="${tournament.id}" data-name="${tournament.name}">
+                            Add
+                          </button>
+                        </div>
                       `;
                       resultsContainer.appendChild(resultItem);
                     });
