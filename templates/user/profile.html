@@ -172,11 +172,9 @@
                 {% if user_past_tournament_ids %}
                   {% for tournament in past_tournaments %}
                     {% if tournament.id in user_past_tournament_ids %}
-                      <div class="selected-tournament mb-2" data-id="{{ tournament.id }}">
+                      <div class="selected-tournament tournament-tag mb-2" data-id="{{ tournament.id }}">
                         <span class="tournament-name">{{ tournament.name }}</span>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-tournament">
-                          <small>×</small>
-                        </button>
+                        <button type="button" class="remove-icon remove-tournament">×</button>
                       </div>
                     {% endif %}
                   {% endfor %}
@@ -443,6 +441,7 @@
 </div>
 
 <style>
+  /* Invite button styles */
   .invite-btn {
     display: inline-block;
     background-color: #007c5f;
@@ -467,6 +466,42 @@
     .invite-section {
       display: none; /* Hide the entire section on desktop */
     }
+  }
+  
+  /* Tournament tag styles - fixes alignment of remove buttons */
+  .tournament-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    min-height: 44px;
+  }
+  
+  .tournament-name {
+    flex-grow: 1;
+    margin-right: 8px;
+  }
+  
+  .remove-icon {
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 0;
+  }
+  
+  .remove-icon:hover {
+    color: #c82333;
   }
 </style>
 {% endblock %}
