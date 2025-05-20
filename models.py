@@ -76,6 +76,8 @@ class User(UserMixin, db.Model):
     
     location = db.Column(db.String(100))
     lanyard_ordered = db.Column(db.Boolean, default=False)
+    lanyard_sent = db.Column(db.Boolean, default=False)
+    lanyard_sent_date = db.Column(db.DateTime, nullable=True)
     notifications = db.Column(db.Boolean, default=True)
     welcome_seen = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
