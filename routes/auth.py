@@ -154,6 +154,16 @@ def signup():
 @auth_bp.route('/logout')
 @login_required
 def logout():
+    user_id = current_user.id
+    
+    # Log the logout event
+    from services.event_logger import log_event
+    log_event('user_logout', data={
+        'user_id': user_id,
+        'ip': request.remote_addr,
+        'user_agent': str(request.user_agent) if request.user_agent else None
+    })
+    
     logout_user()
     return redirect(url_for('auth.login'))
 
