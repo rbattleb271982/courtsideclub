@@ -18,161 +18,166 @@ def admin_dashboard():
     try:
         tournaments = Tournament.query.order_by(Tournament.start_date).all()
         dashboard_data = []
+
+        for tournament in tournaments:
+            # Count total registrations for this tournament
+            total_registrations = UserTournament.query.filter_by(tournament_id=tournament.id).count()
+            
+            # Count attending (saved sessions)
+            attending_count = UserTournament.query.filter_by(
+                tournament_id=tournament.id, 
+                attending=True
+            ).count()
+            
+            # Count open to meet
+            open_to_meet_count = UserTournament.query.filter_by(
+                tournament_id=tournament.id,
+                wants_to_meet=True
+            ).count()
+            
+            # Get session breakdown
+            session_counts = {}
+            
+            # Query for all user_tournaments with sessions
+            user_tourneys = UserTournament.query.filter_by(
+                tournament_id=tournament.id,
+                attending=True
+            ).all()
+            
+            # Process session labels
+            day_count = 0
+            night_count = 0
+            
+            for ut in user_tourneys:
+                if not ut.session_label:
+                    continue
+                    
+                sessions = [s.strip() for s in ut.session_label.split(',') if s.strip()]
+                for session in sessions:
+                    if 'Day' in session:
+                        day_count += 1
+                    elif 'Night' in session:
+                        night_count += 1
+            
+            # Prepare data for the dashboard
+            dashboard_data.append({
+                'tournament': tournament,
+                'total_registrations': total_registrations,
+                'attending_count': attending_count,
+                'open_to_meet_count': open_to_meet_count,
+                'day_count': day_count,
+                'night_count': night_count,
+                'start_date_unix': tournament.start_date.timestamp() if tournament.start_date else 0
+            })
+
+        # Sort tournaments by start date
+        dashboard_data.sort(key=lambda x: x['start_date_unix'])
         
-        for t in tournaments:
-            try:
-                # Only count users who are marked as attending
-                attending_registrations = db.session.query(UserTournament).filter_by(
-                    tournament_id=t.id, 
-                    attending=True
-                ).all()
-
-                # Count session attendance
-                session_counts = {}
-                for reg in attending_registrations:
-                    sessions = (reg.session_label or "").split(", ")
-                    for session in sessions:
-                        if session:
-                            session_counts[session] = session_counts.get(session, 0) + 1
-
-                # Total attending users
-                total_attending = len(attending_registrations)
-                
-                # Count users who want to meet
-                total_meetups = sum(1 for r in attending_registrations if r.wants_to_meet)
-                
-                # Count lanyard orders safely
-                try:
-                    lanyard_count = db.session.query(UserTournament).filter_by(
-                        tournament_id=t.id,
-                        attending=True
-                    ).join(User).filter_by(lanyard_ordered=True).count()
-                except Exception as e:
-                    # Fallback if the join query fails
-                    lanyard_count = 0
-                    print(f"Error counting lanyards for tournament {t.id}: {str(e)}")
-
-                dashboard_data.append({
-                    "tournament": t,
-                    "total_attending": total_attending,
-                    "total_meetups": total_meetups,
-                    "total_lanyards": lanyard_count,
-                    "session_counts": session_counts
-                })
-            except Exception as tournament_error:
-                # Skip this tournament if there's an error
-                print(f"Error processing tournament {t.id}: {str(tournament_error)}")
-                continue
-                
+        return render_template('admin_dashboard.html', dashboard_data=dashboard_data)
     except Exception as e:
-        # Handle database connection errors
-        flash(f"Error accessing dashboard data. Please try again later.", "danger")
-        print(f"Dashboard error: {str(e)}")
-        return render_template("admin_dashboard.html", dashboard_data=[])
+        flash(f"Error loading dashboard: {str(e)}", "danger")
+        return render_template('admin_dashboard.html', dashboard_data=[])
 
-    return render_template("admin_dashboard.html", dashboard_data=dashboard_data)
-
-@admin_bp.route('/tournaments/<tournament_slug>')
+@admin_bp.route('/tournament/<tournament_slug>')
 @login_required
 def view_tournament(tournament_slug):
     if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
 
-    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
-    
-    # Get all attending users for this tournament
-    user_tourneys = UserTournament.query.filter_by(
-        tournament_id=tournament.id,
-        attending=True
-    ).all()
-    
-    # Build session attendance data in grid format
-    session_grid = {}
-    total_attending = len(user_tourneys)
-    
-    # Track sessions per day and type - using a different approach
-    day_counts = {}
-    
-    for registration in user_tourneys:
-        sessions = (registration.session_label or "").split(", ")
-        for session in sessions:
-            if not session:
+    try:
+        tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+        
+        # Get session statistics
+        # We'll track Day vs. Night attendance by session type (Day 1, Day 2, etc.)
+        session_stats = {}
+        
+        # Get all user tournaments with sessions
+        user_tourneys = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            attending=True
+        ).all()
+        
+        # Process session labels
+        for ut in user_tourneys:
+            if not ut.session_label:
                 continue
                 
-            # Extract day number and session type
-            parts = session.strip().split(" - ")
-            if len(parts) >= 2:
-                day_part = parts[0].strip()
-                session_type = parts[1].strip()
+            sessions = [s.strip() for s in ut.session_label.split(',') if s.strip()]
+            for session in sessions:
+                session_type = 'Other'
+                if 'Day' in session:
+                    session_type = 'Day'
+                elif 'Night' in session:
+                    session_type = 'Night'
+                    
+                # Extract the day number (if present)
+                day_num = None
+                parts = session.split()
+                for part in parts:
+                    if part.isdigit():
+                        day_num = int(part)
+                        break
                 
-                # Extract day number
-                if day_part.startswith("Day "):
-                    try:
-                        day_num = int(day_part.replace("Day ", ""))
-                        
-                        # Initialize day entry if needed
-                        if day_num not in day_counts:
-                            day_counts[day_num] = {"Day": 0, "Night": 0}
-                        
-                        # Increment session type counter
-                        if "Night" in session_type:
-                            day_counts[day_num]["Night"] += 1
-                        else:
-                            day_counts[day_num]["Day"] += 1
-                    except (ValueError, IndexError):
-                        # Skip if day number can't be extracted
-                        continue
-    
-    # Convert to sorted list for template rendering
-    days_data = []
-    day_session_total = 0
-    night_session_total = 0
-    overall_total = 0
-    
-    for day_num in sorted(day_counts.keys()):
-        day_session_count = day_counts[day_num]["Day"]
-        night_session_count = day_counts[day_num]["Night"]
-        day_total = day_session_count + night_session_count
+                # Use day number or just the session name without 'Day'/'Night'
+                session_key = day_num if day_num else session.replace('Day', '').replace('Night', '').strip()
+                
+                if session_key not in session_stats:
+                    session_stats[session_key] = {'Day': 0, 'Night': 0, 'Total': 0}
+                    
+                session_stats[session_key][session_type] += 1
+                session_stats[session_key]['Total'] += 1
         
-        day_data = {
-            "day": day_num,
-            "day_session": day_session_count,
-            "night_session": night_session_count,
-            "total": day_total
-        }
-        days_data.append(day_data)
+        # Sort by day number
+        sorted_sessions = sorted(session_stats.items(), key=lambda x: (
+            # Try to convert to int for numerical sorting, fall back to string
+            int(x[0]) if isinstance(x[0], (int, str)) and str(x[0]).isdigit() else float('inf'), 
+            str(x[0])
+        ))
         
-        # Update totals
-        day_session_total += day_session_count
-        night_session_total += night_session_count
-        overall_total += day_total
-    
-    # Keep the original sessions data for backward compatibility
-    sorted_sessions = []
-    for day_num, counts in day_counts.items():
-        if counts["Day"] > 0:
-            sorted_sessions.append({
-                "label": f"Day {day_num} - Day", 
-                "count": counts["Day"]
-            })
-        if counts["Night"] > 0:
-            sorted_sessions.append({
-                "label": f"Day {day_num} - Night", 
-                "count": counts["Night"]
-            })
-    
-    return render_template(
-        "admin_tournament_detail.html",
-        tournament=tournament,
-        total_attending=total_attending,
-        sessions=sorted_sessions,
-        user_tourneys=user_tourneys,
-        days_data=days_data,
-        day_session_total=day_session_total,
-        night_session_total=night_session_total,
-        overall_total=overall_total
-    )
+        # Calculate row and column totals
+        day_total = sum(stats['Day'] for _, stats in sorted_sessions)
+        night_total = sum(stats['Night'] for _, stats in sorted_sessions)
+        grand_total = day_total + night_total
+        
+        # Get attendee information for expandable section
+        attendees = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            attending=True
+        ).join(User).all()
+        
+        # Prepare attendee data
+        attendee_data = []
+        for attendance in attendees:
+            sessions = attendance.session_label if attendance.session_label else "None"
+            wants_to_meet = "Yes" if attendance.wants_to_meet else "No"
+            
+            user = User.query.get(attendance.user_id)
+            if user:
+                attendee_data.append({
+                    'id': user.id,
+                    'name': user.get_full_name(),
+                    'email': user.email,
+                    'sessions': sessions,
+                    'wants_to_meet': wants_to_meet,
+                    'lanyard': "Ordered" if user.lanyard_ordered else "No"
+                })
+        
+        # Sort attendees by name
+        attendee_data.sort(key=lambda x: x['name'].lower())
+        
+        return render_template(
+            'admin_tournament_detail.html',
+            tournament=tournament,
+            session_stats=sorted_sessions,
+            day_total=day_total,
+            night_total=night_total,
+            grand_total=grand_total,
+            attendees=attendee_data
+        )
+    except Exception as e:
+        flash(f"Error loading tournament details: {str(e)}", "danger")
+        return redirect(url_for('admin.admin_dashboard'))
 
 @admin_bp.route('/tournament/<tournament_slug>/attendees')
 @login_required
@@ -180,106 +185,107 @@ def view_attendees(tournament_slug):
     if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
+        
+    try:
+        tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+        
+        # Get sort parameters
+        sort_by = request.args.get('sort', 'name')
+        sort_dir = request.args.get('dir', 'asc')
+        
+        # Get attendee information
+        attendees_query = (
+            db.session.query(User, UserTournament)
+            .join(UserTournament, User.id == UserTournament.user_id)
+            .filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.attending == True
+            )
+        )
+        
+        # Apply sorting
+        if sort_by == 'name':
+            if sort_dir == 'asc':
+                attendees_query = attendees_query.order_by(User.first_name, User.last_name)
+            else:
+                attendees_query = attendees_query.order_by(User.first_name.desc(), User.last_name.desc())
+        elif sort_by == 'email':
+            if sort_dir == 'asc':
+                attendees_query = attendees_query.order_by(User.email)
+            else:
+                attendees_query = attendees_query.order_by(User.email.desc())
+        
+        attendees = attendees_query.all()
+        
+        # Prepare attendee data
+        attendee_data = []
+        for user, attendance in attendees:
+            sessions = attendance.session_label if attendance.session_label else "None"
+            wants_to_meet = "Yes" if attendance.wants_to_meet else "No"
+            
+            attendee_data.append({
+                'id': user.id,
+                'name': user.get_full_name(),
+                'email': user.email,
+                'sessions': sessions,
+                'wants_to_meet': wants_to_meet,
+                'lanyard': "Ordered" if user.lanyard_ordered else "No"
+            })
+        
+        return render_template(
+            'admin_attendees.html',
+            tournament=tournament,
+            attendees=attendee_data,
+            sort_by=sort_by,
+            sort_dir=sort_dir
+        )
+    except Exception as e:
+        flash(f"Error loading attendees: {str(e)}", "danger")
+        return redirect(url_for('admin.view_tournament', tournament_slug=tournament_slug))
 
-    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
-    user_tourneys = UserTournament.query.filter_by(
-        tournament_id=tournament.id,
-        attending=True
-    ).all()
-
-    return render_template(
-        "admin_attendees.html",
-        tournament=tournament,
-        user_tourneys=user_tourneys
-    )
-
-@admin_bp.route("/tournaments", methods=["GET", "POST"])
+@admin_bp.route('/tournaments')
 @login_required
 def list_tournaments():
     """Admin view to list all tournaments for editing"""
-    if not getattr(current_user, "is_admin", False):
+    if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
-
-    # Handle POST request for creating new tournament
-    if request.method == "POST":
-        try:
-            # Extract form data
-            tournament_id = request.form.get("id", "").strip().lower()
-            name = request.form.get("name", "").strip()
-            start_date = request.form.get("start_date")
-            end_date = request.form.get("end_date")
-            city = request.form.get("city", "").strip()
-            country = request.form.get("country", "").strip()
-            event_type = request.form.get("event_type")
-            tour_type = request.form.get("tour_type")
-            surface = request.form.get("surface")
-            draw_url = request.form.get("draw_url", "")
-            schedule_url = request.form.get("schedule_url", "")
-            
-            # Validate required fields
-            if not all([tournament_id, name, start_date, end_date, city, country, event_type, tour_type]):
-                flash("Please fill in all required fields.", "danger")
-                tournaments = Tournament.query.order_by(Tournament.start_date).all()
-                return render_template("admin_tournament_list.html", tournaments=tournaments)
-            
-            # Create slug from tournament name
-            slug = tournament_id.replace(" ", "_").lower()
-            
-            # Check if tournament ID already exists
-            existing = Tournament.query.filter_by(id=tournament_id).first()
-            if existing:
-                flash(f"A tournament with ID '{tournament_id}' already exists.", "danger")
-                tournaments = Tournament.query.order_by(Tournament.start_date).all()
-                return render_template("admin_tournament_list.html", tournaments=tournaments)
-            
-            # Create new tournament and set its attributes
-            tournament = Tournament()
-            tournament.id = tournament_id
-            tournament.slug = slug
-            tournament.name = name
-            tournament.start_date = start_date
-            tournament.end_date = end_date
-            tournament.city = city
-            tournament.country = country
-            tournament.event_type = event_type
-            tournament.tour_type = tour_type
-            tournament.surface = surface
-            tournament.draw_url = draw_url
-            tournament.schedule_url = schedule_url
-            tournament.sessions = []  # Empty sessions array
-            
-            db.session.add(tournament)
-            db.session.commit()
-            
-            flash(f"Tournament '{name}' added successfully.", "success")
-        except Exception as e:
-            db.session.rollback()
-            flash(f"Error adding tournament: {str(e)}", "danger")
-    
-    # GET request or after POST - show tournament list
+        
     tournaments = Tournament.query.order_by(Tournament.start_date).all()
-    return render_template("admin_tournament_list.html", tournaments=tournaments)
+    return render_template('admin_tournaments.html', tournaments=tournaments)
 
-@admin_bp.route("/tournaments/<tournament_id>/edit", methods=["GET", "POST"])
+@admin_bp.route('/tournaments/<int:tournament_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_tournament(tournament_id):
     """Admin view to edit tournament details"""
-    if not getattr(current_user, "is_admin", False):
+    if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
-
+        
     tournament = Tournament.query.get_or_404(tournament_id)
-
-    if request.method == "POST":
-        tournament.about = request.form.get("about", "")
-        tournament.draw_url = request.form.get("draw_url", "")
-        tournament.schedule_url = request.form.get("schedule_url", "")
+    
+    if request.method == 'POST':
+        # Update tournament details
+        tournament.name = request.form.get('name')
+        tournament.location = request.form.get('location')
+        tournament.start_date = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
+        tournament.end_date = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
+        tournament.series = request.form.get('series')
+        tournament.draw_size = request.form.get('draw_size')
+        tournament.prize_money = request.form.get('prize_money')
+        tournament.slug = request.form.get('slug')
+        tournament.about = request.form.get('about')
+        tournament.draw_url = request.form.get('draw_url')
+        tournament.schedule_url = request.form.get('schedule_url')
+        tournament.surface = request.form.get('surface')
+        
         db.session.commit()
-        flash("Tournament updated successfully.", "success")
-        return redirect(url_for("admin.edit_tournament", tournament_id=tournament.id))
+        
+        flash(f"Tournament '{tournament.name}' has been updated.", "success")
+        return redirect(url_for('admin.list_tournaments'))
+    
+    return render_template('admin_edit_tournament.html', tournament=tournament)
 
-    return render_template("admin_edit_tournament.html", tournament=tournament)
 @admin_bp.route('/events')
 @login_required
 def view_events():
@@ -287,26 +293,65 @@ def view_events():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Handle event type filtering
-    event_type = request.args.get('event_type')
+    # Get optional date filter parameters
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
     
-    # Build the query
-    events_query = Event.query.order_by(Event.timestamp.desc())
+    # Default to last 7 days if no dates specified
+    today = datetime.utcnow().date()
+    if not start_date_str:
+        start_date = today - timedelta(days=7)
+    else:
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            start_date = today - timedelta(days=7)
+            flash("Invalid start date format. Showing last 7 days instead.", "warning")
     
-    # Apply filter if specified
-    if event_type:
-        events_query = events_query.filter(Event.name == event_type)
+    if not end_date_str:
+        end_date = today
+    else:
+        try:
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            end_date = today
+            flash("Invalid end date format. Using today instead.", "warning")
+    
+    # Add time to make the date range inclusive
+    start_datetime = datetime.combine(start_date, datetime.min.time())
+    end_datetime = datetime.combine(end_date, datetime.max.time())
+    
+    # Calculate previous and next periods for navigation
+    period_length = (end_date - start_date).days or 1  # Ensure at least 1 day
+    prev_start = start_date - timedelta(days=period_length)
+    prev_end = start_date - timedelta(days=1)
+    next_start = end_date + timedelta(days=1)
+    next_end = end_date + timedelta(days=period_length)
+    
+    # Option to view summary or raw logs
+    view_type = request.args.get('view', 'summary')
+    
+    if view_type == 'summary':
+        return view_event_log()
+    else:
+        # Get event counts per type
+        events = Event.query.filter(
+            Event.date_created.between(start_datetime, end_datetime)
+        ).order_by(Event.date_created.desc()).all()
         
-    # Get the results (limited to 100)
-    events = events_query.limit(100).all()
-    
-    return render_template(
-        "admin_events.html", 
-        events=events, 
-        event_type=event_type
-    )
+        return render_template(
+            'admin_events.html',
+            events=events,
+            start_date=start_date,
+            end_date=end_date,
+            prev_start=prev_start,
+            prev_end=prev_end,
+            next_start=next_start,
+            next_end=next_end,
+            view_type=view_type
+        )
 
-@admin_bp.route('/event-log')
+@admin_bp.route('/events/log')
 @login_required
 def view_event_log():
     """Shows event log summary instead of raw events"""
@@ -314,51 +359,120 @@ def view_event_log():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Define descriptions mapping for event types
+    # Get optional date filter parameters
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
+    
+    # Default to last 7 days if no dates specified
+    today = datetime.utcnow().date()
+    if not start_date_str:
+        start_date = today - timedelta(days=7)
+    else:
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            start_date = today - timedelta(days=7)
+            flash("Invalid start date format. Showing last 7 days instead.", "warning")
+    
+    if not end_date_str:
+        end_date = today
+    else:
+        try:
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        except ValueError:
+            end_date = today
+            flash("Invalid end date format. Using today instead.", "warning")
+    
+    # Add time to make the date range inclusive
+    start_datetime = datetime.combine(start_date, datetime.min.time())
+    end_datetime = datetime.combine(end_date, datetime.max.time())
+    
+    # Calculate previous and next periods for navigation
+    period_length = (end_date - start_date).days or 1  # Ensure at least 1 day
+    prev_start = start_date - timedelta(days=period_length)
+    prev_end = start_date - timedelta(days=1)
+    next_start = end_date + timedelta(days=1)
+    next_end = end_date + timedelta(days=period_length)
+    
+    # Define descriptions for common event types
     event_descriptions = {
-        "user_login": "Users who logged in",
-        "login": "Users who logged in",
         "tournament_view": "Viewed a tournament page",
-        "tournament_register": "Users who RSVP'd for tournaments",
-        "joined_tournament": "Users who RSVP'd for tournaments",
-        "lanyard_order": "Users who placed a lanyard order",
-        "ordered_lanyard": "Users who placed a lanyard order",
-        "profile_update": "Users who updated their profile",
-        "updated_profile": "Users who updated their profile",
+        "tournament_register": "Registered for a tournament",
+        "lanyard_order": "Ordered a lanyard",
+        "login": "User logged in",
+        "profile_update": "Updated profile information",
         "session_select": "Selected tournament session(s)",
-        "open_to_meet": "Users who opted to meet others",
         "session_deselect": "Deselected tournament session(s)",
         "welcome_seen": "Viewed welcome message",
         "password_reset": "Requested password reset",
         "user_registration": "New user registration",
         "past_tournament_add": "Added past tournament",
         "past_tournament_remove": "Removed past tournament",
-        "email_sent": "Emails sent (reminders/welcomes)"
+        "lanyard_fulfillment_update": "Updated lanyard shipping status"
     }
     
-    # Get all event counts
+    # Get event counts per type
     event_counts = db.session.query(
         Event.name, 
         func.count(Event.id).label('count')
+    ).filter(
+        Event.date_created.between(start_datetime, end_datetime)
     ).group_by(Event.name).order_by(desc('count')).all()
     
-    # Process results with descriptions
-    event_summary = []
+    # Prepare event data with descriptions
+    event_data = []
     for event_name, count in event_counts:
         description = event_descriptions.get(event_name, "User action")
-        event_summary.append({
+        
+        event_data.append({
             'name': event_name,
             'count': count,
             'description': description
         })
     
-    # Get total events count
-    total_events = sum(item['count'] for item in event_summary)
+    # Get daily event counts for chart
+    daily_counts = db.session.query(
+        func.date(Event.date_created).label('date'),
+        func.count(Event.id).label('count')
+    ).filter(
+        Event.date_created.between(start_datetime, end_datetime)
+    ).group_by('date').order_by('date').all()
+    
+    # Prepare chart data
+    dates = []
+    counts = []
+    for date, count in daily_counts:
+        dates.append(date.strftime('%Y-%m-%d'))
+        counts.append(count)
+    
+    # Get user counts for chart
+    user_event_counts = db.session.query(
+        User.email,
+        func.count(Event.id).label('count')
+    ).join(Event, User.id == Event.user_id).filter(
+        Event.date_created.between(start_datetime, end_datetime)
+    ).group_by(User.email).order_by(desc('count')).limit(10).all()
+    
+    # Prepare user data
+    user_emails = []
+    user_counts = []
+    for email, count in user_event_counts:
+        user_emails.append(email)
+        user_counts.append(count)
     
     return render_template(
-        "admin_event_log.html", 
-        event_summary=event_summary,
-        total_events=total_events
+        'admin_event_summary.html',
+        event_data=event_data,
+        start_date=start_date,
+        end_date=end_date,
+        prev_start=prev_start,
+        prev_end=prev_end,
+        next_start=next_start,
+        next_end=next_end,
+        dates=dates,
+        counts=counts,
+        user_emails=user_emails,
+        user_counts=user_counts
     )
 
 @admin_bp.route('/export-event-log')
@@ -369,69 +483,27 @@ def export_event_log():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Define descriptions
-    event_descriptions = {
-        "user_login": "Users who logged in",
-        "login": "Users who logged in",
-        "tournament_view": "Viewed a tournament page",
-        "tournament_register": "Users who RSVP'd for tournaments",
-        "joined_tournament": "Users who RSVP'd for tournaments",
-        "lanyard_order": "Users who placed a lanyard order",
-        "ordered_lanyard": "Users who placed a lanyard order",
-        "profile_update": "Users who updated their profile",
-        "updated_profile": "Users who updated their profile",
-        "session_select": "Selected tournament session(s)",
-        "open_to_meet": "Users who opted to meet others",
-        "session_deselect": "Deselected tournament session(s)",
-        "welcome_seen": "Viewed welcome message",
-        "password_reset": "Requested password reset",
-        "user_registration": "New user registration",
-        "past_tournament_add": "Added past tournament",
-        "past_tournament_remove": "Removed past tournament",
-        "email_sent": "Emails sent (reminders/welcomes)"
-    }
+    # Get optional date filter parameters
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
     
-    # Get event counts
-    event_counts = db.session.query(
-        Event.name, 
-        func.count(Event.id).label('count')
-    ).group_by(Event.name).order_by(desc('count')).all()
+    # Default to last 30 days if no dates specified
+    today = datetime.utcnow().date()
+    if not start_date_str:
+        start_date = today - timedelta(days=30)
+    else:
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
     
-    # Create CSV
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(['Event Type', 'Total Count', 'Description'])
+    if not end_date_str:
+        end_date = today
+    else:
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
     
-    for event_name, count in event_counts:
-        description = event_descriptions.get(event_name, "User action")
-        writer.writerow([event_name, count, description])
+    # Add time to make the date range inclusive
+    start_datetime = datetime.combine(start_date, datetime.min.time())
+    end_datetime = datetime.combine(end_date, datetime.max.time())
     
-    output.seek(0)
-    return Response(
-        output, 
-        mimetype="text/csv", 
-        headers={"Content-Disposition": "attachment;filename=event_log_summary.csv"}
-    )
-
-@admin_bp.route('/event-types')
-@login_required
-def view_event_types():
-    if not current_user.is_admin:
-        flash("Access denied.", "danger")
-        return redirect(url_for("main.public_home"))
-        
-    event_names = db.session.query(Event.name).distinct().all()
-    event_names = sorted([name[0] for name in event_names])
-    return render_template("admin_event_types.html", event_names=event_names)
-
-@admin_bp.route('/event-summary')
-@login_required
-def event_summary():
-    if not current_user.is_admin:
-        flash("Access denied.", "danger")
-        return redirect(url_for("main.public_home"))
-    
-    # Define a mapping dictionary for event descriptions
+    # Define descriptions for common event types
     event_descriptions = {
         "tournament_view": "Viewed a tournament page",
         "tournament_register": "Registered for a tournament",
@@ -447,45 +519,168 @@ def event_summary():
         "past_tournament_remove": "Removed past tournament"
     }
     
-    # Get sorted event counts (most frequent first)
+    # Get raw events with user details
+    events = db.session.query(
+        Event.id,
+        Event.name,
+        Event.date_created,
+        User.email
+    ).join(User, User.id == Event.user_id).filter(
+        Event.date_created.between(start_datetime, end_datetime)
+    ).order_by(Event.date_created.desc()).all()
+    
+    # Create CSV
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Event ID', 'Event Type', 'Description', 'User Email', 'Date'])
+    
+    for event_id, event_name, event_date, user_email in events:
+        description = event_descriptions.get(event_name, "User action")
+        writer.writerow([
+            event_id,
+            event_name,
+            description,
+            user_email,
+            event_date.strftime('%Y-%m-%d %H:%M:%S')
+        ])
+    
+    output.seek(0)
+    return Response(
+        output, 
+        mimetype="text/csv", 
+        headers={"Content-Disposition": "attachment;filename=event_log.csv"}
+    )
+
+@admin_bp.route('/event-types')
+@login_required
+def view_event_types():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
+    
+    # Define descriptions for common event types
+    event_descriptions = {
+        "tournament_view": "Viewed a tournament page",
+        "tournament_register": "Registered for a tournament",
+        "lanyard_order": "Ordered a lanyard",
+        "login": "User logged in",
+        "profile_update": "Updated profile information",
+        "session_select": "Selected tournament session(s)",
+        "session_deselect": "Deselected tournament session(s)",
+        "welcome_seen": "Viewed welcome message",
+        "password_reset": "Requested password reset",
+        "user_registration": "New user registration",
+        "past_tournament_add": "Added past tournament",
+        "past_tournament_remove": "Removed past tournament"
+    }
+    
+    # Get event counts per type
     event_counts = db.session.query(
         Event.name, 
         func.count(Event.id).label('count')
     ).group_by(Event.name).order_by(desc('count')).all()
     
-    # Process the results with descriptions
-    event_summary = []
+    # Prepare event data with descriptions
+    event_data = []
     for event_name, count in event_counts:
         description = event_descriptions.get(event_name, "User action")
-        event_summary.append({
+        
+        event_data.append({
             'name': event_name,
             'count': count,
             'description': description
         })
     
-    # Get total events count
-    total_events = sum(item['count'] for item in event_summary)
+    return render_template('admin_event_types.html', event_data=event_data)
+
+@admin_bp.route('/event-summary')
+@login_required
+def event_summary():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
     
-    # Determine sort direction
-    sort_dir = request.args.get('sort_dir', 'desc')
-    sort_by = request.args.get('sort_by', 'count')
+    # Define descriptions for common event types
+    event_descriptions = {
+        "tournament_view": "Viewed a tournament page",
+        "tournament_register": "Registered for a tournament",
+        "lanyard_order": "Ordered a lanyard",
+        "login": "User logged in",
+        "profile_update": "Updated profile information",
+        "session_select": "Selected tournament session(s)",
+        "session_deselect": "Deselected tournament session(s)",
+        "welcome_seen": "Viewed welcome message",
+        "password_reset": "Requested password reset",
+        "user_registration": "New user registration",
+        "past_tournament_add": "Added past tournament",
+        "past_tournament_remove": "Removed past tournament"
+    }
     
-    # Sort results based on parameters
-    if sort_by == 'name':
-        event_summary.sort(key=lambda x: x['name'], reverse=(sort_dir == 'desc'))
-    elif sort_by == 'count':
-        event_summary.sort(key=lambda x: x['count'], reverse=(sort_dir == 'desc'))
-    elif sort_by == 'description':
-        event_summary.sort(key=lambda x: x['description'], reverse=(sort_dir == 'desc'))
+    # Get event counts per type
+    event_counts = db.session.query(
+        Event.name, 
+        func.count(Event.id).label('count')
+    ).group_by(Event.name).order_by(desc('count')).all()
     
-    return render_template(
-        "admin_event_summary.html", 
-        event_summary=event_summary,
-        total_events=total_events,
-        sort_by=sort_by,
-        sort_dir=sort_dir
+    # Prepare event data with descriptions
+    event_data = []
+    for event_name, count in event_counts:
+        description = event_descriptions.get(event_name, "User action")
+        
+        event_data.append({
+            'name': event_name,
+            'count': count,
+            'description': description
+        })
+    
+    return render_template('admin_event_summary.html', event_data=event_data)
+
+@admin_bp.route('/export-event-summary')
+@login_required
+def export_event_summary():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
+    
+    # Define descriptions 
+    event_descriptions = {
+        "tournament_view": "Viewed a tournament page",
+        "tournament_register": "Registered for a tournament",
+        "lanyard_order": "Ordered a lanyard",
+        "login": "User logged in",
+        "profile_update": "Updated profile information",
+        "session_select": "Selected tournament session(s)",
+        "session_deselect": "Deselected tournament session(s)",
+        "welcome_seen": "Viewed welcome message",
+        "password_reset": "Requested password reset",
+        "user_registration": "New user registration",
+        "past_tournament_add": "Added past tournament",
+        "past_tournament_remove": "Removed past tournament"
+    }
+    
+    # Get event counts
+    event_counts = db.session.query(
+        Event.name, 
+        func.count(Event.id).label('count')
+    ).group_by(Event.name).order_by(desc('count')).all()
+    
+    # Create CSV
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Event Name', 'Count', 'Description'])
+    
+    for event_name, count in event_counts:
+        description = event_descriptions.get(event_name, "User action")
+        writer.writerow([event_name, count, description])
+    
+    output.seek(0)
+    return Response(
+        output, 
+        mimetype="text/csv", 
+        headers={"Content-Disposition": "attachment;filename=event_summary.csv"}
     )
 
+# Added implementation for lanyard fulfillment page
 @admin_bp.route('/lanyards')
 @login_required
 def lanyard_fulfillment():
@@ -591,15 +786,14 @@ def update_lanyard_status(user_id):
     db.session.commit()
     
     # Log the event
-    event = Event(
-        user_id=current_user.id,
-        name="lanyard_fulfillment_update",
-        event_data={
-            "target_user_id": user_id,
-            "lanyard_sent": status,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    )
+    event = Event()
+    event.user_id = current_user.id
+    event.name = "lanyard_fulfillment_update"
+    event.event_data = {
+        "target_user_id": user_id,
+        "lanyard_sent": status,
+        "timestamp": datetime.utcnow().isoformat()
+    }
     db.session.add(event)
     db.session.commit()
     
@@ -609,53 +803,6 @@ def update_lanyard_status(user_id):
         'date': user.lanyard_sent_date.strftime('%b %d, %Y %H:%M UTC') if user.lanyard_sent_date else None
     })
 
-@admin_bp.route('/export-event-summary')
-@login_required
-def export_event_summary():
-    if not current_user.is_admin:
-        flash("Access denied.", "danger")
-        return redirect(url_for("main.public_home"))
-    
-    # Define descriptions 
-    event_descriptions = {
-        "tournament_view": "Viewed a tournament page",
-        "tournament_register": "Registered for a tournament",
-        "lanyard_order": "Ordered a lanyard",
-        "login": "User logged in",
-        "profile_update": "Updated profile information",
-        "session_select": "Selected tournament session(s)",
-        "session_deselect": "Deselected tournament session(s)",
-        "welcome_seen": "Viewed welcome message",
-        "password_reset": "Requested password reset",
-        "user_registration": "New user registration",
-        "past_tournament_add": "Added past tournament",
-        "past_tournament_remove": "Removed past tournament"
-    }
-    
-    # Get event counts
-    event_counts = db.session.query(
-        Event.name, 
-        func.count(Event.id).label('count')
-    ).group_by(Event.name).order_by(desc('count')).all()
-    
-    # Create CSV
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(['Event Name', 'Count', 'Description'])
-    
-    for event_name, count in event_counts:
-        description = event_descriptions.get(event_name, "User action")
-        writer.writerow([event_name, count, description])
-    
-    output.seek(0)
-    return Response(
-        output, 
-        mimetype="text/csv", 
-        headers={"Content-Disposition": "attachment;filename=event_summary.csv"}
-    )
-
-from models import ShippingAddress
-
 @admin_bp.route('/export-lanyards')
 @login_required
 def export_lanyards():
@@ -663,54 +810,69 @@ def export_lanyards():
     if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
-
-    # Get users who meet these criteria:
-    # 1. Have lanyard_ordered=True
-    # 2. Are attending at least one tournament (UserTournament.attending=True)
-    # 3. Have selected at least one session (UserTournament.session_label is not empty)
-    # 4. Have a shipping address on file
-    results = (
-        db.session.query(User, ShippingAddress)
-        .join(ShippingAddress, User.id == ShippingAddress.user_id)
-        .join(UserTournament, User.id == UserTournament.user_id)
-        .filter(
-            User.lanyard_ordered == True,
-            UserTournament.attending == True,
-            UserTournament.session_label.isnot(None),
-            UserTournament.session_label != ''
-        )
-        .distinct(User.id)
-        .all()
-    )
-
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(['Name', 'Email', 'Address1', 'Address2', 'City', 'State', 'Zip', 'Country', 'Attending Tournaments'])
-
-    for user, address in results:
-        # Get all tournaments this user is attending
-        attending_tournaments = (
-            db.session.query(Tournament.name)
-            .join(UserTournament, Tournament.id == UserTournament.tournament_id)
-            .filter(
-                UserTournament.user_id == user.id,
-                UserTournament.attending == True
-            )
-            .all()
-        )
-        tournament_names = "; ".join([t[0] for t in attending_tournaments])
+    
+    # Get all users who ordered lanyards
+    users_with_lanyards = User.query.filter_by(lanyard_ordered=True).all()
+    
+    if not users_with_lanyards:
+        flash("No lanyard orders found.", "info")
+        return redirect(url_for("admin.lanyard_fulfillment"))
+    
+    # Prepare CSV data
+    csv_data = []
+    headers = ["Name", "Email", "Address", "First Tournament", "Sessions", "Lanyard Sent", "Sent Date"]
+    
+    for user in users_with_lanyards:
+        # Get shipping address if available
+        shipping_address = ""
+        address = ShippingAddress.query.filter_by(user_id=user.id).first()
+        if address:
+            shipping_address = f"{address.name}, {address.address1}, {address.address2 or ''}, {address.city}, {address.state or ''}, {address.zip_code}, {address.country}"
         
-        writer.writerow([
+        # Get first tournament the user is attending
+        first_tournament_str = "None"
+        sessions_str = "None"
+        
+        user_tourneys = UserTournament.query.filter_by(
+            user_id=user.id,
+            attending=True
+        ).join(Tournament).order_by(Tournament.start_date).all()
+        
+        if user_tourneys:
+            first_tourney = user_tourneys[0]
+            tournament = Tournament.query.get(first_tourney.tournament_id)
+            if tournament:
+                first_tournament_str = f"{tournament.name} ({tournament.start_date.strftime('%b %d, %Y')})"
+                sessions_str = first_tourney.session_label or "No sessions selected"
+        
+        row = [
             user.get_full_name(),
             user.email,
-            address.address1,
-            address.address2 or '',
-            address.city,
-            address.state or '',
-            address.zip_code,
-            address.country,
-            tournament_names
-        ])
-
-    output.seek(0)
-    return Response(output, mimetype="text/csv", headers={"Content-Disposition": "attachment;filename=lanyard_orders.csv"})
+            shipping_address or "Not provided",
+            first_tournament_str,
+            sessions_str,
+            "Yes" if user.lanyard_sent else "No",
+            user.lanyard_sent_date.strftime('%b %d, %Y %H:%M UTC') if user.lanyard_sent_date else "Not sent"
+        ]
+        
+        csv_data.append(row)
+    
+    # Generate CSV response
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(headers)
+    writer.writerows(csv_data)
+    
+    response = make_response(output.getvalue())
+    response.headers["Content-Disposition"] = "attachment; filename=lanyard_fulfillment.csv"
+    response.headers["Content-type"] = "text/csv"
+    
+    # Log the export event
+    event = Event()
+    event.user_id = current_user.id
+    event.name = "lanyard_export"
+    event.event_data = {"exported_count": len(users_with_lanyards)}
+    db.session.add(event)
+    db.session.commit()
+    
+    return response
