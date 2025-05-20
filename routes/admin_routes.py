@@ -477,7 +477,7 @@ def view_event_log():
         User.email,
         func.count(Event.id).label('count')
     ).join(Event, User.id == Event.user_id).filter(
-        Event.date_created.between(start_datetime, end_datetime)
+        Event.timestamp.between(start_datetime, end_datetime)
     ).group_by(User.email).order_by(desc('count')).limit(10).all()
     
     # Prepare user data
@@ -550,11 +550,11 @@ def export_event_log():
     events = db.session.query(
         Event.id,
         Event.name,
-        Event.date_created,
+        Event.timestamp,
         User.email
     ).join(User, User.id == Event.user_id).filter(
-        Event.date_created.between(start_datetime, end_datetime)
-    ).order_by(Event.date_created.desc()).all()
+        Event.timestamp.between(start_datetime, end_datetime)
+    ).order_by(Event.timestamp.desc()).all()
     
     # Create CSV
     output = io.StringIO()
