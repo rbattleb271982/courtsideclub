@@ -86,29 +86,72 @@ def view_tournament(tournament_slug):
         attending=True
     ).all()
     
-    # Build session attendance data
-    session_counts = {}
+    # Build session attendance data in grid format
+    session_grid = {}
     total_attending = len(user_tourneys)
     
     for registration in user_tourneys:
         sessions = (registration.session_label or "").split(", ")
         for session in sessions:
-            if session:
-                session_counts[session] = session_counts.get(session, 0) + 1
+            if not session:
+                continue
+                
+            # Extract day number and session type
+            parts = session.strip().split(" - ")
+            if len(parts) >= 2:
+                day_part = parts[0].strip()
+                session_type = parts[1].strip()
+                
+                # Extract day number
+                if day_part.startswith("Day "):
+                    try:
+                        day_num = int(day_part.replace("Day ", ""))
+                        
+                        # Initialize day entry if needed
+                        if day_num not in session_grid:
+                            session_grid[day_num] = {"Day": 0, "Night": 0}
+                        
+                        # Increment session type counter
+                        if "Night" in session_type:
+                            session_grid[day_num]["Night"] += 1
+                        else:
+                            session_grid[day_num]["Day"] += 1
+                    except (ValueError, IndexError):
+                        # Skip if day number can't be extracted
+                        continue
     
-    # Sort sessions by attendance count (highest first)
-    sorted_sessions = sorted(
-        [{"label": label, "count": count} for label, count in session_counts.items()],
-        key=lambda x: x["count"],
-        reverse=True
-    )
+    # Convert to sorted list for template rendering
+    days_data = []
+    for day_num in sorted(session_grid.keys()):
+        day_data = {
+            "day": day_num,
+            "day_session": session_grid[day_num]["Day"],
+            "night_session": session_grid[day_num]["Night"],
+            "total": session_grid[day_num]["Day"] + session_grid[day_num]["Night"]
+        }
+        days_data.append(day_data)
+    
+    # Keep the original sessions data for backward compatibility
+    sorted_sessions = []
+    for day_num, counts in session_grid.items():
+        if counts["Day"] > 0:
+            sorted_sessions.append({
+                "label": f"Day {day_num} - Day", 
+                "count": counts["Day"]
+            })
+        if counts["Night"] > 0:
+            sorted_sessions.append({
+                "label": f"Day {day_num} - Night", 
+                "count": counts["Night"]
+            })
     
     return render_template(
         "admin_tournament_detail.html",
         tournament=tournament,
         total_attending=total_attending,
         sessions=sorted_sessions,
-        user_tourneys=user_tourneys
+        user_tourneys=user_tourneys,
+        days_data=days_data
     )
 
 @admin_bp.route('/tournament/<tournament_slug>/attendees')

@@ -79,43 +79,72 @@
     <div class="col-md-6">
       <div class="card mb-4">
         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-          <h5 class="mb-0">Session Attendance</h5>
+          <h5 class="mb-0">Session Attendance Grid</h5>
           <span class="badge bg-light text-dark">{{ total_attending }} total attendees</span>
         </div>
         <div class="card-body p-0">
           <div class="table-responsive">
-            <table class="table table-striped mb-0">
-              <thead>
-                <tr>
-                  <th>Session</th>
-                  <th>Attendees</th>
-                  <th class="text-center">%</th>
+            <table class="table table-striped table-bordered mb-0">
+              <thead class="table-light">
+                <tr class="text-center">
+                  <th>Day</th>
+                  <th>Day Session</th>
+                  <th>Night Session</th>
+                  <th>Total</th>
                 </tr>
               </thead>
               <tbody>
-                {% for session in sessions %}
-                <tr>
-                  <td>{{ session.label }}</td>
-                  <td>{{ session.count }} attendee{{ "s" if session.count > 1 else "" }}</td>
-                  <td class="text-center">
-                    {% if total_attending > 0 %}
-                      {% set percent = ((session.count / total_attending) * 100) | round(1) %}
-                      {{ percent }}%
-                      <div class="progress mt-1" style="height: 4px;">
-                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ percent }}%;" 
-                            aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    {% else %}
-                      0%
-                    {% endif %}
-                  </td>
-                </tr>
+                {% if days_data %}
+                  {% for day in days_data %}
+                  <tr class="text-center">
+                    <td class="fw-bold">Day {{ day.day }}</td>
+                    <td>
+                      {% if day.day_session > 0 %}
+                      <span class="badge rounded-pill bg-success">{{ day.day_session }}</span>
+                      {% else %}
+                      <span>0</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if day.night_session > 0 %}
+                      <span class="badge rounded-pill bg-success">{{ day.night_session }}</span>
+                      {% else %}
+                      <span>0</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <span class="badge rounded-pill bg-primary">{{ day.total }}</span>
+                    </td>
+                  </tr>
+                  {% endfor %}
                 {% else %}
                 <tr>
-                  <td colspan="3" class="text-center text-muted py-3">No sessions selected yet</td>
+                  <td colspan="4" class="text-center text-muted py-3">No sessions selected yet</td>
                 </tr>
-                {% endfor %}
+                {% endif %}
               </tbody>
+              <tfoot class="table-light">
+                <tr class="text-center fw-bold">
+                  <th>Totals</th>
+                  <th>
+                    {% set day_total = 0 %}
+                    {% for day in days_data %}
+                      {% set day_total = day_total + day.day_session %}
+                    {% endfor %}
+                    {{ day_total }}
+                  </th>
+                  <th>
+                    {% set night_total = 0 %}
+                    {% for day in days_data %}
+                      {% set night_total = night_total + day.night_session %}
+                    {% endfor %}
+                    {{ night_total }}
+                  </th>
+                  <th>
+                    {{ day_total + night_total }}
+                  </th>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
