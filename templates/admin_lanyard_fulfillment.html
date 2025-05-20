@@ -67,17 +67,7 @@
   {% endif %}
   {% endif %}
 
-  <!-- Save Changes Button -->
-  <div class="card mb-4">
-    <div class="card-header bg-light">
-      <div class="d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Lanyard Fulfillment Management</h5>
-        <div>
-          <button id="save-changes-btn" class="btn btn-success" disabled>💾 Save All Changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- No extra button card here, removed as requested -->
 
   <!-- Fulfillment Table -->
   <div class="card mb-4">
@@ -356,75 +346,59 @@
       });
     });
     
-    // Mark all filtered as sent
-    markAllSentBtn.addEventListener('click', function() {
-      if (!confirm('Are you sure you want to mark all currently visible users as sent?')) {
-        return;
-      }
-      
-      // Find all visible rows with unsent lanyards
-      const visibleRows = Array.from(rows).filter(row => {
-        return row.style.display !== 'none' && !row.querySelector('.lanyard-toggle').checked;
-      });
-      
-      if (visibleRows.length === 0) {
-        alert('No unsent lanyards found in the current view.');
-        return;
-      }
-      
-      // Create an array of promises for all the update requests
-      const updatePromises = visibleRows.map(row => {
-        const userId = row.dataset.userId;
-        const toggle = row.querySelector('.lanyard-toggle');
-        
-        // Set the toggle to checked (this doesn't trigger the change event)
-        toggle.checked = true;
-        
-        // Send the update request
-        return fetch(`/admin/lanyards/update-status/${userId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: 'status=true'
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Update row styling
-            row.classList.add('table-success');
-            const dateCell = row.querySelector('.date-cell');
-            dateCell.innerHTML = data.date ? data.date.split(' ')[0] : '—';
-            row.dataset.needsLanyard = 'false';
-            return true;
-          } else {
-            // Revert the checkbox if failed
-            toggle.checked = false;
-            return false;
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          toggle.checked = false;
-          return false;
+    // Export to CSV functionality
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', function() {
+        // Get all visible rows
+        const visibleRows = Array.from(rows).filter(row => {
+          return row.style.display !== 'none';
         });
-      });
-      
-      // Wait for all requests to complete
-      Promise.all(updatePromises)
-        .then(results => {
-          const successCount = results.filter(r => r).length;
-          const failCount = results.length - successCount;
+        
+        if (visibleRows.length === 0) {
+          alert('No visible rows to export.');
+          return;
+        }
+        
+        // Create CSV header
+        let csvContent = "User Name,Email,Address,City,State,Zip,First Tournament,Lanyard Status\n";
+        
+        // Add row data
+        visibleRows.forEach(row => {
+          // Extract data from columns
+          const cells = row.querySelectorAll('td');
+          const userName = cells[0].textContent.trim().replace(/,/g, ' ');
+          const email = cells[1].textContent.trim().replace(/,/g, ' ');
+          const address = cells[2].textContent.trim().replace(/,/g, ' ');
+          const city = cells[3].textContent.trim().replace(/,/g, ' ');
+          const state = cells[4].textContent.trim().replace(/,/g, ' ');
+          const zip = cells[5].textContent.trim().replace(/,/g, ' ');
+          const tournament = cells[6].textContent.trim().replace(/,/g, ' ');
+          const status = cells[7].querySelector('.badge.bg-success') ? 'Sent' : 'Not Sent';
           
-          if (failCount > 0) {
-            alert(`Updated ${successCount} lanyards successfully. ${failCount} updates failed.`);
-          } else {
-            alert(`Successfully marked ${successCount} lanyards as sent!`);
-          }
-          
-          // Reapply filters
-          applyFilters();
+          // Add row to CSV
+          csvContent += `"${userName}","${email}","${address}","${city}","${state}","${zip}","${tournament}","${status}"\n`;
         });
+        
+        // Create and download CSV file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        // Set filename with date
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        const filename = `lanyard_export_${formattedDate}.csv`;
+        
+        // Set up download
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.display = 'none';
+        
+        // Add to document, trigger download, then clean up
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
     });
     
     // View address button handlers
