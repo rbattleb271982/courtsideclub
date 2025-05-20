@@ -890,8 +890,13 @@ def lanyard():
         db.session.add(address)
         db.session.commit()
 
-        flash("Lanyard request received! It will ship soon.")
-        return redirect(url_for('user.profile'))
+        # Log the event
+        log_event(current_user.id, 'order_lanyard', {'success': True})
+        
+        # Return to the same page but with lanyard_ordered=True to show confirmation
+        return render_template('order_lanyard.html', 
+                            states=sorted(STATE_ABBRS),
+                            lanyard_ordered=True)
 
     return render_template('order_lanyard.html', 
                          states=sorted(STATE_ABBRS),
