@@ -210,9 +210,6 @@
     const searchInput = document.getElementById('fulfillment-search');
     const table = document.getElementById('fulfillment-table');
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-    const showUnsentOnly = document.getElementById('show-unsent-only');
-    const tournamentFilter = document.getElementById('tournament-filter');
-    const markAllSentBtn = document.getElementById('mark-all-sent-btn');
     const exportCsvBtn = document.getElementById('export-csv-btn');
     const filterUrgentBtn = document.getElementById('filter-urgent-btn');
     const saveChangesBtn = document.getElementById('save-changes-btn');
@@ -221,56 +218,21 @@
     // Track changes for batch saving
     const lanyardChanges = new Map(); // userId -> new status
     
-    // Function to apply all filters
-    function applyFilters() {
+    // Apply filters on search input only
+    searchInput.addEventListener('keyup', function() {
       const query = searchInput.value.toLowerCase();
-      const showOnlyUnsent = showUnsentOnly.checked;
-      const tournamentId = tournamentFilter.value;
       
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        const name = row.getElementsByTagName('td')[0].textContent.toLowerCase();
-        const email = row.getElementsByTagName('td')[1].textContent.toLowerCase();
-        const isSent = row.querySelector('.lanyard-toggle').checked;
-        const rowTournamentId = row.dataset.tournamentId;
+        const name = row.dataset.userName.toLowerCase();
+        const email = row.dataset.userEmail.toLowerCase();
         
         // Apply name/email filter
-        const matchesSearch = name.includes(query) || email.includes(query);
-        
-        // Apply sent/unsent filter
-        const matchesSentFilter = !showOnlyUnsent || !isSent;
-        
-        // Apply tournament filter
-        const matchesTournament = !tournamentId || tournamentId === rowTournamentId;
-        
-        if (matchesSearch && matchesSentFilter && matchesTournament) {
+        if (name.includes(query) || email.includes(query)) {
           row.style.display = '';
         } else {
           row.style.display = 'none';
         }
-      }
-    }
-    
-    // Apply filters on search input
-    searchInput.addEventListener('keyup', applyFilters);
-    
-    // Apply filters on show unsent only toggle
-    showUnsentOnly.addEventListener('change', applyFilters);
-    
-    // Apply filters on tournament selection
-    tournamentFilter.addEventListener('change', applyFilters);
-    
-    // Reset filters button
-    const resetFiltersBtn = document.getElementById('reset-filters-btn');
-    resetFiltersBtn.addEventListener('click', function() {
-      // Reset all filter controls
-      searchInput.value = '';
-      showUnsentOnly.checked = false;
-      tournamentFilter.value = '';
-      
-      // Show all rows
-      for (let i = 0; i < rows.length; i++) {
-        rows[i].style.display = '';
       }
     });
     
@@ -279,7 +241,6 @@
       filterUrgentBtn.addEventListener('click', function() {
         // Clear existing filters
         searchInput.value = '';
-        showUnsentOnly.checked = true;
         
         // Show only users who need lanyards for next tournament
         for (let i = 0; i < rows.length; i++) {
