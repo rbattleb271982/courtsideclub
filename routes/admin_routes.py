@@ -883,6 +883,117 @@ def get_shipping_address_detail(user_id):
         }
     })
 
+@admin_bp.route('/lanyards/batch-update', methods=['POST'])
+@login_required
+def update_lanyard_status_batch():
+    """Batch update lanyard fulfillment status for multiple users"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+    
+    # Get the batch update data from the request
+    data = request.json
+    if not data or 'updates' not in data or not isinstance(data['updates'], list):
+        return jsonify({'success': False, 'message': 'Invalid request format'}), 400
+    
+    updates = data['updates']
+    if not updates:
+        return jsonify({'success': True, 'message': 'No updates to process', 'results': []}), 200
+    
+    # Track the results for each user update
+    results = []
+    sent_count = 0
+    
+    # Process each update
+    for update in updates:
+        try:
+            user_id = update.get('userId')
+            status = update.get('status')
+            
+            if user_id is None or status is None:
+                results.append({'success': False, 'userId': user_id, 'message': 'Missing required fields'})
+                continue
+                
+            user = User.query.get(user_id)
+            if not user:
+                results.append({'success': False, 'userId': user_id, 'message': 'User not found'})
+                continue
+            
+            # Update the lanyard status
+            user.lanyard_sent = status
+            
+            # If marking as sent, record the timestamp
+            if status:
+                user.lanyard_sent_date = datetime.utcnow()
+                sent_count += 1
+            else:
+                user.lanyard_sent_date = None
+            
+            # Find user's first tournament (if any)
+            first_tournament = None
+            user_tourneys = UserTournament.query.filter_by(
+                user_id=user.id,
+                attending=True
+            ).join(Tournament).order_by(Tournament.start_date).first()
+            
+            if user_tourneys:
+                first_tournament = Tournament.query.get(user_tourneys.tournament_id)
+            
+            # Log the event
+            from services.event_logger import log_event
+            log_event('lanyard_marked_sent' if status else 'lanyard_marked_unsent', data={
+                "target_user_id": user_id,
+                "target_user_email": user.email,
+                "admin_user": current_user.email,
+                "tournament_id": first_tournament.id if first_tournament else None,
+                "tournament_name": first_tournament.name if first_tournament else None,
+                "ip": request.remote_addr,
+                "timestamp": datetime.utcnow().isoformat(),
+                "batch_update": True
+            })
+            
+            # Add to results
+            results.append({
+                'success': True,
+                'userId': user_id,
+                'status': status
+            })
+            
+        except Exception as e:
+            results.append({
+                'success': False,
+                'userId': update.get('userId'),
+                'message': str(e)
+            })
+    
+    # Commit all changes at once
+    try:
+        db.session.commit()
+        
+        # Log the batch update event
+        from services.event_logger import log_event
+        log_event('lanyard_batch_update', data={
+            'total_updates': len(updates),
+            'successful_updates': sum(1 for r in results if r.get('success')),
+            'sent_count': sent_count,
+            'timestamp': datetime.utcnow().isoformat(),
+            'admin_user': current_user.email,
+            'ip': request.remote_addr
+        })
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully processed {len(results)} lanyard status updates',
+            'results': results
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Database error: {str(e)}',
+            'results': results
+        }), 500
+
 @admin_bp.route('/lanyards/update-note/<int:user_id>', methods=['POST'])
 @login_required
 def update_lanyard_note(user_id):
