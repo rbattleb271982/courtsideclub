@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from models import db, Tournament, UserTournament, User, Event, ShippingAddress
 from sqlalchemy import func, desc
+from utils.event_meta import event_descriptions
 import csv
 import io
 from datetime import datetime, timedelta
@@ -426,23 +427,6 @@ def view_event_log():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Define descriptions for common event types
-    event_descriptions = {
-        "tournament_view": "Viewed a tournament page",
-        "tournament_register": "Registered for a tournament",
-        "lanyard_order": "Ordered a lanyard",
-        "login": "User logged in",
-        "profile_update": "Updated profile information",
-        "session_select": "Selected tournament session(s)",
-        "session_deselect": "Deselected tournament session(s)",
-        "welcome_seen": "Viewed welcome message",
-        "password_reset": "Requested password reset",
-        "user_registration": "New user registration",
-        "past_tournament_add": "Added past tournament",
-        "past_tournament_remove": "Removed past tournament",
-        "lanyard_fulfillment_update": "Updated lanyard shipping status"
-    }
-    
     # Get event counts per type
     event_counts = db.session.query(
         Event.name, 
@@ -454,6 +438,7 @@ def view_event_log():
     total_events = 0
     
     for event_name, count in event_counts:
+        # Use the imported comprehensive event descriptions dictionary
         description = event_descriptions.get(event_name, "User action")
         total_events += count
         
@@ -566,22 +551,6 @@ def view_event_types():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Define descriptions for common event types
-    event_descriptions = {
-        "tournament_view": "Viewed a tournament page",
-        "tournament_register": "Registered for a tournament",
-        "lanyard_order": "Ordered a lanyard",
-        "login": "User logged in",
-        "profile_update": "Updated profile information",
-        "session_select": "Selected tournament session(s)",
-        "session_deselect": "Deselected tournament session(s)",
-        "welcome_seen": "Viewed welcome message",
-        "password_reset": "Requested password reset",
-        "user_registration": "New user registration",
-        "past_tournament_add": "Added past tournament",
-        "past_tournament_remove": "Removed past tournament"
-    }
-    
     # Get event counts per type
     event_counts = db.session.query(
         Event.name, 
@@ -591,6 +560,7 @@ def view_event_types():
     # Prepare event data with descriptions
     event_data = []
     for event_name, count in event_counts:
+        # Use the imported comprehensive event descriptions dictionary
         description = event_descriptions.get(event_name, "User action")
         
         event_data.append({
