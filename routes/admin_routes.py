@@ -107,7 +107,8 @@ def view_tournament(tournament_slug):
         "admin_tournament_detail.html",
         tournament=tournament,
         total_attending=total_attending,
-        sessions=sorted_sessions
+        sessions=sorted_sessions,
+        user_tourneys=user_tourneys
     )
 
 @admin_bp.route('/tournament/<tournament_slug>/attendees')
