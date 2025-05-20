@@ -35,7 +35,7 @@
             {% if current_user.is_admin %}
               <a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
               <a href="{{ url_for('admin.list_tournaments') }}">Manage Tournaments</a>
-              <a href="{{ url_for('admin.export_lanyards') }}">Lanyards</a>
+              <a href="{{ url_for('admin.lanyard_fulfillment') }}">Lanyards</a>
               <a href="{{ url_for('admin.view_events') }}">Event Log</a>
             {% endif %}
             <a href="{{ url_for('user.my_tournaments') }}">My Tournaments</a>
