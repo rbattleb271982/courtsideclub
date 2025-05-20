@@ -1,0 +1,56 @@
+🛠 REPLIT AGENT PROMPT — Inline Admin Editing for Individual Tournament Page
+
+INSTRUCTION (Replit Agent — say this first):
+"Enhance the /admin/tournaments/<slug> page to include an inline admin-only edit form. Remove the separate /admin/tournaments/edit/<slug> route and view. Add the ability to edit the tournament description, draw URL, schedule URL, and surface (if not already set). Include fixed https:// prefixes for URL inputs. Only use checkpoints if necessary. Do not finish until visually confirmed."
+
+✅ DETAILS TO IMPLEMENT
+1. 🔧 Inline Edit Form on Tournament Page
+
+Add a section below the main tournament info that shows a form with these fields:
+
+Tournament Description
+Use a <textarea>
+Pre-fill with Tournament.description if available
+Draw URL
+Use an <input> with https:// shown as a fixed prefix (see #3)
+Pre-fill with current value (after removing https:// if it exists)
+Schedule URL
+Same as above: fixed https:// prefix, text-only field
+Surface
+Dropdown menu with options:
+Hard
+Clay
+Grass
+(optional) Carpet
+If Tournament.surface already exists, show as pre-selected
+If blank, show default "Select a surface" prompt
+2. 🧠 Admin-Only Visibility
+
+Only show this entire form if the current user is an admin
+Hide the form for non-admin users visiting this page
+3. 🌐 Fixed https:// Prefix for URL Fields
+
+For both Draw URL and Schedule URL inputs:
+
+Display the prefix https:// visually but do not make it editable
+In the HTML, split it like:
+<div class="url-input">
+  <span class="fixed-protocol">https://</span>
+  <input type="text" name="draw_url" />
+</div>
+In the Flask POST handler:
+Grab the input value
+Sanitize and prepend https:// before saving to Tournament.draw_url and Tournament.schedule_url
+4. 📤 Form Submission
+
+Route the form to /admin/tournaments/<slug>/update via POST
+In the backend:
+Update all provided fields
+Prepend https:// to both URLs
+Update the surface value
+Flash a success message: "Tournament details updated successfully."
+Redirect back to the same tournament page
+5. ❌ Remove Redundant Route
+
+Remove or disable the old /admin/tournaments/edit/<slug> route
+Remove or replace any links pointing to it (if they exist)
