@@ -78,7 +78,7 @@ def admin_dashboard():
         flash(f"Error loading dashboard: {str(e)}", "danger")
         return render_template('admin_dashboard.html', dashboard_data=[])
 
-@admin_bp.route('/tournament/<tournament_slug>')
+@admin_bp.route('/tournament/<tournament_slug>', methods=['GET'])
 @login_required
 def view_tournament(tournament_slug):
     if not current_user.is_admin:
@@ -254,37 +254,57 @@ def list_tournaments():
     tournaments = Tournament.query.order_by(Tournament.start_date).all()
     return render_template('admin_tournaments.html', tournaments=tournaments)
 
-@admin_bp.route('/tournaments/<int:tournament_id>/edit', methods=['GET', 'POST'])
+@admin_bp.route('/tournament/<tournament_slug>/update', methods=['POST'])
 @login_required
-def edit_tournament(tournament_id):
-    """Admin view to edit tournament details"""
+def update_tournament(tournament_slug):
+    """Inline update of tournament details"""
     if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
         
-    tournament = Tournament.query.get_or_404(tournament_id)
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     
-    if request.method == 'POST':
-        # Update tournament details
-        tournament.name = request.form.get('name')
-        tournament.location = request.form.get('location')
-        tournament.start_date = datetime.strptime(request.form.get('start_date'), '%Y-%m-%d').date()
-        tournament.end_date = datetime.strptime(request.form.get('end_date'), '%Y-%m-%d').date()
-        tournament.series = request.form.get('series')
-        tournament.draw_size = request.form.get('draw_size')
-        tournament.prize_money = request.form.get('prize_money')
-        tournament.slug = request.form.get('slug')
+    # Update tournament details
+    if request.form.get('about'):
         tournament.about = request.form.get('about')
-        tournament.draw_url = request.form.get('draw_url')
-        tournament.schedule_url = request.form.get('schedule_url')
-        tournament.surface = request.form.get('surface')
-        
-        db.session.commit()
-        
-        flash(f"Tournament '{tournament.name}' has been updated.", "success")
-        return redirect(url_for('admin.list_tournaments'))
     
-    return render_template('admin_edit_tournament.html', tournament=tournament)
+    # Handle URL fields with https:// prefix
+    draw_url_input = request.form.get('draw_url', '').strip()
+    if draw_url_input:
+        # Ensure URL has https:// prefix
+        if not draw_url_input.startswith('http'):
+            tournament.draw_url = f"https://{draw_url_input}"
+        else:
+            tournament.draw_url = draw_url_input
+    
+    schedule_url_input = request.form.get('schedule_url', '').strip()
+    if schedule_url_input:
+        # Ensure URL has https:// prefix
+        if not schedule_url_input.startswith('http'):
+            tournament.schedule_url = f"https://{schedule_url_input}"
+        else:
+            tournament.schedule_url = schedule_url_input
+    
+    # Update surface if provided
+    if request.form.get('surface'):
+        tournament.surface = request.form.get('surface')
+    
+    db.session.commit()
+    
+    # Log the event
+    event = Event()
+    event.user_id = current_user.id
+    event.name = "tournament_edit"
+    event.event_data = {
+        "tournament_id": tournament.id,
+        "tournament_name": tournament.name,
+        "fields_updated": ["about", "draw_url", "schedule_url", "surface"]
+    }
+    db.session.add(event)
+    db.session.commit()
+    
+    flash(f"Tournament '{tournament.name}' has been updated.", "success")
+    return redirect(url_for('admin.view_tournament', tournament_slug=tournament_slug))
 
 @admin_bp.route('/events')
 @login_required

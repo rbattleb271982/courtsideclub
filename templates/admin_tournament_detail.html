@@ -23,9 +23,9 @@
           <button id="toggleAttendees" class="btn btn-outline-primary">
             <i class="fas fa-users"></i> <span>👥 View Attendees</span>
           </button>
-          <a href="{{ url_for('admin.edit_tournament', tournament_id=tournament.id) }}" class="btn btn-outline-secondary">
+          <button id="toggleEditForm" class="btn btn-outline-secondary">
             <i class="fas fa-edit"></i> Edit Tournament
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -150,6 +150,55 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Inline Tournament Edit Form (Hidden by Default) -->
+  <div id="editFormSection" class="card mb-4" style="display: none;">
+    <div class="card-header bg-secondary text-white">
+      <h5 class="mb-0">Edit Tournament Details</h5>
+    </div>
+    <div class="card-body">
+      <form action="{{ url_for('admin.update_tournament', tournament_slug=tournament.slug) }}" method="POST">
+        <div class="mb-3">
+          <label for="about" class="form-label">Tournament Description</label>
+          <textarea class="form-control" id="about" name="about" rows="4">{{ tournament.about or '' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="draw_url" class="form-label">Draw URL</label>
+          <div class="input-group">
+            <span class="input-group-text fixed-protocol">https://</span>
+            <input type="text" class="form-control" id="draw_url" name="draw_url" 
+                   value="{{ tournament.draw_url.replace('https://', '') if tournament.draw_url and tournament.draw_url.startswith('https://') else tournament.draw_url or '' }}">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="schedule_url" class="form-label">Schedule URL</label>
+          <div class="input-group">
+            <span class="input-group-text fixed-protocol">https://</span>
+            <input type="text" class="form-control" id="schedule_url" name="schedule_url" 
+                   value="{{ tournament.schedule_url.replace('https://', '') if tournament.schedule_url and tournament.schedule_url.startswith('https://') else tournament.schedule_url or '' }}">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="surface" class="form-label">Court Surface</label>
+          <select class="form-select" id="surface" name="surface">
+            <option value="" {% if not tournament.surface %}selected{% endif %}>Select a surface</option>
+            <option value="Hard" {% if tournament.surface == 'Hard' %}selected{% endif %}>Hard</option>
+            <option value="Clay" {% if tournament.surface == 'Clay' %}selected{% endif %}>Clay</option>
+            <option value="Grass" {% if tournament.surface == 'Grass' %}selected{% endif %}>Grass</option>
+            <option value="Carpet" {% if tournament.surface == 'Carpet' %}selected{% endif %}>Carpet</option>
+          </select>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" id="cancelEdit" class="btn btn-outline-secondary me-2">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
     </div>
   </div>
 
