@@ -59,7 +59,7 @@ function sortTable(n) {
   headers.forEach((header, index) => {
     let icon = header.querySelector('i');
     if (icon) {
-      icon.className = 'fas fa-sort';
+      icon.className = 'fas fa-sort text-dark';
     }
   });
   
@@ -67,9 +67,9 @@ function sortTable(n) {
   let currentHeader = table.querySelector(`th:nth-child(${n+1}) i`);
   if (currentHeader) {
     if (dir === 'asc') {
-      currentHeader.className = 'fas fa-sort-up';
+      currentHeader.className = 'fas fa-sort-up text-primary';
     } else {
-      currentHeader.className = 'fas fa-sort-down';
+      currentHeader.className = 'fas fa-sort-down text-primary';
     }
   }
 }
@@ -84,11 +84,11 @@ function sortTable(n) {
         <table class="table table-hover">
           <thead>
             <tr>
-              <th onclick="sortTable(0)" style="cursor: pointer;">Name <i class="fas fa-sort"></i></th>
-              <th onclick="sortTable(1)" style="cursor: pointer;">Dates <i class="fas fa-sort"></i></th>
-              <th onclick="sortTable(2)" style="cursor: pointer;">Location <i class="fas fa-sort"></i></th>
-              <th onclick="sortTable(3)" style="cursor: pointer;">Type <i class="fas fa-sort"></i></th>
-              <th onclick="sortTable(4)" style="cursor: pointer;">Surface <i class="fas fa-sort"></i></th>
+              <th onclick="sortTable(0)" style="cursor: pointer;">Name <i class="fas fa-sort text-dark"></i></th>
+              <th onclick="sortTable(1)" style="cursor: pointer;">Dates <i class="fas fa-sort text-dark"></i></th>
+              <th onclick="sortTable(2)" style="cursor: pointer;">Location <i class="fas fa-sort text-dark"></i></th>
+              <th onclick="sortTable(3)" style="cursor: pointer;">Type <i class="fas fa-sort text-dark"></i></th>
+              <th onclick="sortTable(4)" style="cursor: pointer;">Surface <i class="fas fa-sort text-dark"></i></th>
             </tr>
           </thead>
           <tbody>
