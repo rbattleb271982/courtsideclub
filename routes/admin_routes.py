@@ -1,6 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Response
 from flask_login import login_required, current_user
 from models import db, Tournament, UserTournament, User, Event
+from sqlalchemy import func, desc
+import csv
+from io import StringIO
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -180,9 +183,25 @@ def view_events():
     if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
+    
+    # Handle event type filtering
+    event_type = request.args.get('event_type')
+    
+    # Build the query
+    events_query = Event.query.order_by(Event.timestamp.desc())
+    
+    # Apply filter if specified
+    if event_type:
+        events_query = events_query.filter(Event.name == event_type)
         
-    events = Event.query.order_by(Event.timestamp.desc()).limit(100).all()
-    return render_template("admin_events.html", events=events)
+    # Get the results (limited to 100)
+    events = events_query.limit(100).all()
+    
+    return render_template(
+        "admin_events.html", 
+        events=events, 
+        event_type=event_type
+    )
 
 @admin_bp.route('/event-types')
 @login_required
@@ -195,11 +214,114 @@ def view_event_types():
     event_names = sorted([name[0] for name in event_names])
     return render_template("admin_event_types.html", event_names=event_names)
 
-import csv
-from io import StringIO
-from flask import Response
+@admin_bp.route('/event-summary')
+@login_required
+def event_summary():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
+    
+    # Define a mapping dictionary for event descriptions
+    event_descriptions = {
+        "tournament_view": "Viewed a tournament page",
+        "tournament_register": "Registered for a tournament",
+        "lanyard_order": "Ordered a lanyard",
+        "login": "User logged in",
+        "profile_update": "Updated profile information",
+        "session_select": "Selected tournament session(s)",
+        "session_deselect": "Deselected tournament session(s)",
+        "welcome_seen": "Viewed welcome message",
+        "password_reset": "Requested password reset",
+        "user_registration": "New user registration",
+        "past_tournament_add": "Added past tournament",
+        "past_tournament_remove": "Removed past tournament"
+    }
+    
+    # Get sorted event counts (most frequent first)
+    event_counts = db.session.query(
+        Event.name, 
+        func.count(Event.id).label('count')
+    ).group_by(Event.name).order_by(desc('count')).all()
+    
+    # Process the results with descriptions
+    event_summary = []
+    for event_name, count in event_counts:
+        description = event_descriptions.get(event_name, "User action")
+        event_summary.append({
+            'name': event_name,
+            'count': count,
+            'description': description
+        })
+    
+    # Get total events count
+    total_events = sum(item['count'] for item in event_summary)
+    
+    # Determine sort direction
+    sort_dir = request.args.get('sort_dir', 'desc')
+    sort_by = request.args.get('sort_by', 'count')
+    
+    # Sort results based on parameters
+    if sort_by == 'name':
+        event_summary.sort(key=lambda x: x['name'], reverse=(sort_dir == 'desc'))
+    elif sort_by == 'count':
+        event_summary.sort(key=lambda x: x['count'], reverse=(sort_dir == 'desc'))
+    elif sort_by == 'description':
+        event_summary.sort(key=lambda x: x['description'], reverse=(sort_dir == 'desc'))
+    
+    return render_template(
+        "admin_event_summary.html", 
+        event_summary=event_summary,
+        total_events=total_events,
+        sort_by=sort_by,
+        sort_dir=sort_dir
+    )
+
+@admin_bp.route('/export-event-summary')
+@login_required
+def export_event_summary():
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
+    
+    # Define descriptions 
+    event_descriptions = {
+        "tournament_view": "Viewed a tournament page",
+        "tournament_register": "Registered for a tournament",
+        "lanyard_order": "Ordered a lanyard",
+        "login": "User logged in",
+        "profile_update": "Updated profile information",
+        "session_select": "Selected tournament session(s)",
+        "session_deselect": "Deselected tournament session(s)",
+        "welcome_seen": "Viewed welcome message",
+        "password_reset": "Requested password reset",
+        "user_registration": "New user registration",
+        "past_tournament_add": "Added past tournament",
+        "past_tournament_remove": "Removed past tournament"
+    }
+    
+    # Get event counts
+    event_counts = db.session.query(
+        Event.name, 
+        func.count(Event.id).label('count')
+    ).group_by(Event.name).order_by(desc('count')).all()
+    
+    # Create CSV
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Event Name', 'Count', 'Description'])
+    
+    for event_name, count in event_counts:
+        description = event_descriptions.get(event_name, "User action")
+        writer.writerow([event_name, count, description])
+    
+    output.seek(0)
+    return Response(
+        output, 
+        mimetype="text/csv", 
+        headers={"Content-Disposition": "attachment;filename=event_summary.csv"}
+    )
+
 from models import ShippingAddress
-from sqlalchemy import func, desc
 
 @admin_bp.route('/export-lanyards')
 @login_required
