@@ -274,33 +274,30 @@
 
     /* Tournament layout container */
     .tournament-detail-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
+        display: block;
+        width: 100%;
     }
 
     /* Main content area */
     .tournament-detail-main {
-        flex: 1 1 60%;
-        min-width: 0;
+        width: 100%;
+        margin-bottom: 1.5rem;
     }
 
-    /* Sidebar area */
+    /* Sidebar area converted to regular block */
     .tournament-detail-sidebar {
-        flex: 1 1 30%;
-        min-width: 300px;
+        width: 100%;
+        margin-top: 1rem;
     }
 
-    /* On mobile screens, stack vertically */
-    @media (max-width: 767px) {
-        .tournament-detail-container {
-            flex-direction: column;
+    /* Add responsive spacing for all screen sizes */
+    @media (min-width: 768px) {
+        .tournament-detail {
+            display: block;
         }
-
-        .tournament-detail-main,
-        .tournament-detail-sidebar {
-            width: 100%;
-            flex-basis: 100%;
+        
+        #session-selection-card {
+            margin-top: 2rem;
         }
     }
 
