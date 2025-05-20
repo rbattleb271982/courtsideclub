@@ -1,28 +1,27 @@
-import logging
-from models import db
+from models import Event, db
+from flask_login import current_user
+from datetime import datetime
 
-def log_event(user_id, event_name, event_data=None):
+def log_event(name, user=None, data=None):
     """
-    Log a user event to the database
+    Log an event to the database
     
     Args:
-        user_id (int): ID of the user performing the action
-        event_name (str): Name of the event (e.g., 'profile_updated', 'tournament_registered')
-        event_data (dict, optional): Additional event data
+        name (str): The name of the event (e.g., 'tournament_view', 'login')
+        user (User, optional): The user who performed the action. Defaults to current_user.
+        data (dict, optional): Additional data to store with the event. Defaults to None.
     """
     try:
-        # Import here to avoid circular import
-        from models import Event
-        
-        # Create and save the event
         event = Event(
-            user_id=user_id, 
-            name=event_name, 
-            event_data=event_data or {}
+            name=name,
+            user_id=user.id if user else current_user.id if current_user.is_authenticated else None,
+            timestamp=datetime.utcnow(),
+            event_data=data or {}
         )
         db.session.add(event)
         db.session.commit()
-        logging.info(f"Event logged: {event_name} for user {user_id}")
+        return True
     except Exception as e:
+        print(f"Error logging event: {str(e)}")
         db.session.rollback()
-        logging.error(f"Failed to log event {event_name}: {str(e)}")
+        return False

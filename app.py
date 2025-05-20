@@ -5,6 +5,7 @@ import logging
 from models import db, User, load_user, Tournament
 import datetime
 from datetime import timedelta
+from services.event_logger import log_event
 
 # Configure logging
 logging.basicConfig(
@@ -184,6 +185,7 @@ from routes.user import user_bp
 from routes.main import main_bp
 from routes.admin_routes import admin_bp
 from routes.attendance_debug import attendance_debug_bp
+from routes.event_test import event_test_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(tournaments_bp)
@@ -192,6 +194,7 @@ app.register_blueprint(user_bp)
 app.register_blueprint(main_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(attendance_debug_bp)
+app.register_blueprint(event_test_bp)
 
 # Add context processor for current year
 @app.context_processor
