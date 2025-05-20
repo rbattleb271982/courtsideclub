@@ -8,26 +8,19 @@
       <i class="fas fa-arrow-left"></i> Back to Dashboard
     </a>
     
-    <div class="row align-items-center">
-      <div class="col-md-8">
-        <h2>{{ tournament.name }}</h2>
-        <p class="text-muted">
-          {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }} | 
-          {{ tournament.city }}, {{ tournament.country }} | 
-          {{ tournament.tour_type }} | 
-          {% if tournament.surface %}{{ tournament.surface }} Court{% endif %}
-        </p>
-      </div>
-      <div class="col-md-4 text-md-end">
-        <div class="d-flex flex-column flex-md-row justify-content-md-end gap-2">
-          <button id="toggleAttendees" class="btn btn-outline-primary">
-            <i class="fas fa-users"></i> <span>👥 View Attendees</span>
-          </button>
-          <button id="toggleEditForm" class="btn btn-outline-secondary">
-            <i class="fas fa-edit"></i> Edit Tournament
-          </button>
-        </div>
-      </div>
+    <h2>Tournament Management</h2>
+    <p class="text-muted">{{ tournament.name }} | {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }} | 
+      {{ tournament.city }}, {{ tournament.country }} | 
+      {{ tournament.tour_type }} | 
+      {% if tournament.surface %}{{ tournament.surface }} Court{% endif %}</p>
+    
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <button id="toggleAttendees" class="btn btn-outline-primary">
+        <i class="fas fa-users"></i> <span>👥 View Attendees</span>
+      </button>
+      <button id="toggleEditForm" class="btn btn-outline-secondary">
+        <i class="fas fa-edit"></i> Edit Tournament
+      </button>
     </div>
   </div>
 

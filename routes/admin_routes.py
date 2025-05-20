@@ -69,7 +69,7 @@ def admin_dashboard():
                 'open_to_meet_count': open_to_meet_count,
                 'day_count': day_count,
                 'night_count': night_count,
-                'start_date_unix': tournament.start_date.timestamp() if tournament.start_date else 0
+                'start_date_unix': datetime.combine(tournament.start_date, datetime.min.time()).timestamp() if tournament.start_date else 0
             })
 
         # Sort tournaments by start date
@@ -275,7 +275,7 @@ def update_tournament(tournament_slug):
         tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
         
         # Update tournament details - handle empty input correctly
-        tournament.about = request.form.get('about', '')
+        tournament.about = request.form.get('about', '').strip()
         
         # Handle URL fields with https:// prefix
         draw_url_input = request.form.get('draw_url', '').strip()
@@ -299,7 +299,8 @@ def update_tournament(tournament_slug):
             tournament.schedule_url = None
         
         # Update surface if provided
-        tournament.surface = request.form.get('surface', '')
+        surface = request.form.get('surface', '').strip()
+        tournament.surface = surface if surface else None
         
         db.session.commit()
         
@@ -315,11 +316,12 @@ def update_tournament(tournament_slug):
         db.session.add(event)
         db.session.commit()
         
-        flash(f"Tournament '{tournament.name}' has been updated.", "success")
+        flash(f"Tournament '{tournament.name}' has been updated successfully.", "success")
     except Exception as e:
         db.session.rollback()
         flash(f"Error updating tournament: {str(e)}", "danger")
     
+    # Return to the tournament detail page
     return redirect(url_for('admin.view_tournament', tournament_slug=tournament_slug))
 
 @admin_bp.route('/events')
