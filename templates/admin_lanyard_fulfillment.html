@@ -234,6 +234,14 @@
     setupLanyardCheckboxes();
     
     // Set up CSV export functionality
+    function setupExportCsv() {
+      if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', function() {
+          exportTableToCSV();
+        });
+      }
+    }
+    
     setupExportCsv();
     
     // Function to handle immediate AJAX updates when a checkbox is clicked
@@ -460,121 +468,6 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    }sing user ID on Mark Sent button");
-            return false;
-          }
-          
-          // Get the row for this user
-          const row = document.querySelector(`tr[data-user-id="${userId}"]`);
-          if (!row) {
-            console.error(`Could not find row for user ID: ${userId}`);
-            return false;
-          }
-          
-          // Add to changes map for batch update
-          lanyardChanges.set(userId, true);
-          console.log(`Added change for user ${userId}, total changes: ${lanyardChanges.size}`);
-          
-          // Update visual state
-          row.classList.add('table-success');
-          
-          // Replace button with pending badge
-          this.outerHTML = '<span class="badge bg-warning">Pending Save</span>';
-          
-          // CRITICAL FIX: Enable Save All Changes button
-          if (saveChangesBtn) {
-            saveChangesBtn.disabled = false;
-            console.log("Save Changes button enabled");
-          } else {
-            console.error("Save Changes button not found - cannot enable it");
-          }
-          
-          return false;
-        });
-      });
-      
-      console.log("Mark Sent button handlers initialized successfully");
-    }
-    
-    // Initialize Mark Sent buttons
-    setupMarkSentButtons();
-    
-    // 3. Fix Save All Changes button functionality
-    if (saveChangesBtn) {
-      console.log(`Setting up Save Changes button with ID: ${saveChangesBtn.id}`);
-      
-      saveChangesBtn.addEventListener('click', function() {
-        console.log(`Save Changes button clicked. Changes to save: ${lanyardChanges.size}`);
-        
-        if (lanyardChanges.size === 0) {
-          alert('No changes to save.');
-          return;
-        }
-        
-        // Show loading state
-        this.disabled = true;
-        this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-        
-        // Prepare updates to send
-        const updates = [];
-        lanyardChanges.forEach((status, userId) => {
-          updates.push({
-            userId: parseInt(userId),
-            status: status
-          });
-        });
-        
-        console.log(`Sending batch update with ${updates.length} changes`);
-        
-        // Send batch update request
-        fetch('/admin/lanyards/batch-update', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ updates: updates })
-        })
-        .then(response => {
-          console.log("Batch update response status:", response.status);
-          if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log("Batch update response data:", data);
-          
-          if (data.success) {
-            // Update UI to show success
-            const successCount = data.results.filter(r => r.success).length;
-            alert(`Successfully processed ${successCount} lanyard updates.`);
-            
-            // Reload the page to show updated data
-            setTimeout(() => {
-              location.reload();
-            }, 1000);
-          } else {
-            // Show error
-            alert(`Error: ${data.message || 'Unknown error occurred'}`);
-            
-            // Reset button state
-            this.disabled = false;
-            this.innerHTML = '💾 Save All Changes';
-          }
-        })
-        .catch(error => {
-          console.error('Error during save:', error);
-          alert(`Error: ${error.message}`);
-          
-          // Reset button state
-          this.disabled = false;
-          this.innerHTML = '💾 Save All Changes';
-        });
-      });
-      
-      console.log("Save Changes button handler attached successfully");
-    } else {
-      console.error("CRITICAL ERROR: Save Changes button not found - button with ID 'save-changes-btn' does not exist in the DOM");
     }
     
     // Auto-filter to show only urgent users when urgent alert is present
@@ -595,133 +488,32 @@
       }
     }
     
-    // Mark as Sent button handlers
-    function setupMarkSentButtons() {
-      // Get all current buttons
-      const markSentButtons = document.querySelectorAll('.mark-sent-btn');
-      console.log(`Setting up ${markSentButtons.length} 'Mark Sent' buttons`);
-      
-      // Remove any existing event listeners and add new ones
-      markSentButtons.forEach(button => {
-        button.onclick = function(e) {
+    // Set up address modal functionality for viewing shipping details
+    // This allows admins to click on an address to see full details in a modal
+    if (addressModal) {
+      const addressLinks = document.querySelectorAll('.address-link');
+      addressLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
           e.preventDefault();
-          e.stopPropagation();
           
-          const userId = this.getAttribute('data-user-id');
-          const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+          const userId = this.dataset.userId;
           
-          if (!userId || !row) {
-            console.error("Could not find user ID or row", {userId, row});
-            return;
-          }
-          
-          // Register this change in the global Map
-          lanyardChanges.set(userId, true);
-          
-          // Always enable save button when there are changes
-          document.getElementById('save-changes-btn').disabled = false;
-          
-          // Update UI immediately (will be confirmed on save)
-          row.classList.add('table-success');
-          
-          // Replace button with "Pending Save" badge
-          this.outerHTML = '<span class="badge bg-warning">Pending Save</span>';
-          
-          // Update row's needs-lanyard attribute
-          row.dataset.needsLanyard = 'false';
-          
-          console.log(`Marked user ${userId} for lanyard sent, pending save`);
-          console.log(`Current number of pending changes: ${lanyardChanges.size}`);
-          
-          return false;
-        };
+          // Load address details via AJAX
+          fetch(`/admin/user/${userId}/address`)
+            .then(response => response.text())
+            .then(html => {
+              const modalBody = document.getElementById('addressModalBody');
+              if (modalBody) {
+                modalBody.innerHTML = html;
+                addressModal.show();
+              }
+            })
+            .catch(error => {
+              console.error('Error loading address details:', error);
+            });
+        });
       });
     }
-    
-    // Setup the mark-sent buttons initially
-    setupMarkSentButtons();
-    
-    // Save all changes button
-    saveChangesBtn.addEventListener('click', function() {
-      if (lanyardChanges.size === 0) {
-        return; // Nothing to save
-      }
-      
-      // Disable save button during the save operation
-      saveChangesBtn.disabled = true;
-      saveChangesBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-      
-      // Prepare the payload with all changes
-      const payload = Array.from(lanyardChanges).map(([userId, status]) => {
-        return { userId, status };
-      });
-      
-      // Send batch update request
-      fetch('/admin/lanyards/batch-update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ updates: payload })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Update UI to reflect saved state
-          let sentCount = 0;
-          
-          // Update all rows that were successfully saved
-          data.results.forEach(result => {
-            if (result.success) {
-              const row = document.querySelector(`tr[data-user-id="${result.userId}"]`);
-              
-              // Update row styling
-              if (result.status) {
-                row.classList.add('table-success');
-                
-                // Replace the pending badge with a "Sent" badge
-                const cell = row.querySelector('td.text-center');
-                if (cell) {
-                  cell.innerHTML = '<span class="badge bg-success">Sent</span>';
-                }
-                
-                sentCount++;
-              }
-            }
-          });
-          
-          // Show success message
-          if (sentCount > 0) {
-            alert(`${sentCount} lanyards marked as sent!`);
-          } else {
-            alert('All lanyard status updates saved.');
-          }
-          
-          // Clear the changes map since all were saved
-          lanyardChanges.clear();
-          
-          // Reapply filters
-          applyFilters();
-          
-          // Update the statistics on the page (would require a page reload to be accurate)
-          // For now, we'll just disable the save button
-          saveChangesBtn.disabled = true;
-          saveChangesBtn.innerHTML = '💾 Save All Changes';
-          
-        } else {
-          // Show error message
-          alert('Failed to save some changes. Please try again.');
-          saveChangesBtn.disabled = false;
-          saveChangesBtn.innerHTML = '💾 Save All Changes';
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error saving changes. Please try again.');
-        saveChangesBtn.disabled = false;
-        saveChangesBtn.innerHTML = '💾 Save All Changes';
-      });
-    });
     
     // Export to CSV functionality
     if (exportCsvBtn) {
