@@ -11,43 +11,60 @@ def admin_dashboard():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
 
-    tournaments = Tournament.query.order_by(Tournament.start_date).all()
-    dashboard_data = []
-    
-    for t in tournaments:
-        # Only count users who are marked as attending
-        attending_registrations = db.session.query(UserTournament).filter_by(
-            tournament_id=t.id, 
-            attending=True
-        ).all()
-
-        # Count session attendance
-        session_counts = {}
-        for reg in attending_registrations:
-            sessions = (reg.session_label or "").split(", ")
-            for session in sessions:
-                if session:
-                    session_counts[session] = session_counts.get(session, 0) + 1
-
-        # Total attending users
-        total_attending = len(attending_registrations)
+    try:
+        tournaments = Tournament.query.order_by(Tournament.start_date).all()
+        dashboard_data = []
         
-        # Count users who want to meet
-        total_meetups = sum(1 for r in attending_registrations if r.wants_to_meet)
-        
-        # Count lanyard orders - users who are attending AND ordered a lanyard
-        lanyard_count = db.session.query(UserTournament).filter_by(
-            tournament_id=t.id,
-            attending=True
-        ).join(User).filter_by(lanyard_ordered=True).count()
+        for t in tournaments:
+            try:
+                # Only count users who are marked as attending
+                attending_registrations = db.session.query(UserTournament).filter_by(
+                    tournament_id=t.id, 
+                    attending=True
+                ).all()
 
-        dashboard_data.append({
-            "tournament": t,
-            "total_attending": total_attending,
-            "total_meetups": total_meetups,
-            "total_lanyards": lanyard_count,
-            "session_counts": session_counts
-        })
+                # Count session attendance
+                session_counts = {}
+                for reg in attending_registrations:
+                    sessions = (reg.session_label or "").split(", ")
+                    for session in sessions:
+                        if session:
+                            session_counts[session] = session_counts.get(session, 0) + 1
+
+                # Total attending users
+                total_attending = len(attending_registrations)
+                
+                # Count users who want to meet
+                total_meetups = sum(1 for r in attending_registrations if r.wants_to_meet)
+                
+                # Count lanyard orders safely
+                try:
+                    lanyard_count = db.session.query(UserTournament).filter_by(
+                        tournament_id=t.id,
+                        attending=True
+                    ).join(User).filter_by(lanyard_ordered=True).count()
+                except Exception as e:
+                    # Fallback if the join query fails
+                    lanyard_count = 0
+                    print(f"Error counting lanyards for tournament {t.id}: {str(e)}")
+
+                dashboard_data.append({
+                    "tournament": t,
+                    "total_attending": total_attending,
+                    "total_meetups": total_meetups,
+                    "total_lanyards": lanyard_count,
+                    "session_counts": session_counts
+                })
+            except Exception as tournament_error:
+                # Skip this tournament if there's an error
+                print(f"Error processing tournament {t.id}: {str(tournament_error)}")
+                continue
+                
+    except Exception as e:
+        # Handle database connection errors
+        flash(f"Error accessing dashboard data. Please try again later.", "danger")
+        print(f"Dashboard error: {str(e)}")
+        return render_template("admin_dashboard.html", dashboard_data=[])
 
     return render_template("admin_dashboard.html", dashboard_data=dashboard_data)
 
