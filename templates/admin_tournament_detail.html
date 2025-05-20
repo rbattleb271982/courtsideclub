@@ -273,6 +273,34 @@
     }
   });
 
+  // Toggle Edit Form
+  document.getElementById('toggleEditForm').addEventListener('click', function() {
+    const editFormSection = document.getElementById('editFormSection');
+    
+    if (editFormSection.style.display === 'none') {
+      editFormSection.style.display = 'block';
+      this.innerHTML = '<i class="fas fa-times"></i> Cancel Editing';
+      this.classList.remove('btn-outline-secondary');
+      this.classList.add('btn-outline-danger');
+    } else {
+      editFormSection.style.display = 'none';
+      this.innerHTML = '<i class="fas fa-edit"></i> Edit Tournament';
+      this.classList.remove('btn-outline-danger');
+      this.classList.add('btn-outline-secondary');
+    }
+  });
+  
+  // Cancel Edit Button
+  document.getElementById('cancelEdit').addEventListener('click', function() {
+    const editFormSection = document.getElementById('editFormSection');
+    const toggleEditButton = document.getElementById('toggleEditForm');
+    
+    editFormSection.style.display = 'none';
+    toggleEditButton.innerHTML = '<i class="fas fa-edit"></i> Edit Tournament';
+    toggleEditButton.classList.remove('btn-outline-danger');
+    toggleEditButton.classList.add('btn-outline-secondary');
+  });
+
   // Table Sorting Function
   function sortTable(colIndex) {
     const table = document.getElementById('attendeeTable');
@@ -338,6 +366,31 @@
   /* Table hover effect */
   #attendeeTable tbody tr:hover {
     background-color: rgba(0,123,255,0.05);
+  }
+  
+  /* URL Input Group */
+  .input-group .fixed-protocol {
+    min-width: 90px;
+    background-color: #f0f0f0;
+    font-family: monospace;
+    color: #555;
+  }
+  
+  /* Edit form transitions */
+  #editFormSection {
+    transition: all 0.3s ease;
+  }
+  
+  /* Responsive form styling */
+  @media (max-width: 768px) {
+    #editFormSection .card-body {
+      padding: 1rem 0.75rem;
+    }
+    
+    .input-group .fixed-protocol {
+      min-width: 70px;
+      font-size: 0.85rem;
+    }
   }
 </style>
 {% endblock %}
