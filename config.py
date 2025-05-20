@@ -5,8 +5,17 @@ class Config:
     SECRET_KEY = os.environ.get('SESSION_SECRET', 'dev_secret_key')
     
     # Database configuration
+    # Use a fallback SQLite database if the main database is unavailable
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Improved connection pool settings for better resilience
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,  # Verify connections before use
+        "pool_recycle": 300,    # Recycle connections every 5 minutes
+        "pool_timeout": 30,     # Wait longer for connection
+        "max_overflow": 15      # Allow more overflow connections
+    }
     
     # Google OAuth configuration
     GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
