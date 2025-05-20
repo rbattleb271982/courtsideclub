@@ -890,8 +890,16 @@ def lanyard():
         db.session.add(address)
         db.session.commit()
 
-        # Log the event
-        log_event(current_user.id, 'order_lanyard', {'success': True})
+        # Log the lanyard order event with detailed tracking data
+        log_event('lanyard_order_placed', data={
+            'user_id': current_user.id,
+            'name': request.form['name'],
+            'country': request.form['country'],
+            'has_attending_tournaments': bool(attending_sessions),
+            'attendance_count': len(attending_sessions),
+            'ip': request.remote_addr,
+            'timestamp': datetime.utcnow().isoformat()
+        })
         
         # Return to the same page but with lanyard_ordered=True to show confirmation
         return render_template('order_lanyard.html', 
