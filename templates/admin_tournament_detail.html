@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block title %}{{ tournament.name }} | Admin | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container pt-4">
+  <div class="mb-4">
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary mb-3">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+    
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h2>{{ tournament.name }}</h2>
+        <p class="text-muted">
+          {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }} | 
+          {{ tournament.city }}, {{ tournament.country }} | 
+          {{ tournament.tour_type }} | 
+          {% if tournament.surface %}{{ tournament.surface }} Court{% endif %}
+        </p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <div class="d-flex flex-column flex-md-row justify-content-md-end gap-2">
+          <a href="{{ url_for('admin.view_attendees', tournament_slug=tournament.slug) }}" class="btn btn-outline-primary">
+            <i class="fas fa-users"></i> View Attendees
+          </a>
+          <a href="{{ url_for('admin.edit_tournament', tournament_id=tournament.id) }}" class="btn btn-outline-secondary">
+            <i class="fas fa-edit"></i> Edit Tournament
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Tournament Info</h5>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped">
+            <tr>
+              <th>Dates</th>
+              <td>{{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}</td>
+            </tr>
+            <tr>
+              <th>Location</th>
+              <td>{{ tournament.city }}, {{ tournament.country }}</td>
+            </tr>
+            <tr>
+              <th>Tour</th>
+              <td>{{ tournament.tour_type }}</td>
+            </tr>
+            <tr>
+              <th>Event Type</th>
+              <td>{{ tournament.event_type }}</td>
+            </tr>
+            <tr>
+              <th>Surface</th>
+              <td>{{ tournament.surface or 'Not specified' }}</td>
+            </tr>
+            {% if tournament.draw_url %}
+            <tr>
+              <th>Draw URL</th>
+              <td><a href="{{ tournament.draw_url }}" target="_blank">View Draw</a></td>
+            </tr>
+            {% endif %}
+            {% if tournament.schedule_url %}
+            <tr>
+              <th>Schedule URL</th>
+              <td><a href="{{ tournament.schedule_url }}" target="_blank">View Schedule</a></td>
+            </tr>
+            {% endif %}
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Session Attendance</h5>
+          <span class="badge bg-light text-dark">{{ total_attending }} total attendees</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped mb-0">
+              <thead>
+                <tr>
+                  <th>Session</th>
+                  <th>Attendees</th>
+                  <th class="text-center">%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for session in sessions %}
+                <tr>
+                  <td>{{ session.label }}</td>
+                  <td>{{ session.count }} attendee{{ "s" if session.count > 1 else "" }}</td>
+                  <td class="text-center">
+                    {% if total_attending > 0 %}
+                      {% set percent = ((session.count / total_attending) * 100) | round(1) %}
+                      {{ percent }}%
+                      <div class="progress mt-1" style="height: 4px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ percent }}%;" 
+                            aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    {% else %}
+                      0%
+                    {% endif %}
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="3" class="text-center text-muted py-3">No sessions selected yet</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">Admin Tools</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap gap-2">
+            <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-outline-success">
+              <i class="fas fa-download"></i> Export Lanyards (CSV)
+            </a>
+            
+            <form method="GET" action="{{ url_for('debug.send_reminder', user_id=current_user.id, tournament_slug=tournament.slug) }}" class="d-inline">
+              <button type="submit" class="btn btn-outline-secondary">📬 Test Reminder</button>
+            </form>
+            
+            <a href="#" class="btn btn-outline-danger" onclick="return confirm('This would send emails to all confirmed attendees. This button is currently disabled.')">
+              <i class="fas fa-envelope"></i> Email All Attendees
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add font awesome if not already included in layout -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

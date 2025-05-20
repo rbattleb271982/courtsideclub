@@ -71,6 +71,45 @@ def admin_dashboard():
 
     return render_template("admin_dashboard.html", dashboard_data=dashboard_data)
 
+@admin_bp.route('/tournaments/<tournament_slug>')
+@login_required
+def view_tournament(tournament_slug):
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
+
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    
+    # Get all attending users for this tournament
+    user_tourneys = UserTournament.query.filter_by(
+        tournament_id=tournament.id,
+        attending=True
+    ).all()
+    
+    # Build session attendance data
+    session_counts = {}
+    total_attending = len(user_tourneys)
+    
+    for registration in user_tourneys:
+        sessions = (registration.session_label or "").split(", ")
+        for session in sessions:
+            if session:
+                session_counts[session] = session_counts.get(session, 0) + 1
+    
+    # Sort sessions by attendance count (highest first)
+    sorted_sessions = sorted(
+        [{"label": label, "count": count} for label, count in session_counts.items()],
+        key=lambda x: x["count"],
+        reverse=True
+    )
+    
+    return render_template(
+        "admin_tournament_detail.html",
+        tournament=tournament,
+        total_attending=total_attending,
+        sessions=sorted_sessions
+    )
+
 @admin_bp.route('/tournament/<tournament_slug>/attendees')
 @login_required
 def view_attendees(tournament_slug):

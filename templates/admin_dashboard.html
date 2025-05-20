@@ -74,7 +74,6 @@
           <th style="cursor: pointer;" onclick="sortTable(2)">Attending <i class="sort-icon fas fa-sort"></i></th>
           <th style="cursor: pointer;" onclick="sortTable(3)">Open to Meet <i class="sort-icon fas fa-sort"></i></th>
           <th style="cursor: pointer;" onclick="sortTable(4)">Lanyards <i class="sort-icon fas fa-sort"></i></th>
-          <th>Sessions</th>
           <th>Export</th>
           <th>Email Tools</th>
         </tr>
@@ -86,7 +85,7 @@
             data-attending="{{ row.total_attending }}"
             data-meetups="{{ row.total_meetups }}"
             data-lanyards="{{ row.total_lanyards }}">
-          <td>{{ row.tournament.name }}</td>
+          <td><a href="{{ url_for('admin.view_tournament', tournament_slug=row.tournament.slug) }}" class="text-decoration-none">{{ row.tournament.name }}</a></td>
           <td data-date="{{ row.tournament.start_date.strftime('%Y-%m-%d') }}">
             {{ row.tournament.start_date.strftime('%b %d, %Y') }}
           </td>
@@ -98,11 +97,6 @@
           </td>
           <td>{{ row.total_meetups }}</td>
           <td>{{ row.total_lanyards }}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-info" onclick="toggleSessionDetails('{{ row.tournament.id }}')">
-              View <i class="fas fa-chevron-down toggle-icon-{{ row.tournament.id }}"></i>
-            </button>
-          </td>
           <td>
             <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-sm btn-outline-success">
               <i class="fas fa-download"></i> CSV
@@ -119,47 +113,7 @@
             </div>
           </td>
         </tr>
-        <!-- Session Details Row (Hidden by Default) -->
-        <tr id="session-details-{{ row.tournament.id }}" class="session-details-row" style="display: none; background-color: #f8f9fa;">
-          <td colspan="8">
-            <div class="card">
-              <div class="card-header bg-light">
-                <h5 class="mb-0">📊 Session Attendance for {{ row.tournament.name }}</h5>
-              </div>
-              <div class="card-body p-0">
-                <table class="table table-sm mb-0">
-                  <thead>
-                    <tr>
-                      <th>Session</th>
-                      <th>Attendees</th>
-                      <th class="text-center">%</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for label, count in row.session_counts.items() %}
-                    <tr>
-                      <td>{{ label }}</td>
-                      <td>{{ count }} attendee{{ "s" if count > 1 else "" }}</td>
-                      <td class="text-center">
-                        {% if row.total_attending > 0 %}
-                          {{ ((count / row.total_attending) * 100) | round(1) }}%
-                        {% else %}
-                          0%
-                        {% endif %}
-                      </td>
-                    </tr>
-                    {% endfor %}
-                    {% if not row.session_counts %}
-                    <tr>
-                      <td colspan="3" class="text-center text-muted">No sessions selected yet</td>
-                    </tr>
-                    {% endif %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </td>
-        </tr>
+
         {% endfor %}
       </tbody>
     </table>
@@ -206,21 +160,7 @@
 </style>
 
 <script>
-  // Toggle Session Details
-  function toggleSessionDetails(tournamentId) {
-    const detailsRow = document.getElementById(`session-details-${tournamentId}`);
-    const toggleIcon = document.querySelector(`.toggle-icon-${tournamentId}`);
-    
-    if (detailsRow.style.display === "none") {
-      detailsRow.style.display = "table-row";
-      toggleIcon.classList.remove("fa-chevron-down");
-      toggleIcon.classList.add("fa-chevron-up");
-    } else {
-      detailsRow.style.display = "none";
-      toggleIcon.classList.remove("fa-chevron-up");
-      toggleIcon.classList.add("fa-chevron-down");
-    }
-  }
+  // Note: Session toggle functionality removed
 
   // Table Sorting
   let currentSortCol = -1;
