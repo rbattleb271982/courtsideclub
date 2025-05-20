@@ -61,12 +61,19 @@ def admin_dashboard():
                     elif 'Night' in session:
                         night_count += 1
             
+            # Count lanyard orders
+            lanyard_count = UserTournament.query.join(User).filter(
+                UserTournament.tournament_id == tournament.id,
+                User.lanyard_ordered == True
+            ).count()
+            
             # Prepare data for the dashboard
             dashboard_data.append({
                 'tournament': tournament,
                 'total_registrations': total_registrations,
-                'attending_count': attending_count,
-                'open_to_meet_count': open_to_meet_count,
+                'total_attending': attending_count,
+                'total_meetups': open_to_meet_count,
+                'total_lanyards': lanyard_count,
                 'day_count': day_count,
                 'night_count': night_count,
                 'start_date_unix': datetime.combine(tournament.start_date, datetime.min.time()).timestamp() if tournament.start_date else 0
