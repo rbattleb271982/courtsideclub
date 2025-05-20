@@ -305,35 +305,42 @@
       console.error("Search input element not found - filter functionality disabled");
     }
     
-    // 2. Mark as Sent button functionality
+    // 2. Fix the Mark Sent button functionality
     function setupMarkSentButtons() {
+      // Get all Mark Sent buttons
       const markSentButtons = document.querySelectorAll('.mark-sent-btn');
-      debugLog(`Setting up ${markSentButtons.length} 'Mark Sent' buttons`);
+      console.log(`Found ${markSentButtons.length} 'Mark Sent' buttons to set up`);
       
+      if (!markSentButtons || markSentButtons.length === 0) {
+        console.warn("No Mark Sent buttons found - all lanyards might already be marked as sent");
+        return;
+      }
+      
+      // Add click handler to each button
       markSentButtons.forEach(button => {
-        // Add click handler
         button.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
           
+          // Get user ID from button's data attribute
           const userId = this.getAttribute('data-user-id');
-          debugLog(`Mark Sent clicked for user ID: ${userId}`);
+          console.log(`Mark Sent clicked for user ID: ${userId}`);
           
           if (!userId) {
             console.error("Missing user ID on Mark Sent button");
             return false;
           }
           
-          // Get the row
+          // Get the row for this user
           const row = document.querySelector(`tr[data-user-id="${userId}"]`);
           if (!row) {
             console.error(`Could not find row for user ID: ${userId}`);
             return false;
           }
           
-          // Add to changes map
+          // Add to changes map for batch update
           lanyardChanges.set(userId, true);
-          debugLog(`Added change for user ${userId}, total changes: ${lanyardChanges.size}`);
+          console.log(`Added change for user ${userId}, total changes: ${lanyardChanges.size}`);
           
           // Update visual state
           row.classList.add('table-success');
@@ -341,26 +348,30 @@
           // Replace button with pending badge
           this.outerHTML = '<span class="badge bg-warning">Pending Save</span>';
           
-          // Enable Save All Changes button
+          // CRITICAL FIX: Enable Save All Changes button
           if (saveChangesBtn) {
             saveChangesBtn.disabled = false;
-            debugLog("Save All Changes button enabled");
+            console.log("Save Changes button enabled");
+          } else {
+            console.error("Save Changes button not found - cannot enable it");
           }
           
           return false;
         });
       });
       
-      debugLog("Mark Sent buttons initialized");
+      console.log("Mark Sent button handlers initialized successfully");
     }
     
     // Initialize Mark Sent buttons
     setupMarkSentButtons();
     
-    // 3. Save All Changes button functionality
+    // 3. Fix Save All Changes button functionality
     if (saveChangesBtn) {
+      console.log(`Setting up Save Changes button with ID: ${saveChangesBtn.id}`);
+      
       saveChangesBtn.addEventListener('click', function() {
-        debugLog(`Save Changes button clicked. Changes to save: ${lanyardChanges.size}`);
+        console.log(`Save Changes button clicked. Changes to save: ${lanyardChanges.size}`);
         
         if (lanyardChanges.size === 0) {
           alert('No changes to save.');
@@ -380,6 +391,8 @@
           });
         });
         
+        console.log(`Sending batch update with ${updates.length} changes`);
+        
         // Send batch update request
         fetch('/admin/lanyards/batch-update', {
           method: 'POST',
@@ -389,13 +402,14 @@
           body: JSON.stringify({ updates: updates })
         })
         .then(response => {
+          console.log("Batch update response status:", response.status);
           if (!response.ok) {
             throw new Error(`Server error: ${response.status}`);
           }
           return response.json();
         })
         .then(data => {
-          debugLog("Batch update response:", data);
+          console.log("Batch update response data:", data);
           
           if (data.success) {
             // Update UI to show success
@@ -416,7 +430,7 @@
           }
         })
         .catch(error => {
-          console.error('Error:', error);
+          console.error('Error during save:', error);
           alert(`Error: ${error.message}`);
           
           // Reset button state
@@ -425,9 +439,9 @@
         });
       });
       
-      debugLog("Save Changes button handler attached");
+      console.log("Save Changes button handler attached successfully");
     } else {
-      console.error("Save Changes button not found");
+      console.error("CRITICAL ERROR: Save Changes button not found - button with ID 'save-changes-btn' does not exist in the DOM");
     }
     
     // Auto-filter to show only urgent users when urgent alert is present
