@@ -245,13 +245,109 @@ def view_events():
 @admin_bp.route('/event-log')
 @login_required
 def view_event_log():
-    """Redirects to the event summary page"""
+    """Shows event log summary instead of raw events"""
     if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Redirect to event summary page
-    return redirect(url_for('admin.event_summary'))
+    # Define descriptions mapping for event types
+    event_descriptions = {
+        "user_login": "Users who logged in",
+        "login": "Users who logged in",
+        "tournament_view": "Viewed a tournament page",
+        "tournament_register": "Users who RSVP'd for tournaments",
+        "joined_tournament": "Users who RSVP'd for tournaments",
+        "lanyard_order": "Users who placed a lanyard order",
+        "ordered_lanyard": "Users who placed a lanyard order",
+        "profile_update": "Users who updated their profile",
+        "updated_profile": "Users who updated their profile",
+        "session_select": "Selected tournament session(s)",
+        "open_to_meet": "Users who opted to meet others",
+        "session_deselect": "Deselected tournament session(s)",
+        "welcome_seen": "Viewed welcome message",
+        "password_reset": "Requested password reset",
+        "user_registration": "New user registration",
+        "past_tournament_add": "Added past tournament",
+        "past_tournament_remove": "Removed past tournament",
+        "email_sent": "Emails sent (reminders/welcomes)"
+    }
+    
+    # Get all event counts
+    event_counts = db.session.query(
+        Event.name, 
+        func.count(Event.id).label('count')
+    ).group_by(Event.name).order_by(desc('count')).all()
+    
+    # Process results with descriptions
+    event_summary = []
+    for event_name, count in event_counts:
+        description = event_descriptions.get(event_name, "User action")
+        event_summary.append({
+            'name': event_name,
+            'count': count,
+            'description': description
+        })
+    
+    # Get total events count
+    total_events = sum(item['count'] for item in event_summary)
+    
+    return render_template(
+        "admin_event_log.html", 
+        event_summary=event_summary,
+        total_events=total_events
+    )
+
+@admin_bp.route('/export-event-log')
+@login_required
+def export_event_log():
+    """Export event log summary data as CSV"""
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
+    
+    # Define descriptions
+    event_descriptions = {
+        "user_login": "Users who logged in",
+        "login": "Users who logged in",
+        "tournament_view": "Viewed a tournament page",
+        "tournament_register": "Users who RSVP'd for tournaments",
+        "joined_tournament": "Users who RSVP'd for tournaments",
+        "lanyard_order": "Users who placed a lanyard order",
+        "ordered_lanyard": "Users who placed a lanyard order",
+        "profile_update": "Users who updated their profile",
+        "updated_profile": "Users who updated their profile",
+        "session_select": "Selected tournament session(s)",
+        "open_to_meet": "Users who opted to meet others",
+        "session_deselect": "Deselected tournament session(s)",
+        "welcome_seen": "Viewed welcome message",
+        "password_reset": "Requested password reset",
+        "user_registration": "New user registration",
+        "past_tournament_add": "Added past tournament",
+        "past_tournament_remove": "Removed past tournament",
+        "email_sent": "Emails sent (reminders/welcomes)"
+    }
+    
+    # Get event counts
+    event_counts = db.session.query(
+        Event.name, 
+        func.count(Event.id).label('count')
+    ).group_by(Event.name).order_by(desc('count')).all()
+    
+    # Create CSV
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['Event Type', 'Total Count', 'Description'])
+    
+    for event_name, count in event_counts:
+        description = event_descriptions.get(event_name, "User action")
+        writer.writerow([event_name, count, description])
+    
+    output.seek(0)
+    return Response(
+        output, 
+        mimetype="text/csv", 
+        headers={"Content-Disposition": "attachment;filename=event_log_summary.csv"}
+    )
 
 @admin_bp.route('/event-types')
 @login_required
