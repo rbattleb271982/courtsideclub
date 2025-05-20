@@ -1,0 +1,63 @@
+Complete and polish the /admin/lanyard page to fully support lanyard fulfillment operations. This includes alert logic, summary stats, an interactive and sortable table, tracking support, and address handling. Only use checkpoints if necessary. Do not finish until all features below are implemented and visually confirmed."
+
+✅ Features to Implement:
+1. Page and Navigation Label
+Change sidebar label from "Export Lanyards" to just "Lanyards"
+Page title should remain "Lanyard Fulfillment"
+2. Summary Stats
+At the top of the page, display:
+
+✅ Total lanyards ordered
+✅ Number sent
+✅ Number pending
+3. Urgent Alert for Upcoming Tournament
+If today's date is within 9 days of the next tournament's start, and users attending that tournament haven’t been sent a lanyard, show a red alert box:
+🚨 4 users have not been sent a lanyard and are attending the next tournament: Madrid Open (starts Apr 28)
+Clicking the alert should filter the table to only show those users
+4. Main Fulfillment Table
+Columns to include:
+
+Field	Notes
+User Name	From User model
+Email	From User model
+City/State/Zip	From ShippingAddress — just show high-level info in table
+View Full Address	Small icon/button that opens a modal with full address
+First Tournament	From UserTournament — show the first upcoming tournament
+Other Tournaments	Show names of other upcoming tournaments (comma-separated)
+Lanyard Sent	Checkbox that updates User.lanyard_sent = True
+Sent Date	Display User.lanyard_sent_date if available
+Internal Note	Editable freeform text field (saved per user)
+5. Lanyard Sent Logic
+When checkbox is clicked:
+Set User.lanyard_sent = True
+Set User.lanyard_sent_date = datetime.utcnow()
+✅ Add logic to show a banner in the user’s dashboard:
+“🎾 Your lanyard has been mailed! Look out for it before your next tournament.”
+6. Bulk Actions
+Above the table:
+
+✅ "Mark All Filtered as Sent" (applies to current visible rows)
+✅ "Export Visible Rows (CSV)"
+7. Table Features
+✅ Sortable by:
+Name
+Lanyard Sent
+First Tournament (by date)
+✅ Search/filter:
+Show only unsent
+Filter by tournament (optional dropdown)
+8. CSV Export
+Export includes:
+
+Name
+Email
+Full shipping address
+First tournament
+Lanyard Sent status
+Sent date
+Internal note
+9. General Requirements
+All functionality must be mobile-friendly and match current admin styling
+Do not break any existing /admin/tournaments/<slug> or dashboard pages
+Only use checkpoints if necessary
+Do not finish until fully tested and confirmed working
