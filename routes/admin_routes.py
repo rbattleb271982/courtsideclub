@@ -414,41 +414,6 @@ def view_event_log():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Get optional date filter parameters
-    start_date_str = request.args.get('start_date')
-    end_date_str = request.args.get('end_date')
-    
-    # Default to last 7 days if no dates specified
-    today = datetime.utcnow().date()
-    if not start_date_str:
-        start_date = today - timedelta(days=7)
-    else:
-        try:
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            start_date = today - timedelta(days=7)
-            flash("Invalid start date format. Showing last 7 days instead.", "warning")
-    
-    if not end_date_str:
-        end_date = today
-    else:
-        try:
-            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
-        except ValueError:
-            end_date = today
-            flash("Invalid end date format. Using today instead.", "warning")
-    
-    # Add time to make the date range inclusive
-    start_datetime = datetime.combine(start_date, datetime.min.time())
-    end_datetime = datetime.combine(end_date, datetime.max.time())
-    
-    # Calculate previous and next periods for navigation
-    period_length = (end_date - start_date).days or 1  # Ensure at least 1 day
-    prev_start = start_date - timedelta(days=period_length)
-    prev_end = start_date - timedelta(days=1)
-    next_start = end_date + timedelta(days=1)
-    next_end = end_date + timedelta(days=period_length)
-    
     # Define descriptions for common event types
     event_descriptions = {
         "tournament_view": "Viewed a tournament page",
@@ -470,64 +435,40 @@ def view_event_log():
     event_counts = db.session.query(
         Event.name, 
         func.count(Event.id).label('count')
-    ).filter(
-        Event.timestamp.between(start_datetime, end_datetime)
     ).group_by(Event.name).order_by(desc('count')).all()
     
     # Prepare event data with descriptions
-    event_data = []
+    event_summary = []
+    total_events = 0
+    
     for event_name, count in event_counts:
         description = event_descriptions.get(event_name, "User action")
+        total_events += count
         
-        event_data.append({
+        event_summary.append({
             'name': event_name,
             'count': count,
             'description': description
         })
     
-    # Get daily event counts for chart
-    daily_counts = db.session.query(
-        func.date(Event.timestamp).label('date'),
-        func.count(Event.id).label('count')
-    ).filter(
-        Event.timestamp.between(start_datetime, end_datetime)
-    ).group_by('date').order_by('date').all()
+    # Get sorting parameters
+    sort_by = request.args.get('sort_by', 'count')
+    sort_dir = request.args.get('sort_dir', 'desc')
     
-    # Prepare chart data
-    dates = []
-    counts = []
-    for date, count in daily_counts:
-        dates.append(date.strftime('%Y-%m-%d'))
-        counts.append(count)
-    
-    # Get user counts for chart
-    user_event_counts = db.session.query(
-        User.email,
-        func.count(Event.id).label('count')
-    ).join(Event, User.id == Event.user_id).filter(
-        Event.timestamp.between(start_datetime, end_datetime)
-    ).group_by(User.email).order_by(desc('count')).limit(10).all()
-    
-    # Prepare user data
-    user_emails = []
-    user_counts = []
-    for email, count in user_event_counts:
-        user_emails.append(email)
-        user_counts.append(count)
+    # Apply sorting
+    if sort_by == 'name':
+        event_summary.sort(key=lambda x: x['name'].lower(), reverse=(sort_dir == 'desc'))
+    elif sort_by == 'count':
+        event_summary.sort(key=lambda x: x['count'], reverse=(sort_dir == 'desc'))
+    elif sort_by == 'description':
+        event_summary.sort(key=lambda x: x['description'].lower(), reverse=(sort_dir == 'desc'))
     
     return render_template(
         'admin_event_summary.html',
-        event_data=event_data,
-        start_date=start_date,
-        end_date=end_date,
-        prev_start=prev_start,
-        prev_end=prev_end,
-        next_start=next_start,
-        next_end=next_end,
-        dates=dates,
-        counts=counts,
-        user_emails=user_emails,
-        user_counts=user_counts
+        event_summary=event_summary,
+        total_events=total_events,
+        sort_by=sort_by,
+        sort_dir=sort_dir
     )
 
 @admin_bp.route('/export-event-log')

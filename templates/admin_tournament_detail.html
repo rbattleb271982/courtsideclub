@@ -198,38 +198,36 @@
   <div id="attendeeSection" class="card mb-4" style="display: none;">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Tournament Attendees</h5>
-      <span class="badge bg-light text-dark">{{ total_attending }} attendees</span>
+      <span class="badge bg-light text-dark">{{ grand_total }} attendees</span>
     </div>
     <div class="card-body">
-      {% if user_tourneys %}
+      {% if attendees %}
       <div class="table-responsive">
         <table id="attendeeTable" class="table table-striped table-hover">
           <thead>
             <tr>
               <th onclick="sortTable(0)" style="cursor: pointer;">Name <i class="fas fa-sort"></i></th>
               <th onclick="sortTable(1)" style="cursor: pointer;">Email <i class="fas fa-sort"></i></th>
-              <th onclick="sortTable(2)" style="cursor: pointer;">Location <i class="fas fa-sort"></i></th>
               <th>Sessions</th>
-              <th onclick="sortTable(4)" style="cursor: pointer;">Open to Meet <i class="fas fa-sort"></i></th>
-              <th onclick="sortTable(5)" style="cursor: pointer;">Lanyard <i class="fas fa-sort"></i></th>
+              <th onclick="sortTable(3)" style="cursor: pointer;">Open to Meet <i class="fas fa-sort"></i></th>
+              <th onclick="sortTable(4)" style="cursor: pointer;">Lanyard <i class="fas fa-sort"></i></th>
             </tr>
           </thead>
           <tbody>
-            {% for ut in user_tourneys %}
+            {% for attendee in attendees %}
             <tr>
-              <td>{{ ut.user.get_full_name() }}</td>
-              <td>{{ ut.user.email }}</td>
-              <td>{{ ut.user.location or "Not specified" }}</td>
-              <td>{{ ut.session_label or "None selected" }}</td>
+              <td>{{ attendee.name }}</td>
+              <td>{{ attendee.email }}</td>
+              <td>{{ attendee.sessions }}</td>
               <td class="text-center">
-                {% if ut.wants_to_meet %}
+                {% if attendee.wants_to_meet == "Yes" %}
                 <span class="badge bg-success">✓</span>
                 {% else %}
                 <span class="badge bg-secondary">✗</span>
                 {% endif %}
               </td>
               <td class="text-center">
-                {% if ut.user.lanyard_ordered %}
+                {% if attendee.lanyard == "Ordered" %}
                 <span class="badge bg-info">✓</span>
                 {% else %}
                 <span class="badge bg-secondary">✗</span>
