@@ -363,8 +363,8 @@ def view_events():
     else:
         # Get event counts per type
         events = Event.query.filter(
-            Event.date_created.between(start_datetime, end_datetime)
-        ).order_by(Event.date_created.desc()).all()
+            Event.timestamp.between(start_datetime, end_datetime)
+        ).order_by(Event.timestamp.desc()).all()
         
         return render_template(
             'admin_events.html',
@@ -443,7 +443,7 @@ def view_event_log():
         Event.name, 
         func.count(Event.id).label('count')
     ).filter(
-        Event.date_created.between(start_datetime, end_datetime)
+        Event.timestamp.between(start_datetime, end_datetime)
     ).group_by(Event.name).order_by(desc('count')).all()
     
     # Prepare event data with descriptions
@@ -459,10 +459,10 @@ def view_event_log():
     
     # Get daily event counts for chart
     daily_counts = db.session.query(
-        func.date(Event.date_created).label('date'),
+        func.date(Event.timestamp).label('date'),
         func.count(Event.id).label('count')
     ).filter(
-        Event.date_created.between(start_datetime, end_datetime)
+        Event.timestamp.between(start_datetime, end_datetime)
     ).group_by('date').order_by('date').all()
     
     # Prepare chart data

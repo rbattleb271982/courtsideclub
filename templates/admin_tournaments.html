@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block title %}Tournaments | Admin | CourtSide Club{% endblock %}
+
+{% block content %}
+<div class="container pt-4">
+  <div class="mb-4">
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary mb-3">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <h2>Tournament Management</h2>
+    <p class="text-muted">Manage all tournament details and settings.</p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">All Tournaments</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Dates</th>
+              <th>Location</th>
+              <th>Type</th>
+              <th>Surface</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tournament in tournaments %}
+            <tr>
+              <td>{{ tournament.name }}</td>
+              <td>{{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}</td>
+              <td>{{ tournament.city }}, {{ tournament.country }}</td>
+              <td>{{ tournament.tour_type }}</td>
+              <td>{{ tournament.surface or 'Not specified' }}</td>
+              <td>
+                <a href="{{ url_for('admin.view_tournament', tournament_slug=tournament.slug) }}" class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-eye"></i> View
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
