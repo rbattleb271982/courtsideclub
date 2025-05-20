@@ -6,8 +6,8 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>🏷️ Lanyard Fulfillment <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
     <div>
-      <button id="export-csv-btn" class="btn btn-primary">📥 Export Visible Rows (CSV)</button>
-      <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary ms-2">Back to Dashboard</a>
+      <button id="export-csv-btn" class="btn btn-primary me-2">📥 Export Visible Rows (CSV)</button>
+      <button id="save-changes-btn" class="btn btn-success" disabled>💾 Save All Changes</button>
     </div>
   </div>
 
@@ -110,12 +110,12 @@
             <tr>
               <th class="sortable" data-sort="name">User Name <i class="fas fa-sort"></i></th>
               <th>Email</th>
-              <th>City/State/Zip</th>
-              <th>View Address</th>
+              <th>Address</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Zip</th>
               <th class="sortable" data-sort="tournament">First Tournament <i class="fas fa-sort"></i></th>
-              <th>Other Tournaments</th>
               <th class="sortable" data-sort="status">Lanyard Sent <i class="fas fa-sort"></i></th>
-              <th>Sent Date</th>
               <th>Internal Note</th>
             </tr>
           </thead>
@@ -133,16 +133,31 @@
               <td>
                 {% if item.has_address %}
                 {% set address = get_shipping_address(item.user.id) %}
-                {{ address.city }}{% if address.state %}, {{ address.state }}{% endif %} {{ address.zip_code }}
+                {{ address.address1 }}{% if address.address2 %} {{ address.address2 }}{% endif %}
                 {% else %}
                 <span class="badge bg-danger">No address</span>
                 {% endif %}
               </td>
               <td>
                 {% if item.has_address %}
-                <button class="btn btn-sm btn-outline-primary view-address-btn" data-user-id="{{ item.user.id }}">
-                  <i class="fas fa-home"></i> View
-                </button>
+                {% set address = get_shipping_address(item.user.id) %}
+                {{ address.city }}
+                {% else %}
+                <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if item.has_address %}
+                {% set address = get_shipping_address(item.user.id) %}
+                {{ address.state or "—" }}
+                {% else %}
+                <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if item.has_address %}
+                {% set address = get_shipping_address(item.user.id) %}
+                {{ address.zip_code }}
                 {% else %}
                 <span class="text-muted">—</span>
                 {% endif %}
@@ -154,27 +169,14 @@
                 <span class="text-muted">No tournaments</span>
                 {% endif %}
               </td>
-              <td>
-                {% if other_tournaments.get(item.user.id) %}
-                {{ other_tournaments.get(item.user.id)|safe }}
-                {% else %}
-                <span class="text-muted">None</span>
-                {% endif %}
-              </td>
               <td class="status-cell">
                 <div class="form-check form-switch">
                   <input class="form-check-input lanyard-toggle" type="checkbox" id="lanyard-{{ item.user.id }}" 
                          {{ 'checked' if item.user.lanyard_sent else '' }}
-                         data-user-id="{{ item.user.id }}">
+                         data-user-id="{{ item.user.id }}"
+                         data-original-state="{{ 'true' if item.user.lanyard_sent else 'false' }}">
                   <label class="form-check-label" for="lanyard-{{ item.user.id }}">Sent</label>
                 </div>
-              </td>
-              <td class="date-cell">
-                {% if item.user.lanyard_sent and item.user.lanyard_sent_date %}
-                {{ item.user.lanyard_sent_date.strftime('%b %d, %Y') }}
-                {% else %}
-                <span class="text-muted">—</span>
-                {% endif %}
               </td>
               <td>
                 <input type="text" class="form-control form-control-sm internal-note" 
@@ -221,7 +223,11 @@
     const markAllSentBtn = document.getElementById('mark-all-sent-btn');
     const exportCsvBtn = document.getElementById('export-csv-btn');
     const filterUrgentBtn = document.getElementById('filter-urgent-btn');
+    const saveChangesBtn = document.getElementById('save-changes-btn');
     const addressModal = new bootstrap.Modal(document.getElementById('addressModal'));
+    
+    // Track changes for batch saving
+    const lanyardChanges = new Map(); // userId -> new status
     
     // Function to apply all filters
     function applyFilters() {
@@ -290,45 +296,109 @@
       toggle.addEventListener('change', function() {
         const userId = this.dataset.userId;
         const checked = this.checked;
+        const originalState = this.dataset.originalState === 'true';
         const row = document.querySelector(`tr[data-user-id="${userId}"]`);
-        const dateCell = row.querySelector('.date-cell');
         
-        // Send AJAX request to update status
-        fetch(`/admin/lanyards/update-status/${userId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: `status=${checked}`
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            // Update row styling
-            if (checked) {
-              row.classList.add('table-success');
-              dateCell.innerHTML = data.date ? data.date.split(' ')[0] : '—';
-            } else {
-              row.classList.remove('table-success');
-              dateCell.innerHTML = '<span class="text-muted">—</span>';
+        // Only register a change if the value is different from the original
+        if (checked !== originalState) {
+          lanyardChanges.set(userId, checked);
+          saveChangesBtn.disabled = false; // Enable save button
+        } else {
+          // If toggled back to original state, remove from changes
+          lanyardChanges.delete(userId);
+          saveChangesBtn.disabled = lanyardChanges.size === 0; // Disable if no changes
+        }
+        
+        // Update UI immediately (will be confirmed on save)
+        if (checked) {
+          row.classList.add('table-success');
+        } else {
+          row.classList.remove('table-success');
+        }
+        
+        // Update row's needs-lanyard attribute for filtering
+        row.dataset.needsLanyard = !checked && row.dataset.tournamentId === (tournamentFilter.value || '');
+      });
+    });
+    
+    // Save all changes button
+    saveChangesBtn.addEventListener('click', function() {
+      if (lanyardChanges.size === 0) {
+        return; // Nothing to save
+      }
+      
+      // Disable save button during the save operation
+      saveChangesBtn.disabled = true;
+      saveChangesBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+      
+      // Prepare the payload with all changes
+      const payload = Array.from(lanyardChanges).map(([userId, status]) => {
+        return { userId, status };
+      });
+      
+      // Send batch update request
+      fetch('/admin/lanyards/batch-update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ updates: payload })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update UI to reflect saved state
+          let sentCount = 0;
+          
+          // Update all rows that were successfully saved
+          data.results.forEach(result => {
+            if (result.success) {
+              const row = document.querySelector(`tr[data-user-id="${result.userId}"]`);
+              const toggle = row.querySelector('.lanyard-toggle');
+              
+              // Update the original state to match the new state
+              toggle.dataset.originalState = result.status;
+              
+              // Update row styling
+              if (result.status) {
+                row.classList.add('table-success');
+                sentCount++;
+              } else {
+                row.classList.remove('table-success');
+              }
             }
-            // Update row's needs-lanyard attribute
-            if (checked) {
-              row.dataset.needsLanyard = 'false';
-            }
-            // Reapply filters in case we're filtering on sent status
-            applyFilters();
+          });
+          
+          // Show success message
+          if (sentCount > 0) {
+            alert(`${sentCount} lanyards marked as sent!`);
           } else {
-            // Revert the checkbox if failed
-            toggle.checked = !checked;
-            alert('Failed to update lanyard status');
+            alert('All lanyard status updates saved.');
           }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          toggle.checked = !checked;
-          alert('Error updating lanyard status');
-        });
+          
+          // Clear the changes map since all were saved
+          lanyardChanges.clear();
+          
+          // Reapply filters
+          applyFilters();
+          
+          // Update the statistics on the page (would require a page reload to be accurate)
+          // For now, we'll just disable the save button
+          saveChangesBtn.disabled = true;
+          saveChangesBtn.innerHTML = '💾 Save All Changes';
+          
+        } else {
+          // Show error message
+          alert('Failed to save some changes. Please try again.');
+          saveChangesBtn.disabled = false;
+          saveChangesBtn.innerHTML = '💾 Save All Changes';
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Error saving changes. Please try again.');
+        saveChangesBtn.disabled = false;
+        saveChangesBtn.innerHTML = '💾 Save All Changes';
       });
     });
     
