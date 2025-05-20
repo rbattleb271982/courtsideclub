@@ -277,7 +277,7 @@
   document.getElementById('toggleEditForm').addEventListener('click', function() {
     const editFormSection = document.getElementById('editFormSection');
     
-    if (editFormSection.style.display === 'none') {
+    if (editFormSection.style.display === 'none' || editFormSection.style.display === '') {
       editFormSection.style.display = 'block';
       this.innerHTML = '<i class="fas fa-times"></i> Cancel Editing';
       this.classList.remove('btn-outline-secondary');
