@@ -39,7 +39,9 @@
 {% block content %}
 <div class="container tournament-detail">
     <div class="tournament-detail-container">
+        <!-- Main content area -->
         <div class="tournament-detail-main">
+            <!-- Tournament header and info card -->
             <div class="card tournament-card mb-4">
                 <div class="tournament-header">
                     <h1 class="tournament-name">{{ tournament.name }}</h1>
@@ -62,48 +64,45 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <!-- Attendance Controls MOVED INTO MAIN CARD -->
+                    <div class="detail-item mt-3 attendance-container">
+                        <i data-feather="calendar-check" class="icon-sm"></i>
+                        <div class="w-100">
+                            {# Use attendance_type directly #}
+                            {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
+                            {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
 
-                        <!-- Attendance Controls MOVED INTO MAIN CARD -->
-                        <div class="detail-item mt-3 attendance-container">
-                            <i data-feather="calendar-check" class="icon-sm"></i>
-                            <div class="w-100">
+                            <!-- Simplified Attendance UI with reduced spacing -->
+                            <div class="attendance-buttons">
+                              <label class="mb-1 font-weight-bold">Will you be there?</label>
 
-                                {# Use attendance_type directly #}
-                                {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
-                                {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
+                              <div class="attendance-button-group">
+                                <!-- I'm Attending -->
+                                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
+                                  <button type="submit" class="btn py-1 {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
+                                    <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
+                                  </button>
+                                </form>
 
-                                <!-- Simplified Attendance UI with reduced spacing -->
-                                <div class="attendance-buttons">
-                                  <label class="mb-1 font-weight-bold">Will you be there?</label>
+                                <!-- Maybe Attending -->
+                                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
+                                  <input type="hidden" name="attendance_type" value="maybe">
+                                  <button type="submit" class="btn py-1 {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
+                                    <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
+                                  </button>
+                                </form>
+                              </div>
 
-                                  <div class="attendance-button-group">
-                                    <!-- I'm Attending -->
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
-                                      <button type="submit" class="btn py-1 {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
-                                        <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
-                                      </button>
-                                    </form>
+                              <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
+                                <button type="submit" class="btn-clear text-danger small-text">Not Attending</button>
+                              </form>
 
-                                    <!-- Maybe Attending -->
-                                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
-                                      <input type="hidden" name="attendance_type" value="maybe">
-                                      <button type="submit" class="btn py-1 {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
-                                        <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
-                                      </button>
-                                    </form>
-                                  </div>
-
-                                  <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
-                                    <button type="submit" class="btn-clear text-danger small-text">Not Attending</button>
-                                  </form>
-
-                                  {% if user_tournament and user_tournament.attending %}
-                                  <div class="session-note mt-3">
-                                    <i data-feather="info" class="icon-sm me-1"></i>
-                                    After selecting sessions below, you can choose whether you're open to meeting other fans
-                                  </div>
-                                  {% endif %}
-                                </div>
+                              {% if user_tournament and user_tournament.attending %}
+                              <div class="session-note mt-3">
+                                <i data-feather="info" class="icon-sm me-1"></i>
+                                After selecting sessions below, you can choose whether you're open to meeting other fans
+                              </div>
+                              {% endif %}
                             </div>
                         </div>
                     </div>
@@ -163,105 +162,96 @@
                 <i data-feather="package" class="icon-sm"></i> Your lanyard is on its way!
             </div>
             {% endif %}
+        </div>
+        
+        <!-- Tournament sessions section - Moved below main content for vertical layout -->
+        {% set is_full_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
+        {% set is_attending = user_tournament and user_tournament.attending == True %}
+        {% set is_thinking = user_tournament and user_tournament.attendance_type == 'maybe' %}
+        {% set is_not_going = not user_tournament or user_tournament.attending == False %}
 
-            <!-- Tournament Attendance Section -->
-            {% set is_full_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
-            {% set is_attending = user_tournament and user_tournament.attending == True %}
-            {% set is_thinking = user_tournament and user_tournament.attendance_type == 'maybe' %}
-            {% set is_not_going = not user_tournament or user_tournament.attending == False %}
-
-            <div class="card mb-4" id="session-selection-card" {% if is_not_going %}style="display: none;"{% endif %}>
-                <div class="card-header">
-                    <h3 class="card-title h5 mb-0">Your Tournament Sessions</h3>
-                </div>
-                <div class="card-body">
-                    <!-- Session Selection UI - Visible for both "I'm Attending" and "Maybe Attending" users -->
-                    <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or not user_tournament.attending %}style="display: none;"{% endif %}>
-                        <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="session-form">
-                            <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
-                            <div id="hiddenSessionInputs">
-                                <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
-                            </div>
-                            <!-- No hidden field for wants_to_meet - we use the visible checkbox instead -->
-                            
-                            <!-- Create session day groups with all tournament days -->
-                            <div class="session-groups">
-                                {% for day in tournament_days %}
-                                {% set day_num = loop.index %}
-                                <div class="session-day-group">
-                                    <div class="day-title">
-                                        {{ day.formatted }} (Day {{ day.day_num }})
-                                    </div>
-
-                                    <div class="session-chips">
-                                        <!-- Day session with checkbox -->
-                                        {% set day_key = "Day " + day.day_num|string + " - Day" %}
-                                        <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Day Session</span>
-                                            <span class="check-icon check-icon-only">✓</span>
-                                        </label>
-
-                                        <!-- Night session with checkbox -->
-                                        {% set night_key = "Day " + day.day_num|string + " - Night" %}
-                                        <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Night Session</span>
-                                            <span class="check-icon check-icon-only">✓</span>
-                                        </label>
-                                    </div>
-
-                                    <!-- Session attendance counts shown below the buttons -->
-                                    <p class="session-counts">
-                                        <small>
-                                            {% if session_counts.get(day_key, 0) > 0 %}
-                                                <strong>{{ session_counts.get(day_key, 0) }}</strong> fan{{ 's' if session_counts.get(day_key, 0) != 1 else '' }} attending Day Session
-                                            {% else %}
-                                                {{ session_counts.get(day_key, 0) }} fans attending Day Session
-                                            {% endif %}
-                                        </small><br>
-                                        <small>
-                                            {% if session_counts.get(night_key, 0) > 0 %}
-                                                <strong>{{ session_counts.get(night_key, 0) }}</strong> fan{{ 's' if session_counts.get(night_key, 0) != 1 else '' }} attending Night Session
-                                            {% else %}
-                                                {{ session_counts.get(night_key, 0) }} fans attending Night Session
-                                            {% endif %}
-                                        </small>
-                                    </p>
+        <div class="card mb-4" id="session-selection-card" {% if is_not_going %}style="display: none;"{% endif %}>
+            <div class="card-header">
+                <h3 class="card-title h5 mb-0">Your Tournament Sessions</h3>
+            </div>
+            <div class="card-body">
+                <!-- Session Selection UI - Visible for both "I'm Attending" and "Maybe Attending" users -->
+                <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or not user_tournament.attending %}style="display: none;"{% endif %}>
+                    <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="session-form">
+                        <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
+                        <div id="hiddenSessionInputs">
+                            <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
+                        </div>
+                        <!-- No hidden field for wants_to_meet - we use the visible checkbox instead -->
+                        
+                        <!-- Create session day groups with all tournament days -->
+                        <div class="session-groups">
+                            {% for day in tournament_days %}
+                            {% set day_num = loop.index %}
+                            <div class="session-day-group">
+                                <div class="day-title">
+                                    {{ day.formatted }} (Day {{ day.day_num }})
                                 </div>
-                                {% endfor %}
 
+                                <div class="session-chips">
+                                    <!-- Day session with checkbox -->
+                                    {% set day_key = "Day " + day.day_num|string + " - Day" %}
+                                    <label class="session-checkbox">
+                                        <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
+                                        <span class="session-name">Day Session</span>
+                                        <span class="check-icon check-icon-only">✓</span>
+                                    </label>
 
+                                    <!-- Night session with checkbox -->
+                                    {% set night_key = "Day " + day.day_num|string + " - Night" %}
+                                    <label class="session-checkbox">
+                                        <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
+                                        <span class="session-name">Night Session</span>
+                                        <span class="check-icon check-icon-only">✓</span>
+                                    </label>
+                                </div>
+
+                                <!-- Session attendance counts shown below the buttons -->
+                                <p class="session-counts">
+                                    <small>
+                                        {% if session_counts.get(day_key, 0) > 0 %}
+                                            <strong>{{ session_counts.get(day_key, 0) }}</strong> fan{{ 's' if session_counts.get(day_key, 0) != 1 else '' }} attending Day Session
+                                        {% else %}
+                                            {{ session_counts.get(day_key, 0) }} fans attending Day Session
+                                        {% endif %}
+                                    </small><br>
+                                    <small>
+                                        {% if session_counts.get(night_key, 0) > 0 %}
+                                            <strong>{{ session_counts.get(night_key, 0) }}</strong> fan{{ 's' if session_counts.get(night_key, 0) != 1 else '' }} attending Night Session
+                                        {% else %}
+                                            {{ session_counts.get(night_key, 0) }} fans attending Night Session
+                                        {% endif %}
+                                    </small>
+                                </p>
                             </div>
+                            {% endfor %}
+                        </div>
 
-                            <!-- Want to meet checkbox -->
-                            <div class="mt-4 mb-2 text-center">
-                                <label>
-                                  <input type="checkbox" name="wants_to_meet" {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}>
-                                  I'm open to meeting other fans
-                                </label>
-                            </div>
+                        <!-- Want to meet checkbox -->
+                        <div class="mt-4 mb-2 text-center">
+                            <label>
+                              <input type="checkbox" name="wants_to_meet" {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}>
+                              I'm open to meeting other fans
+                            </label>
+                        </div>
 
-                            <!-- Static save button -->
-                            <div class="text-center mt-2 mb-3">
-                                <button type="submit" class="btn btn-primary" style="width: 100%; max-width: 300px;">Save My Selections</button>
-                            </div>
-                        </form>
-                    </div>
+                        <!-- Static save button -->
+                        <div class="text-center mt-2 mb-3">
+                            <button type="submit" class="btn btn-primary" style="width: 100%; max-width: 300px;">Save My Selections</button>
+                        </div>
+                    </form>
+                </div>
 
-                    <!-- Message for "Thinking About It" status - Now hidden for all attending users -->
-                    <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" style="display: none;">
-                        <p class="text-muted mb-0">When you decide to attend, you'll be able to select your specific sessions.</p>
-                    </div>
-
-                    <!-- Lanyard CTA removed from tournament detail page -->
+                <!-- Message for "Thinking About It" status - Now hidden for all attending users -->
+                <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" style="display: none;">
+                    <p class="text-muted mb-0">When you decide to attend, you'll be able to select your specific sessions.</p>
                 </div>
             </div>
-        </div>
-
-        <!-- Empty sidebar - content moved to main vertical flow -->
-        <div class="tournament-detail-sidebar d-none">
-            <!-- Hidden, as content is now in the vertical layout -->
         </div>
     </div>
 </div>
