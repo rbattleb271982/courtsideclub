@@ -230,34 +230,58 @@
     document.querySelector('.table-responsive').style.maxWidth = '100%';
     document.querySelector('.table').style.tableLayout = 'fixed';
     
-    // Set up checkboxes for AJAX updates
-    setupLanyardCheckboxes();
+    // Add event listeners to all checkboxes for lanyard status updates
+    const checkboxes = document.querySelectorAll('.lanyard-sent-checkbox');
+    console.log(`Found ${checkboxes.length} lanyard checkboxes`);
     
-    // Set up CSV export functionality
-    function setupExportCsv() {
-      if (exportCsvBtn) {
-        exportCsvBtn.addEventListener('click', function() {
-          exportTableToCSV();
-        });
-      }
-    }
-    
-    setupExportCsv();
-    
-    // Function to handle immediate AJAX updates when a checkbox is clicked
-    function setupLanyardCheckboxes() {
-      const checkboxes = document.querySelectorAll('.lanyard-sent-checkbox');
+    checkboxes.forEach(checkbox => {
+      const userId = checkbox.getAttribute('data-user-id');
+      console.log(`Setting up checkbox for user ID: ${userId}`);
       
-      checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-          const userId = this.dataset.userId;
-          const isChecked = this.checked;
-          
-          // Show loading state
-          const savedIndicator = document.getElementById(`saved-indicator-${userId}`);
+      checkbox.addEventListener('change', function() {
+        const isChecked = this.checked;
+        console.log(`Checkbox changed for user ${userId}: ${isChecked ? 'SENT' : 'NOT SENT'}`);
+        
+        // Get saved indicator element
+        const savedIndicator = document.getElementById(`saved-indicator-${userId}`);
+        if (savedIndicator) {
           savedIndicator.style.display = 'inline-block';
           savedIndicator.innerHTML = '<span class="badge bg-secondary">Saving...</span>';
           savedIndicator.style.opacity = '1';
+        }
+        
+        // Update the badge next to checkbox
+        const label = this.nextElementSibling;
+        if (label) {
+          if (isChecked) {
+            label.innerHTML = '<span class="badge bg-success">Sent</span>';
+          } else {
+            label.innerHTML = '<span class="badge bg-light text-dark">Not sent</span>';
+          }
+        }
+        
+        // Update row background color
+        const row = this.closest('tr');
+        if (row) {
+          if (isChecked) {
+            row.classList.add('table-success');
+          } else {
+            row.classList.remove('table-success');
+          }
+        }
+        
+        // Send AJAX request to update status
+        updateLanyardStatus(userId, isChecked);
+      });
+    });
+    
+    // Set up CSV export functionality
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', exportTableToCSV);
+    }
+    
+    // We no longer need this function since we set up the checkboxes directly above
+    // Keeping these functions but removing the reference to setupLanyardCheckboxes() call earlier
           
           // Update adjacent label to reflect current state
           const label = this.nextElementSibling;
