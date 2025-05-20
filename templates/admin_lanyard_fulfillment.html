@@ -213,28 +213,36 @@
     // Define a reusable filter function
     function applyFilters() {
       const query = searchInput.value.toLowerCase();
+      console.log("Searching for:", query);
+      
+      let visibleCount = 0;
       
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        const name = row.dataset.userName.toLowerCase();
-        const email = row.dataset.userEmail.toLowerCase();
+        // Get the text from the cells directly instead of attributes
+        const cells = row.getElementsByTagName('td');
+        const name = cells[0].textContent.toLowerCase();
+        const email = cells[1].textContent.toLowerCase();
         
         // Apply name/email filter
         if (name.includes(query) || email.includes(query)) {
           row.style.display = '';
+          visibleCount++;
         } else {
           row.style.display = 'none';
         }
       }
+      
+      console.log(`Filter applied: ${visibleCount} rows visible`);
     }
     
-    // Apply filters on search input
+    // Apply filters immediately when typed
     searchInput.addEventListener('input', function() {
       applyFilters();
     });
     
     // Also handle pressing Enter in the search box
-    searchInput.addEventListener('keypress', function(e) {
+    searchInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') {
         e.preventDefault();
         applyFilters();
@@ -263,21 +271,27 @@
     function setupMarkSentButtons() {
       // Get all current buttons
       const markSentButtons = document.querySelectorAll('.mark-sent-btn');
+      console.log(`Setting up ${markSentButtons.length} 'Mark Sent' buttons`);
       
+      // Remove any existing event listeners and add new ones
       markSentButtons.forEach(button => {
-        // Remove any existing event listeners
-        const newButton = button.cloneNode(true);
-        button.parentNode.replaceChild(newButton, button);
-        
-        // Add the event listener
-        newButton.addEventListener('click', function(e) {
+        button.onclick = function(e) {
           e.preventDefault();
-          const userId = this.dataset.userId;
+          e.stopPropagation();
+          
+          const userId = this.getAttribute('data-user-id');
           const row = document.querySelector(`tr[data-user-id="${userId}"]`);
           
-          // Register this change
+          if (!userId || !row) {
+            console.error("Could not find user ID or row", {userId, row});
+            return;
+          }
+          
+          // Register this change in the global Map
           lanyardChanges.set(userId, true);
-          saveChangesBtn.disabled = false; // Enable save button
+          
+          // Always enable save button when there are changes
+          document.getElementById('save-changes-btn').disabled = false;
           
           // Update UI immediately (will be confirmed on save)
           row.classList.add('table-success');
@@ -289,11 +303,14 @@
           row.dataset.needsLanyard = 'false';
           
           console.log(`Marked user ${userId} for lanyard sent, pending save`);
-        });
+          console.log(`Current number of pending changes: ${lanyardChanges.size}`);
+          
+          return false;
+        };
       });
     }
     
-    // Setup the mark-sent buttons
+    // Setup the mark-sent buttons initially
     setupMarkSentButtons();
     
     // Save all changes button
