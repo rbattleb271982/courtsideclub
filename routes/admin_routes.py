@@ -321,17 +321,29 @@ def update_tournament(tournament_slug):
         
         db.session.commit()
         
-        # Log the event
-        event = Event()
-        event.user_id = current_user.id
-        event.name = "tournament_edit"
-        event.event_data = {
-            "tournament_id": tournament.id,
-            "tournament_name": tournament.name,
-            "fields_updated": ["about", "draw_url", "schedule_url", "surface"]
-        }
-        db.session.add(event)
-        db.session.commit()
+        # Log the event using our standardized event logging service
+        from services.event_logger import log_event
+        
+        # Track which fields were actually updated
+        updated_fields = []
+        if request.form.get('about', '').strip() != '':
+            updated_fields.append('about')
+        if request.form.get('draw_url', '').strip() != '':
+            updated_fields.append('draw_url')
+        if request.form.get('schedule_url', '').strip() != '':
+            updated_fields.append('schedule_url')
+        if request.form.get('surface', '').strip() != '':
+            updated_fields.append('surface')
+            
+        log_event('admin_tournament_updated', data={
+            'tournament_id': tournament.id,
+            'tournament_name': tournament.name,
+            'tournament_slug': tournament.slug,
+            'fields_updated': updated_fields,
+            'admin_user': current_user.email,
+            'ip': request.remote_addr,
+            'timestamp': datetime.utcnow().isoformat()
+        })
         
         flash(f"Tournament '{tournament.name}' has been updated successfully.", "success")
     except Exception as e:
@@ -812,17 +824,32 @@ def update_lanyard_status(user_id):
     # Save changes
     db.session.commit()
     
-    # Log the event
-    event = Event()
-    event.user_id = current_user.id
-    event.name = "lanyard_fulfillment_update"
-    event.event_data = {
+    # Log the event using standardized event logging
+    from services.event_logger import log_event
+    
+    # Get recipient's email and first tournament for better tracking
+    recipient_email = user.email
+    
+    # Find recipient's first tournament (if any)
+    first_tournament = None
+    user_tourneys = UserTournament.query.filter_by(
+        user_id=user.id,
+        attending=True
+    ).join(Tournament).order_by(Tournament.start_date).first()
+    
+    if user_tourneys:
+        first_tournament = Tournament.query.get(user_tourneys.tournament_id)
+    
+    # Log the event with detailed metadata
+    log_event('lanyard_marked_sent' if status else 'lanyard_marked_unsent', data={
         "target_user_id": user_id,
-        "lanyard_sent": status,
+        "target_user_email": recipient_email,
+        "admin_user": current_user.email,
+        "tournament_id": first_tournament.id if first_tournament else None,
+        "tournament_name": first_tournament.name if first_tournament else None,
+        "ip": request.remote_addr,
         "timestamp": datetime.utcnow().isoformat()
-    }
-    db.session.add(event)
-    db.session.commit()
+    })
     
     return jsonify({
         'success': True, 
