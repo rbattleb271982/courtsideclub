@@ -127,22 +127,37 @@
   display: block;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .attendance-buttons .btn {
-    margin-bottom: 4px;
+    margin-bottom: 0.15rem;
   }
   
   .attendance-container {
-    margin-top: 0.5rem !important;
+    margin-top: 0.3rem !important;
   }
   
   .attendance-buttons label {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.25rem;
     font-size: 13.5px;
   }
   
   .attendance-button-group {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  /* Reduce top margin for shared history box */
+  .shared-history-box {
+    margin-top: 0.6rem !important;
+  }
+  
+  /* Reduce gap between pill badges */
+  .tournament-stats {
+    gap: 0.25rem;
+  }
+  
+  /* More compact styling for mobile */
+  form.mb-1 {
+    margin-bottom: 0.15rem !important;
   }
 }
 
