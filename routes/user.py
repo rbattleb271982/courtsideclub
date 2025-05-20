@@ -830,7 +830,7 @@ def browse_tournaments():
         sorted_months=sorted_months
     )
 
-@user_bp.route('/lanyard')
+@user_bp.route('/lanyard', methods=['GET', 'POST'])
 @login_required
 def lanyard():
     # Check if user has selected any tournament sessions
