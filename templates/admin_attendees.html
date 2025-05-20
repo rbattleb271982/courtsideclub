@@ -38,7 +38,7 @@
         <tbody>
           {% set session_counts = {} %}
           {% for ut in user_tourneys %}
-            {% set sessions = (ut.session_label or "")|split(", ") %}
+            {% set sessions = (ut.session_label or "").split(", ") %}
             {% for session in sessions if session %}
               {% if session in session_counts %}
                 {% set _ = session_counts.update({session: session_counts[session] + 1}) %}

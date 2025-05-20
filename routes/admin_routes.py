@@ -242,6 +242,17 @@ def view_events():
         event_type=event_type
     )
 
+@admin_bp.route('/event-log')
+@login_required
+def view_event_log():
+    """Redirects to the event summary page"""
+    if not current_user.is_admin:
+        flash("Access denied.", "danger")
+        return redirect(url_for("main.public_home"))
+    
+    # Redirect to event summary page
+    return redirect(url_for('admin.event_summary'))
+
 @admin_bp.route('/event-types')
 @login_required
 def view_event_types():
