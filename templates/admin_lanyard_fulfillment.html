@@ -200,7 +200,6 @@
     const table = document.getElementById('fulfillment-table');
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
     const exportCsvBtn = document.getElementById('export-csv-btn');
-    const filterUrgentBtn = document.getElementById('filter-urgent-btn');
     const saveChangesBtn = document.getElementById('save-changes-btn');
     const addressModal = new bootstrap.Modal(document.getElementById('addressModal'));
     
@@ -211,8 +210,8 @@
     // Track changes for batch saving
     const lanyardChanges = new Map(); // userId -> new status
     
-    // Apply filters on search input only
-    searchInput.addEventListener('keyup', function() {
+    // Define a reusable filter function
+    function applyFilters() {
       const query = searchInput.value.toLowerCase();
       
       for (let i = 0; i < rows.length; i++) {
@@ -227,6 +226,11 @@
           row.style.display = 'none';
         }
       }
+    }
+    
+    // Apply filters on search input
+    searchInput.addEventListener('keyup', function() {
+      applyFilters();
     });
     
     // Auto-filter to show only urgent users when urgent alert is present
