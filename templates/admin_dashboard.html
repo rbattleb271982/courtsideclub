@@ -91,11 +91,11 @@
           </td>
           <td>
             <a href="{{ url_for('admin.view_attendees', tournament_slug=row.tournament.slug) }}" 
-               class="btn btn-sm {{ 'btn-primary' if row.total_attending > 0 else 'btn-outline-secondary' }}">
+               class="text-decoration-none">
                {{ row.total_attending }}
             </a>
           </td>
-          <td>{{ row.total_meetups }}</td>
+          <td><span class="open-meet-count">{{ row.total_meetups }}</span></td>
           <td>{{ row.total_lanyards }}</td>
           <td>
             <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-sm btn-outline-success">
@@ -148,14 +148,15 @@
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
   }
   
-  /* Session Details Row */
-  .session-details-row {
-    transition: all 0.3s ease;
-  }
-  
   /* Toolbar */
   .sticky-top {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Open to Meet Count */
+  .open-meet-count {
+    font-weight: 500;
+    color: #2e7d32; /* tennis green */
   }
 </style>
 

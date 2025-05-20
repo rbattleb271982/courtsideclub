@@ -38,6 +38,13 @@ def pluralize(count, singular='', plural='s'):
         return singular
     else:
         return plural
+        
+@app.template_filter('split')
+def split_filter(value, delimiter=','):
+    """Split a string by delimiter and return list"""
+    if value is None:
+        return []
+    return value.split(delimiter)
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
