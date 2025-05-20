@@ -70,7 +70,7 @@ def view_attendees(tournament_slug):
         user_tourneys=user_tourneys
     )
 
-@admin_bp.route("/tournaments")
+@admin_bp.route("/tournaments", methods=["GET", "POST"])
 @login_required
 def list_tournaments():
     """Admin view to list all tournaments for editing"""
@@ -78,6 +78,63 @@ def list_tournaments():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
 
+    # Handle POST request for creating new tournament
+    if request.method == "POST":
+        try:
+            # Extract form data
+            tournament_id = request.form.get("id", "").strip().lower()
+            name = request.form.get("name", "").strip()
+            start_date = request.form.get("start_date")
+            end_date = request.form.get("end_date")
+            city = request.form.get("city", "").strip()
+            country = request.form.get("country", "").strip()
+            event_type = request.form.get("event_type")
+            tour_type = request.form.get("tour_type")
+            surface = request.form.get("surface")
+            draw_url = request.form.get("draw_url", "")
+            schedule_url = request.form.get("schedule_url", "")
+            
+            # Validate required fields
+            if not all([tournament_id, name, start_date, end_date, city, country, event_type, tour_type]):
+                flash("Please fill in all required fields.", "danger")
+                tournaments = Tournament.query.order_by(Tournament.start_date).all()
+                return render_template("admin_tournament_list.html", tournaments=tournaments)
+            
+            # Create slug from tournament name
+            slug = tournament_id.replace(" ", "_").lower()
+            
+            # Check if tournament ID already exists
+            existing = Tournament.query.filter_by(id=tournament_id).first()
+            if existing:
+                flash(f"A tournament with ID '{tournament_id}' already exists.", "danger")
+                tournaments = Tournament.query.order_by(Tournament.start_date).all()
+                return render_template("admin_tournament_list.html", tournaments=tournaments)
+            
+            # Create new tournament and set its attributes
+            tournament = Tournament()
+            tournament.id = tournament_id
+            tournament.slug = slug
+            tournament.name = name
+            tournament.start_date = start_date
+            tournament.end_date = end_date
+            tournament.city = city
+            tournament.country = country
+            tournament.event_type = event_type
+            tournament.tour_type = tour_type
+            tournament.surface = surface
+            tournament.draw_url = draw_url
+            tournament.schedule_url = schedule_url
+            tournament.sessions = []  # Empty sessions array
+            
+            db.session.add(tournament)
+            db.session.commit()
+            
+            flash(f"Tournament '{name}' added successfully.", "success")
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error adding tournament: {str(e)}", "danger")
+    
+    # GET request or after POST - show tournament list
     tournaments = Tournament.query.order_by(Tournament.start_date).all()
     return render_template("admin_tournament_list.html", tournaments=tournaments)
 
