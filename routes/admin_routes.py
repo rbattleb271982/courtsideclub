@@ -108,6 +108,15 @@ def view_tournament(tournament_slug):
         # We'll track Day vs. Night attendance by session type (Day 1, Day 2, etc.)
         session_stats = {}
         
+        # Initialize stats for all possible tournament days (typically 14 days for a Grand Slam)
+        # This ensures we show all days in the grid, even those with zero attendees
+        tournament_duration = (tournament.end_date - tournament.start_date).days + 1
+        max_days = 14 if tournament.event_type == "Grand Slam" else tournament_duration
+        
+        # Pre-populate all days with zero counts
+        for day in range(1, max_days + 1):
+            session_stats[day] = {'Day': 0, 'Night': 0, 'Total': 0}
+            
         # Get all user tournaments with sessions
         user_tourneys = UserTournament.query.filter_by(
             tournament_id=tournament.id,
@@ -138,8 +147,9 @@ def view_tournament(tournament_slug):
                 # Use day number or just the session name without 'Day'/'Night'
                 session_key = day_num if day_num else session.replace('Day', '').replace('Night', '').strip()
                 
-                if session_key not in session_stats:
-                    session_stats[session_key] = {'Day': 0, 'Night': 0, 'Total': 0}
+                # Skip if session_key is not a number or is outside our range
+                if not isinstance(session_key, int) or session_key < 1 or session_key > max_days:
+                    continue
                     
                 session_stats[session_key][session_type] += 1
                 session_stats[session_key]['Total'] += 1
