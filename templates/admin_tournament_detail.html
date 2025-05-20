@@ -87,18 +87,18 @@
                 </tr>
               </thead>
               <tbody>
-                {% if days_data %}
-                  {% for day in days_data %}
+                {% if session_stats %}
+                  {% for day_key, stats in session_stats %}
                   <tr class="text-center">
-                    <td class="fw-bold">Day {{ day.day }}</td>
+                    <td class="fw-bold">{% if day_key|string|int(0) > 0 %}Day {{ day_key }}{% else %}{{ day_key }}{% endif %}</td>
                     <td class="text-center">
-                      {{ day.day_session }}
+                      {{ stats.Day }}
                     </td>
                     <td class="text-center">
-                      {{ day.night_session }}
+                      {{ stats.Night }}
                     </td>
                     <td class="text-center">
-                      {{ day.total }}
+                      {{ stats.Total }}
                     </td>
                   </tr>
                   {% endfor %}
