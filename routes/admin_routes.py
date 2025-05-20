@@ -258,52 +258,59 @@ def list_tournaments():
 @login_required
 def update_tournament(tournament_slug):
     """Inline update of tournament details"""
-    if not current_user.is_admin:
-        flash("Access denied.", "danger")
-        return redirect(url_for("main.public_home"))
+    try:
+        if not current_user.is_admin:
+            flash("Access denied.", "danger")
+            return redirect(url_for("main.public_home"))
+            
+        tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
         
-    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
-    
-    # Update tournament details
-    if request.form.get('about'):
-        tournament.about = request.form.get('about')
-    
-    # Handle URL fields with https:// prefix
-    draw_url_input = request.form.get('draw_url', '').strip()
-    if draw_url_input:
-        # Ensure URL has https:// prefix
-        if not draw_url_input.startswith('http'):
-            tournament.draw_url = f"https://{draw_url_input}"
+        # Update tournament details - handle empty input correctly
+        tournament.about = request.form.get('about', '')
+        
+        # Handle URL fields with https:// prefix
+        draw_url_input = request.form.get('draw_url', '').strip()
+        if draw_url_input:
+            # Ensure URL has https:// prefix
+            if not draw_url_input.startswith('http'):
+                tournament.draw_url = f"https://{draw_url_input}"
+            else:
+                tournament.draw_url = draw_url_input
         else:
-            tournament.draw_url = draw_url_input
-    
-    schedule_url_input = request.form.get('schedule_url', '').strip()
-    if schedule_url_input:
-        # Ensure URL has https:// prefix
-        if not schedule_url_input.startswith('http'):
-            tournament.schedule_url = f"https://{schedule_url_input}"
+            tournament.draw_url = None
+        
+        schedule_url_input = request.form.get('schedule_url', '').strip()
+        if schedule_url_input:
+            # Ensure URL has https:// prefix
+            if not schedule_url_input.startswith('http'):
+                tournament.schedule_url = f"https://{schedule_url_input}"
+            else:
+                tournament.schedule_url = schedule_url_input
         else:
-            tournament.schedule_url = schedule_url_input
+            tournament.schedule_url = None
+        
+        # Update surface if provided
+        tournament.surface = request.form.get('surface', '')
+        
+        db.session.commit()
+        
+        # Log the event
+        event = Event()
+        event.user_id = current_user.id
+        event.name = "tournament_edit"
+        event.event_data = {
+            "tournament_id": tournament.id,
+            "tournament_name": tournament.name,
+            "fields_updated": ["about", "draw_url", "schedule_url", "surface"]
+        }
+        db.session.add(event)
+        db.session.commit()
+        
+        flash(f"Tournament '{tournament.name}' has been updated.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error updating tournament: {str(e)}", "danger")
     
-    # Update surface if provided
-    if request.form.get('surface'):
-        tournament.surface = request.form.get('surface')
-    
-    db.session.commit()
-    
-    # Log the event
-    event = Event()
-    event.user_id = current_user.id
-    event.name = "tournament_edit"
-    event.event_data = {
-        "tournament_id": tournament.id,
-        "tournament_name": tournament.name,
-        "fields_updated": ["about", "draw_url", "schedule_url", "surface"]
-    }
-    db.session.add(event)
-    db.session.commit()
-    
-    flash(f"Tournament '{tournament.name}' has been updated.", "success")
     return redirect(url_for('admin.view_tournament', tournament_slug=tournament_slug))
 
 @admin_bp.route('/events')

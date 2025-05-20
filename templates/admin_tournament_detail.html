@@ -170,7 +170,7 @@
           <div class="input-group">
             <span class="input-group-text fixed-protocol">https://</span>
             <input type="text" class="form-control" id="draw_url" name="draw_url" 
-                   value="{{ tournament.draw_url.replace('https://', '') if tournament.draw_url and tournament.draw_url.startswith('https://') else tournament.draw_url or '' }}">
+                   value="{% if tournament.draw_url %}{% if tournament.draw_url.startswith('https://') %}{{ tournament.draw_url.replace('https://', '') }}{% else %}{{ tournament.draw_url }}{% endif %}{% endif %}">
           </div>
         </div>
 
@@ -179,7 +179,7 @@
           <div class="input-group">
             <span class="input-group-text fixed-protocol">https://</span>
             <input type="text" class="form-control" id="schedule_url" name="schedule_url" 
-                   value="{{ tournament.schedule_url.replace('https://', '') if tournament.schedule_url and tournament.schedule_url.startswith('https://') else tournament.schedule_url or '' }}">
+                   value="{% if tournament.schedule_url %}{% if tournament.schedule_url.startswith('https://') %}{{ tournament.schedule_url.replace('https://', '') }}{% else %}{{ tournament.schedule_url }}{% endif %}{% endif %}">
           </div>
         </div>
 
