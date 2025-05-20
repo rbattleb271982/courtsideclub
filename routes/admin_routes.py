@@ -756,6 +756,9 @@ def lanyard_fulfillment():
     today = datetime.utcnow().date()
     next_tournament = Tournament.query.filter(Tournament.start_date >= today).order_by(Tournament.start_date).first()
     
+    # Get all tournaments for dropdown filter
+    all_tournaments = Tournament.query.filter(Tournament.start_date >= today).order_by(Tournament.start_date).all()
+    
     # Users with unsent lanyards who are attending the next tournament
     unsent_next_tournament = []
     if next_tournament:
@@ -774,25 +777,44 @@ def lanyard_fulfillment():
     # Prepare lanyard fulfillment data
     lanyard_data = []
     
+    # Dictionary to store other tournaments by user
+    other_tournaments = {}
+    
     for user in users_with_lanyards:
         # Get shipping address if available
         has_address = bool(ShippingAddress.query.filter_by(user_id=user.id).first())
         
-        # Get first tournament the user is attending
-        first_tournament = None
-        first_tournament_date = None
-        sessions = None
-        
+        # Get all tournaments the user is attending, ordered by date
         user_tourneys = UserTournament.query.filter_by(
             user_id=user.id,
             attending=True
         ).join(Tournament).order_by(Tournament.start_date).all()
         
+        # Handle first tournament and other tournaments
+        first_tournament = None
+        first_tournament_date = None
+        sessions = None
+        
         if user_tourneys:
+            # First tournament
             first_tournament = Tournament.query.get(user_tourneys[0].tournament_id)
             if first_tournament:
                 first_tournament_date = first_tournament.start_date
                 sessions = user_tourneys[0].session_label
+            
+            # Other tournaments (limited to 3 for display)
+            if len(user_tourneys) > 1:
+                other_names = []
+                for i in range(1, min(4, len(user_tourneys))):
+                    t = Tournament.query.get(user_tourneys[i].tournament_id)
+                    if t:
+                        other_names.append(t.name)
+                
+                # Add ellipsis if more than 3 other tournaments
+                if len(user_tourneys) > 4:
+                    other_names.append("...")
+                
+                other_tournaments[user.id] = ", ".join(other_names)
         
         lanyard_data.append({
             'user': user,
@@ -808,6 +830,11 @@ def lanyard_fulfillment():
         x['first_tournament_date'] if x['first_tournament_date'] else datetime(9999, 12, 31).date()  # Sort by tournament date
     ))
     
+    # Helper function for template to get shipping address details
+    def get_shipping_address(user_id):
+        """Get shipping address for display in template"""
+        return ShippingAddress.query.filter_by(user_id=user_id).first()
+    
     return render_template(
         "admin_lanyard_fulfillment.html",
         lanyard_data=lanyard_data,
@@ -815,7 +842,10 @@ def lanyard_fulfillment():
         total_sent=total_sent,
         total_not_sent=total_not_sent,
         next_tournament=next_tournament,
-        unsent_next_tournament=unsent_next_tournament
+        unsent_next_tournament=unsent_next_tournament,
+        tournaments=all_tournaments,
+        other_tournaments=other_tournaments,
+        get_shipping_address=get_shipping_address
     )
 
 @admin_bp.route('/lanyards/update-status/<int:user_id>', methods=['POST'])
@@ -858,6 +888,76 @@ def update_lanyard_status(user_id):
         'date': user.lanyard_sent_date.strftime('%b %d, %Y %H:%M UTC') if user.lanyard_sent_date else None
     })
 
+@admin_bp.route('/lanyards/address/<int:user_id>')
+@login_required
+def get_shipping_address_detail(user_id):
+    """Get detailed shipping address for a user"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+    
+    address = ShippingAddress.query.filter_by(user_id=user_id).first()
+    
+    if not address:
+        return jsonify({'success': False, 'message': 'No address found for this user'}), 404
+    
+    # Return address details as JSON
+    return jsonify({
+        'success': True,
+        'address': {
+            'name': address.name,
+            'address1': address.address1,
+            'address2': address.address2 or '',
+            'city': address.city,
+            'state': address.state or '',
+            'zip_code': address.zip_code,
+            'country': address.country
+        }
+    })
+
+@admin_bp.route('/lanyards/update-note/<int:user_id>', methods=['POST'])
+@login_required
+def update_lanyard_note(user_id):
+    """Update internal note for a user's lanyard order"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+    
+    user = User.query.get_or_404(user_id)
+    note = request.form.get('note', '')
+    
+    # Add internal note field to the user if it doesn't exist yet
+    if not hasattr(user, 'internal_note'):
+        # For first usage, we'll store it in the user's event_data field
+        # as a temporary solution until the model is updated
+        event = Event()
+        event.user_id = current_user.id
+        event.name = "lanyard_note"
+        event.event_data = {
+            "target_user_id": user_id,
+            "note": note,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        db.session.add(event)
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': 'Stored in event log temporarily'})
+    
+    # If the model has been updated with the field, use it directly
+    user.internal_note = note
+    db.session.commit()
+    
+    # Log the event
+    event = Event()
+    event.user_id = current_user.id
+    event.name = "lanyard_note_update"
+    event.event_data = {
+        "target_user_id": user_id,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+    db.session.add(event)
+    db.session.commit()
+    
+    return jsonify({'success': True})
+
 @admin_bp.route('/export-lanyards')
 @login_required
 def export_lanyards():
@@ -875,18 +975,35 @@ def export_lanyards():
     
     # Prepare CSV data
     csv_data = []
-    headers = ["Name", "Email", "Address", "First Tournament", "Sessions", "Lanyard Sent", "Sent Date"]
+    headers = ["Name", "Email", "Full Address", "City", "State", "Zip", "Country", "First Tournament", "Other Tournaments", "Sessions", "Lanyard Sent", "Sent Date", "Internal Note"]
     
     for user in users_with_lanyards:
         # Get shipping address if available
-        shipping_address = ""
+        full_address = "Not provided"
+        city = ""
+        state = ""
+        zip_code = ""
+        country = ""
+        
         address = ShippingAddress.query.filter_by(user_id=user.id).first()
         if address:
-            shipping_address = f"{address.name}, {address.address1}, {address.address2 or ''}, {address.city}, {address.state or ''}, {address.zip_code}, {address.country}"
+            address_parts = [
+                address.name,
+                address.address1
+            ]
+            if address.address2:
+                address_parts.append(address.address2)
+            
+            full_address = ", ".join(address_parts)
+            city = address.city
+            state = address.state or ""
+            zip_code = address.zip_code
+            country = address.country
         
         # Get first tournament the user is attending
         first_tournament_str = "None"
         sessions_str = "None"
+        other_tournaments_str = "None"
         
         user_tourneys = UserTournament.query.filter_by(
             user_id=user.id,
@@ -894,20 +1011,53 @@ def export_lanyards():
         ).join(Tournament).order_by(Tournament.start_date).all()
         
         if user_tourneys:
+            # First tournament
             first_tourney = user_tourneys[0]
             tournament = Tournament.query.get(first_tourney.tournament_id)
             if tournament:
                 first_tournament_str = f"{tournament.name} ({tournament.start_date.strftime('%b %d, %Y')})"
                 sessions_str = first_tourney.session_label or "No sessions selected"
+            
+            # Other tournaments
+            if len(user_tourneys) > 1:
+                other_names = []
+                for i in range(1, len(user_tourneys)):
+                    t = Tournament.query.get(user_tourneys[i].tournament_id)
+                    if t:
+                        other_names.append(t.name)
+                
+                if other_names:
+                    other_tournaments_str = ", ".join(other_names)
+        
+        # Try to get internal note if available
+        internal_note = ""
+        if hasattr(user, 'internal_note'):
+            internal_note = user.internal_note or ""
+        else:
+            # Check if note exists in event data
+            note_event = Event.query.filter_by(
+                name="lanyard_note"
+            ).filter(
+                Event.event_data.contains(f'"target_user_id": {user.id}')
+            ).order_by(Event.timestamp.desc()).first()
+            
+            if note_event and 'note' in note_event.event_data:
+                internal_note = note_event.event_data.get('note', '')
         
         row = [
             user.get_full_name(),
             user.email,
-            shipping_address or "Not provided",
+            full_address,
+            city,
+            state,
+            zip_code,
+            country,
             first_tournament_str,
+            other_tournaments_str,
             sessions_str,
             "Yes" if user.lanyard_sent else "No",
-            user.lanyard_sent_date.strftime('%b %d, %Y %H:%M UTC') if user.lanyard_sent_date else "Not sent"
+            user.lanyard_sent_date.strftime('%b %d, %Y') if user.lanyard_sent_date else "Not sent",
+            internal_note
         ]
         
         csv_data.append(row)
@@ -926,7 +1076,10 @@ def export_lanyards():
     event = Event()
     event.user_id = current_user.id
     event.name = "lanyard_export"
-    event.event_data = {"exported_count": len(users_with_lanyards)}
+    event.event_data = {
+        "exported_count": len(users_with_lanyards),
+        "timestamp": datetime.utcnow().isoformat()
+    }
     db.session.add(event)
     db.session.commit()
     
