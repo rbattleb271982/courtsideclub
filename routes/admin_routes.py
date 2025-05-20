@@ -90,6 +90,9 @@ def view_tournament(tournament_slug):
     session_grid = {}
     total_attending = len(user_tourneys)
     
+    # Track sessions per day and type - using a different approach
+    day_counts = {}
+    
     for registration in user_tourneys:
         sessions = (registration.session_label or "").split(", ")
         for session in sessions:
@@ -108,32 +111,32 @@ def view_tournament(tournament_slug):
                         day_num = int(day_part.replace("Day ", ""))
                         
                         # Initialize day entry if needed
-                        if day_num not in session_grid:
-                            session_grid[day_num] = {"Day": 0, "Night": 0}
+                        if day_num not in day_counts:
+                            day_counts[day_num] = {"Day": 0, "Night": 0}
                         
                         # Increment session type counter
                         if "Night" in session_type:
-                            session_grid[day_num]["Night"] += 1
+                            day_counts[day_num]["Night"] += 1
                         else:
-                            session_grid[day_num]["Day"] += 1
+                            day_counts[day_num]["Day"] += 1
                     except (ValueError, IndexError):
                         # Skip if day number can't be extracted
                         continue
     
     # Convert to sorted list for template rendering
     days_data = []
-    for day_num in sorted(session_grid.keys()):
+    for day_num in sorted(day_counts.keys()):
         day_data = {
             "day": day_num,
-            "day_session": session_grid[day_num]["Day"],
-            "night_session": session_grid[day_num]["Night"],
-            "total": session_grid[day_num]["Day"] + session_grid[day_num]["Night"]
+            "day_session": day_counts[day_num]["Day"],
+            "night_session": day_counts[day_num]["Night"],
+            "total": day_counts[day_num]["Day"] + day_counts[day_num]["Night"]
         }
         days_data.append(day_data)
     
     # Keep the original sessions data for backward compatibility
     sorted_sessions = []
-    for day_num, counts in session_grid.items():
+    for day_num, counts in day_counts.items():
         if counts["Day"] > 0:
             sorted_sessions.append({
                 "label": f"Day {day_num} - Day", 

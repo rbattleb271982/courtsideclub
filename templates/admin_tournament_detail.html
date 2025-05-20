@@ -98,22 +98,14 @@
                   {% for day in days_data %}
                   <tr class="text-center">
                     <td class="fw-bold">Day {{ day.day }}</td>
-                    <td>
-                      {% if day.day_session > 0 %}
-                      <span class="badge rounded-pill bg-success">{{ day.day_session }}</span>
-                      {% else %}
-                      <span>0</span>
-                      {% endif %}
+                    <td class="text-center">
+                      {{ day.day_session }}
                     </td>
-                    <td>
-                      {% if day.night_session > 0 %}
-                      <span class="badge rounded-pill bg-success">{{ day.night_session }}</span>
-                      {% else %}
-                      <span>0</span>
-                      {% endif %}
+                    <td class="text-center">
+                      {{ day.night_session }}
                     </td>
-                    <td>
-                      <span class="badge rounded-pill bg-primary">{{ day.total }}</span>
+                    <td class="text-center">
+                      {{ day.total }}
                     </td>
                   </tr>
                   {% endfor %}
@@ -126,21 +118,21 @@
               <tfoot class="table-light">
                 <tr class="text-center fw-bold">
                   <th>Totals</th>
-                  <th>
+                  <th class="text-center">
                     {% set day_total = 0 %}
                     {% for day in days_data %}
                       {% set day_total = day_total + day.day_session %}
                     {% endfor %}
                     {{ day_total }}
                   </th>
-                  <th>
+                  <th class="text-center">
                     {% set night_total = 0 %}
                     {% for day in days_data %}
                       {% set night_total = night_total + day.night_session %}
                     {% endfor %}
                     {{ night_total }}
                   </th>
-                  <th>
+                  <th class="text-center">
                     {{ day_total + night_total }}
                   </th>
                 </tr>
