@@ -6,8 +6,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>🏷️ Lanyard Fulfillment <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
     <div>
-      <button id="export-csv-btn" class="btn btn-primary me-2">📥 Export Visible Rows (CSV)</button>
-      <button id="save-changes-btn" class="btn btn-success" disabled>💾 Save All Changes</button>
+      <button id="export-csv-btn" class="btn btn-primary">📥 Export Visible Rows (CSV)</button>
     </div>
   </div>
 
@@ -155,15 +154,24 @@
                 {% endif %}
               </td>
               <td class="text-center">
-                {% if item.user.lanyard_sent %}
-                <span class="badge bg-success">Sent</span>
-                {% else %}
-                <button class="btn btn-sm btn-outline-success mark-sent-btn" 
-                        data-user-id="{{ item.user.id }}"
-                        data-original-state="false">
-                  Mark as Sent
-                </button>
-                {% endif %}
+                <div class="form-check d-inline-flex align-items-center">
+                  <input type="checkbox" class="form-check-input lanyard-sent-checkbox" 
+                         id="lanyard-sent-{{ item.user.id }}"
+                         data-user-id="{{ item.user.id }}" 
+                         {% if item.user.lanyard_sent %}checked{% endif %}
+                         style="cursor: pointer; width: 20px; height: 20px;">
+                  <label class="form-check-label ms-2" for="lanyard-sent-{{ item.user.id }}">
+                    {% if item.user.lanyard_sent %}
+                    <span class="badge bg-success">Sent</span>
+                    {% else %}
+                    <span class="badge bg-light text-dark">Not sent</span>
+                    {% endif %}
+                  </label>
+                  <span class="saved-indicator ms-2" id="saved-indicator-{{ item.user.id }}" 
+                        style="display: none; opacity: 0; transition: opacity 0.5s ease;">
+                    <span class="badge bg-info">Saved!</span>
+                  </span>
+                </div>
               </td>
             </tr>
             {% endfor %}
@@ -199,12 +207,10 @@
     
     // Get DOM elements with careful checks
     const searchInput = document.getElementById('search-input');
-    const saveChangesBtn = document.getElementById('save-changes-btn');
     const table = document.getElementById('fulfillment-table');
     
     // Check critical elements
     if (!searchInput) console.error("Search input not found - check your HTML for id='search-input'");
-    if (!saveChangesBtn) console.error("Save Changes button not found - check your HTML for id='save-changes-btn'");
     if (!table) console.error("Table not found - check your HTML for id='fulfillment-table'");
     
     // Get rows only if table exists
@@ -212,7 +218,6 @@
     
     console.log("DOM elements loaded:", {
       searchInput: !!searchInput,
-      saveChangesBtn: !!saveChangesBtn,
       table: !!table,
       rowCount: rows.length
     });
@@ -225,8 +230,91 @@
     document.querySelector('.table-responsive').style.maxWidth = '100%';
     document.querySelector('.table').style.tableLayout = 'fixed';
     
-    // Track changes for batch saving
-    const lanyardChanges = new Map(); // userId -> new status
+    // Set up checkboxes for AJAX updates
+    setupLanyardCheckboxes();
+    
+    // Set up CSV export functionality
+    setupExportCsv();
+    
+    // Function to handle immediate AJAX updates when a checkbox is clicked
+    function setupLanyardCheckboxes() {
+      const checkboxes = document.querySelectorAll('.lanyard-sent-checkbox');
+      
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const userId = this.dataset.userId;
+          const isChecked = this.checked;
+          
+          // Show loading state
+          const savedIndicator = document.getElementById(`saved-indicator-${userId}`);
+          savedIndicator.style.display = 'inline-block';
+          savedIndicator.innerHTML = '<span class="badge bg-secondary">Saving...</span>';
+          savedIndicator.style.opacity = '1';
+          
+          // Update adjacent label to reflect current state
+          const label = this.nextElementSibling;
+          if (isChecked) {
+            label.innerHTML = '<span class="badge bg-success">Sent</span>';
+          } else {
+            label.innerHTML = '<span class="badge bg-light text-dark">Not sent</span>';
+          }
+          
+          // Send AJAX request to update the status
+          updateLanyardStatus(userId, isChecked)
+            .then(response => {
+              // Show success message
+              savedIndicator.innerHTML = '<span class="badge bg-info">Saved!</span>';
+              
+              // Fade out the "Saved!" indicator after 3 seconds
+              setTimeout(() => {
+                savedIndicator.style.opacity = '0';
+                setTimeout(() => {
+                  savedIndicator.style.display = 'none';
+                }, 500);
+              }, 3000);
+            })
+            .catch(error => {
+              // Show error message
+              savedIndicator.innerHTML = '<span class="badge bg-danger">Error!</span>';
+              console.error('Error updating lanyard status:', error);
+              
+              // Revert the checkbox state after 3 seconds
+              setTimeout(() => {
+                this.checked = !isChecked;
+                if (!isChecked) {
+                  label.innerHTML = '<span class="badge bg-success">Sent</span>';
+                } else {
+                  label.innerHTML = '<span class="badge bg-light text-dark">Not sent</span>';
+                }
+                
+                savedIndicator.style.opacity = '0';
+                setTimeout(() => {
+                  savedIndicator.style.display = 'none';
+                }, 500);
+              }, 3000);
+            });
+        });
+      });
+    }
+    
+    // Function to send AJAX request to update lanyard status
+    function updateLanyardStatus(userId, status) {
+      const formData = new FormData();
+      formData.append('status', status);
+      
+      return fetch(`/admin/lanyards/update-status/${userId}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+      });
+    }
     
     // Enable debug mode
     const debugMode = true;
@@ -239,8 +327,7 @@
     debugLog("Elements initialized:", { 
       searchInput: !!searchInput, 
       table: !!table, 
-      rows: rows.length, 
-      saveChangesBtn: !!saveChangesBtn 
+      rows: rows.length
     });
     
     // 1. Search functionality
@@ -305,29 +392,75 @@
       console.error("Search input element not found - filter functionality disabled");
     }
     
-    // 2. Fix the Mark Sent button functionality
-    function setupMarkSentButtons() {
-      // Get all Mark Sent buttons
-      const markSentButtons = document.querySelectorAll('.mark-sent-btn');
-      console.log(`Found ${markSentButtons.length} 'Mark Sent' buttons to set up`);
-      
-      if (!markSentButtons || markSentButtons.length === 0) {
-        console.warn("No Mark Sent buttons found - all lanyards might already be marked as sent");
+    // Setup Export CSV functionality
+    function setupExportCsv() {
+      if (!exportCsvBtn) {
+        console.error("Export CSV button not found");
         return;
       }
       
-      // Add click handler to each button
-      markSentButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          // Get user ID from button's data attribute
-          const userId = this.getAttribute('data-user-id');
-          console.log(`Mark Sent clicked for user ID: ${userId}`);
-          
-          if (!userId) {
-            console.error("Missing user ID on Mark Sent button");
+      exportCsvBtn.addEventListener('click', function() {
+        exportTableToCSV();
+      });
+    }
+    
+    // Function to export visible table rows to CSV
+    function exportTableToCSV() {
+      if (!table) {
+        console.error("Cannot export - table not found");
+        return;
+      }
+      
+      // Get visible rows only
+      const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none');
+      
+      if (visibleRows.length === 0) {
+        alert("No visible rows to export");
+        return;
+      }
+      
+      console.log(`Exporting ${visibleRows.length} visible rows to CSV`);
+      
+      // Create CSV content
+      let csv = [];
+      
+      // Add header row
+      const headers = Array.from(table.querySelectorAll('thead th')).map(th => 
+        th.textContent.trim().replace(/\s+/g, ' ').replace(/[,]/g, '')
+      );
+      csv.push(headers.join(','));
+      
+      // Add data rows
+      visibleRows.forEach(row => {
+        const cells = Array.from(row.getElementsByTagName('td'));
+        const rowData = cells.map(cell => {
+          // Get the text content and clean it up
+          let text = cell.textContent.trim().replace(/\s+/g, ' ');
+          // Escape commas and quotes
+          text = text.replace(/"/g, '""');
+          if (text.includes(',')) {
+            text = `"${text}"`;
+          }
+          return text;
+        });
+        csv.push(rowData.join(','));
+      });
+      
+      // Download the CSV file
+      const csvContent = csv.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `lanyard-export-${timestamp}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }sing user ID on Mark Sent button");
             return false;
           }
           
