@@ -308,19 +308,26 @@
     // Function to send AJAX request to update lanyard status
     function updateLanyardStatus(userId, status) {
       const formData = new FormData();
-      formData.append('status', status);
+      formData.append('status', status ? "true" : "false");
       
       return fetch(`/admin/lanyards/update-status/${userId}`, {
         method: 'POST',
         body: formData,
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
-        }
+        },
+        credentials: 'same-origin' // Important: include cookies for auth
       }).then(response => {
         if (!response.ok) {
+          console.error("Server error:", response.status, response.statusText);
           throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
         }
         return response.json();
+      })
+      .catch(error => {
+        console.error("Error updating lanyard status:", error);
+        alert("There was an error updating the lanyard status. Please try again.");
+        throw error;
       });
     }
     
