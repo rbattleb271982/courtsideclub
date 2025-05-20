@@ -6,10 +6,6 @@
 <div class="container-fluid" style="padding: 1.5rem;">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>🎾 Admin Dashboard <span style="font-size: 0.6em; color: gray;">(Admin Only)</span></h2>
-    <div>
-      <a href="{{ url_for('admin.lanyard_fulfillment') }}" class="btn btn-success me-2">🏷️ Lanyard Fulfillment</a>
-      <a href="{{ url_for('admin.view_events') }}" class="btn btn-info">📊 View User Event Log</a>
-    </div>
   </div>
 
   <!-- Search and Filter Bar -->
@@ -40,30 +36,7 @@
     </div>
   </div>
 
-  <!-- Bulk Actions Toolbar -->
-  <div class="card mb-4 sticky-top" style="top: 0; z-index: 100; background-color: #f8f9fa; border-bottom: 2px solid #ddd;">
-    <div class="card-body py-2">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <strong>Bulk Actions:</strong>
-        </div>
-        <div class="btn-group">
-          <a href="{{ url_for('admin.export_lanyards') }}" class="btn btn-outline-success">
-            <i class="fas fa-file-csv"></i> Export All Lanyards
-          </a>
-          <button type="button" class="btn btn-outline-primary" onclick="confirmSendAllEmails('welcome')">
-            <i class="fas fa-envelope"></i> Send All Welcome Emails
-          </button>
-          <button type="button" class="btn btn-outline-info" onclick="confirmSendAllEmails('reminder')">
-            <i class="fas fa-bell"></i> Send All Reminder Emails
-          </button>
-        </div>
-        <div>
-          <span id="filtered-count" class="badge bg-secondary">Showing all tournaments</span>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- Tournament Table -->
   <div class="table-responsive">

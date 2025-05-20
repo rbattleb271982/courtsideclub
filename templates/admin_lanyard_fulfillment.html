@@ -58,8 +58,8 @@
     <p><strong>{{ unsent_next_tournament|length }}</strong> users have not been sent a lanyard and are attending the next tournament: 
     <strong>{{ next_tournament.name }}</strong> (starts {{ next_tournament.start_date.strftime('%b %d') }}, {{ days_until }} day{% if days_until != 1 %}s{% endif %} away)</p>
     <ul>
-      {% for item in unsent_next_tournament %}
-      <li>{{ item.user.email }}</li>
+      {% for user in unsent_next_tournament %}
+      <li>{{ user.email }}</li>
       {% endfor %}
     </ul>
   </div>
@@ -69,8 +69,8 @@
     <p><strong>{{ next_tournament.name }}</strong> is starting on {{ next_tournament.start_date.strftime('%b %d, %Y') }} 
       and <strong>{{ unsent_next_tournament|length }}</strong> users with unsent lanyards are attending!</p>
     <ul>
-      {% for item in unsent_next_tournament %}
-      <li>{{ item.user.email }}</li>
+      {% for user in unsent_next_tournament %}
+      <li>{{ user.email }}</li>
       {% endfor %}
     </ul>
   </div>
