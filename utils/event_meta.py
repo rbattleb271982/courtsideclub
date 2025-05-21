@@ -2,6 +2,7 @@ event_descriptions = {
     # 🔐 Account & Profile
     "user_signup": "User created an account",
     "user_login": "User signed in",
+    "user_logout": "User signed out",
     "profile_updated": "User updated their profile",
     "location_set": "User set or updated their city/state",
     "user_skipped_profile": "User bypassed the profile setup",

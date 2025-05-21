@@ -1412,3 +1412,11 @@ input:checked + .toggle-slider:before {
   color: #004d26;
   text-decoration: none;
 }
+
+/* Page intro message styling */
+.page-intro-message {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #333;
+}

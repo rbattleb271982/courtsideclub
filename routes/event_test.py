@@ -20,34 +20,34 @@ def test_event_logging():
     # Log a variety of events to demonstrate the event tracking system
     
     # Account events
-    log_event('user_login', data={'login_method': 'password'})
-    log_event('profile_updated', data={'fields': ['first_name', 'last_name', 'location']})
+    log_event(current_user.id, 'user_login', data={'login_method': 'password'})
+    log_event(current_user.id, 'profile_updated', data={'fields': ['first_name', 'last_name', 'location']})
     
     # Tournament events
     tournament_id = "indian_wells"
-    log_event('attend_tournament', data={
+    log_event(current_user.id, 'attend_tournament', data={
         'tournament_id': tournament_id,
         'tournament_name': 'BNP Paribas Open',
     })
-    log_event('session_selected', data={
+    log_event(current_user.id, 'session_selected', data={
         'tournament_id': tournament_id,
         'sessions': ['Day 1 - Day', 'Day 2 - Night']
     })
-    log_event('wants_to_meet_enabled', data={'tournament_id': tournament_id})
+    log_event(current_user.id, 'wants_to_meet_enabled', data={'tournament_id': tournament_id})
     
     # Lanyard events
-    log_event('lanyard_order_eligible', data={'eligible_count': 1})
-    log_event('lanyard_order_started', data={'timestamp': datetime.utcnow().isoformat()})
+    log_event(current_user.id, 'lanyard_order_eligible', data={'eligible_count': 1})
+    log_event(current_user.id, 'lanyard_order_started', data={'timestamp': datetime.utcnow().isoformat()})
     
     # Admin events
-    log_event('admin_tournament_updated', data={
+    log_event(current_user.id, 'admin_tournament_updated', data={
         'tournament_id': tournament_id,
         'fields_updated': ['about', 'surface', 'draw_url'],
         'admin_user': current_user.email
     })
     
     # Email events
-    log_event('reminder_email_sent', data={
+    log_event(current_user.id, 'reminder_email_sent', data={
         'email_type': 'tournament_reminder',
         'tournament_id': tournament_id,
         'days_before': 7

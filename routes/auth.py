@@ -158,8 +158,7 @@ def logout():
     
     # Log the logout event
     from services.event_logger import log_event
-    log_event('user_logout', data={
-        'user_id': user_id,
+    log_event(user_id, 'user_logout', data={
         'ip': request.remote_addr,
         'user_agent': str(request.user_agent) if request.user_agent else None
     })

@@ -441,13 +441,12 @@ def update_profile():
             
             # Log a specific notification preference event for better analytics
             notification_event = 'user_opt_in_email' if notifications else 'user_opt_out_email'
-            log_event(notification_event, data={
-                'user_id': current_user.id,
+            log_event(current_user.id, notification_event, data={
                 'email': current_user.email,
                 'timestamp': datetime.utcnow().isoformat()
             })
             
-    log_event('profile_updated', data=event_data)
+    log_event(current_user.id, 'profile_updated', data=event_data)
 
     # Clear temporary password after profile update (if exists)
     if 'temp_password' in session:
@@ -909,7 +908,7 @@ def lanyard():
         db.session.commit()
 
         # Log the lanyard order event with detailed tracking data
-        log_event('lanyard_order_placed', data={
+        log_event(current_user.id, 'lanyard_order_placed', data={
             'user_id': current_user.id,
             'name': request.form['name'],
             'country': request.form['country'],
