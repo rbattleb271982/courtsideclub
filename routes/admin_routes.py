@@ -427,18 +427,24 @@ def view_event_log():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Get event counts per type
-    event_counts = db.session.query(
+    # Define all expected event types (using our event_descriptions dictionary)
+    expected_events = list(event_descriptions.keys())
+    
+    # Get actual event counts from the database
+    db_event_counts = db.session.query(
         Event.name, 
         func.count(Event.id).label('count')
-    ).group_by(Event.name).order_by(desc('count')).all()
+    ).group_by(Event.name).all()
     
-    # Prepare event data with descriptions
+    # Convert query result to a dictionary for easier lookup
+    count_dict = {event_name: count for event_name, count in db_event_counts}
+    
+    # Prepare event data with descriptions, including 0-count events
     event_summary = []
     total_events = 0
     
-    for event_name, count in event_counts:
-        # Use the imported comprehensive event descriptions dictionary
+    # First, add all events that have counts in the database
+    for event_name, count in count_dict.items():
         description = event_descriptions.get(event_name, "User action")
         total_events += count
         
@@ -447,6 +453,16 @@ def view_event_log():
             'count': count,
             'description': description
         })
+    
+    # Then add any expected events that weren't found in the database (with count 0)
+    for event_name in expected_events:
+        if event_name not in count_dict:
+            description = event_descriptions.get(event_name, "User action")
+            event_summary.append({
+                'name': event_name,
+                'count': 0,
+                'description': description
+            })
     
     # Get sorting parameters
     sort_by = request.args.get('sort_by', 'count')
