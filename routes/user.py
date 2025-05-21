@@ -405,6 +405,36 @@ def remove_wishlist(wishlist_id):
         
     return redirect(url_for('user.profile'))
 
+@user_bp.route('/update_wishlist', methods=['POST'])
+@login_required
+def update_wishlist():
+    """Update the user's bucket list of tournaments"""
+    # Get the list of tournament IDs from the form
+    tournament_ids = request.form.getlist('wishlist_tournaments')
+    
+    # First, remove all existing wishlist entries for this user
+    UserWishlistTournament.query.filter_by(user_id=current_user.id).delete()
+    
+    # Now add the new selections
+    for tournament_id in tournament_ids:
+        wishlist_entry = UserWishlistTournament(
+            user_id=current_user.id,
+            tournament_id=tournament_id
+        )
+        db.session.add(wishlist_entry)
+    
+    # Save changes
+    db.session.commit()
+    
+    # Log the event
+    log_event(current_user.id, 'wishlist_updated', {
+        'count': len(tournament_ids),
+        'tournament_ids': tournament_ids
+    })
+    
+    flash('Your bucket list has been updated!', 'success')
+    return redirect(url_for('user.profile'))
+
 @user_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():

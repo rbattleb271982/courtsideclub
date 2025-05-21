@@ -407,36 +407,253 @@
       <!-- Bucket List Tournaments Section -->
       <div class="profile-section">
         <h3>My Bucket List Tournaments</h3>
-        <p class="mb-3">Add tournaments you'd like to attend someday</p>
+        <p class="mb-3">Select tournaments you'd like to attend someday</p>
         
         <div class="bucket-list-container mb-3">
-          <!-- Add tournament form -->
-          <form action="{{ url_for('user.add_wishlist') }}" method="POST" class="mb-3">
-            <div class="input-group">
-              <select name="tournament_id" class="form-select">
-                <option value="">Select a tournament</option>
-                {% for tournament in all_tournaments %}
-                  <option value="{{ tournament.id }}">{{ tournament.name }}</option>
-                {% endfor %}
-              </select>
-              <button type="submit" class="btn btn-success">Add to Bucket List</button>
+          {% if all_tournaments %}
+            <!-- No initial hidden fields - we'll add them dynamically -->
+            
+            <!-- Search input -->
+            <div class="input-group mb-3">
+              <span class="input-group-text search-icon">
+                <i data-feather="search"></i>
+              </span>
+              <input type="text" id="bucket-list-search" class="form-control" placeholder="Search tournaments">
             </div>
-          </form>
-          
-          <!-- Display existing wishlist tournaments -->
-          {% if wishlist %}
-            <div class="bucket-list-items">
-              {% for entry in wishlist %}
-                <div class="selected-tournament mb-2 d-flex justify-content-between align-items-center">
-                  <span class="tournament-name">{{ entry.tournament.name }}</span>
-                  <form action="{{ url_for('user.remove_wishlist', wishlist_id=entry.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
-                  </form>
-                </div>
-              {% endfor %}
-            </div>
+            
+            <!-- Search results container -->
+            <div id="bucket-results-container" class="search-results mb-3" style="display: none;"></div>
+            
+            <!-- Selected tournaments display -->
+            <div id="bucket-selected-container" class="selected-tournaments mb-3"></div>
+            
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                // Setup search functionality for bucket list
+                const searchInput = document.getElementById('bucket-list-search');
+                const resultsContainer = document.getElementById('bucket-results-container');
+                const selectedContainer = document.getElementById('bucket-selected-container');
+                
+                // Tournament data
+                const allTournaments = [
+                  {% for tournament in all_tournaments %}
+                    {
+                      id: "{{ tournament.id }}",
+                      name: "{{ tournament.name }}"
+                    },
+                  {% endfor %}
+                ];
+                
+                // Selected tournaments - initialize from existing wishlist
+                const selectedTournamentIds = new Set([
+                  {% for entry in wishlist %}
+                    "{{ entry.tournament_id }}",
+                  {% endfor %}
+                ]);
+                
+                // Initial render of selected tournaments
+                renderSelectedTournaments();
+                
+                // Search input handler
+                searchInput.addEventListener('input', function() {
+                  const query = this.value.toLowerCase().trim();
+                  
+                  if (query.length < 2) {
+                    resultsContainer.innerHTML = '';
+                    resultsContainer.style.display = 'none';
+                    return;
+                  }
+                  
+                  // Filter tournaments based on query
+                  const matchingTournaments = allTournaments.filter(t => 
+                    t.name.toLowerCase().includes(query)
+                  );
+                  
+                  // Display results
+                  if (matchingTournaments.length > 0) {
+                    resultsContainer.innerHTML = '';
+                    matchingTournaments.forEach(tournament => {
+                      // Don't show already selected tournaments
+                      if (selectedTournamentIds.has(tournament.id)) return;
+                      
+                      const resultItem = document.createElement('div');
+                      resultItem.className = 'search-result';
+                      resultItem.innerHTML = `
+                        <div class="autocomplete-result">
+                          <span>${tournament.name}</span>
+                          <button type="button" class="add-btn add-wishlist-tournament" data-id="${tournament.id}" data-name="${tournament.name}">
+                            Add
+                          </button>
+                        </div>
+                      `;
+                      resultsContainer.appendChild(resultItem);
+                    });
+                    
+                    // Add event listeners to add buttons
+                    document.querySelectorAll('.add-wishlist-tournament').forEach(btn => {
+                      btn.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const name = this.dataset.name;
+                        addTournament(id, name);
+                        saveWishlist();
+                      });
+                    });
+                    
+                    resultsContainer.style.display = 'block';
+                  } else {
+                    resultsContainer.innerHTML = '<div class="no-results">No matching tournaments found</div>';
+                    resultsContainer.style.display = 'block';
+                  }
+                });
+                
+                // Function to render selected tournaments
+                function renderSelectedTournaments() {
+                  selectedContainer.innerHTML = '';
+                  
+                  if (selectedTournamentIds.size > 0) {
+                    // Create form to submit
+                    const form = document.createElement('form');
+                    form.action = "{{ url_for('user.update_wishlist') }}";
+                    form.method = "POST";
+                    form.id = "wishlist-form";
+                    
+                    // Add selected tournaments to the form
+                    selectedTournamentIds.forEach(id => {
+                      const hiddenInput = document.createElement('input');
+                      hiddenInput.type = 'hidden';
+                      hiddenInput.name = 'wishlist_tournaments';
+                      hiddenInput.value = id;
+                      form.appendChild(hiddenInput);
+                      
+                      // Find tournament name
+                      const tournament = allTournaments.find(t => t.id === id);
+                      if (!tournament) return;
+                      
+                      const tournamentElement = document.createElement('div');
+                      tournamentElement.className = 'selected-tournament mb-2';
+                      tournamentElement.dataset.id = id;
+                      tournamentElement.innerHTML = `
+                        <span class="tournament-name">${tournament.name}</span>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-wishlist-tournament">
+                          <small>×</small>
+                        </button>
+                      `;
+                      selectedContainer.appendChild(tournamentElement);
+                    });
+                    
+                    // Add save button
+                    const saveBtn = document.createElement('button');
+                    saveBtn.type = 'submit';
+                    saveBtn.className = 'btn btn-success mt-3';
+                    saveBtn.textContent = 'Save Bucket List';
+                    form.appendChild(saveBtn);
+                    
+                    selectedContainer.appendChild(form);
+                    
+                    // Add event listeners to remove buttons
+                    document.querySelectorAll('.remove-wishlist-tournament').forEach(btn => {
+                      btn.addEventListener('click', function() {
+                        const tournamentElement = this.closest('.selected-tournament');
+                        const id = tournamentElement.dataset.id;
+                        selectedTournamentIds.delete(id);
+                        renderSelectedTournaments();
+                      });
+                    });
+                  } else {
+                    selectedContainer.innerHTML = '<p id="no-tournaments-selected" class="text-muted">No tournaments selected</p>';
+                  }
+                }
+                
+                // Function to add a tournament
+                function addTournament(id, name) {
+                  selectedTournamentIds.add(id);
+                  renderSelectedTournaments();
+                  searchInput.value = '';
+                  resultsContainer.style.display = 'none';
+                }
+                
+                // Function to save the wishlist via AJAX
+                function saveWishlist() {
+                  // This function is just a placeholder since we'll use the form submit instead
+                  // But it would be nice to add AJAX saving later
+                }
+              });
+            </script>
+            
+            <style>
+              .search-results {
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                max-height: 200px;
+                overflow-y: auto;
+                margin-bottom: 1rem;
+              }
+              
+              .search-result {
+                padding: 8px 12px;
+                border-bottom: 1px solid #eee;
+                cursor: pointer;
+              }
+              
+              .search-result:last-child {
+                border-bottom: none;
+              }
+              
+              .search-result:hover {
+                background-color: #f8f9fa;
+              }
+              
+              .autocomplete-result {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              }
+              
+              .add-btn {
+                border: none;
+                background-color: #4CAF50;
+                color: white;
+                padding: 3px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.8rem;
+              }
+              
+              .selected-tournament {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 12px;
+                background-color: #f1f8e9;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                margin-bottom: 8px;
+              }
+              
+              .tournament-name {
+                flex-grow: 1;
+                line-height: 1.3;
+              }
+              
+              /* Mobile optimization for buttons */
+              @media (max-width: 480px) {
+                .selected-tournament {
+                  padding: 5px 8px;
+                  font-size: 13px;
+                }
+                
+                .search-result {
+                  padding: 5px 6px;
+                }
+                
+                .btn-sm {
+                  padding: 0.2rem 0.4rem;
+                  font-size: 0.75rem;
+                }
+              }
+            </style>
           {% else %}
-            <p class="text-muted">No tournaments in your bucket list yet.</p>
+            <p class="text-muted">No tournaments available for selection.</p>
           {% endif %}
         </div>
       </div>
