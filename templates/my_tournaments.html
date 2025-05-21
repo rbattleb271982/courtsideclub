@@ -9,6 +9,12 @@
 <div class="container">
     <h1 class="mb-4">My Tournaments</h1>
     
+    {% if show_welcome %}
+    <div class="welcome-message">
+      <p><strong>Welcome back to CourtSide Club. Let's see where you're headed next.</strong></p>
+    </div>
+    {% endif %}
+    
     <div class="page-intro-message">
       <p><strong>This is your personal dashboard of tournaments you're attending or thinking about. You can update your attendance and session choices from here anytime.</strong></p>
     </div>

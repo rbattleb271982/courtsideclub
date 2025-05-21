@@ -1426,4 +1426,13 @@ input:checked + .toggle-slider:before {
   font-size: 0.95rem;
   line-height: 1.4;
   color: #333;
+}/* Welcome message styling */
+.welcome-message {
+  background-color: #f0f9f4;
+  border-left: 4px solid #4CAF50;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  color: #333;
 }
