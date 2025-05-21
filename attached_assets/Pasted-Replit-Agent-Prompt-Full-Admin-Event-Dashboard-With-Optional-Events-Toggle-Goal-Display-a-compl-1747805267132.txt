@@ -1,0 +1,95 @@
+Replit Agent Prompt — Full Admin Event Dashboard (With Optional Events Toggle)
+Goal: Display a complete list of tracked event types in the admin dashboard, including those with count = 0. Separate core production events from optional/debug events, with the ability to toggle visibility of the optional group.
+
+🛠️ Step 1: Update the event aggregation logic
+File: routes/admin_routes.py (or wherever the admin event summary is generated)
+
+Replace existing event query logic with:
+
+from sqlalchemy import func
+from models import Event  # Adjust as needed
+
+# Core events to show by default
+core_event_names = [
+    'user_signup', 'user_login', 'user_logout',
+    'password_reset_requested', 'password_reset_successful',
+    'email_opt_in_changed', 'profile_updated', 'profile_completed',
+    'attend_tournament', 'unattend_tournament', 'tournament_attendance_status_changed',
+    'session_selected', 'session_unselected', 'tournament_session_update',
+    'tournaments_added_to_profile', 'wants_to_meet_enabled', 'wants_to_meet_disabled',
+    'tournament_page_viewed', 'tournament_filter_applied',
+    'lanyard_order_eligible', 'lanyard_order_started', 'lanyard_order_abandoned',
+    'lanyard_order_submitted', 'lanyard_export', 'lanyard_shipped',
+    'tournament_created', 'tournament_edit', 'admin_tournament_updated',
+    'admin_manual_user_update', 'admin_lanyard_override',
+    'reminder_email_sent', 'meetup_email_sent', 'lanyard_reminder_sent',
+    'email_send_failed', 'email_bounced', 'email_unsubscribed'
+]
+
+# Optional/debug events to hide by default
+optional_event_names = [
+    'detailed_event', 'example_event', 'test_event',
+    'qa_simulated_user_action', 'debug_lanyard_gate_triggered',
+    'homepage_visited', 'how_it_works_visited', 'about_page_viewed',
+    'invite_sent'
+]
+
+# Query all events from DB
+event_counts = dict(
+    db.session.query(Event.event_name, func.count())
+    .group_by(Event.event_name)
+    .all()
+)
+
+# Build stats list
+core_events = [{'event_name': name, 'count': event_counts.get(name, 0)} for name in core_event_names]
+optional_events = [{'event_name': name, 'count': event_counts.get(name, 0)} for name in optional_event_names]
+
+# Optional: Use ?show_all=1 in URL to reveal optional events
+show_all = request.args.get('show_all') == '1'
+
+return render_template('admin/events.html', core_events=core_events, optional_events=optional_events, show_all=show_all)
+🛠️ Step 2: Update the event dashboard template
+File: templates/admin/events.html
+
+Replace the table block with:
+
+<h2>Event Activity (Core)</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Event Name</th>
+      <th>Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for event in core_events %}
+    <tr>
+      <td>{{ event.event_name }}</td>
+      <td>{{ event.count }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if show_all %}
+  <h2>Optional / Debug Events</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Event Name</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in optional_events %}
+      <tr>
+        <td>{{ event.event_name }}</td>
+        <td>{{ event.count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p><a href="{{ url_for('admin.events') }}?show_all=1">Show optional/debug events</a></p>
+{% endif %}

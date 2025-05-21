@@ -3,35 +3,102 @@
 
 {% block content %}
 <div class="container-fluid pt-4">
-  <div class="mb-4">
-    <h2>Event Types</h2>
+  <div class="mb-4 d-flex justify-content-between align-items-center">
+    <h2>Event Tracking Dashboard</h2>
+    <div class="d-flex align-items-center">
+      <span class="me-2">Total Events: <strong>{{ total_events }}</strong></span>
+      {% if show_all %}
+        <a href="{{ url_for('admin.view_event_log') }}" class="btn btn-sm btn-outline-secondary">Hide Optional Events</a>
+      {% else %}
+        <a href="{{ url_for('admin.view_event_log') }}?show_all=1" class="btn btn-sm btn-outline-primary">Show All Events</a>
+      {% endif %}
+    </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Event Name</th>
-          <th>Count</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for event in event_summary %}
-        <tr>
-          <td><code>{{ event.name }}</code></td>
-          <td>{{ event.count }}</td>
-          <td>{{ event.description }}</td>
-        </tr>
-        {% else %}
-        <tr>
-          <td colspan="3" class="text-center py-3">
-            No events have been tracked yet.
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <!-- Core Events Section -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0">Core Production Events ({{ total_core_events }} total)</h4>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th>Event Name</th>
+              <th>Count</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for event in core_events %}
+            <tr>
+              <td><code>{{ event.name }}</code></td>
+              <td>{{ event.count }}</td>
+              <td>{{ event.description }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="3" class="text-center py-3">
+                No core events have been tracked yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
+
+  <!-- Optional Events Section (conditionally displayed) -->
+  {% if show_all %}
+  <div class="card">
+    <div class="card-header bg-secondary text-white">
+      <h4 class="mb-0">Optional/Debug Events ({{ total_optional_events }} total)</h4>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th>Event Name</th>
+              <th>Count</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for event in optional_events %}
+            <tr>
+              <td><code>{{ event.name }}</code></td>
+              <td>{{ event.count }}</td>
+              <td>{{ event.description }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="3" class="text-center py-3">
+                No optional events have been tracked yet.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% endif %}
 </div>
+
+<style>
+  .card-header h4 {
+    font-size: 1.2rem;
+  }
+  
+  .table code {
+    background-color: #f7f7f7;
+    padding: 2px 5px;
+    border-radius: 3px;
+    color: #333;
+    font-size: 0.9rem;
+  }
+</style>
 {% endblock %}

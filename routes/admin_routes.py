@@ -336,7 +336,7 @@ def update_tournament(tournament_slug):
         if request.form.get('surface', '').strip() != '':
             updated_fields.append('surface')
             
-        log_event('admin_tournament_updated', data={
+        log_event(current_user.id, 'admin_tournament_updated', data={
             'tournament_id': tournament.id,
             'tournament_name': tournament.name,
             'tournament_slug': tournament.slug,
@@ -427,8 +427,35 @@ def view_event_log():
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
     
-    # Define all expected event types (using our event_descriptions dictionary)
-    expected_events = list(event_descriptions.keys())
+    # Core events to show by default
+    core_event_names = [
+        'user_signup', 'user_login', 'user_logout',
+        'password_reset_requested', 'password_reset_successful',
+        'email_opt_in_changed', 'profile_updated', 'profile_completed',
+        'attend_tournament', 'unattend_tournament', 'tournament_attendance_status_changed', 
+        'session_selected', 'session_unselected', 'tournament_session_update',
+        'tournaments_added_to_profile', 'wants_to_meet_enabled', 'wants_to_meet_disabled',
+        'tournament_page_viewed', 'tournament_filter_applied',
+        'lanyard_order_eligible', 'lanyard_order_started', 'lanyard_order_abandoned',
+        'lanyard_order_submitted', 'lanyard_export', 'lanyard_shipped',
+        'tournament_created', 'tournament_edit', 'admin_tournament_updated',
+        'admin_manual_user_update', 'admin_lanyard_override',
+        'reminder_email_sent', 'meetup_email_sent', 'lanyard_reminder_sent',
+        'email_send_failed', 'email_bounced', 'email_unsubscribed'
+    ]
+
+    # Optional/debug events to hide by default
+    optional_event_names = [
+        'detailed_event', 'example_event', 'test_event',
+        'qa_simulated_user_action', 'debug_lanyard_gate_triggered',
+        'homepage_visited', 'how_it_works_visited', 'about_page_viewed',
+        'invite_sent'
+    ]
+    
+    # Add any existing event descriptions not explicitly in either list to optional events
+    for event_name in event_descriptions.keys():
+        if event_name not in core_event_names and event_name not in optional_event_names:
+            optional_event_names.append(event_name)
     
     # Get actual event counts from the database
     db_event_counts = db.session.query(
@@ -439,47 +466,78 @@ def view_event_log():
     # Convert query result to a dictionary for easier lookup
     count_dict = {event_name: count for event_name, count in db_event_counts}
     
-    # Prepare event data with descriptions, including 0-count events
-    event_summary = []
-    total_events = 0
+    # Build stats for core events
+    core_events = []
+    total_core_events = 0
     
-    # First, add all events that have counts in the database
-    for event_name, count in count_dict.items():
+    for event_name in core_event_names:
+        count = count_dict.get(event_name, 0)
         description = event_descriptions.get(event_name, "User action")
-        total_events += count
+        total_core_events += count
         
-        event_summary.append({
+        core_events.append({
             'name': event_name,
             'count': count,
             'description': description
         })
     
-    # Then add any expected events that weren't found in the database (with count 0)
-    for event_name in expected_events:
-        if event_name not in count_dict:
+    # Build stats for optional events
+    optional_events = []
+    total_optional_events = 0
+    
+    for event_name in optional_event_names:
+        count = count_dict.get(event_name, 0)
+        description = event_descriptions.get(event_name, "User action")
+        total_optional_events += count
+        
+        optional_events.append({
+            'name': event_name,
+            'count': count,
+            'description': description
+        })
+        
+    # Also include any events found in the database that aren't in our expected lists
+    for event_name, count in count_dict.items():
+        if event_name not in core_event_names and event_name not in optional_event_names:
             description = event_descriptions.get(event_name, "User action")
-            event_summary.append({
+            total_optional_events += count
+            
+            optional_events.append({
                 'name': event_name,
-                'count': 0,
+                'count': count,
                 'description': description
             })
     
-    # Get sorting parameters
+    # Get optional URL parameters
     sort_by = request.args.get('sort_by', 'count')
     sort_dir = request.args.get('sort_dir', 'desc')
+    show_all = request.args.get('show_all') == '1'
     
-    # Apply sorting
+    # Apply sorting to core events
     if sort_by == 'name':
-        event_summary.sort(key=lambda x: x['name'].lower(), reverse=(sort_dir == 'desc'))
+        core_events = sorted(core_events, key=lambda x: x['name'].lower(), reverse=(sort_dir == 'desc'))
     elif sort_by == 'count':
-        event_summary.sort(key=lambda x: x['count'], reverse=(sort_dir == 'desc'))
+        core_events = sorted(core_events, key=lambda x: x['count'], reverse=(sort_dir == 'desc'))
     elif sort_by == 'description':
-        event_summary.sort(key=lambda x: x['description'].lower(), reverse=(sort_dir == 'desc'))
+        core_events = sorted(core_events, key=lambda x: x['description'].lower(), reverse=(sort_dir == 'desc'))
+    
+    # Apply sorting to optional events (if they will be shown)
+    if show_all:
+        if sort_by == 'name':
+            optional_events = sorted(optional_events, key=lambda x: x['name'].lower(), reverse=(sort_dir == 'desc'))
+        elif sort_by == 'count':
+            optional_events = sorted(optional_events, key=lambda x: x['count'], reverse=(sort_dir == 'desc'))
+        elif sort_by == 'description':
+            optional_events = sorted(optional_events, key=lambda x: x['description'].lower(), reverse=(sort_dir == 'desc'))
     
     return render_template(
         'admin_event_summary.html',
-        event_summary=event_summary,
-        total_events=total_events,
+        core_events=core_events,
+        optional_events=optional_events,
+        total_core_events=total_core_events,
+        total_optional_events=total_optional_events,
+        total_events=total_core_events + total_optional_events,
+        show_all=show_all,
         sort_by=sort_by,
         sort_dir=sort_dir
     )
