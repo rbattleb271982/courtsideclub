@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from models import db, User, Tournament, UserTournament, UserPastTournament, ShippingAddress
+from models import db, User, Tournament, UserTournament, UserPastTournament, ShippingAddress, UserWishlistTournament
 from services.sendgrid_service import send_email
 from services.event_logger import log_event
 import json
@@ -334,6 +334,77 @@ def tournament_detail(tournament_slug):
                          session_saved=session_saved)
 
 # Updated profile route to show user profile with past tournaments selection
+@user_bp.route('/add_wishlist', methods=['POST'])
+@login_required
+def add_wishlist():
+    """Add a tournament to user's bucket list (wishlist)"""
+    tournament_id = request.form.get('tournament_id')
+    if not tournament_id:
+        flash('Tournament selection required', 'warning')
+        return redirect(url_for('user.profile'))
+        
+    # Check if already in wishlist
+    existing = UserWishlistTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament_id
+    ).first()
+    
+    if not existing:
+        # Add to wishlist
+        entry = UserWishlistTournament(
+            user_id=current_user.id,
+            tournament_id=tournament_id
+        )
+        db.session.add(entry)
+        db.session.commit()
+        
+        # Log the event
+        log_event(current_user.id, 'wishlist_tournament_added', {
+            'tournament_id': tournament_id
+        })
+        
+        # Get tournament name for the flash message
+        tournament = Tournament.query.get(tournament_id)
+        if tournament:
+            flash(f'Added {tournament.name} to your bucket list!', 'success')
+        else:
+            flash('Tournament added to your bucket list!', 'success')
+    else:
+        flash('Tournament is already in your bucket list', 'info')
+        
+    return redirect(url_for('user.profile'))
+    
+@user_bp.route('/remove_wishlist/<int:wishlist_id>', methods=['POST'])
+@login_required
+def remove_wishlist(wishlist_id):
+    """Remove a tournament from user's bucket list (wishlist)"""
+    entry = UserWishlistTournament.query.filter_by(
+        id=wishlist_id,
+        user_id=current_user.id
+    ).first()
+    
+    if entry:
+        tournament_id = entry.tournament_id
+        
+        # Get tournament name for the flash message
+        tournament = Tournament.query.get(tournament_id)
+        tournament_name = tournament.name if tournament else "Tournament"
+        
+        # Remove from database
+        db.session.delete(entry)
+        db.session.commit()
+        
+        # Log the event
+        log_event(current_user.id, 'wishlist_tournament_removed', {
+            'tournament_id': tournament_id
+        })
+        
+        flash(f'Removed {tournament_name} from your bucket list', 'success')
+    else:
+        flash('Tournament not found in your bucket list', 'warning')
+        
+    return redirect(url_for('user.profile'))
+
 @user_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
@@ -385,15 +456,20 @@ def profile():
     
     # GET request - show the profile form
     # Get all tournaments for selection, including future ones
-    past_tournaments = Tournament.query.order_by(Tournament.name).all()
+    all_tournaments = Tournament.query.order_by(Tournament.name).all()
     
     # Get the user's past tournament IDs for pre-checking the checkboxes
     user_past_tournament_ids = [pt.tournament_id for pt in current_user.past_tournaments]
     
+    # Get the user's wishlist (bucket list) tournaments
+    user_wishlist = UserWishlistTournament.query.filter_by(user_id=current_user.id).all()
+    
     return render_template('user/profile.html', 
                           user=current_user,
-                          past_tournaments=past_tournaments,
-                          user_past_tournament_ids=user_past_tournament_ids)
+                          past_tournaments=all_tournaments,
+                          user_past_tournament_ids=user_past_tournament_ids,
+                          all_tournaments=all_tournaments,
+                          wishlist=user_wishlist)
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required
