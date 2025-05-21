@@ -195,5 +195,21 @@ class Event(db.Model):
     def __repr__(self):
         return f"<Event {self.name} by User {self.user_id}>"
 
+class UserWishlistTournament(db.Model):
+    __tablename__ = 'user_wishlist_tournaments'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    tournament_id = db.Column(db.String(50), db.ForeignKey('tournaments.id', ondelete='CASCADE'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = relationship('User', backref=backref('wishlist_tournaments', cascade="all, delete-orphan"))
+    tournament = relationship('Tournament')
+    
+    def __repr__(self):
+        return f"<WishlistTournament {self.tournament_id} for User {self.user_id}>"
+
+
 def load_user(user_id):
     return User.query.get(int(user_id))
