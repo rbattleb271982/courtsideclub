@@ -24,6 +24,11 @@ event_descriptions = {
     "past_tournament_added": "User added a past tournament to their profile",
     "past_tournament_removed": "User removed a past tournament from their profile",
     "user_added_multiple_past_events": "User added 3 or more past tournaments",
+    
+    # 📋 Bucket List
+    "wishlist_tournament_added": "User added a tournament to their bucket list",
+    "wishlist_tournament_removed": "User removed a tournament from their bucket list",
+    "wishlist_updated": "User updated their tournament bucket list",
 
     # 🎁 Lanyard Funnel
     "lanyard_order_eligible": "User became eligible to order a lanyard",
