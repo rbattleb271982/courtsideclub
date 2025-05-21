@@ -59,6 +59,9 @@ def login():
                     user.welcome_seen = True
                     db.session.commit()
 
+                # Set session flag for welcome message
+                session['show_welcome'] = True
+                
                 # Always redirect to my_tournaments after login
                 return redirect(url_for('user.my_tournaments'))
 

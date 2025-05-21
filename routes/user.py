@@ -605,6 +605,9 @@ def my_tournaments():
     from datetime import datetime, timedelta
     import logging
 
+    # Check for welcome message flag in session
+    show_welcome = session.pop('show_welcome', False)
+    
     today = datetime.now().date()
     
     # Get all future tournaments the user is attending (regardless of session selection)
@@ -742,7 +745,8 @@ def my_tournaments():
         session_stats=session_stats,
         show_lanyard_reminder=show_lanyard_reminder,
         days_away=days_away,
-        soonest_tournament=soonest_tournament.tournament if soonest_tournament else None
+        soonest_tournament=soonest_tournament.tournament if soonest_tournament else None,
+        show_welcome=show_welcome
     )
 
 @user_bp.route('/browse-tournaments')
