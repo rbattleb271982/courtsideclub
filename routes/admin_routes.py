@@ -320,6 +320,10 @@ def update_tournament(tournament_slug):
         surface = request.form.get('surface', '').strip()
         tournament.surface = surface if surface else None
         
+        # Update commentary if provided
+        commentary = request.form.get('commentary', '').strip()
+        tournament.commentary = commentary if commentary else None
+        
         db.session.commit()
         
         # Log the event using our standardized event logging service

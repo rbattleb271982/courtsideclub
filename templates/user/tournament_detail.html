@@ -67,6 +67,14 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    {% if tournament.commentary %}
+                    <div class="tournament-commentary mb-3">
+                        <div class="alert alert-success">
+                            <i class="fas fa-quote-left text-success-light me-2"></i>
+                            {{ tournament.commentary }}
+                        </div>
+                    </div>
+                    {% endif %}
                     <!-- Attendance Controls MOVED INTO MAIN CARD -->
                     <div class="detail-item mt-3 attendance-container">
                         <i data-feather="calendar-check" class="icon-sm"></i>

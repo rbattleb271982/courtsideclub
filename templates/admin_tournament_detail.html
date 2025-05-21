@@ -158,6 +158,12 @@
         </div>
 
         <div class="mb-3">
+          <label for="commentary" class="form-label">Tournament Commentary (Optional)</label>
+          <textarea class="form-control" id="commentary" name="commentary" rows="3" placeholder="Add editorial commentary or key highlights">{{ tournament.commentary or '' }}</textarea>
+          <small class="text-muted">This commentary will appear at the top of the tournament page for all users.</small>
+        </div>
+
+        <div class="mb-3">
           <label for="draw_url" class="form-label">Draw URL</label>
           <div class="input-group">
             <span class="input-group-text fixed-protocol">https://</span>
