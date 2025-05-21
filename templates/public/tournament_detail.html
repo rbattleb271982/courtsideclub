@@ -29,6 +29,15 @@
     </div>
   </header>
 
+  {% if tournament.commentary %}
+  <section class="tournament-commentary">
+    <div class="alert alert-success" style="border-left: 4px solid #4CAF50; margin: 1.5rem 0; padding: 1rem; background-color: #f1f8e9; border-radius: 4px;">
+      <i class="fas fa-quote-left" style="color: #4CAF50; margin-right: 0.5rem;"></i>
+      {{ tournament.commentary }}
+    </div>
+  </section>
+  {% endif %}
+
   {% if tournament.about %}
   <section class="tournament-about">
     <h2>About {{ tournament.name }}</h2>
