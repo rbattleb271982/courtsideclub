@@ -885,7 +885,7 @@ def update_lanyard_status(user_id):
         first_tournament = Tournament.query.get(user_tourneys.tournament_id)
     
     # Log the event with detailed metadata
-    log_event('lanyard_marked_sent' if status else 'lanyard_marked_unsent', data={
+    log_event(current_user.id, 'lanyard_marked_sent' if status else 'lanyard_marked_unsent', data={
         "target_user_id": user_id,
         "target_user_email": recipient_email,
         "admin_user": current_user.email,
@@ -984,7 +984,7 @@ def update_lanyard_status_batch():
             
             # Log the event
             from services.event_logger import log_event
-            log_event('lanyard_marked_sent' if status else 'lanyard_marked_unsent', data={
+            log_event(current_user.id, 'lanyard_marked_sent' if status else 'lanyard_marked_unsent', data={
                 "target_user_id": user_id,
                 "target_user_email": user.email,
                 "admin_user": current_user.email,
@@ -1015,7 +1015,7 @@ def update_lanyard_status_batch():
         
         # Log the batch update event
         from services.event_logger import log_event
-        log_event('lanyard_batch_update', data={
+        log_event(current_user.id, 'lanyard_batch_update', data={
             'total_updates': len(updates),
             'successful_updates': sum(1 for r in results if r.get('success')),
             'sent_count': sent_count,
