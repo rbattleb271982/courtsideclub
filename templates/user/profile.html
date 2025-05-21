@@ -404,6 +404,43 @@
         </div>
       </div>
       
+      <!-- Bucket List Tournaments Section -->
+      <div class="profile-section">
+        <h3>My Bucket List Tournaments</h3>
+        <p class="mb-3">Add tournaments you'd like to attend someday</p>
+        
+        <div class="bucket-list-container mb-3">
+          <!-- Add tournament form -->
+          <form action="{{ url_for('user.add_wishlist') }}" method="POST" class="mb-3">
+            <div class="input-group">
+              <select name="tournament_id" class="form-select">
+                <option value="">Select a tournament</option>
+                {% for tournament in all_tournaments %}
+                  <option value="{{ tournament.id }}">{{ tournament.name }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit" class="btn btn-success">Add to Bucket List</button>
+            </div>
+          </form>
+          
+          <!-- Display existing wishlist tournaments -->
+          {% if wishlist %}
+            <div class="bucket-list-items">
+              {% for entry in wishlist %}
+                <div class="selected-tournament mb-2 d-flex justify-content-between align-items-center">
+                  <span class="tournament-name">{{ entry.tournament.name }}</span>
+                  <form action="{{ url_for('user.remove_wishlist', wishlist_id=entry.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                  </form>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-muted">No tournaments in your bucket list yet.</p>
+          {% endif %}
+        </div>
+      </div>
+      
       <!-- Invite via Text Section (Mobile Only) - Moved above Preferences -->
       <div class="invite-section profile-section">
         <p class="text-center">Know someone going to a tournament? Invite them to join CourtSide Club!</p>
