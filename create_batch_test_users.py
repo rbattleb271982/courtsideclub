@@ -22,8 +22,8 @@ def create_batch_users(batch_size=50):
         current_count = User.query.filter(User.email.like('test%@example.com')).count()
         print(f"Current test users: {current_count}")
         
-        if current_count >= 500:
-            print("Already have 500+ test users!")
+        if current_count >= 750:
+            print("Already have 750+ test users!")
             return current_count
         
         # Get tournaments
@@ -50,7 +50,7 @@ def create_batch_users(batch_size=50):
         for i in range(batch_size):
             try:
                 user_num = current_count + i + 1
-                if user_num > 500:
+                if user_num > 750:
                     break
                     
                 # Create unique user
