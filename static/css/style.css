@@ -25,6 +25,12 @@
   text-decoration: underline;
 }
 
+/* Hide empty search results container */
+#tournament-results:empty,
+.autocomplete-results:empty {
+  display: none;
+}
+
 /* Mobile optimizations for profile tournament search */
 @media (max-width: 768px) {
   .autocomplete-result {

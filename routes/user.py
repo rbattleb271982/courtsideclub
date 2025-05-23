@@ -819,12 +819,19 @@ def my_tournaments():
     days_away = None
     soonest_tournament = None
     
-    # Only show lanyard reminder if user has tournaments with sessions AND hasn't ordered a lanyard
-    if user_tournaments and not current_user.lanyard_ordered:
-        show_lanyard_reminder = True
-        # Find soonest upcoming tournament for days_away calculation
-        soonest_tournament = min(user_tournaments, key=lambda ut: ut.tournament.start_date)
-        days_away = (soonest_tournament.tournament.start_date - today).days
+    # Only show lanyard reminder if user is attending tournaments but hasn't selected sessions properly
+    if not current_user.lanyard_ordered:
+        # Check for users attending tournaments but missing proper session selections
+        incomplete_tournaments = []
+        for ut in user_tournaments:
+            if ut.attending and (not ut.session_label or ut.session_label.strip() == ''):
+                incomplete_tournaments.append(ut)
+        
+        if incomplete_tournaments:
+            show_lanyard_reminder = True
+            # Find soonest upcoming tournament for days_away calculation
+            soonest_tournament = min(incomplete_tournaments, key=lambda ut: ut.tournament.start_date)
+            days_away = (soonest_tournament.tournament.start_date - today).days
 
     # Check if user needs profile reminder (no past tournaments AND no wishlist)
     show_profile_reminder = (
