@@ -625,9 +625,7 @@ def cancel_attendance(tournament_id):
     user_id = current_user.id
     
     try:
-        # Convert tournament_id to int to ensure proper comparison
-        tournament_id = int(tournament_id)
-        
+        # Don't convert tournament_id - it can be either string or int
         user_tournament = UserTournament.query.filter_by(
             user_id=user_id, 
             tournament_id=tournament_id
@@ -655,8 +653,6 @@ def cancel_attendance(tournament_id):
 
         flash("Your attendance has been cancelled.", "success")
         
-    except ValueError:
-        flash("Invalid tournament ID.", "danger")
     except Exception as e:
         print(f"[Cancel attendance error] {e}")
         db.session.rollback()
