@@ -43,6 +43,16 @@
   cursor: pointer;
   font-weight: bold;
 }
+
+.welcome-banner {
+  background-color: #e6f5f3;
+  color: #2c7a7b;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
 </style>
 {% endblock %}
 
@@ -61,8 +71,9 @@
     
 
     
-    <div class="page-intro-message">
-      <p><strong>This is your personal dashboard of tournaments you're attending or thinking about. You can update your attendance and session choices from here anytime.</strong></p>
+    <div class="welcome-banner">
+      <strong>Welcome back to CourtSide Club.</strong><br>
+      Your personal dashboard is ready — check your upcoming tournaments, fine-tune your sessions, and see who's courtside with you.
     </div>
     
     {% if show_lanyard_reminder and days_away > 0 %}
