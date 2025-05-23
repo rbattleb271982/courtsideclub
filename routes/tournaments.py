@@ -189,7 +189,7 @@ def view_tournament(tournament_slug):
     
     # Get selected sessions for current user
     selected_sessions = []
-    wants_to_meet = False
+    wants_to_meet = True  # Default to True for new users
     user_attending = False
     is_full_attending = False
     
