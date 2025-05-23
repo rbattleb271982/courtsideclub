@@ -621,42 +621,28 @@ def toggle_notifications():
 @user_bp.route('/cancel_attendance/<tournament_id>', methods=['POST'])
 @login_required
 def cancel_attendance(tournament_id):
-    # Store user_id early to avoid session issues
-    user_id = current_user.id
-    
     try:
-        # Don't convert tournament_id - it can be either string or int
+        # Simple approach: just mark as not attending instead of deleting
+        # This prevents any potential session conflicts from database deletions
         user_tournament = UserTournament.query.filter_by(
-            user_id=user_id, 
+            user_id=current_user.id, 
             tournament_id=tournament_id
         ).first()
 
         if not user_tournament:
             flash("Could not find your attendance record.", "warning")
-            return redirect(url_for('user.my_tournaments'))
-
-        # Get tournament name before deletion to avoid lazy loading issues
-        tournament_name = "Unknown"
-        if user_tournament.tournament:
-            tournament_name = user_tournament.tournament.name
-
-        # Delete the attendance record
-        db.session.delete(user_tournament)
-        db.session.commit()
-
-        # Log the event after successful deletion
-        from services.event_logger import log_event
-        log_event(user_id, 'tournament_unattend', {
-            'tournament_id': tournament_id,
-            'tournament_name': tournament_name
-        })
-
-        flash("Your attendance has been cancelled.", "success")
+        else:
+            # Instead of deleting, just mark as not attending
+            user_tournament.attending = False
+            user_tournament.session_label = None
+            user_tournament.wants_to_meet = False
+            db.session.commit()
+            flash("Your attendance has been cancelled.", "success")
         
     except Exception as e:
-        print(f"[Cancel attendance error] {e}")
+        print(f"Cancel attendance error: {e}")
         db.session.rollback()
-        flash("An error occurred while cancelling your attendance.", "danger")
+        flash("Unable to cancel attendance. Please try again.", "danger")
 
     return redirect(url_for('user.my_tournaments'))
 
