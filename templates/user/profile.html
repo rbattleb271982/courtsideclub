@@ -522,8 +522,16 @@
                       btn.addEventListener('click', function() {
                         const id = this.dataset.id;
                         const name = this.dataset.name;
-                        addTournament(id, name);
-                        saveWishlist();
+                        selectedTournamentIds.add(id);
+                        renderSelectedTournaments();
+                        
+                        // Auto-save the addition
+                        autoSaveWishlist();
+                        
+                        // Clear search
+                        searchInput.value = '';
+                        resultsContainer.innerHTML = '';
+                        resultsContainer.style.display = 'none';
                       });
                     });
                     
@@ -569,12 +577,7 @@
                       selectedContainer.appendChild(tournamentElement);
                     });
                     
-                    // Add save button
-                    const saveBtn = document.createElement('button');
-                    saveBtn.type = 'submit';
-                    saveBtn.className = 'btn btn-success mt-3';
-                    saveBtn.textContent = 'Save Bucket List';
-                    form.appendChild(saveBtn);
+                    // Removed save button - now auto-saves instantly
                     
                     selectedContainer.appendChild(form);
                     
@@ -585,6 +588,9 @@
                         const id = tournamentElement.dataset.id;
                         selectedTournamentIds.delete(id);
                         renderSelectedTournaments();
+                        
+                        // Auto-save the removal
+                        autoSaveWishlist();
                       });
                     });
                   } else {
