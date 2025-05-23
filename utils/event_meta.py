@@ -44,6 +44,9 @@ event_descriptions = {
     "admin_bulk_lanyards_sent": "Admin used 'Mark All as Sent'",
     "admin_lanyard_note_updated": "Admin updated internal note on a lanyard",
 
+    # 🔗 Referrals & Sharing
+    "invite_link_clicked": "Someone clicked an invite link from SMS",
+
     # 📬 Emails
     "welcome_email_sent": "Welcome email sent to user",
     "reminder_email_sent": "Reminder email sent before a tournament",

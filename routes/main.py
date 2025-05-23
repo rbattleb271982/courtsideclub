@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, request, Response
 from models import Tournament, User, UserTournament
 import datetime
+from services.event_logger import log_event
 
 main_bp = Blueprint('main', __name__)
 
@@ -12,6 +13,23 @@ def public_home():
     ).order_by(Tournament.start_date).first()
     
     return render_template('public/home.html', next_tournament=next_tournament)
+
+@main_bp.route('/invite')
+def track_invite_click():
+    """Track invite link clicks and redirect to homepage"""
+    try:
+        # Log the invite click event (no user ID needed for privacy)
+        log_event(None, 'invite_link_clicked', {
+            'timestamp': datetime.datetime.utcnow().isoformat(),
+            'user_agent': request.headers.get('User-Agent', 'Unknown'),
+            'referrer': request.headers.get('Referer', 'Unknown')
+        })
+    except Exception as e:
+        # Don't break the redirect if logging fails
+        print(f"Failed to log invite click: {e}")
+    
+    # Redirect to homepage
+    return redirect(url_for('main.public_home'))
 
 @main_bp.route('/tournaments')
 def public_tournaments():
