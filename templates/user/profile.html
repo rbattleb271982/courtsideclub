@@ -328,6 +328,8 @@
                 
                 // Before form submit, update hidden fields for tournaments
                 form.addEventListener('submit', function(e) {
+                  console.log('Form submitting with selected tournaments:', Array.from(selectedTournamentIds));
+                  
                   // Remove any existing hidden fields for past_tournaments
                   const existingFields = form.querySelectorAll('input[name="past_tournaments"]');
                   existingFields.forEach(field => field.remove());
@@ -339,6 +341,7 @@
                     hiddenInput.name = 'past_tournaments';
                     hiddenInput.value = id;
                     form.appendChild(hiddenInput);
+                    console.log('Added hidden field for tournament:', id);
                   });
                 });
                 
@@ -348,6 +351,34 @@
                   selectedTournamentIds.delete(id);
                 }
               });
+              
+              // Invite friend functionality
+              function inviteFriend() {
+                const message = "Hey, check out CourtSide Club – it's how I meet cool tennis fans at tournaments. courtsideclub.com";
+                
+                // Check if device supports SMS (mobile)
+                if (window.innerWidth <= 768 && 'ontouchstart' in window) {
+                  // Mobile device - open SMS app
+                  const smsUrl = `sms:?body=${encodeURIComponent(message)}`;
+                  window.location.href = smsUrl;
+                } else {
+                  // Desktop - show message to copy
+                  const desktopDiv = document.getElementById('invite-message-desktop');
+                  const textArea = document.getElementById('invite-text');
+                  
+                  desktopDiv.style.display = 'block';
+                  textArea.value = message;
+                  textArea.select();
+                  textArea.setSelectionRange(0, 99999); // For mobile browsers
+                  
+                  try {
+                    document.execCommand('copy');
+                    alert('Message copied to clipboard!');
+                  } catch (err) {
+                    console.log('Could not copy text');
+                  }
+                }
+              }
             </script>
             
             <style>
@@ -677,6 +708,22 @@
             <span class="toggle-label">Email Notifications</span>
           </div>
           <small class="text-muted">Receive updates about tournaments you're attending</small>
+        </div>
+      </div>
+      
+      <!-- Invite a Friend Section -->
+      <div class="profile-section">
+        <h3>Invite a Friend</h3>
+        <p>Tap below to invite a friend via text. They'll get a message with a link to join CourtSide Club.</p>
+        
+        <button type="button" class="btn btn-primary" id="invite-friend-btn" onclick="inviteFriend()">
+          Invite via Text
+        </button>
+        
+        <!-- Desktop message display (hidden by default) -->
+        <div id="invite-message-desktop" class="mt-3" style="display: none;">
+          <p><strong>Copy this message to send:</strong></p>
+          <textarea class="form-control" rows="3" readonly id="invite-text">Hey, check out CourtSide Club – it's how I meet cool tennis fans at tournaments. courtsideclub.com</textarea>
         </div>
       </div>
       
