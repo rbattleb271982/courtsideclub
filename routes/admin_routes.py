@@ -296,9 +296,17 @@ def update_tournament(tournament_slug):
         tournament.about = request.form.get('about', '').strip()
         
         # Handle URL fields with https:// prefix
+        external_url_input = request.form.get('external_url', '').strip()
+        if external_url_input:
+            if not external_url_input.startswith('http'):
+                tournament.external_url = f"https://{external_url_input}"
+            else:
+                tournament.external_url = external_url_input
+        else:
+            tournament.external_url = None
+        
         draw_url_input = request.form.get('draw_url', '').strip()
         if draw_url_input:
-            # Ensure URL has https:// prefix
             if not draw_url_input.startswith('http'):
                 tournament.draw_url = f"https://{draw_url_input}"
             else:
@@ -306,9 +314,17 @@ def update_tournament(tournament_slug):
         else:
             tournament.draw_url = None
         
+        bracket_url_input = request.form.get('bracket_url', '').strip()
+        if bracket_url_input:
+            if not bracket_url_input.startswith('http'):
+                tournament.bracket_url = f"https://{bracket_url_input}"
+            else:
+                tournament.bracket_url = bracket_url_input
+        else:
+            tournament.bracket_url = None
+        
         schedule_url_input = request.form.get('schedule_url', '').strip()
         if schedule_url_input:
-            # Ensure URL has https:// prefix
             if not schedule_url_input.startswith('http'):
                 tournament.schedule_url = f"https://{schedule_url_input}"
             else:

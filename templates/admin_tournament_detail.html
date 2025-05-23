@@ -164,11 +164,29 @@
         </div>
 
         <div class="mb-3">
-          <label for="draw_url" class="form-label">Draw URL</label>
+          <label for="external_url" class="form-label">Official Tournament Website</label>
+          <div class="input-group">
+            <span class="input-group-text fixed-protocol">https://</span>
+            <input type="text" class="form-control" id="external_url" name="external_url" 
+                   value="{% if tournament.external_url %}{% if tournament.external_url.startswith('https://') %}{{ tournament.external_url.replace('https://', '') }}{% else %}{{ tournament.external_url }}{% endif %}{% endif %}">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="draw_url" class="form-label">Draw Link</label>
           <div class="input-group">
             <span class="input-group-text fixed-protocol">https://</span>
             <input type="text" class="form-control" id="draw_url" name="draw_url" 
                    value="{% if tournament.draw_url %}{% if tournament.draw_url.startswith('https://') %}{{ tournament.draw_url.replace('https://', '') }}{% else %}{{ tournament.draw_url }}{% endif %}{% endif %}">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="bracket_url" class="form-label">Bracket Link</label>
+          <div class="input-group">
+            <span class="input-group-text fixed-protocol">https://</span>
+            <input type="text" class="form-control" id="bracket_url" name="bracket_url" 
+                   value="{% if tournament.bracket_url %}{% if tournament.bracket_url.startswith('https://') %}{{ tournament.bracket_url.replace('https://', '') }}{% else %}{{ tournament.bracket_url }}{% endif %}{% endif %}">
           </div>
         </div>
 

@@ -15,10 +15,24 @@
     </div>
 
     <div class="form-group" style="margin-bottom: 1.5rem;">
-      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Draw URL</label>
+      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Official Tournament Website</label>
+      <input type="url" name="external_url" value="{{ tournament.external_url or '' }}" 
+             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+      <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Official tournament website URL.</p>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Draw Link</label>
       <input type="url" name="draw_url" value="{{ tournament.draw_url or '' }}" 
              style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
       <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Link to the official tournament draw.</p>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label style="display: block; margin-bottom: 8px; font-weight: bold;">Bracket Link</label>
+      <input type="url" name="bracket_url" value="{{ tournament.bracket_url or '' }}" 
+             style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+      <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Optional bracket challenge link.</p>
     </div>
 
     <div class="form-group" style="margin-bottom: 1.5rem;">

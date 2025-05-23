@@ -113,6 +113,8 @@ class Tournament(db.Model):
     about = db.Column(db.Text)
     draw_url = db.Column(db.String(255))
     schedule_url = db.Column(db.String(255))
+    external_url = db.Column(db.String(255))
+    bracket_url = db.Column(db.String(255))
     sessions = db.Column(MutableList.as_mutable(JsonEncodedList), default=[])
     
     # New optional fields for admin use

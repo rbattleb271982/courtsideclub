@@ -1,0 +1,61 @@
+Updated Plan — Add 3 Admin-Editable Links
+
+🔗 The Three Fields:
+external_url → Official tournament website
+draw_url → Link to the live/main draw (ATP/WTA)
+bracket_url → Link to CourtSide Club bracket or challenge (optional feature)
+✅ Updated Design on the Page (Mobile-Optimized)
+
+Place all three links under the tournament name and dates:
+
+{% if tournament.external_url %}
+  <p class="tournament-link">
+    <a href="{{ tournament.external_url }}" target="_blank" rel="noopener">🎾 Official Tournament Site →</a>
+  </p>
+{% endif %}
+{% if tournament.draw_url %}
+  <p class="tournament-link">
+    <a href="{{ tournament.draw_url }}" target="_blank" rel="noopener">📄 View the Draw →</a>
+  </p>
+{% endif %}
+{% if tournament.bracket_url %}
+  <p class="tournament-link">
+    <a href="{{ tournament.bracket_url }}" target="_blank" rel="noopener">🏆 See the Bracket →</a>
+  </p>
+{% endif %}
+✅ REPLIT AGENT PROMPT — Add 3 Tournament Links
+Update the Tournament model and views to support three links:
+external_url – Official tournament site
+draw_url – Link to draw page
+bracket_url – Optional bracket challenge link
+1. In the Tournament model:
+external_url = db.Column(db.String(255))
+draw_url = db.Column(db.String(255))
+bracket_url = db.Column(db.String(255))
+2. In the admin tournament edit form (edit_tournament.html):
+Add labeled <input type="url"> fields for:
+“Official Tournament Website”
+“Draw Link”
+“Bracket Link”
+3. In the user-facing tournament detail page (tournament_detail.html):
+Below the tournament title/date, conditionally show all 3 links using this pattern:
+{% if tournament.external_url %}
+  <p class="tournament-link">
+    <a href="{{ tournament.external_url }}" target="_blank" rel="noopener">🎾 Official Tournament Site →</a>
+  </p>
+{% endif %}
+{% if tournament.draw_url %}
+  <p class="tournament-link">
+    <a href="{{ tournament.draw_url }}" target="_blank" rel="noopener">📄 View the Draw →</a>
+  </p>
+{% endif %}
+{% if tournament.bracket_url %}
+  <p class="tournament-link">
+    <a href="{{ tournament.bracket_url }}" target="_blank" rel="noopener">🏆 See the Bracket →</a>
+  </p>
+{% endif %}
+✅ Use the same .tournament-link a CSS class from earlier for styling
+✅ Fully test that all 3 fields:
+Save via the admin form
+Display cleanly on mobile and desktop
+⚠️ Use only one checkpoint if needed
