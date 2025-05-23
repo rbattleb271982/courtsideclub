@@ -432,6 +432,10 @@ def update_wishlist():
         'tournament_ids': tournament_ids
     })
     
+    # Handle AJAX requests
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'success': True, 'message': 'Bucket list updated!'})
+    
     flash('Your bucket list has been updated!', 'success')
     return redirect(url_for('user.profile'))
 
@@ -480,6 +484,10 @@ def profile():
             'profile_updated': True
         }
         log_event(current_user.id, 'profile_updated', event_data)
+        
+        # Handle AJAX requests
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True, 'message': 'Profile updated successfully!'})
         
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('user.profile'))

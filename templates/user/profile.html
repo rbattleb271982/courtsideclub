@@ -324,6 +324,9 @@
                   
                   // Add to selected container
                   selectedContainer.appendChild(tournamentElement);
+                  
+                  // Auto-save the addition
+                  autoSavePastTournaments();
                 }
                 
                 // Before form submit, update hidden fields for tournaments
@@ -349,6 +352,76 @@
                 function removeTournament(id) {
                   // Remove from the set
                   selectedTournamentIds.delete(id);
+                  
+                  // Auto-save the removal
+                  autoSavePastTournaments();
+                }
+                
+                // Auto-save past tournaments function with AJAX
+                function autoSavePastTournaments() {
+                  const formData = new FormData();
+                  
+                  // Add all selected tournament IDs to form data
+                  selectedTournamentIds.forEach(id => {
+                    formData.append('past_tournaments', id);
+                  });
+                  
+                  // Add other form fields to maintain profile data
+                  formData.append('first_name', document.querySelector('input[name="first_name"]').value);
+                  formData.append('last_name', document.querySelector('input[name="last_name"]').value);
+                  if (document.querySelector('input[name="notifications"]').checked) {
+                    formData.append('notifications', 'on');
+                  }
+                  
+                  // Show saving indicator
+                  showPastTournamentsSaveStatus('Saving...');
+                  
+                  fetch("{{ url_for('user.profile') }}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                      'X-Requested-With': 'XMLHttpRequest'
+                    }
+                  })
+                  .then(response => {
+                    if (response.ok) {
+                      showPastTournamentsSaveStatus('Saved!', 'success');
+                    } else {
+                      showPastTournamentsSaveStatus('Error saving', 'error');
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    showPastTournamentsSaveStatus('Error saving', 'error');
+                  });
+                }
+                
+                // Show save status for past tournaments
+                function showPastTournamentsSaveStatus(message, type = 'info') {
+                  // Remove any existing status
+                  const existingStatus = document.querySelector('.past-tournaments-save-status');
+                  if (existingStatus) {
+                    existingStatus.remove();
+                  }
+                  
+                  // Create status element
+                  const status = document.createElement('div');
+                  status.className = `past-tournaments-save-status alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} mt-2`;
+                  status.style.fontSize = '0.8rem';
+                  status.style.padding = '0.25rem 0.5rem';
+                  status.textContent = message;
+                  
+                  // Add after the selected container
+                  selectedContainer.after(status);
+                  
+                  // Auto-hide success messages after 2 seconds
+                  if (type === 'success') {
+                    setTimeout(() => {
+                      if (status.parentNode) {
+                        status.remove();
+                      }
+                    }, 2000);
+                  }
                 }
               });
               
@@ -606,10 +679,64 @@
                   resultsContainer.style.display = 'none';
                 }
                 
-                // Function to save the wishlist via AJAX
-                function saveWishlist() {
-                  // This function is just a placeholder since we'll use the form submit instead
-                  // But it would be nice to add AJAX saving later
+                // Auto-save wishlist function with AJAX
+                function autoSaveWishlist() {
+                  const formData = new FormData();
+                  
+                  // Add all selected tournament IDs to form data
+                  selectedTournamentIds.forEach(id => {
+                    formData.append('wishlist_tournaments', id);
+                  });
+                  
+                  // Show saving indicator
+                  showSaveStatus('Saving...');
+                  
+                  fetch("{{ url_for('user.update_wishlist') }}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                      'X-Requested-With': 'XMLHttpRequest'
+                    }
+                  })
+                  .then(response => {
+                    if (response.ok) {
+                      showSaveStatus('Saved!', 'success');
+                    } else {
+                      showSaveStatus('Error saving', 'error');
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    showSaveStatus('Error saving', 'error');
+                  });
+                }
+                
+                // Show save status with visual feedback
+                function showSaveStatus(message, type = 'info') {
+                  // Remove any existing status
+                  const existingStatus = document.querySelector('.save-status');
+                  if (existingStatus) {
+                    existingStatus.remove();
+                  }
+                  
+                  // Create status element
+                  const status = document.createElement('div');
+                  status.className = `save-status alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} mt-2`;
+                  status.style.fontSize = '0.8rem';
+                  status.style.padding = '0.25rem 0.5rem';
+                  status.textContent = message;
+                  
+                  // Add after the selected container
+                  selectedContainer.after(status);
+                  
+                  // Auto-hide success messages after 2 seconds
+                  if (type === 'success') {
+                    setTimeout(() => {
+                      if (status.parentNode) {
+                        status.remove();
+                      }
+                    }, 2000);
+                  }
                 }
               });
             </script>
