@@ -621,9 +621,15 @@ def toggle_notifications():
 @user_bp.route('/cancel_attendance/<tournament_id>', methods=['POST'])
 @login_required
 def cancel_attendance(tournament_id):
+    # Store user_id early to avoid session issues
+    user_id = current_user.id
+    
     try:
+        # Convert tournament_id to int to ensure proper comparison
+        tournament_id = int(tournament_id)
+        
         user_tournament = UserTournament.query.filter_by(
-            user_id=current_user.id, 
+            user_id=user_id, 
             tournament_id=tournament_id
         ).first()
 
@@ -631,18 +637,26 @@ def cancel_attendance(tournament_id):
             flash("Could not find your attendance record.", "warning")
             return redirect(url_for('user.my_tournaments'))
 
-        # Log the cancellation event before deletion
+        # Get tournament name before deletion to avoid lazy loading issues
+        tournament_name = "Unknown"
+        if user_tournament.tournament:
+            tournament_name = user_tournament.tournament.name
+
+        # Delete the attendance record
+        db.session.delete(user_tournament)
+        db.session.commit()
+
+        # Log the event after successful deletion
         from services.event_logger import log_event
-        tournament_name = user_tournament.tournament.name if user_tournament.tournament else "Unknown"
-        log_event(current_user.id, 'tournament_unattend', {
+        log_event(user_id, 'tournament_unattend', {
             'tournament_id': tournament_id,
             'tournament_name': tournament_name
         })
 
-        db.session.delete(user_tournament)
-        db.session.commit()
-
         flash("Your attendance has been cancelled.", "success")
+        
+    except ValueError:
+        flash("Invalid tournament ID.", "danger")
     except Exception as e:
         print(f"[Cancel attendance error] {e}")
         db.session.rollback()
