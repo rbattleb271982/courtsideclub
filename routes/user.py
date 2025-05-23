@@ -826,10 +826,10 @@ def my_tournaments():
         soonest_tournament = min(user_tournaments, key=lambda ut: ut.tournament.start_date)
         days_away = (soonest_tournament.tournament.start_date - today).days
 
-    # Check if user needs profile reminder (no past tournaments AND no bucket list)
+    # Check if user needs profile reminder (no past tournaments AND no wishlist)
     show_profile_reminder = (
         len(current_user.past_tournaments) == 0 and
-        len(current_user.bucket_list_tournaments) == 0
+        len(current_user.wishlist_tournaments) == 0
     )
 
     return render_template(
