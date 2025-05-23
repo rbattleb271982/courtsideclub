@@ -69,6 +69,14 @@
 <div class="container">
     <h1 class="mb-4">My Tournaments</h1>
     
+    {% if show_profile_reminder %}
+    <div class="alert alert-info">
+      <strong>Make your profile more complete.</strong><br>
+      Add tournaments you've attended and your tennis bucket list to help other members get to know you.
+      <a href="{{ url_for('user.profile') }}" class="ml-2">Update your profile →</a>
+    </div>
+    {% endif %}
+    
     {% if show_lanyard_reminder and days_away > 0 %}
     <div class="lanyard-reminder">
         <h4>Don't forget your lanyard!</h4>

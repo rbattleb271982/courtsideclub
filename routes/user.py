@@ -826,6 +826,12 @@ def my_tournaments():
         soonest_tournament = min(user_tournaments, key=lambda ut: ut.tournament.start_date)
         days_away = (soonest_tournament.tournament.start_date - today).days
 
+    # Check if user needs profile reminder (no past tournaments AND no bucket list)
+    show_profile_reminder = (
+        len(current_user.past_tournaments) == 0 and
+        len(current_user.bucket_list_tournaments) == 0
+    )
+
     return render_template(
         "my_tournaments.html",
         grouped_tournaments=grouped_tournaments,
@@ -834,7 +840,8 @@ def my_tournaments():
         show_lanyard_reminder=show_lanyard_reminder,
         days_away=days_away,
         soonest_tournament=soonest_tournament.tournament if soonest_tournament else None,
-        show_welcome=show_welcome
+        show_welcome=show_welcome,
+        show_profile_reminder=show_profile_reminder
     )
 
 @user_bp.route('/browse-tournaments')
