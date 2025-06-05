@@ -1,5 +1,5 @@
 """
-Create 750 realistic test users for CourtSide Club
+Create 50 realistic test users for CourtSide Club as a test batch
 
 Each user will have:
 - Realistic names and email formats
@@ -33,16 +33,7 @@ FIRST_NAMES = [
     "Hannah", "Mateo", "Lily", "Anthony", "Addison", "Jaxon", "Eleanor", "Lincoln", "Natalie", "Joshua",
     "Luna", "Christopher", "Savannah", "Andrew", "Brooklyn", "Theodore", "Leah", "Caleb", "Zoe", "Ryan",
     "Stella", "Asher", "Hazel", "Nathan", "Ellie", "Thomas", "Paisley", "Leo", "Audrey", "Isaiah",
-    "Skylar", "Charles", "Violet", "Josiah", "Claire", "Hudson", "Bella", "Christian", "Aurora", "Hunter",
-    "Lucy", "Connor", "Anna", "Eli", "Samantha", "Ezra", "Caroline", "Aaron", "Genesis", "Landon",
-    "Aaliyah", "Adrian", "Kennedy", "Jonathan", "Kinsley", "Nolan", "Allison", "Jeremiah", "Maya", "Easton",
-    "Sarah", "Elias", "Madelyn", "Colton", "Adeline", "Cameron", "Alexa", "Carson", "Ariana", "Robert",
-    "Elena", "Angel", "Maria", "Maverick", "Eva", "Nicholas", "Melanie", "Dominic", "Naomi", "Jaxson",
-    "Isla", "Greyson", "Ashley", "Adam", "Nicole", "Ian", "Leila", "Austin", "Hailey", "Santiago",
-    "Gabriella", "Jordan", "Katherine", "Cooper", "Natalia", "Brayden", "Alice", "Roman", "Trinity", "Evan",
-    "Khloe", "Ezekiel", "Serenity", "Xander", "Sadie", "Jose", "Jasmine", "Jace", "Julia", "Jameson",
-    "Kylie", "Leonardo", "Mackenzie", "Bryson", "Kaylee", "Axel", "Sophie", "Everett", "Brielle", "Parker",
-    "Madeline", "Kai", "Peyton", "Brantley", "Rylee", "Max", "Clara", "Waylon", "Reagan", "Miles"
+    "Skylar", "Charles", "Violet", "Josiah", "Claire", "Hudson", "Bella", "Christian", "Aurora", "Hunter"
 ]
 
 # Realistic last names
@@ -56,16 +47,7 @@ LAST_NAMES = [
     "Stewart", "Morris", "Morales", "Murphy", "Cook", "Rogers", "Gutierrez", "Ortiz", "Morgan", "Cooper",
     "Peterson", "Bailey", "Reed", "Kelly", "Howard", "Ramos", "Kim", "Cox", "Ward", "Richardson",
     "Watson", "Brooks", "Chavez", "Wood", "James", "Bennett", "Gray", "Mendoza", "Ruiz", "Hughes",
-    "Price", "Alvarez", "Castillo", "Sanders", "Patel", "Myers", "Long", "Ross", "Foster", "Jimenez",
-    "Powell", "Jenkins", "Perry", "Russell", "Sullivan", "Bell", "Coleman", "Butler", "Henderson", "Barnes",
-    "Gonzales", "Fisher", "Vasquez", "Simmons", "Romero", "Jordan", "Patterson", "Alexander", "Hamilton", "Graham",
-    "Reynolds", "Griffin", "Wallace", "Moreno", "West", "Cole", "Hayes", "Bryant", "Herrera", "Gibson",
-    "Ellis", "Tran", "Medina", "Aguilar", "Stevens", "Murray", "Ford", "Castro", "Marshall", "Owens",
-    "Harrison", "Fernandez", "McDonald", "Woods", "Washington", "Kennedy", "Wells", "Vargas", "Henry", "Chen",
-    "Freeman", "Webb", "Tucker", "Guzman", "Burns", "Crawford", "Olson", "Simpson", "Porter", "Hunter",
-    "Gordon", "Mendez", "Silva", "Shaw", "Snyder", "Mason", "Dixon", "Munoz", "Hunt", "Hicks",
-    "Holmes", "Palmer", "Wagner", "Black", "Robertson", "Boyd", "Rose", "Stone", "Salazar", "Fox",
-    "Warren", "Mills", "Meyer", "Rice", "Schmidt", "Garza", "Daniels", "Ferguson", "Nichols", "Stephens"
+    "Price", "Alvarez", "Castillo", "Sanders", "Patel", "Myers", "Long", "Ross", "Foster", "Jimenez"
 ]
 
 # Email domains for realistic emails
@@ -90,15 +72,7 @@ CITIES = [
     "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", "Charlotte", "San Francisco",
     "Indianapolis", "Seattle", "Denver", "Washington", "Boston", "El Paso", "Nashville", "Detroit",
     "Oklahoma City", "Portland", "Las Vegas", "Memphis", "Louisville", "Baltimore", "Milwaukee", "Albuquerque",
-    "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas City", "Colorado Springs", "Miami",
-    "Raleigh", "Omaha", "Long Beach", "Virginia Beach", "Oakland", "Minneapolis", "Tampa", "Arlington",
-    "New Orleans", "Wichita", "Cleveland", "Tulsa", "Bakersfield", "Aurora", "Anaheim", "Honolulu",
-    "Santa Ana", "Riverside", "Corpus Christi", "Lexington", "Stockton", "Henderson", "Saint Paul", "St. Louis",
-    "Cincinnati", "Pittsburgh", "Greensboro", "Anchorage", "Plano", "Lincoln", "Orlando", "Irvine",
-    "Newark", "Durham", "Chula Vista", "Toledo", "Fort Wayne", "St. Petersburg", "Laredo", "Jersey City",
-    "Chandler", "Madison", "Lubbock", "Scottsdale", "Reno", "Buffalo", "Gilbert", "Glendale", "North Las Vegas",
-    "Winston-Salem", "Chesapeake", "Norfolk", "Fremont", "Garland", "Irving", "Hialeah", "Richmond", "Boise",
-    "Spokane", "Baton Rouge"
+    "Tucson", "Fresno", "Mesa", "Sacramento", "Atlanta", "Kansas City", "Colorado Springs", "Miami"
 ]
 
 def get_random_email(first_name, last_name):
@@ -240,9 +214,9 @@ def create_user_with_tournaments():
     
     return user, user_tournaments, shipping_address
 
-def create_750_test_users():
-    """Create 750 test users with proper tournament distributions"""
-    logger.info("Starting creation of 750 test users...")
+def create_50_test_users():
+    """Create 50 test users with proper tournament distributions"""
+    logger.info("Starting creation of 50 test users...")
     
     with app.app_context():
         created_users = 0
@@ -250,9 +224,9 @@ def create_750_test_users():
         created_shipping = 0
         
         try:
-            for i in range(750):
-                if i % 50 == 0:
-                    logger.info(f"Creating user {i+1}/750...")
+            for i in range(50):
+                if i % 10 == 0:
+                    logger.info(f"Creating user {i+1}/50...")
                 
                 user, user_tournaments, shipping_address = create_user_with_tournaments()
                 
@@ -261,8 +235,8 @@ def create_750_test_users():
                 if shipping_address:
                     created_shipping += 1
                 
-                # Commit every 25 users to avoid memory issues
-                if (i + 1) % 25 == 0:
+                # Commit every 10 users to avoid memory issues
+                if (i + 1) % 10 == 0:
                     db.session.commit()
                     logger.info(f"Committed batch ending at user {i+1}")
             
@@ -313,11 +287,11 @@ def test_results():
             logger.info(f"{i}. {user.name} -> {tournament.name}: {ut.session_label}")
 
 if __name__ == "__main__":
-    success = create_750_test_users()
+    success = create_50_test_users()
     
     if success:
         test_results()
-        print("750 test users created successfully!")
+        print("50 test users created successfully!")
     else:
         print("Failed to create test users")
         sys.exit(1)
