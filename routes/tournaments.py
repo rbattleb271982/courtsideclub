@@ -80,7 +80,7 @@ def list_tournaments():
                           attendance_counts=attendance_counts)
 
 
-@tournaments_bp.route('/tournaments/<tournament_slug>', methods=['GET', 'POST'])
+@tournaments_bp.route('/tournaments_admin/<tournament_slug>', methods=['GET', 'POST'])
 @login_required
 def view_tournament(tournament_slug):
     print("="*50)
