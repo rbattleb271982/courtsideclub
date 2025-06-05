@@ -30,6 +30,9 @@ body {
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
   line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .tournament-container h3 {
@@ -47,18 +50,19 @@ body {
 
 .tournament-links li {
   margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .tournament-links a {
   color: #2c7a7b;
   text-decoration: none;
   font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   padding: 0.5rem 0;
   border-radius: 4px;
   transition: background-color 0.2s ease;
+  flex: 1;
 }
 
 .tournament-links a:hover {
@@ -148,13 +152,13 @@ body {
 {% block content %}
 <div class="tournament-container">
   <h1>{{ tournament.name }}{% if tournament.alt_name %} ({{ tournament.alt_name }}){% endif %}</h1>
-  <p>📍 {{ tournament.city }}, {{ tournament.country }}</p>
-  <p>📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
+  <p><span>📍</span>{{ tournament.city }}, {{ tournament.country }}</p>
+  <p><span>📅</span>{{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
 
   <h3>Tournament Information</h3>
   <ul class="tournament-links">
-    <li>🎾 <a href="https://www.rolandgarros.com/en-us/draws" target="_blank">View Tournament Draw</a></li>
-    <li>🌐 <a href="https://www.rolandgarros.com/en-us/" target="_blank">Official Site</a></li>
+    <li><span>🎾</span><a href="https://www.rolandgarros.com/en-us/draws" target="_blank">View Tournament Draw</a></li>
+    <li><span>🌐</span><a href="https://www.rolandgarros.com/en-us/" target="_blank">Official Site</a></li>
   </ul>
 
   <div class="snapshot-card">
