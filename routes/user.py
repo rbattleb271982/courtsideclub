@@ -130,11 +130,17 @@ def tournament_detail(tournament_slug):
     
     # Process form submission for session selection
     if request.method == 'POST':
+        print(f"DEBUG: POST request received for tournament {tournament_slug}")
+        print(f"DEBUG: Form data: {dict(request.form)}")
+        
         # Get selected sessions
         selected_sessions = request.form.getlist('sessions')
+        print(f"DEBUG: Selected sessions from form: {selected_sessions}")
+        
         # Get wants_to_meet preference using standardized field name
         wants_to_meet_value = request.form.get('wants_to_meet')
-        wants_to_meet = wants_to_meet_value == 'true' if wants_to_meet_value else False
+        wants_to_meet = wants_to_meet_value == 'on' if wants_to_meet_value else False
+        print(f"DEBUG: wants_to_meet checkbox value: {wants_to_meet_value}, processed: {wants_to_meet}")
         
         # Get or create user tournament registration
         user_tournament = UserTournament.query.filter_by(
