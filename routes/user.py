@@ -205,6 +205,7 @@ def tournament_detail(tournament_slug):
         wants_to_meet = user_tournament.wants_to_meet if user_tournament.wants_to_meet is not None else False
         print(f"DEBUG: user_attending = {user_attending}, wants_to_meet = {wants_to_meet}")
         print(f"DEBUG: tournament.sessions = {tournament.sessions}")
+        print(f"DEBUG: Will show session UI = {user_attending}")
         if user_tournament.session_label:
             selected_sessions = user_tournament.session_label.split(',')
             print(f"DEBUG: selected_sessions = {selected_sessions}")
