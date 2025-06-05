@@ -80,13 +80,10 @@ def list_tournaments():
                           attendance_counts=attendance_counts)
 
 
-@tournaments_bp.route('/tournaments_admin/<tournament_slug>', methods=['GET', 'POST'])
-@login_required
-def view_tournament(tournament_slug):
-    print("="*50)
-    print(f"TOURNAMENTS ROUTE ACCESSED: {tournament_slug}")
-    print("="*50)
-    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+# DISABLED - This route was conflicting with user.tournament_detail
+# @tournaments_bp.route('/tournaments_admin/<tournament_slug>', methods=['GET', 'POST'])
+# @login_required
+# def view_tournament(tournament_slug):
     
     # Get current user's tournament registration
     user_tournament = UserTournament.query.filter_by(
