@@ -187,11 +187,11 @@ from routes.admin_routes import admin_bp
 from routes.attendance_debug import attendance_debug_bp
 from routes.event_test import event_test_bp
 
+app.register_blueprint(main_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(tournaments_bp)
 app.register_blueprint(debug_bp)
 app.register_blueprint(user_bp)
-app.register_blueprint(main_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(attendance_debug_bp)
 app.register_blueprint(event_test_bp)
