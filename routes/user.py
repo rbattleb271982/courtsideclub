@@ -126,6 +126,7 @@ def home():
 @login_required
 def tournament_detail(tournament_slug):
     print(f"DEBUG: USER ROUTE CALLED for {tournament_slug}")
+    print("DEBUG: Route execution started")
     # Get the tournament by slug
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     
