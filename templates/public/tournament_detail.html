@@ -7,40 +7,51 @@
 .tournament-container {
   max-width: 600px;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
+  padding: 1rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: white;
+  min-height: 100vh;
 }
 
 .tournament-title {
-  font-size: 1.75rem;
+  font-size: 1.625rem;
   font-weight: 700;
-  color: #2d3748;
-  margin-bottom: 0.75rem;
-  line-height: 1.2;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+  line-height: 1.25;
 }
 
 .tournament-subtitle {
   color: #4a5568;
-  margin-bottom: 2rem;
-  font-size: 1rem;
-  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.location-info, .date-info {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .section-title {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  color: #2d3748;
-  margin: 2rem 0 1rem 0;
+  color: #1a202c;
+  margin: 1.5rem 0 0.75rem 0;
 }
 
 .tournament-links {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 1.5rem 0;
 }
 
 .tournament-links li {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .tournament-links a {
@@ -50,109 +61,173 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
 .tournament-links a:hover {
-  text-decoration: underline;
+  background-color: #e6f5f3;
+  text-decoration: none;
 }
 
 .snapshot-card {
-  background: #f7fafc;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin: 1rem 0 2rem 0;
-  border-left: 4px solid #2c7a7b;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin: 0.75rem 0 1.5rem 0;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .snapshot-card p {
-  margin: 0.75rem 0;
+  margin: 0.5rem 0;
   font-weight: 500;
   color: #2d3748;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.snapshot-card p:first-child {
+  margin-top: 0;
+}
+
+.snapshot-card p:last-child {
+  margin-bottom: 0;
+}
+
+.cta-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
 }
 
 .cta-text {
-  text-align: center;
-  margin: 2rem 0 1.5rem 0;
-  color: #2d3748;
-  font-size: 1.1rem;
+  margin: 0 0 0.75rem 0;
+  color: #1a202c;
+  font-size: 1rem;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .cta-description {
-  text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: #4a5568;
   line-height: 1.5;
+  font-size: 0.9rem;
 }
 
 .button-container {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
-.button-outline {
-  padding: 0.75rem 2rem;
+.btn {
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 100px;
+  flex: 1;
+  max-width: 140px;
+}
+
+.btn-outline {
   border: 2px solid #2c7a7b;
   background: white;
   color: #2c7a7b;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  display: inline-block;
-  text-align: center;
-  min-width: 120px;
 }
 
-.button-outline:hover {
+.btn-outline:hover {
   background: #2c7a7b;
-  color: white;
-  text-decoration: none;
-}
-
-.button-primary {
-  padding: 0.75rem 2rem;
-  background: #2c7a7b;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  display: inline-block;
-  text-align: center;
-  min-width: 120px;
-}
-
-.button-primary:hover {
-  background: #285e61;
   color: white;
   text-decoration: none;
   transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(44, 122, 123, 0.3);
 }
 
-@media (max-width: 480px) {
+.btn-primary {
+  background: #2c7a7b;
+  color: white;
+  border: 2px solid #2c7a7b;
+}
+
+.btn-primary:hover {
+  background: #285e61;
+  border-color: #285e61;
+  color: white;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(40, 94, 97, 0.3);
+}
+
+/* Touch targets for mobile */
+@media (max-width: 768px) {
   .tournament-container {
-    padding: 1rem 0.75rem;
+    padding: 0.75rem;
   }
   
   .tournament-title {
     font-size: 1.5rem;
   }
   
-  .button-container {
+  .tournament-subtitle {
     flex-direction: column;
-    align-items: center;
+    gap: 0.25rem;
   }
   
-  .button-outline,
-  .button-primary {
+  .tournament-links a {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .snapshot-card {
+    padding: 1rem;
+  }
+  
+  .cta-section {
+    padding: 1.25rem;
+    margin: 1.5rem -0.75rem 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .button-container {
+    gap: 0.5rem;
+  }
+  
+  .btn {
+    min-height: 48px;
+    font-size: 1rem;
+    padding: 1rem;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+  .button-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .btn {
+    max-width: none;
     width: 100%;
-    max-width: 200px;
   }
 }
 </style>
@@ -161,12 +236,15 @@
 {% block content %}
 <div class="tournament-container">
   <h1 class="tournament-title">{{ tournament.name }}</h1>
-  <p class="tournament-subtitle">📍 {{ tournament.city }}, {{ tournament.country }} &nbsp;&nbsp; 📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
+  <div class="tournament-subtitle">
+    <div class="location-info">📍 {{ tournament.city }}, {{ tournament.country }}</div>
+    <div class="date-info">📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</div>
+  </div>
 
   <h3 class="section-title">Tournament Information</h3>
   <ul class="tournament-links">
-    <li>🎾 <a href="https://www.rolandgarros.com/en-us/draws" target="_blank">View Tournament Draw</a></li>
-    <li>🌐 <a href="https://www.rolandgarros.com/en-us/" target="_blank">Official Site</a></li>
+    <li>🎾 <a href="https://www.rolandgarros.com/en-us/draws" target="_blank" rel="noopener">View Tournament Draw</a></li>
+    <li>🌐 <a href="https://www.rolandgarros.com/en-us/" target="_blank" rel="noopener">Official Site</a></li>
   </ul>
 
   <h3 class="section-title">Tournament Snapshot</h3>
@@ -176,12 +254,14 @@
     <p>📅 Most Popular Session: {{ most_popular_session or 'TBD' }}</p>
   </div>
 
-  <h3 class="cta-text">See who's attending — and meet fellow fans!</h3>
-  <p class="cta-description">Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
-  
-  <div class="button-container">
-    <a href="{{ url_for('auth.login') }}" class="button-outline">Log In</a>
-    <a href="{{ url_for('auth.signup') }}" class="button-primary">Sign Up</a>
+  <div class="cta-section">
+    <h3 class="cta-text">See who's attending — and meet fellow fans!</h3>
+    <p class="cta-description">Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
+    
+    <div class="button-container">
+      <a href="{{ url_for('auth.login') }}" class="btn btn-outline" role="button">Log In</a>
+      <a href="{{ url_for('auth.signup') }}" class="btn btn-primary" role="button">Sign Up</a>
+    </div>
   </div>
 </div>
 {% endblock %}
