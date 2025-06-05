@@ -1,0 +1,64 @@
+📌 Do not affect the logged-in version of tournament detail pages. Do not use checkpoints unless I explicitly say so.
+Please update the public-facing tournament detail page (/tournaments/<slug>) to match the mobile-first layout mockup shown. This is for anonymous users only.
+🔹 1. Route Logic (keep as-is if already implemented)
+Confirm that the public route in routes/main.py looks like:
+@main_bp.route('/tournaments/<slug>')
+def public_tournament_detail(slug):
+    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
+
+    attending_count = UserTournament.query.filter_by(
+        tournament_id=tournament.id, attending=True
+    ).count()
+
+    meeting_count = UserTournament.query.filter_by(
+        tournament_id=tournament.id, attending=True, open_to_meet=True
+    ).count()
+
+    all_sessions = UserTournament.query.with_entities(UserTournament.session_label).filter_by(
+        tournament_id=tournament.id, attending=True
+    ).all()
+
+    from collections import Counter
+    session_counts = Counter()
+    for entry in all_sessions:
+        if entry.session_label:
+            session_counts.update(entry.session_label.split(','))
+
+    most_popular_session = session_counts.most_common(1)[0][0] if session_counts else None
+
+    return render_template(
+        'public/tournament_detail.html',
+        tournament=tournament,
+        attending_count=attending_count,
+        meeting_count=meeting_count,
+        most_popular_session=most_popular_session
+    )
+🔹 2. Update Template: templates/public/tournament_detail.html
+Replace the current layout with the following:
+<h1>{{ tournament.name }} ({{ tournament.alt_name }})</h1>
+<p>📍 {{ tournament.city }}, {{ tournament.country }} &nbsp;&nbsp; 📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
+
+<h3>Tournament Information</h3>
+<ul class="tournament-links">
+  <li>🎾 <a href="https://www.rolandgarros.com/en-us/draws" target="_blank">View Tournament Draw</a></li>
+  <li>🌐 <a href="https://www.rolandgarros.com/en-us/" target="_blank">Official Site</a></li>
+</ul>
+
+<h3>Tournament Snapshot</h3>
+<div class="snapshot-card">
+  <p>✅ {{ attending_count }} Attending</p>
+  <p>👥 {{ meeting_count }} Open to Meet</p>
+  <p>📅 Most Popular Session: {{ most_popular_session or 'TBD' }}</p>
+</div>
+
+<h3>See who’s attending — and meet fellow fans!</h3>
+<p>Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
+<a href="{{ url_for('auth.login') }}" class="button-outline">Log In</a>
+<a href="{{ url_for('auth.signup') }}" class="button-primary">Sign Up</a>
+🔹 3. Styling Notes (CSS Optional)
+Ensure:
+Buttons are tappable on mobile
+Text spacing is compact
+Snapshot stats are grouped in a card-like container
+Links open in a new tab (target="_blank")
+✅ Let me know once this is implemented and visible on /tournaments/roland-garros. We’ll polish spacing and expand as needed.

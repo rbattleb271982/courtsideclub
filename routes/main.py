@@ -63,9 +63,34 @@ def public_tournament_detail(slug):
                             user_tournament=user_tournament,
                             stats=stats)
     
-    # Show limited info for non-logged in users
-    return render_template('public/tournament_detail.html', 
-                         tournament=tournament)
+    # Public version for anonymous users
+    attending_count = UserTournament.query.filter_by(
+        tournament_id=tournament.id, attending=True
+    ).count()
+
+    meeting_count = UserTournament.query.filter_by(
+        tournament_id=tournament.id, attending=True, wants_to_meet=True
+    ).count()
+
+    all_sessions = UserTournament.query.with_entities(UserTournament.session_label).filter_by(
+        tournament_id=tournament.id, attending=True
+    ).all()
+
+    from collections import Counter
+    session_counts = Counter()
+    for entry in all_sessions:
+        if entry.session_label:
+            session_counts.update(entry.session_label.split(','))
+
+    most_popular_session = session_counts.most_common(1)[0][0] if session_counts else None
+
+    return render_template(
+        'public/tournament_detail.html',
+        tournament=tournament,
+        attending_count=attending_count,
+        meeting_count=meeting_count,
+        most_popular_session=most_popular_session
+    )
 
 @main_bp.route('/how-it-works')
 def how_it_works():
