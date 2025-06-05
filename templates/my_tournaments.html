@@ -177,10 +177,10 @@
                                 
                                 <!-- Action buttons at bottom of card -->
                                 <div class="mt-3">
-                                    <a href="{{ url_for('tournaments.view_tournament', tournament_slug=ut.tournament.slug) }}" class="btn btn-primary btn-sm w-100 mb-2">View Details</a>
+                                    <a href="{{ url_for('user.tournament_detail', tournament_slug=ut.tournament.slug) }}" class="btn btn-primary btn-sm w-100 mb-2">View Details</a>
                                     
                                     <p class="shared-history-link">
-                                      <a href="{{ url_for('tournaments.view_tournament', tournament_slug=ut.tournament.slug) }}#shared-history">
+                                      <a href="{{ url_for('user.tournament_detail', tournament_slug=ut.tournament.slug) }}#shared-history">
                                         Members' past events →
                                       </a>
                                     </p>

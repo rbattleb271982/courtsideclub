@@ -14,7 +14,7 @@
     <li style="margin-bottom: 1em; padding: 1em; border: 1px solid #ccc; border-radius: 6px;">
       <strong>{{ t.name }}</strong> – {{ t.city }}, {{ t.country }}<br>
       🗓 {{ t.start_date.strftime('%b %d') }} – {{ t.end_date.strftime('%b %d') }}<br>
-      <a href="{{ url_for('tournaments.view_tournament', tournament_slug=t.id) }}">View Tournament Details</a>
+      <a href="{{ url_for('user.tournament_detail', tournament_slug=t.id) }}">View Tournament Details</a>
     </li>
   {% endfor %}
 </ul>
