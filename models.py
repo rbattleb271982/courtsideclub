@@ -81,6 +81,7 @@ class User(UserMixin, db.Model):
     notifications = db.Column(db.Boolean, default=True)
     welcome_seen = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
+    test_user = db.Column(db.Boolean, default=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     
     def get_full_name(self):
