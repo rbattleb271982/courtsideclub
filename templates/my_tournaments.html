@@ -97,7 +97,7 @@
                             <div class="card-body p-3">
                                 <!-- Tournament title with mobile-optimized size -->
                                 <h5 class="tournament-title">
-                                    <a href="{{ url_for('tournaments.view_tournament', tournament_slug=ut.tournament.slug) }}">{{ ut.tournament.name }}</a>
+                                    <a href="{{ url_for('user.tournament_detail', tournament_slug=ut.tournament.slug) }}">{{ ut.tournament.name }}</a>
                                 </h5>
                                 
                                 <!-- Tournament metadata with mobile-optimized styling -->
