@@ -303,31 +303,46 @@ def tournament_detail(tournament_slug):
             }
     
     # Calculate dates for each tournament day
-    # Use only imports already available at top of file
+    # Generate tournament days based on actual sessions from database
     import datetime as dt
-    day_dates = []
-    start_date = tournament.start_date
-    for i in range(7):  # Generate 7 days of dates
-        day_date = start_date + dt.timedelta(days=i)
-        day_dates.append({
-            'day_number': i + 1,
-            'date': day_date,
-            'formatted': day_date.strftime('%b %d')
-        })
+    tournament_days = []
+    
+    # Extract unique days from tournament sessions
+    if tournament.sessions:
+        unique_days = set()
+        for session in tournament.sessions:
+            # Extract day number from session string like "Day 1 - Day" or "Day 1 - Night"
+            if session.startswith('Day '):
+                try:
+                    day_part = session.split(' - ')[0]  # Gets "Day 1"
+                    day_num = int(day_part.replace('Day ', ''))  # Gets 1
+                    unique_days.add(day_num)
+                except (ValueError, IndexError):
+                    continue
+        
+        # Create tournament_days list from unique days
+        start_date = tournament.start_date
+        for day_num in sorted(unique_days):
+            day_date = start_date + dt.timedelta(days=day_num - 1)
+            tournament_days.append({
+                'day_num': str(day_num),
+                'date': day_date,
+                'formatted': day_date.strftime('%b %d')
+            })
     
     # Check if sessions were just saved (from query param)
     session_saved = request.args.get('session_saved', '0') == '1'
     
     return render_template('user/tournament_detail.html',
-                          day_dates=day_dates,
                          tournament=tournament,
+                         tournament_days=tournament_days,
                          user_tournament=user_tournament,
                          stats=stats,
                          attending_count=stats['attending'],
                          meeting_count=stats['meetup'],
                          selected_sessions=selected_sessions,
                          session_stats=session_stats,
-                         session_counts=session_counts,  # Add session_counts to template context
+                         session_counts=session_counts,
                          wants_to_meet=wants_to_meet,
                          user_attending=user_attending,
                          days_until=days_until,
