@@ -30,77 +30,70 @@
   margin: 0 auto;
 }
 
-.tournaments-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 1fr;
-}
-
-.tournament-row {
+.tournaments-table-container {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
   border: 1px solid #e2e8f0;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1rem;
-  align-items: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tournament-row:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+.tournaments-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.tournament-info {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1rem;
-  align-items: center;
-}
-
-.tournament-details h2 {
-  font-size: 1.5rem;
-  color: #2d3748;
-  margin: 0 0 0.5rem 0;
+.tournaments-table th {
+  background: #f7fafc;
+  padding: 1rem;
+  text-align: left;
   font-weight: 600;
-}
-
-.tournament-meta {
-  display: flex;
-  gap: 1.5rem;
-  color: #4a5568;
+  color: #2d3748;
+  border-bottom: 2px solid #e2e8f0;
   font-size: 0.95rem;
 }
 
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
+.tournaments-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
 }
 
-.meta-item span {
+.tournaments-table tr:last-child td {
+  border-bottom: none;
+}
+
+.tournaments-table tr:hover {
+  background: #f7fafc;
+}
+
+.tournament-name {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.tournament-type {
+  background: #e6f5f3;
+  color: #2c7a7b;
+  padding: 0.25rem 0.5rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
   font-weight: 500;
-}
-
-.tournament-actions {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
+  display: inline-block;
 }
 
 .btn-view {
   background: #2c7a7b;
   color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.9rem;
   transition: background-color 0.2s ease;
-  border: none;
-  cursor: pointer;
+  display: inline-block;
 }
 
 .btn-view:hover {
@@ -109,36 +102,56 @@
   text-decoration: none;
 }
 
-.tournament-badge {
-  background: #e6f5f3;
-  color: #2c7a7b;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
+/* Mobile responsive design */
 @media (max-width: 768px) {
-  .tournament-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .tournaments-table,
+  .tournaments-table thead,
+  .tournaments-table tbody,
+  .tournaments-table th,
+  .tournaments-table td,
+  .tournaments-table tr {
+    display: block;
   }
-  
-  .tournament-info {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+
+  .tournaments-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
   }
-  
-  .tournament-meta {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-start;
+
+  .tournaments-table tr {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   }
-  
-  .tournament-actions {
-    justify-content: center;
+
+  .tournaments-table td {
+    border: none;
+    padding: 0.5rem 0;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  
+
+  .tournaments-table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #4a5568;
+    flex-shrink: 0;
+    margin-right: 1rem;
+    min-width: 80px;
+  }
+
+  .tournaments-table-container {
+    box-shadow: none;
+    background: transparent;
+    border: none;
+  }
+
   .page-header h1 {
     font-size: 2rem;
   }
@@ -153,32 +166,37 @@
     <p>Discover upcoming tennis tournaments and connect with other fans attending</p>
   </div>
   
-  <div class="tournaments-grid">
-    {% for t in tournaments %}
-    <div class="tournament-row">
-      <div class="tournament-info">
-        <div class="tournament-details">
-          <h2>{{ t.name }}</h2>
-          <div class="tournament-meta">
-            <div class="meta-item">
-              <span>📍</span> {{ t.city }}, {{ t.country }}
-            </div>
-            <div class="meta-item">
-              <span>📅</span> {{ t.start_date.strftime('%B %d, %Y') }}
-            </div>
-            <div class="meta-item">
-              <span class="tournament-badge">{{ t.event_type or 'Tournament' }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tournament-actions">
-        <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="btn-view">
-          View Details
-        </a>
-      </div>
-    </div>
-    {% endfor %}
+  <div class="tournaments-table-container">
+    <table class="tournaments-table">
+      <thead>
+        <tr>
+          <th>Tournament</th>
+          <th>Location</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tournaments %}
+        <tr>
+          <td data-label="Tournament">
+            <div class="tournament-name">{{ t.name }}</div>
+          </td>
+          <td data-label="Location">{{ t.city }}, {{ t.country }}</td>
+          <td data-label="Date">{{ t.start_date.strftime('%B %d, %Y') }}</td>
+          <td data-label="Type">
+            <span class="tournament-type">{{ t.event_type or 'Tournament' }}</span>
+          </td>
+          <td data-label="Actions">
+            <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="btn-view">
+              View Details
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 {% endblock %}
