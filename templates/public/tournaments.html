@@ -74,6 +74,21 @@
   margin-bottom: 0.25rem;
 }
 
+.tournament-name-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.tournament-name-link:hover .tournament-name {
+  color: #2c7a7b;
+  text-decoration: underline;
+}
+
+.tournament-name-link:hover {
+  color: inherit;
+}
+
 .tournament-type {
   background: #e6f5f3;
   color: #2c7a7b;
@@ -174,24 +189,20 @@
           <th>Location</th>
           <th>Date</th>
           <th>Type</th>
-          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for t in tournaments %}
         <tr>
           <td data-label="Tournament">
-            <div class="tournament-name">{{ t.name }}</div>
+            <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="tournament-name-link">
+              <div class="tournament-name">{{ t.name }}</div>
+            </a>
           </td>
           <td data-label="Location">{{ t.city }}, {{ t.country }}</td>
           <td data-label="Date">{{ t.start_date.strftime('%B %d, %Y') }}</td>
           <td data-label="Type">
             <span class="tournament-type">{{ t.event_type or 'Tournament' }}</span>
-          </td>
-          <td data-label="Actions">
-            <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="btn-view">
-              View Details
-            </a>
           </td>
         </tr>
         {% endfor %}
