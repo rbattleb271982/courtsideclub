@@ -343,18 +343,19 @@ def tournament_detail(tournament_slug):
     # Check if sessions were just saved (from query param)
     session_saved = request.args.get('session_saved', '0') == '1'
     
-    # CRITICAL DEBUG OUTPUT - CAPTURE ALL VARIABLES
+    # CRITICAL DEBUG - CHECK TEMPLATE CONDITIONALS
     print("="*80)
-    print("CRITICAL TOURNAMENT DEBUG DATA:")
+    print("TEMPLATE CONDITIONAL DEBUG:")
+    print(f"user_attending = {user_attending} (type: {type(user_attending)})")
+    print(f"user_attending evaluates to: {bool(user_attending)}")
     print(f"tournament.sessions = {tournament.sessions}")
-    print(f"tournament.sessions type = {type(tournament.sessions)}")
-    print(f"user_attending = {user_attending}")
-    print(f"selected_sessions = {selected_sessions}")
-    print(f"session_stats = {session_stats}")
-    print(f"user_tournament = {user_tournament}")
-    print(f"tournament_days = {tournament_days}")
+    print(f"tournament_days length = {len(tournament_days) if tournament_days else 0}")
     print(f"session_counts = {session_counts}")
-    print(f"stats = {stats}")
+    print(f"Template will show session UI: {bool(user_attending)}")
+    if user_tournament:
+        print(f"UserTournament exists: attending={user_tournament.attending}")
+    else:
+        print("No UserTournament record found")
     print("="*80)
     
     return render_template('user/tournament_detail.html',
