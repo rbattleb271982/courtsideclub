@@ -1,43 +1,16 @@
 
-{% extends "layout.html" %}
+{% extends "public/base.html" %}
 
 {% block title %}Browse Tournaments{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1 class="mb-4">Browse Tournaments</h1>
-  
-  <p class="text-sm text-gray-700 mb-4">
-    Click into a tournament you're interested in to mark yourself as attending and select the specific sessions you'll be at.
-  </p>
-
-  {% set ns = namespace(current_month=None) %}
-  {% for tournament in tournaments %}
-    {% if tournament.start_date.strftime('%B %Y') != ns.current_month %}
-      {% set ns.current_month = tournament.start_date.strftime('%B %Y') %}
-      <h2 class="text-lg font-semibold mt-6">{{ ns.current_month }}</h2>
-    {% endif %}
-    
-    <div class="tournament-card mb-4 p-4 border rounded">
-      <h3 class="text-xl font-bold">{{ tournament.name }}</h3>
-      <p class="text-gray-600">{{ tournament.location }}</p>
-      <p class="text-gray-600">{{ tournament.start_date.strftime('%B %d') }} - {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
-      
-      <div class="mt-3">
-        <form action="{{ url_for('tournaments.mark_attending', tournament_id=tournament.id) }}" method="POST" class="inline">
-          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-full text-sm hover:bg-green-500 transition">
-            I'm Attending
-          </button>
-        </form>
-        <a href="{{ url_for('tournaments.view_tournament', slug=tournament.slug) }}" class="ml-2 text-blue-600 hover:underline">View Details</a>
-      </div>
-
-      <p class="text-sm text-gray-500 mt-2">
-        {{ tournament.attendee_count or 0 }} attending •
-        {{ tournament.hand_raised_count or 0 }} open to meetups •
-        {{ tournament.lanyard_count or 0 }} lanyards ordered
-      </p>
-    </div>
-  {% endfor %}
-</div>
+<h1>Upcoming Tournament</h1>
+{% for t in tournaments %}
+  <div class="tournament-card">
+    <h2>{{ t.name }}</h2>
+    <p>{{ t.city }}, {{ t.country }}</p>
+    <p>{{ t.start_date.strftime('%B %d, %Y') }}</p>
+    <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}">View Details</a>
+  </div>
+{% endfor %}
 {% endblock %}
