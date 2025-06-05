@@ -95,7 +95,7 @@ def admin_dashboard():
         flash(f"Error loading dashboard: {str(e)}", "danger")
         return render_template('admin_dashboard.html', dashboard_data=[])
 
-@admin_bp.route('/tournament/<tournament_slug>', methods=['GET'])
+@admin_bp.route('/admin/tournament/<tournament_slug>', methods=['GET'])
 @login_required
 def view_tournament(tournament_slug):
     if not current_user.is_admin:
