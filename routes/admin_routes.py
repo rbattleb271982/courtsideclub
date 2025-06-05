@@ -98,6 +98,7 @@ def admin_dashboard():
 @admin_bp.route('/admin/tournament/<tournament_slug>', methods=['GET'])
 @login_required
 def view_tournament(tournament_slug):
+    print(f"DEBUG: ADMIN ROUTE CALLED for {tournament_slug}")
     if not current_user.is_admin:
         flash("Access denied.", "danger")
         return redirect(url_for("main.public_home"))
