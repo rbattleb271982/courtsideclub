@@ -341,19 +341,14 @@ def tournament_detail(tournament_slug):
     # Check if sessions were just saved (from query param)
     session_saved = request.args.get('session_saved', '0') == '1'
     
-    # DEBUG: Print all variables before render_template
-    print(f"DEBUG: tournament = {tournament}")
-    print(f"DEBUG: tournament.sessions = {tournament.sessions if tournament else 'None'}")
-    print(f"DEBUG: user_tournament = {user_tournament}")
+    # DEBUG: Print critical variables for troubleshooting
+    print(f"DEBUG: tournament.sessions = {tournament.sessions}")
+    print(f"DEBUG: user_attending = {user_attending}")
     print(f"DEBUG: selected_sessions = {selected_sessions}")
     print(f"DEBUG: session_stats = {session_stats}")
+    print(f"DEBUG: user_tournament = {user_tournament}")
+    print(f"DEBUG: tournament_days length = {len(tournament_days) if tournament_days else 0}")
     print(f"DEBUG: session_counts = {session_counts}")
-    print(f"DEBUG: tournament_days = {tournament_days}")
-    print(f"DEBUG: user_attending = {user_attending}")
-    print(f"DEBUG: wants_to_meet = {wants_to_meet}")
-    print(f"DEBUG: days_until = {days_until}")
-    print(f"DEBUG: session_saved = {session_saved}")
-    print(f"DEBUG: stats = {stats}")
     print(f"DEBUG: About to render template: user/tournament_detail.html")
     
     return render_template('user/tournament_detail.html',
