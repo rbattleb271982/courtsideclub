@@ -72,107 +72,62 @@
 }
 
 .snapshot-card {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin: 0.75rem 0 1.5rem 0;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.snapshot-card h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #1a202c;
+  font-weight: 600;
 }
 
 .snapshot-card p {
   margin: 0.5rem 0;
-  font-weight: 500;
+  font-size: 0.95rem;
   color: #2d3748;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+}
+
+.button-outline, .button-primary {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
   font-size: 0.95rem;
-}
-
-.snapshot-card p:first-child {
-  margin-top: 0;
-}
-
-.snapshot-card p:last-child {
-  margin-bottom: 0;
-}
-
-.cta-section {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #f7fafc;
-  border-radius: 12px;
+  margin-right: 0.5rem;
+  margin-top: 0.75rem;
   text-align: center;
-  border: 1px solid #e2e8f0;
-}
-
-.cta-text {
-  margin: 0 0 0.75rem 0;
-  color: #1a202c;
-  font-size: 1rem;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.cta-description {
-  margin-bottom: 1.5rem;
-  color: #4a5568;
-  line-height: 1.5;
-  font-size: 0.9rem;
-}
-
-.button-container {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: center;
-}
-
-.btn {
-  padding: 0.875rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
+  text-decoration: none;
   transition: all 0.2s ease;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  min-width: 100px;
-  flex: 1;
-  max-width: 140px;
 }
 
-.btn-outline {
-  border: 2px solid #2c7a7b;
-  background: white;
-  color: #2c7a7b;
+.button-outline {
+  border: 2px solid #00703c;
+  color: #00703c;
+  background: transparent;
 }
 
-.btn-outline:hover {
-  background: #2c7a7b;
+.button-outline:hover {
+  background: #00703c;
   color: white;
   text-decoration: none;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(44, 122, 123, 0.3);
 }
 
-.btn-primary {
-  background: #2c7a7b;
+.button-primary {
+  background-color: #00703c;
   color: white;
-  border: 2px solid #2c7a7b;
+  border: 2px solid #00703c;
 }
 
-.btn-primary:hover {
-  background: #285e61;
-  border-color: #285e61;
+.button-primary:hover {
+  background-color: #005a2e;
+  border-color: #005a2e;
   color: white;
   text-decoration: none;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(40, 94, 97, 0.3);
 }
 
 /* Touch targets for mobile */
@@ -235,33 +190,27 @@
 
 {% block content %}
 <div class="tournament-container">
-  <h1 class="tournament-title">{{ tournament.name }}</h1>
-  <div class="tournament-subtitle">
-    <div class="location-info">📍 {{ tournament.city }}, {{ tournament.country }}</div>
-    <div class="date-info">📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</div>
-  </div>
+  <h1>{{ tournament.name }} ({{ tournament.alt_name }})</h1>
+  <p>📍 {{ tournament.city }}, {{ tournament.country }}</p>
+  <p>📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
 
-  <h3 class="section-title">Tournament Information</h3>
+  <h3>Tournament Information</h3>
   <ul class="tournament-links">
-    <li>🎾 <a href="https://www.rolandgarros.com/en-us/draws" target="_blank" rel="noopener">View Tournament Draw</a></li>
-    <li>🌐 <a href="https://www.rolandgarros.com/en-us/" target="_blank" rel="noopener">Official Site</a></li>
+    <li>🎾 <a href="https://www.rolandgarros.com/en-us/draws" target="_blank">View Tournament Draw</a></li>
+    <li>🌐 <a href="https://www.rolandgarros.com/en-us/" target="_blank">Official Site</a></li>
   </ul>
 
-  <h3 class="section-title">Tournament Snapshot</h3>
   <div class="snapshot-card">
-    <p>✅ {{ attending_count }} Attending</p>
-    <p>👥 {{ meeting_count }} Open to Meet</p>
-    <p>📅 Most Popular Session: {{ most_popular_session or 'TBD' }}</p>
-  </div>
+    <h3>Tournament Snapshot</h3>
+    <p>✅ <strong>{{ attending_count }}</strong> Attending</p>
+    <p>👥 <strong>{{ meeting_count }}</strong> Open to Meet</p>
+    <p>📅 Most Popular Session: <strong>{{ most_popular_session or 'TBD' }}</strong></p>
 
-  <div class="cta-section">
-    <h3 class="cta-text">See who's attending — and meet fellow fans!</h3>
-    <p class="cta-description">Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
-    
-    <div class="button-container">
-      <a href="{{ url_for('auth.login') }}" class="btn btn-outline" role="button">Log In</a>
-      <a href="{{ url_for('auth.signup') }}" class="btn btn-primary" role="button">Sign Up</a>
-    </div>
+    <h3>See who's attending — and meet fellow fans!</h3>
+    <p>Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
+
+    <a href="{{ url_for('auth.login') }}" class="button-outline">Log In</a>
+    <a href="{{ url_for('auth.signup') }}" class="button-primary">Sign Up</a>
   </div>
 </div>
 {% endblock %}

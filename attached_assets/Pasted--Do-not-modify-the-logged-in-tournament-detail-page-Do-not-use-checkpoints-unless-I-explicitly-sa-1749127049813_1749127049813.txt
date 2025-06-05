@@ -1,0 +1,67 @@
+📌 Do not modify the logged-in tournament detail page. Do not use checkpoints unless I explicitly say so.
+Please update the public tournament detail template (templates/public/tournament_detail.html) to match the attached mockup. This is for anonymous users only.
+🔹 1. Template Layout Changes
+Replace the existing template structure with this updated HTML layout:
+<h1>{{ tournament.name }} ({{ tournament.alt_name }})</h1>
+<p>📍 {{ tournament.city }}, {{ tournament.country }}</p>
+<p>📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
+
+<h3>Tournament Information</h3>
+<ul class="tournament-links">
+  <li>🎾 <a href="https://www.rolandgarros.com/en-us/draws" target="_blank">View Tournament Draw</a></li>
+  <li>🌐 <a href="https://www.rolandgarros.com/en-us/" target="_blank">Official Site</a></li>
+</ul>
+
+<div class="snapshot-card">
+  <h3>Tournament Snapshot</h3>
+  <p>✅ <strong>{{ attending_count }}</strong> Attending</p>
+  <p>👥 <strong>{{ meeting_count }}</strong> Open to Meet</p>
+  <p>📅 Most Popular Session: <strong>{{ most_popular_session or 'TBD' }}</strong></p>
+
+  <h3>See who’s attending — and meet fellow fans!</h3>
+  <p>Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
+
+  <a href="{{ url_for('auth.login') }}" class="button-outline">Log In</a>
+  <a href="{{ url_for('auth.signup') }}" class="button-primary">Sign Up</a>
+</div>
+🔹 2. Styling (Add to CSS or Inline)
+.snapshot-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.snapshot-card h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.snapshot-card p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.button-outline, .button-primary {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-right: 0.5rem;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.button-outline {
+  border: 2px solid #00703c;
+  color: #00703c;
+  background: transparent;
+}
+
+.button-primary {
+  background-color: #00703c;
+  color: white;
+  border: none;
+}
