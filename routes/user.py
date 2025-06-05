@@ -125,8 +125,9 @@ def home():
 @user_bp.route('/tournament/<tournament_slug>', methods=['GET', 'POST'])
 @login_required
 def tournament_detail(tournament_slug):
-    print(f"DEBUG: USER ROUTE CALLED for {tournament_slug}")
-    print("DEBUG: Route execution started")
+    print("="*50)
+    print(f"TOURNAMENT DETAIL ROUTE ACCESSED: {tournament_slug}")
+    print("="*50)
     # Get the tournament by slug
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     

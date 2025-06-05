@@ -83,6 +83,9 @@ def list_tournaments():
 @tournaments_bp.route('/tournaments/<tournament_slug>', methods=['GET', 'POST'])
 @login_required
 def view_tournament(tournament_slug):
+    print("="*50)
+    print(f"TOURNAMENTS ROUTE ACCESSED: {tournament_slug}")
+    print("="*50)
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     
     # Get current user's tournament registration
