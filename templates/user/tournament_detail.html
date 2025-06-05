@@ -205,7 +205,7 @@
             <div class="card-body">
                 <!-- Session Selection UI - Visible for both "I'm Attending" and "Maybe Attending" users -->
                 <div class="session-selection-ui" id="session-selection-ui" {% if not user_tournament or not user_tournament.attending %}style="display: none;"{% endif %}>
-                    <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" id="session-form">
+                    <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" id="session-form">
                         <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
                         <div id="hiddenSessionInputs">
                             <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
