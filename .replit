@@ -173,3 +173,7 @@ args = "FLASK_DEBUG=1 python3 -u main.py"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
