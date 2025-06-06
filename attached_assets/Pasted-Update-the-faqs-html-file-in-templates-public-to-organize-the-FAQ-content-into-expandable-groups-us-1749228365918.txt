@@ -1,0 +1,38 @@
+Update the faqs.html file in templates/public/ to organize the FAQ content into expandable groups using nested <details> elements.
+Instructions:
+Use one top-level <details> per group (e.g., Signing Up & Getting Started), with a <summary> heading
+Inside each group, add individual <details> for each question
+Ensure the page is mobile-friendly, cleanly spaced, and accessible
+Add <h2>Frequently Asked Questions</h2> as the main heading at the top
+🧾 HTML to Paste In
+<h2>Frequently Asked Questions</h2>
+
+<details>
+  <summary><strong>🎟️ Signing Up & Getting Started</strong></summary>
+  <details><summary>Do I have to pay for a lanyard?</summary><p>Nope! It's totally free if you've signed up and selected at least one tournament session.</p></details>
+  <details><summary>How do I sign up?</summary><p>Just click “Join Now” on the homepage. You’ll create a quick profile and select which tournaments and sessions you’re attending.</p></details>
+  <details><summary>What happens after I sign up?</summary><p>You’ll be able to see who else is going to tournaments, opt in to meetups, and order your free lanyard.</p></details>
+  <details><summary>Can I invite a friend?</summary><p>Yes! Once you sign up, you'll be able to refer friends and unlock perks.</p></details>
+</details>
+
+<details>
+  <summary><strong>🧑‍🤝‍🧑 Meeting Up with Members</strong></summary>
+  <details><summary>Can I see who else is attending a tournament?</summary><p>Yes — once logged in, just visit any tournament page to see who's going and who's open to meeting up.</p></details>
+  <details><summary>What’s the point of the lanyard?</summary><p>It’s a visual signal that you're part of CourtSide Club and open to connecting with others at the event.</p></details>
+  <details><summary>How do I opt in to meet up?</summary><p>On each tournament page, you can toggle whether you're open to meeting. You'll also choose which sessions you're attending.</p></details>
+  <details><summary>Is there an official meet-up spot?</summary><p>Some events will have suggested meeting spots or times — we’ll include those in your reminder emails if available.</p></details>
+</details>
+
+<details>
+  <summary><strong>🧳 Attending Tournaments</strong></summary>
+  <details><summary>Can I attend more than one tournament?</summary><p>Absolutely — just add them to your profile and select which sessions you’re going to.</p></details>
+  <details><summary>What if my plans change?</summary><p>You can update your attendance or session selections at any time from your dashboard.</p></details>
+  <details><summary>Do I have to attend with friends?</summary><p>Not at all. CourtSide Club is built for solo fans, friend groups, and everyone in between.</p></details>
+</details>
+
+<details>
+  <summary><strong>📦 Lanyard & Perks</strong></summary>
+  <details><summary>When will my lanyard arrive?</summary><p>Once you order it, we’ll ship it to you in advance of your selected tournament(s). You’ll get a tracking number too.</p></details>
+  <details><summary>Do I get a new lanyard for each tournament?</summary><p>No — it’s a one-time lanyard you can use across multiple events.</p></details>
+  <details><summary>Are there other perks?</summary><p>Yes! We’re working on exclusive offers and extras for active members — stay tuned.</p></details>
+</details>
