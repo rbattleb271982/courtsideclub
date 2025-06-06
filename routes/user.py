@@ -196,7 +196,7 @@ def tournament_detail(tournament_slug):
         print(f"DEBUG: After commit verification - attending: {verification.attending if verification else 'NOT FOUND'}")
         
         flash('Your tournament sessions have been saved.', 'success')
-        return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug, session_saved=1))
+        return redirect(url_for('user.my_tournaments'))
     
     # Get current user's tournament registration
     user_tournament = UserTournament.query.filter_by(
