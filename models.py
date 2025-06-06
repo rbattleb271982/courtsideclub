@@ -20,7 +20,11 @@ class JsonEncodedList(types.TypeDecorator):
     def process_result_value(self, value, dialect):
         if value is None:
             return []
-        return json.loads(value)
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            # Handle malformed JSON by returning empty list
+            return []
 
 class JsonEncodedDict(types.TypeDecorator):
     impl = types.Text
@@ -33,7 +37,11 @@ class JsonEncodedDict(types.TypeDecorator):
     def process_result_value(self, value, dialect):
         if value is None:
             return {}
-        return json.loads(value)
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            # Handle malformed JSON by returning empty dict
+            return {}
 
 # Create a proper UserPastTournament model for the many-to-many relationship
 class UserPastTournament(db.Model):
