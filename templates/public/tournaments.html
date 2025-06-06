@@ -81,18 +81,13 @@
 }
 
 .date-column {
-  width: 20%;
+  width: 25%;
   font-weight: 500;
   color: #555;
 }
 
 .name-column {
-  width: 40%;
-}
-
-.location-column {
-  width: 25%;
-  color: #666;
+  width: 60%;
 }
 
 .attending-column {
@@ -141,15 +136,11 @@
   }
   
   .date-column {
-    width: 25%;
+    width: 30%;
   }
   
   .name-column {
-    width: 35%;
-  }
-  
-  .location-column {
-    width: 25%;
+    width: 55%;
   }
   
   .attending-column {
@@ -183,20 +174,18 @@
       <tr>
         <th class="sortable date-column" data-column="date">Date</th>
         <th class="sortable name-column" data-column="name">Tournament Name</th>
-        <th class="sortable location-column" data-column="location">Location</th>
         <th class="sortable attending-column" data-column="attending">Attending</th>
       </tr>
     </thead>
     <tbody>
       {% for t in tournaments %}
-      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-location="{{ t.location.lower() if t.location else '' }}" data-attending="{{ attendance_counts.get(t.id, 0) }}">
+      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-attending="{{ attendance_counts.get(t.id, 0) }}">
         <td class="date-column">{{ t.start_date.strftime('%b %d, %Y') }}</td>
         <td class="name-column">
           <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}">
             {{ t.name }}
           </a>
         </td>
-        <td class="location-column">{{ t.location or 'TBD' }}</td>
         <td class="attending-column">{{ attendance_counts.get(t.id, 0) }}</td>
       </tr>
       {% endfor %}
@@ -248,9 +237,6 @@
         } else if (column === 'name') {
           aVal = a.dataset.name;
           bVal = b.dataset.name;
-        } else if (column === 'location') {
-          aVal = a.dataset.location;
-          bVal = b.dataset.location;
         } else if (column === 'attending') {
           aVal = parseInt(a.dataset.attending);
           bVal = parseInt(b.dataset.attending);
