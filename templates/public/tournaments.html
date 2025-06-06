@@ -1,9 +1,12 @@
 
-{% extends "public/base.html" %}
-
-{% block title %}Browse Tournaments{% endblock %}
-
-{% block head %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Browse Tournaments - CourtSide Club</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 <style>
 /* Complete override of main-content constraints for tournaments page */
 body {
@@ -161,9 +164,31 @@ body {
   }
 }
 </style>
-{% endblock %}
+</head>
+<body>
+  <header class="mobile-header">
+    <div class="nav-container">
+      <div class="logo">🎾 CourtSide Club</div>
+      <nav id="mobile-menu" class="mobile-menu">
+        <a href="{{ url_for('main.public_home') }}">Home</a>
+        <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
+        <a href="{{ url_for('main.public_tournaments') }}">Browse Tournaments</a>
+        <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
+        <a href="{{ url_for('main.faqs') }}">FAQ</a>
+        <a href="{{ url_for('auth.login') }}">Login</a>
+        <a href="{{ url_for('auth.signup') }}">Sign Up</a>
+      </nav>
+      <button class="menu-toggle" onclick="toggleMenu(event)">☰</button>
+    </div>
+  </header>
 
-{% block content %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
 <div class="tournaments-header">
   <h1>Browse Upcoming Tournaments</h1>
   <input type="text" id="tournamentSearch" placeholder="Search tournaments..." class="search-input" />
@@ -266,6 +291,28 @@ body {
 
   // Initialize with date sort
   document.querySelector('[data-column="date"]').classList.add('sort-asc');
+  
+  function toggleMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById('mobile-menu');
+    const isOpen = menu.style.display === 'flex';
+    menu.style.display = isOpen ? 'none' : 'flex';
+  }
+
+  document.addEventListener('click', function(event) {
+    const menu = document.getElementById('mobile-menu');
+    const toggle = document.querySelector('.menu-toggle');
+    if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+      menu.style.display = 'none';
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const menu = document.getElementById('mobile-menu');
+    if (window.innerWidth < 768) {
+      menu.style.display = 'none';
+    }
+  });
   </script>
-</div>
-{% endblock %}
+</body>
+</html>
