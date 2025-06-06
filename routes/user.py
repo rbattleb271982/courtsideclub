@@ -371,6 +371,60 @@ def tournament_detail(tournament_slug):
         print("No UserTournament record found")
     print("="*80)
     
+    # Get past tournaments for users attending this tournament (shared-history logic)
+    shared_past_tournaments = {}
+    
+    # If user is authenticated, show them past tournaments whether other attendees exist or not
+    if current_user.is_authenticated and current_user.id:
+        # Get current user's past tournaments (excluding current tournament)
+        user_past_tournaments = db.session.query(
+            Tournament.name
+        ).join(
+            UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+        ).filter(
+            UserPastTournament.user_id == current_user.id,
+            Tournament.id != tournament.id  # Exclude current tournament
+        ).all()
+        
+        # Format the results as a dictionary with count=1 for each tournament
+        shared_past_tournaments = {name: 1 for name, in user_past_tournaments}
+        
+        # Now get additional attendees' past tournaments (if any)
+        other_attendees = db.session.query(UserTournament.user_id).filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.user_id != current_user.id  # Exclude current user
+        ).all()
+        
+        other_attendee_ids = [user.user_id for user in other_attendees]
+        
+        if other_attendee_ids:
+            # Get past tournaments for other attendees
+            other_past_tournament_counts = db.session.query(
+                Tournament.name, db.func.count(UserPastTournament.user_id).label('count')
+            ).join(
+                UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+            ).filter(
+                UserPastTournament.user_id.in_(other_attendee_ids),
+                Tournament.id != tournament.id  # Exclude current tournament
+            ).group_by(
+                Tournament.name
+            ).all()
+            
+            # Update counts in the shared dictionary
+            for name, count in other_past_tournament_counts:
+                if name in shared_past_tournaments:
+                    shared_past_tournaments[name] += count
+                else:
+                    shared_past_tournaments[name] = count
+    
+    # Convert to sorted list of tuples for template rendering - alphabetically by tournament name (case-insensitive)
+    sorted_shared_tournaments = sorted(shared_past_tournaments.items(), key=lambda x: x[0].lower())
+    
+    print(f"DEBUG: shared_past_tournaments = {shared_past_tournaments}")
+    print(f"DEBUG: sorted_shared_tournaments = {sorted_shared_tournaments}")
+    print(f"DEBUG: len(sorted_shared_tournaments) = {len(sorted_shared_tournaments)}")
+    
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          tournament_days=tournament_days,
@@ -384,7 +438,9 @@ def tournament_detail(tournament_slug):
                          wants_to_meet=wants_to_meet,
                          user_attending=user_attending,
                          days_until=days_until,
-                         session_saved=session_saved)
+                         session_saved=session_saved,
+                         shared_past_tournaments=shared_past_tournaments,
+                         sorted_shared_tournaments=sorted_shared_tournaments)
 
 # Updated profile route to show user profile with past tournaments selection
 @user_bp.route('/add_wishlist', methods=['POST'])
