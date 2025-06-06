@@ -33,12 +33,28 @@ def track_invite_click():
 
 @main_bp.route('/tournaments')
 def public_tournaments():
+    from sqlalchemy import func
+    from models import UserTournament
+    
     # Get all future tournaments ordered by start date
     tournaments = Tournament.query.filter(
         Tournament.start_date >= datetime.date.today()
     ).order_by(Tournament.start_date).all()
     
-    return render_template('public/tournaments.html', tournaments=tournaments)
+    # Get attendance counts for each tournament
+    attendance_counts = {}
+    for tournament in tournaments:
+        count = UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None),
+            UserTournament.session_label != ''
+        ).count()
+        attendance_counts[tournament.id] = count
+    
+    return render_template('public/tournaments.html', 
+                         tournaments=tournaments, 
+                         attendance_counts=attendance_counts)
 
 @main_bp.route('/tournaments/<slug>')
 def public_tournament_detail(slug):

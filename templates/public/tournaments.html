@@ -81,18 +81,25 @@
 }
 
 .date-column {
-  width: 25%;
+  width: 20%;
   font-weight: 500;
   color: #555;
 }
 
 .name-column {
-  width: 45%;
+  width: 40%;
 }
 
 .location-column {
-  width: 30%;
+  width: 25%;
   color: #666;
+}
+
+.attending-column {
+  width: 15%;
+  text-align: center;
+  font-weight: 500;
+  color: #065f46;
 }
 
 .tournaments-container {
@@ -134,15 +141,19 @@
   }
   
   .date-column {
-    width: 30%;
+    width: 25%;
   }
   
   .name-column {
-    width: 40%;
+    width: 35%;
   }
   
   .location-column {
-    width: 30%;
+    width: 25%;
+  }
+  
+  .attending-column {
+    width: 15%;
   }
 }
 
@@ -173,11 +184,12 @@
         <th class="sortable date-column" data-column="date">Date</th>
         <th class="sortable name-column" data-column="name">Tournament Name</th>
         <th class="sortable location-column" data-column="location">Location</th>
+        <th class="sortable attending-column" data-column="attending">Attending</th>
       </tr>
     </thead>
     <tbody>
       {% for t in tournaments %}
-      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-location="{{ t.location.lower() if t.location else '' }}">
+      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-location="{{ t.location.lower() if t.location else '' }}" data-attending="{{ attendance_counts.get(t.id, 0) }}">
         <td class="date-column">{{ t.start_date.strftime('%b %d, %Y') }}</td>
         <td class="name-column">
           <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}">
@@ -185,6 +197,7 @@
           </a>
         </td>
         <td class="location-column">{{ t.location or 'TBD' }}</td>
+        <td class="attending-column">{{ attendance_counts.get(t.id, 0) }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -238,12 +251,25 @@
         } else if (column === 'location') {
           aVal = a.dataset.location;
           bVal = b.dataset.location;
+        } else if (column === 'attending') {
+          aVal = parseInt(a.dataset.attending);
+          bVal = parseInt(b.dataset.attending);
         }
         
-        if (currentSort.direction === 'asc') {
-          return aVal.localeCompare(bVal);
+        if (column === 'attending') {
+          // Numeric sort for attending column
+          if (currentSort.direction === 'asc') {
+            return aVal - bVal;
+          } else {
+            return bVal - aVal;
+          }
         } else {
-          return bVal.localeCompare(aVal);
+          // String sort for other columns
+          if (currentSort.direction === 'asc') {
+            return aVal.localeCompare(bVal);
+          } else {
+            return bVal.localeCompare(aVal);
+          }
         }
       });
       
