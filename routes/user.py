@@ -170,17 +170,30 @@ def tournament_detail(tournament_slug):
         user_tournament.wants_to_meet = wants_to_meet
         user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
         
+        print(f"DEBUG: About to save - session_label: '{user_tournament.session_label}'")
+        print(f"DEBUG: About to save - attending: {user_tournament.attending}")
+        print(f"DEBUG: About to save - wants_to_meet: {user_tournament.wants_to_meet}")
+        
         # Log the event for tracking
         event_data = {
             'tournament_id': tournament.id,
             'tournament_name': tournament.name,
             'selected_sessions': selected_sessions,
             'wants_to_meet': wants_to_meet,
-            'attending': user_tournament.attending
+            'attending': user_tournament.attending,
+            'session_label_saved': user_tournament.session_label
         }
         log_event(current_user.id, 'tournament_session_update', event_data)
         
         db.session.commit()
+        
+        # Verify the save worked
+        verification = UserTournament.query.filter_by(
+            user_id=current_user.id,
+            tournament_id=tournament.id
+        ).first()
+        print(f"DEBUG: After commit verification - session_label: '{verification.session_label if verification else 'NOT FOUND'}'")
+        print(f"DEBUG: After commit verification - attending: {verification.attending if verification else 'NOT FOUND'}")
         
         flash('Your tournament sessions have been saved.', 'success')
         return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug, session_saved=1))
