@@ -5,13 +5,19 @@
   color: #333;
 }
 
-/* Mobile Header Styling */
-.mobile-header {
+/* Top Navigation Wrapper - Cream Background Only */
+.top-nav-wrapper {
   background-color: #fdfdf7;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
+}
+
+/* Mobile Header - No Background */
+.mobile-header {
+  background: none;
 }
 
 .nav-container {
@@ -19,6 +25,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
+  background: none;
 }
 
 .logo {
@@ -35,6 +42,21 @@
   padding: 0.25rem;
   cursor: pointer;
   line-height: 1;
+}
+
+/* Ensure body and main content have white background */
+body {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.main-content {
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 .mobile-menu {
