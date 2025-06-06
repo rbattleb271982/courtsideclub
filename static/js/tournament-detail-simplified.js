@@ -57,3 +57,23 @@ function updateSessionUIVisibility() {
     thinkingMessage.style.display = 'none';
   }
 }
+
+// Function to toggle the previous tournaments list
+function togglePreviousTournaments() {
+  const tournamentList = document.getElementById('tournamentList');
+  const chevron = document.getElementById('chevron');
+  
+  if (tournamentList && chevron) {
+    if (tournamentList.style.display === 'none' || tournamentList.classList.contains('collapsed')) {
+      // Show the list
+      tournamentList.style.display = 'block';
+      tournamentList.classList.remove('collapsed');
+      chevron.textContent = '▲';
+    } else {
+      // Hide the list
+      tournamentList.style.display = 'none';
+      tournamentList.classList.add('collapsed');
+      chevron.textContent = '▼';
+    }
+  }
+}
