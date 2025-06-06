@@ -339,8 +339,8 @@ def send_test_email():
     import os
     from flask import current_app
     
-    # Your test email address - replace with your actual email
-    test_email = "youremail@example.com"  # Replace this with your actual email
+    # Your test email address
+    test_email = "richardbattlebaxter@gmail.com"
     
     # Get FROM_EMAIL from config
     from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
