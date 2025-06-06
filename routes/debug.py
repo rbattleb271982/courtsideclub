@@ -451,16 +451,88 @@ def send_tournament_reminder_debug(user_id=None, tournament_id=None):
             '''
         
         # Send the reminder email to your address for testing
-        from services.email import send_tournament_reminder_email
+        from services.sendgrid_service import send_email
+        from services.email import get_session_attendees_count, get_session_meetup_count
+        from flask import current_app
         
-        # Override the user's email for testing purposes
-        original_email = user.email
-        user.email = "richardbattlebaxter@gmail.com"
+        # Get user's tournament registration
+        user_tournament = db.session.query(UserTournament).filter_by(
+            user_id=user.id,
+            tournament_id=tournament.id,
+            attending=True
+        ).first()
         
-        success = send_tournament_reminder_email(user_id, tournament_id)
+        if not user_tournament or not user_tournament.session_label:
+            return '''
+            <h1>❌ No Session Data</h1>
+            <p>User is not attending tournament or has no sessions selected.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
         
-        # Restore original email
-        user.email = original_email
+        # Count attendees and meetup users
+        attendees_count = get_session_attendees_count(tournament.id, user_tournament.session_label)
+        meetup_count = get_session_meetup_count(tournament.id, user_tournament.session_label)
+        
+        # Exclude current user from meetup count if they're open to meet
+        if user_tournament.open_to_meet:
+            meetup_count = max(0, meetup_count - 1)
+            
+        # Build session summary
+        session_summary = f"<p>Here are the sessions you've selected:</p>"
+        session_summary += f"<ul><li>✅ {user_tournament.session_label}"
+        
+        if meetup_count > 0:
+            session_summary += f" – <strong>{meetup_count} other fan{'s' if meetup_count != 1 else ''}</strong> who are open to meeting up"
+        else:
+            session_summary += " – you're the first to raise your hand for this one!"
+            
+        session_summary += "</li></ul>"
+        
+        # Meetup message based on user's preferences
+        if user_tournament.open_to_meet:
+            meetup_msg = "<p>👋 Great news — you're set to meet other fans at the tournament! We'll send you final details about meeting spots soon.</p>"
+        else:
+            meetup_msg = f"<p>Want to meet other fans? <a href=\"https://courtsideclub.app/login\">Update your preferences</a> to join the meetup.</p>"
+        
+        # Lanyard message
+        has_lanyard = getattr(user, 'lanyard_ordered', False)
+        if has_lanyard:
+            lanyard_msg = "<p>🎉 Your lanyard is on its way — bring it with you to help fellow fans spot you!</p>"
+        else:
+            lanyard_msg = f"<p>🧢 Don't forget — your free lanyard is still waiting. <a href=\"https://courtsideclub.app/login\">Log in to claim yours</a> so it arrives before the tournament!</p>"
+        
+        # Build schedule URL
+        schedule_link = ""
+        if hasattr(tournament, 'schedule_url') and tournament.schedule_url:
+            schedule_link = f"<p>🗓 Want to plan your day? <a href=\"{tournament.schedule_url}\">Check the official tournament schedule</a>.</p>"
+        
+        reminder_html = f"""
+        <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
+
+        <p>We're two weeks away from <strong>{tournament.name}</strong>, and we want to make sure you're ready.</p>
+
+        {session_summary}
+
+        {lanyard_msg}
+
+        {schedule_link}
+
+        <p>📍 The tournament takes place in <strong>{tournament.city}, {tournament.country}</strong>. Make sure to plan ahead for entry and transport.</p>
+
+        <p>🎒 Pro tip: bring sunscreen, a refillable water bottle, and your lanyard. The courtside energy is real — stay ready.</p>
+
+        <p>Need to make a change? You can <a href=\"https://courtsideclub.app/login\">log into your account</a> anytime to update your session or raise your hand.</p>
+
+        <p>Thanks for being part of CourtSideClub — we can't wait to see you there!<br>
+        – The CourtSideClub Team</p>
+        """
+        
+        # Send directly to your email
+        success = send_email(
+            to_email="richardbattlebaxter@gmail.com",
+            subject=f"{tournament.name} is just 2 weeks away! 🎾",
+            content_html=reminder_html
+        )
         
         if success:
             return f'''
@@ -546,13 +618,76 @@ def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None
             '''
         
         # Send the morning-of email to your address for testing
-        original_email = user.email
-        user.email = "richardbattlebaxter@gmail.com"
+        from services.sendgrid_service import send_email
+        from services.email import get_session_attendees_count, get_session_meetup_count
         
-        success = send_morning_of_email(user_id, tournament_id, session_date, session_name)
+        # Get user's tournament registration
+        user_tournament = db.session.query(UserTournament).filter_by(
+            user_id=user.id,
+            tournament_id=tournament.id,
+            attending=True
+        ).first()
         
-        # Restore original email
-        user.email = original_email
+        if not user_tournament or not user_tournament.session_label:
+            return '''
+            <h1>❌ No Session Data</h1>
+            <p>User is not attending tournament or has no sessions selected.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        
+        # Count attendees for this specific session
+        session_attendees = get_session_attendees_count(tournament.id, session_name)
+        meetup_count = get_session_meetup_count(tournament.id, session_name)
+        
+        # Exclude current user from meetup count if they're open to meet
+        if user_tournament.open_to_meet:
+            meetup_count = max(0, meetup_count - 1)
+        
+        # Session display name
+        session_display = f"{session_date} – {session_name} Session"
+        
+        # Attendee counts
+        attendee_msg = f"<p><strong>{session_attendees} fan{'s' if session_attendees != 1 else ''}</strong> will be at today's session"
+        if meetup_count > 0:
+            attendee_msg += f", with <strong>{meetup_count}</strong> open to meeting up."
+        else:
+            attendee_msg += "."
+        attendee_msg += "</p>"
+        
+        # Lanyard reminder
+        has_lanyard = getattr(user, 'lanyard_ordered', False)
+        if has_lanyard:
+            lanyard_msg = "<p>🧢 Don't forget to bring your CourtSideClub lanyard to help other fans spot you!</p>"
+        else:
+            lanyard_msg = ""
+        
+        # Instagram CTA
+        instagram_cta = "<p>📸 Tag your meetups on Instagram <strong>@courtsideclub</strong> — we love seeing the community in action!</p>"
+        
+        morning_html = f"""
+        <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
+
+        <p>Today's the day! You're all set for <strong>{tournament.name}</strong>.</p>
+
+        <p><strong>Your Session:</strong> {session_display}</p>
+
+        {attendee_msg}
+
+        {lanyard_msg}
+
+        <p>🎾 Have an amazing time at the tournament! The energy courtside is incredible — soak it all in.</p>
+
+        {instagram_cta}
+
+        <p>Enjoy the tennis!<br>
+        – The CourtSideClub Team</p>
+        """
+        
+        success = send_email(
+            to_email="richardbattlebaxter@gmail.com",
+            subject=f"Today's the day! {tournament.name} – {session_name} Session 🎾",
+            content_html=morning_html
+        )
         
         if success:
             return f'''
@@ -614,13 +749,46 @@ def send_welcome_email_debug(user_id=None):
             '''
         
         # Send the welcome email to your address for testing
-        original_email = user.email
-        user.email = "richardbattlebaxter@gmail.com"
+        from services.sendgrid_service import send_email
         
-        success = send_welcome_email(user_id)
+        # Get upcoming tournaments
+        upcoming_tournaments = Tournament.query.filter(
+            Tournament.start_date >= datetime.date.today()
+        ).order_by(Tournament.start_date).limit(3).all()
         
-        # Restore original email
-        user.email = original_email
+        tournament_html = ""
+        if upcoming_tournaments:
+            tournament_lines = "".join([
+                f"<li>🎾 {t.name} – {t.start_date.strftime('%B %d')}</li>" 
+                for t in upcoming_tournaments
+            ])
+            tournament_html = f"<p>Some of the biggest tournaments coming up:</p><ul>{tournament_lines}</ul>"
+        
+        welcome_html = f"""
+        <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
+
+        <p>Welcome to <strong>CourtSideClub</strong> – the community for tennis fans who want more than just a seat in the stands.</p>
+
+        <p>Here's what you can do starting today:</p>
+        <ul>
+          <li>📍 Choose the tournaments you're attending</li>
+          <li>🤝 Raise your hand to meet other fans</li>
+          <li>🧢 Get your free lanyard to help you connect in person</li>
+        </ul>
+
+        {tournament_html}
+
+        <p>Ready to dive in? <a href="https://courtsideclub.app/login">Log in to pick your tournaments</a> and join the community.</p>
+
+        <p>Thanks for joining CourtSideClub — we're excited to have you with us!<br>
+        – The CourtSideClub Team</p>
+        """
+        
+        success = send_email(
+            to_email="richardbattlebaxter@gmail.com",
+            subject="Welcome to CourtSideClub 🎾 Here's what's next",
+            content_html=welcome_html
+        )
         
         if success:
             return f'''
