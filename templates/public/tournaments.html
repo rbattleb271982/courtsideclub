@@ -5,9 +5,17 @@
 
 {% block head %}
 <style>
-/* Override global main-content padding for full-width table */
+/* Complete override of main-content constraints for tournaments page */
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .main-content {
   padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  width: 100% !important;
 }
 .search-input {
   width: 100%;
@@ -19,16 +27,11 @@
 }
 
 .tournament-table {
-  width: 100vw;
+  width: 100%;
   border-collapse: collapse;
-  margin: 1rem 0 0 0;
+  margin: 0;
   background: white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
 }
 
 .tournament-table th {
