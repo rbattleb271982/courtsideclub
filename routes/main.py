@@ -33,10 +33,12 @@ def track_invite_click():
 
 @main_bp.route('/tournaments')
 def public_tournaments():
-    tournament = Tournament.query.filter_by(slug='roland_garros').first()
-    if not tournament:
-        return render_template('public/tournaments.html', tournaments=[])
-    return render_template('public/tournaments.html', tournaments=[tournament])
+    # Get all future tournaments ordered by start date
+    tournaments = Tournament.query.filter(
+        Tournament.start_date >= datetime.date.today()
+    ).order_by(Tournament.start_date).all()
+    
+    return render_template('public/tournaments.html', tournaments=tournaments)
 
 @main_bp.route('/tournaments/<slug>')
 def public_tournament_detail(slug):
