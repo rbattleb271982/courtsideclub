@@ -9,6 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize UI visibility based on attendance state
   updateSessionUIVisibility();
   
+  // Auto-expand shared history section if accessed via anchor link
+  if (window.location.hash === '#shared-history') {
+    const tournamentList = document.getElementById('tournamentList');
+    const chevron = document.getElementById('chevron');
+    
+    if (tournamentList && chevron) {
+      tournamentList.style.display = 'block';
+      tournamentList.classList.remove('collapsed');
+      chevron.textContent = '▲';
+    }
+  }
+  
   // Add event listener to the meeting toggle
   const meetingToggle = document.getElementById('wants-to-meet-top');
   const wantsToMeetHidden = document.getElementById('wants_to_meet_hidden');
