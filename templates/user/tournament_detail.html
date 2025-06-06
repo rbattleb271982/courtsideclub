@@ -47,7 +47,17 @@
             <!-- Tournament header and info card -->
             <div class="card tournament-card mb-4">
                 <div class="tournament-header">
-                    <h1 class="tournament-name">{{ tournament.name }}</h1>
+                    <h1 class="tournament-name">
+                        {{ tournament.name }}
+                        <!-- Lanyard badge moved to top right of header -->
+                        {% if current_user.is_authenticated %}
+                            {% set user_shipping = current_user.shipping_addresses|selectattr('tournament_id', 'equalto', tournament.id)|first %}
+                            {% if user_shipping and user_shipping.lanyard_sent %}
+                                <span class="lanyard-badge">Your lanyard is on its way!</span>
+                            {% endif %}
+                        {% endif %}
+                    </h1>
+                    <p class="tournament-subheading">Let others know you're coming and match up on sessions.</p>
                     <div class="tournament-meta">
                         <div class="date-range">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</div>
                         <div class="location">{{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</div>
@@ -67,22 +77,18 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <!-- Tournament Links -->
-                    {% if tournament.external_url %}
-                    <p class="tournament-link">
-                        <a href="{{ tournament.external_url }}" target="_blank" rel="noopener">🎾 Official Tournament Site →</a>
-                    </p>
-                    {% endif %}
-                    {% if tournament.draw_url %}
-                    <p class="tournament-link">
-                        <a href="{{ tournament.draw_url }}" target="_blank" rel="noopener">📄 View the Draw →</a>
-                    </p>
-                    {% endif %}
-                    {% if tournament.bracket_url %}
-                    <p class="tournament-link">
-                        <a href="{{ tournament.bracket_url }}" target="_blank" rel="noopener">🏆 See the Bracket →</a>
-                    </p>
-                    {% endif %}
+                    <!-- Tournament Links - Improved compact layout -->
+                    <div class="tournament-links-compact">
+                        {% if tournament.external_url %}
+                        <a href="{{ tournament.external_url }}" target="_blank" rel="noopener" class="tournament-link-item">🎾 Official Tournament Site →</a>
+                        {% endif %}
+                        {% if tournament.draw_url %}
+                        <a href="{{ tournament.draw_url }}" target="_blank" rel="noopener" class="tournament-link-item">📄 View the Draw →</a>
+                        {% endif %}
+                        {% if tournament.bracket_url %}
+                        <a href="{{ tournament.bracket_url }}" target="_blank" rel="noopener" class="tournament-link-item">🏆 See the Bracket →</a>
+                        {% endif %}
+                    </div>
                     
                     {% if tournament.commentary %}
                     <div class="tournament-commentary mb-3">
@@ -142,24 +148,7 @@
                     </div>
                     {% endif %}
 
-                    <div class="tournament-links mt-4">
-                        {% if tournament.draw_url or tournament.schedule_url %}
-                        <h4 class="h5">Tournament Links</h4>
-                        <div class="links-container">
-                            {% if tournament.draw_url %}
-                            <a href="{{ tournament.draw_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                                <i data-feather="external-link" class="icon-sm"></i> View Tournament Draw
-                            </a>
-                            {% endif %}
 
-                            {% if tournament.schedule_url %}
-                            <a href="{{ tournament.schedule_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
-                                <i data-feather="external-link" class="icon-sm"></i> View Tournament Schedule
-                            </a>
-                            {% endif %}
-                        </div>
-                        {% endif %}
-                    </div>
                     
                     <!-- Shared Tournament History Section with improved collapsible functionality -->
                     {% if current_user.is_authenticated and sorted_shared_tournaments %}
@@ -185,11 +174,7 @@
                 </div>
             </div>
 
-            {% if current_user.lanyard_ordered %}
-            <div class="alert alert-success mb-4">
-                <i data-feather="package" class="icon-sm"></i> Your lanyard is on its way!
-            </div>
-            {% endif %}
+
         </div>
         
         <!-- Tournament sessions section - Moved below main content for vertical layout -->
@@ -288,6 +273,44 @@
     .tournament-detail {
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
+    }
+
+    /* Lanyard badge styling */
+    .lanyard-badge {
+        float: right;
+        background: #dff6e2;
+        color: #1d632f;
+        padding: 6px 12px;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-left: 10px;
+        white-space: nowrap;
+    }
+
+    /* Tournament subheading styling */
+    .tournament-subheading {
+        color: #666;
+        font-size: 0.95rem;
+        margin: 0.5rem 0 1rem 0;
+        font-weight: normal;
+    }
+
+    /* Tournament links cleanup */
+    .tournament-link {
+        margin-bottom: 0.5rem;
+    }
+
+    .tournament-link a {
+        display: inline-block;
+        color: #004d26;
+        text-decoration: none;
+        font-size: 0.9rem;
+        margin-right: 1rem;
+    }
+
+    .tournament-link a:hover {
+        text-decoration: underline;
     }
 
     /* Tournament layout container */
