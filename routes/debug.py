@@ -450,8 +450,17 @@ def send_tournament_reminder_debug(user_id=None, tournament_id=None):
             <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
             '''
         
-        # Send the reminder email
+        # Send the reminder email to your address for testing
+        from services.email import send_tournament_reminder_email
+        
+        # Override the user's email for testing purposes
+        original_email = user.email
+        user.email = "richardbattlebaxter@gmail.com"
+        
         success = send_tournament_reminder_email(user_id, tournament_id)
+        
+        # Restore original email
+        user.email = original_email
         
         if success:
             return f'''
@@ -536,8 +545,14 @@ def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None
             <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
             '''
         
-        # Send the morning-of email
+        # Send the morning-of email to your address for testing
+        original_email = user.email
+        user.email = "richardbattlebaxter@gmail.com"
+        
         success = send_morning_of_email(user_id, tournament_id, session_date, session_name)
+        
+        # Restore original email
+        user.email = original_email
         
         if success:
             return f'''
@@ -598,8 +613,14 @@ def send_welcome_email_debug(user_id=None):
             <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
             '''
         
-        # Send the welcome email
+        # Send the welcome email to your address for testing
+        original_email = user.email
+        user.email = "richardbattlebaxter@gmail.com"
+        
         success = send_welcome_email(user_id)
+        
+        # Restore original email
+        user.email = original_email
         
         if success:
             return f'''
