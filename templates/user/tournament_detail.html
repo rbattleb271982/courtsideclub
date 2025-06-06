@@ -297,20 +297,29 @@
     }
 
     /* Tournament links cleanup */
-    .tournament-link {
-        margin-bottom: 0.5rem;
+    .tournament-links-compact {
+        margin-bottom: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
     }
 
-    .tournament-link a {
-        display: inline-block;
+    .tournament-link-item {
         color: #004d26;
         text-decoration: none;
         font-size: 0.9rem;
-        margin-right: 1rem;
+        padding: 0.3rem 0;
     }
 
-    .tournament-link a:hover {
+    .tournament-link-item:hover {
         text-decoration: underline;
+    }
+
+    @media (max-width: 767px) {
+        .tournament-links-compact {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
     }
 
     /* Tournament layout container */
