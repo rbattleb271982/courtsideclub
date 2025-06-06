@@ -1,0 +1,40 @@
+<svg width="1200" height="600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="courtGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2D5A27;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4A7C59;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1B3A20;stop-opacity:1" />
+    </linearGradient>
+    <pattern id="courtLines" patternUnits="userSpaceOnUse" width="40" height="40">
+      <rect width="40" height="40" fill="none"/>
+      <path d="M0,20 L40,20 M20,0 L20,40" stroke="#ffffff" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+    <radialGradient id="lightGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Tennis court background -->
+  <rect width="1200" height="600" fill="url(#courtGradient)"/>
+  <rect width="1200" height="600" fill="url(#courtLines)"/>
+  
+  <!-- Tennis court outline -->
+  <rect x="200" y="150" width="800" height="300" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.6"/>
+  <line x1="600" y1="150" x2="600" y2="450" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+  <line x1="200" y1="225" x2="1000" y2="225" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+  <line x1="200" y1="375" x2="1000" y2="375" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+  
+  <!-- Tennis balls -->
+  <circle cx="150" cy="100" r="25" fill="#E6FF00" opacity="0.8"/>
+  <circle cx="150" cy="100" r="25" fill="none" stroke="#ffffff" stroke-width="1"/>
+  <path d="M125,100 Q150,80 175,100 Q150,120 125,100" stroke="#ffffff" stroke-width="1" fill="none"/>
+  
+  <circle cx="1050" cy="500" r="20" fill="#E6FF00" opacity="0.7"/>
+  <circle cx="1050" cy="500" r="20" fill="none" stroke="#ffffff" stroke-width="1"/>
+  <path d="M1030,500 Q1050,485 1070,500 Q1050,515 1030,500" stroke="#ffffff" stroke-width="1" fill="none"/>
+  
+  <!-- Stadium lights effect -->
+  <circle cx="300" cy="50" r="80" fill="url(#lightGradient)" opacity="0.2"/>
+  <circle cx="900" cy="50" r="80" fill="url(#lightGradient)" opacity="0.2"/>
+</svg>
