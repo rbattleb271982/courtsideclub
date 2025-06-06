@@ -300,6 +300,10 @@ def list_tournaments():
     # Convert to sorted list of tuples for template rendering - alphabetically by tournament name (case-insensitive)
     sorted_shared_tournaments = sorted(shared_past_tournaments.items(), key=lambda x: x[0].lower())
     
+    print(f"DEBUG: shared_past_tournaments = {shared_past_tournaments}")
+    print(f"DEBUG: sorted_shared_tournaments = {sorted_shared_tournaments}")
+    print(f"DEBUG: len(sorted_shared_tournaments) = {len(sorted_shared_tournaments)}")
+    
     # Pass session_saved flag to show lanyard button conditionally
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
