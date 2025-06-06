@@ -5,10 +5,65 @@
   color: #333;
 }
 
+/* Mobile Header Styling */
+.mobile-header {
+  background-color: #fdfdf7;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 .nav-container {
-  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #fdfdf7;
+}
+
+.logo {
+  font-weight: bold;
+  color: #004d26;
+  font-size: 1.1rem;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: #004d26;
+  font-size: 1.2rem;
+  padding: 0.25rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #fdfdf7;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex-direction: column;
   padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  gap: 0.75rem;
+}
+
+.mobile-menu a {
+  color: #004d26;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 77, 38, 0.1);
+}
+
+.mobile-menu a:hover {
+  color: #2c8c56;
+}
+
+.mobile-menu a:last-child {
+  border-bottom: none;
 }
 
 /* Tournament name link styles */
