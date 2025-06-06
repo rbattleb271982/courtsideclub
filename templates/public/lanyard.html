@@ -1,20 +1,23 @@
 
 {% extends "public/base.html" %}
 {% block content %}
-  <div class="container">
-    <h1>Get Your Free Lanyard</h1>
-    <p>
-      CourtSide Club lanyards are free for fans who RSVP to attend a tournament.
-      They're your visual signal that you're open to meeting other tennis lovers
-      on site. When you wear one, you make it easier for others to say hello.
-    </p>
-    <p>
-      After you log in and mark your tournament attendance, we'll collect your
-      shipping address and send one out — free of charge.
-    </p>
-    <p>
-      🎾 Tennis is better together. Let's make it social.
-    </p>
-    <a href="{{ url_for('auth.signup') }}" class="hero-cta-button">Sign up to get yours</a>
-  </div>
+<section style="padding: 2rem; background-color: #f9f9f9; border-radius: 1rem; max-width: 600px; margin: 0 auto; text-align: center;">
+  <h2 style="font-size: 1.75rem; margin-bottom: 1rem;">Claim Your Free Lanyard</h2>
+  
+  <p style="font-size: 1rem; margin-bottom: 1rem;">
+    Be part of something courtside. <strong>CourtSide Club</strong> lanyards are free for members who RSVP to at least one tournament session.
+  </p>
+
+  <p style="font-size: 1rem; margin-bottom: 1rem;">
+    Wearing one is a subtle but powerful signal: you're open to meeting other tennis fans and making match days more social, spontaneous, and fun.
+  </p>
+
+  <p style="font-size: 1rem; margin-bottom: 2rem;">
+    Once you've signed up and picked your sessions, you can request your lanyard — and we'll ship it free.
+  </p>
+
+  <a href="/signup" style="display: inline-block; background-color: #007f3f; color: #fff; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: bold; text-decoration: none;">
+    Sign Up to Get Yours
+  </a>
+</section>
 {% endblock %}
