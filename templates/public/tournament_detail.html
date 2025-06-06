@@ -201,7 +201,7 @@ body {
   </ul>
 
   <div class="snapshot-card">
-    <h3>See who's attending — and meet fellow fans!</h3>
+    <h3>{{ attending_count }} fans are attending — {{ meeting_count }} are open to meet!</h3>
     <p>Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
 
     <a href="{{ url_for('auth.login') }}" class="button-outline">Log In</a>
