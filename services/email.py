@@ -396,7 +396,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
         """
         
         return send_email(
-            to_email=user.email,
+            to_email="richardbattlebaxter@gmail.com",  # Override for testing
             subject=f"How was {tournament.name}? 🎾",
             content_html=followup_html
         )
@@ -459,7 +459,7 @@ def send_lanyard_order_confirmation_email(user_id):
         """
         
         return send_email(
-            to_email=user.email,
+            to_email="richardbattlebaxter@gmail.com",  # Override for testing
             subject="Your CourtSide Club lanyard is on the way! 🧢",
             content_html=confirmation_html
         )
@@ -552,7 +552,7 @@ def send_lanyard_delivery_reminder_email(user_id, tournament_id, session_date, s
         """
         
         return send_email(
-            to_email=user.email,
+            to_email="richardbattlebaxter@gmail.com",  # Override for testing
             subject=f"Bring your lanyard to {tournament.name}! 🧢",
             content_html=reminder_html
         )
