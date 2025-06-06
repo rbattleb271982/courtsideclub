@@ -232,12 +232,12 @@ def send_welcome_email(user_id):
     """
 
     send_email(
-        to_email=user.email,
+        to_email="richardbattlebaxter@gmail.com",
         subject="Welcome to CourtSideClub 🎾 Here's what's next",
         content_html=welcome_email_html
     )
 
-    return f"Welcome email sent to {user.email}"
+    return f"Welcome email sent to richardbattlebaxter@gmail.com (test user: {user.email})"
 
 @debug_bp.route('/debug/send-reminder/<int:user_id>/<tournament_slug>')
 def send_reminder(user_id, tournament_slug):
@@ -325,12 +325,12 @@ def send_reminder(user_id, tournament_slug):
     """
 
     send_email(
-        to_email=user.email,
+        to_email="richardbattlebaxter@gmail.com",
         subject=f"{tournament.name} is just 2 weeks away! 🎾",
         content_html=reminder_html
     )
 
-    return f"Tournament reminder sent to {user.email}"
+    return f"Tournament reminder sent to richardbattlebaxter@gmail.com (test user: {user.email})"
 
 @debug_bp.route('/debug/send_test_email')
 def send_test_email():

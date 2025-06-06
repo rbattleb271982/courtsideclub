@@ -26,7 +26,7 @@ def get_session_meetup_count(tournament_id, session_label, date_str=None):
     )
     return query.count()
 
-def send_tournament_reminder_email(user_id, tournament_id):
+def send_tournament_reminder_email(user_id, tournament_id, debug_email_override=None):
     """
     Send pre-tournament reminder email (2 weeks before)
     
@@ -128,7 +128,7 @@ def send_tournament_reminder_email(user_id, tournament_id):
         """
         
         return send_email(
-            to_email=user.email,
+            to_email=debug_email_override or user.email,
             subject=f"{tournament.name} is just 2 weeks away! 🎾",
             content_html=reminder_html
         )
@@ -137,7 +137,7 @@ def send_tournament_reminder_email(user_id, tournament_id):
         logger.error(f"Error sending tournament reminder to user {user_id}: {str(e)}", exc_info=True)
         return False
 
-def send_morning_of_email(user_id, tournament_id, session_date, session_name):
+def send_morning_of_email(user_id, tournament_id, session_date, session_name, debug_email_override=None):
     """
     Send morning-of tournament email for specific session
     
