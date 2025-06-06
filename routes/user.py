@@ -1108,6 +1108,13 @@ def lanyard():
         db.session.add(address)
         db.session.commit()
 
+        # Send lanyard order confirmation email
+        from services.email import send_lanyard_order_confirmation_email
+        try:
+            send_lanyard_order_confirmation_email(current_user.id)
+        except Exception as e:
+            print(f"Failed to send lanyard confirmation email: {e}")
+
         # Log the lanyard order event - temporarily disabled due to event name issue
         print(f"DEBUG: Lanyard order placed for user {current_user.id}, name: {request.form['name']}, country: {request.form['country']}")
         
