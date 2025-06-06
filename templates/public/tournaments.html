@@ -101,37 +101,23 @@
   color: #065f46;
 }
 
-.tournaments-container {
-  width: 100%;
-  margin: 0;
-  padding: 2rem 0;
+.tournaments-header {
+  padding: 2rem 1rem 1rem 1rem;
 }
 
-.tournaments-container h1 {
+.tournaments-header h1 {
   font-size: 2rem;
   color: #2c7a7b;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   font-weight: 700;
-  padding: 0 1rem;
-}
-
-.tournaments-container p {
-  color: #4a5568;
-  margin-bottom: 2rem;
-  font-size: 1.1rem;
-  padding: 0 1rem;
-}
-
-.search-input {
-  margin: 0 1rem 1rem 1rem;
 }
 
 @media (max-width: 768px) {
-  .tournaments-container {
+  .tournaments-header {
     padding: 1rem;
   }
   
-  .tournaments-container h1 {
+  .tournaments-header h1 {
     font-size: 1.5rem;
   }
   
@@ -173,12 +159,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="tournaments-container">
+<div class="tournaments-header">
   <h1>Browse Upcoming Tournaments</h1>
-
   <input type="text" id="tournamentSearch" placeholder="Search tournaments..." class="search-input" />
+</div>
 
-  <table class="tournament-table" id="tournamentTable">
+<table class="tournament-table" id="tournamentTable">
     <thead>
       <tr>
         <th class="sortable date-column" data-column="date">Start Date</th>
