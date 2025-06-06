@@ -1226,6 +1226,28 @@ body {
   margin: 0;
 }
 
+/* How It Works Steps */
+.how-it-works-step {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #007a4d;
+}
+
+.how-it-works-step h2 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: #004d26;
+  font-size: 1.25rem;
+}
+
+.how-it-works-step p {
+  margin-bottom: 0;
+  color: #333;
+  line-height: 1.5;
+}
+
 /* Utilities */
 .text-center {
   text-align: center;
