@@ -90,7 +90,7 @@
                         <!-- Shared Tournament History Toggle - Moved to links section -->
                         {% if current_user.is_authenticated and sorted_shared_tournaments %}
                         <p id="toggleTournaments" onclick="togglePreviousTournaments()" style="cursor: pointer; color: #004d26; font-size: 0.9rem; margin: 0.5rem 0;">
-                            🔄 See what tournaments others have attended <span id="chevron">▼</span>
+                            🔄 Fan History <span id="chevron">▼</span>
                         </p>
                         <ul id="tournamentList" class="collapsed shared-history-list" style="display: none; list-style: none; padding-left: 0; margin: 0.5rem 0;">
                             {% for name, count in sorted_shared_tournaments %}
@@ -574,9 +574,9 @@
     list.classList.toggle("collapsed");
 
     if (list.classList.contains("collapsed")) {
-      toggle.innerHTML = 'Tournaments others have attended <span id="chevron">▼</span>';
+      toggle.innerHTML = '🔄 Fan History <span id="chevron">▼</span>';
     } else {
-      toggle.innerHTML = 'Hide tournaments others have attended <span id="chevron">▲</span>';
+      toggle.innerHTML = '🔄 Fan History <span id="chevron">▲</span>';
     }
   }
 </script>
