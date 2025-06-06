@@ -206,7 +206,7 @@ def tournament_detail(tournament_slug):
     
     # Get selected sessions for current user
     selected_sessions = []
-    wants_to_meet = False
+    wants_to_meet = True  # Default to True - always pre-checked
     user_attending = False
     
     print(f"DEBUG: user_tournament = {user_tournament}")
@@ -1017,15 +1017,6 @@ def browse_tournaments():
 @user_bp.route('/lanyard', methods=['GET', 'POST'])
 @login_required
 def lanyard():
-    # Check if user has selected any tournament sessions
-    attending_sessions = UserTournament.query.filter_by(
-        user_id=current_user.id,
-        attending=True
-    ).first()
-
-    if not attending_sessions or not attending_sessions.session_label:
-        flash("To order your lanyard, you need to select a tournament and session first.", "warning")
-        return redirect(url_for("user.my_tournaments"))
 
     # List of U.S. state abbreviations
     STATE_ABBRS = [
