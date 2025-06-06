@@ -883,3 +883,157 @@ def email_status():
         <p><strong>Error:</strong> {str(e)}</p>
         <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
         ''', 500
+
+@debug_bp.route('/debug/send_post_tournament_email')
+def send_post_tournament_email():
+    """Send a test post-tournament follow-up email"""
+    try:
+        from models import User, Tournament, UserTournament
+        from services.email import send_post_tournament_followup_email
+        
+        # Find a user with tournament attendance
+        user_tournament = db.session.query(UserTournament).filter(
+            UserTournament.attending == True
+        ).first()
+        
+        if not user_tournament:
+            return '''
+            <h1>❌ No Attending Users</h1>
+            <p>No users found attending tournaments.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        
+        user = db.session.get(User, user_tournament.user_id)
+        tournament = db.session.get(Tournament, user_tournament.tournament_id)
+        
+        success = send_post_tournament_followup_email(user.id, tournament.id)
+        
+        if success:
+            return f'''
+            <h1>✅ Post-Tournament Follow-Up Email Sent</h1>
+            <p><strong>User:</strong> {user.email} ({getattr(user, 'first_name', 'N/A')})</p>
+            <p><strong>Tournament:</strong> {tournament.name}</p>
+            <p><strong>Sessions:</strong> {user_tournament.session_label or 'N/A'}</p>
+            <p>Check the recipient's inbox for the post-tournament follow-up email!</p>
+            <p><a href="/debug/send_test_email">Send Test Email</a> | <a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        else:
+            return '''
+            <h1>❌ Email Send Failed</h1>
+            <p>Failed to send post-tournament follow-up email. Check logs for details.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+            
+    except Exception as e:
+        return f'''
+        <h1>❌ Error</h1>
+        <p>Error sending post-tournament follow-up email: {str(e)}</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        '''
+
+@debug_bp.route('/debug/send_lanyard_confirmation_email')
+def send_lanyard_confirmation_email():
+    """Send a test lanyard order confirmation email"""
+    try:
+        from models import User
+        from services.email import send_lanyard_order_confirmation_email
+        
+        # Find a user with lanyard ordered
+        user = db.session.query(User).filter(
+            User.lanyard_ordered == True
+        ).first()
+        
+        if not user:
+            # Fall back to any user
+            user = db.session.query(User).first()
+            
+        if not user:
+            return '''
+            <h1>❌ No Users Found</h1>
+            <p>No users found in database.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        
+        success = send_lanyard_order_confirmation_email(user.id)
+        
+        if success:
+            return f'''
+            <h1>✅ Lanyard Order Confirmation Email Sent</h1>
+            <p><strong>User:</strong> {user.email} ({getattr(user, 'first_name', 'N/A')})</p>
+            <p><strong>Lanyard Ordered:</strong> {getattr(user, 'lanyard_ordered', False)}</p>
+            <p>Check the recipient's inbox for the lanyard order confirmation email!</p>
+            <p><a href="/debug/send_test_email">Send Test Email</a> | <a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        else:
+            return '''
+            <h1>❌ Email Send Failed</h1>
+            <p>Failed to send lanyard order confirmation email. Check logs for details.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+            
+    except Exception as e:
+        return f'''
+        <h1>❌ Error</h1>
+        <p>Error sending lanyard order confirmation email: {str(e)}</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        '''
+
+@debug_bp.route('/debug/send_lanyard_reminder_email')
+def send_lanyard_reminder_email():
+    """Send a test lanyard delivery reminder email"""
+    try:
+        from models import User, Tournament, UserTournament
+        from services.email import send_lanyard_delivery_reminder_email
+        import datetime
+        
+        # Find a user with lanyard ordered and tournament attendance
+        user_tournament = db.session.query(UserTournament).join(User).filter(
+            UserTournament.attending == True,
+            User.lanyard_ordered == True
+        ).first()
+        
+        if not user_tournament:
+            # Fall back to any attending user
+            user_tournament = db.session.query(UserTournament).filter(
+                UserTournament.attending == True
+            ).first()
+            
+        if not user_tournament:
+            return '''
+            <h1>❌ No Attending Users</h1>
+            <p>No users found attending tournaments.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        
+        user = db.session.get(User, user_tournament.user_id)
+        tournament = db.session.get(Tournament, user_tournament.tournament_id)
+        
+        # Use today's date and "Day" session for testing
+        session_date = datetime.date.today().strftime('%Y-%m-%d')
+        session_name = "Day"
+        
+        success = send_lanyard_delivery_reminder_email(user.id, tournament.id, session_date, session_name)
+        
+        if success:
+            return f'''
+            <h1>✅ Lanyard Delivery Reminder Email Sent</h1>
+            <p><strong>User:</strong> {user.email} ({getattr(user, 'first_name', 'N/A')})</p>
+            <p><strong>Tournament:</strong> {tournament.name}</p>
+            <p><strong>Session:</strong> {session_date} – {session_name} Session</p>
+            <p><strong>Lanyard Ordered:</strong> {getattr(user, 'lanyard_ordered', False)}</p>
+            <p>Check the recipient's inbox for the lanyard delivery reminder email!</p>
+            <p><a href="/debug/send_test_email">Send Test Email</a> | <a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        else:
+            return '''
+            <h1>❌ Email Send Failed</h1>
+            <p>Failed to send lanyard delivery reminder email. Check logs for details.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+            
+    except Exception as e:
+        return f'''
+        <h1>❌ Error</h1>
+        <p>Error sending lanyard delivery reminder email: {str(e)}</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        '''
