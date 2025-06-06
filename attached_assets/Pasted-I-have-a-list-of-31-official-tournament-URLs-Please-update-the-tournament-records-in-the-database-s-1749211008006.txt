@@ -1,0 +1,41 @@
+I have a list of 31 official tournament URLs. Please update the tournament records in the database so that each tournament has the correct official_url value.
+✅ Use the Tournament model
+✅ Match tournaments by their name field
+✅ Update the official_url field with the correct website
+Here's the mapping:
+{
+  "Abierto Mexicano Telcel (Acapulco)": "https://abiertomexicanodetenis.com/en/",
+  "Australian Open": "https://ausopen.com/",
+  "Barcelona Open Banc Sabadell": "https://www.atptour.com/en/tournaments/barcelona/425/overview",
+  "Swiss Indoors Basel": "https://www.swissindoorsbasel.ch/en/",
+  "China Open (Beijing)": "https://www.chinaopen.com/en/",
+  "bett1open (Berlin)": "https://www.berlintennisopen.com/en",
+  "National Bank Open (Canada)": "https://nationalbankopen.com/",
+  "Credit One Charleston Open": "https://www.creditonecharlestonopen.com/",
+  "Western & Southern Open (Cincinnati)": "https://www.wsopen.com/",
+  "Qatar TotalEnergies Open (Doha)": "https://www.qatartennis.org/tournaments/qatar-totalenergies-open/",
+  "Dubai Duty Free Tennis Championships (WTA)": "https://dubaidutyfreetennischampionships.com/",
+  "Gonet Geneva Open": "https://gonetgenevaopen.com/",
+  "Hobart International": "https://www.hobartinternational.com.au/",
+  "BNP Paribas Open (Indian Wells)": "https://bnpparibasopen.com/",
+  "Open 6ème Sens (Lyon)": "https://open6emesens.fr/",
+  "Madrid Open": "https://www.madrid-open.com/en/",
+  "Miami Open": "https://www.miamiopen.com/",
+  "Monte Carlo Masters": "https://montecarlotennismasters.com/en/",
+  "Rothesay Open Nottingham": "https://www.lta.org.uk/fan-zone/international/rothesay-open-nottingham/",
+  "Rolex Paris Masters": "https://www.rolexparismasters.com/en",
+  "Cinch Championships (Queen's Club)": "https://www.lta.org.uk/fan-zone/international/cinch-championships/",
+  "Rio Open": "https://rioopen.com/",
+  "Roland Garros (French Open)": "https://www.rolandgarros.com/en-us/",
+  "Internazionali BNL d'Italia (Rome)": "https://www.internazionalibnlditalia.com/en/",
+  "ABN AMRO Open (Rotterdam)": "https://www.abnamro-open.nl/en",
+  "San Diego Open": "https://barnessdopen.com/",
+  "Rolex Shanghai Masters": "https://en.rolexshanghaimasters.com/",
+  "US Open": "https://www.usopen.org/",
+  "Mubadala Citi DC Open": "https://www.mubadalacitidcopen.com/",
+  "Wimbledon": "https://www.wimbledon.com/",
+  "Winston-Salem Open": "https://www.winstonsalemopen.com/"
+}
+✅ Use the Replit database or SQLAlchemy session depending on setup
+✅ Commit the updates and verify a few URLs were saved correctly
+✅ Do not modify other fields or add new tournaments
