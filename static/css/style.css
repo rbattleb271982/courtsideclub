@@ -1180,7 +1180,7 @@ body {
 }
 
 /* CTA Buttons */
-.howitworks-cta-button, .hero-cta-button {
+.howitworks-cta-button, .hero-cta-button, .cta-button {
   display: inline-block;
   background-color: #007a4d;
   color: white;
@@ -1192,20 +1192,20 @@ body {
   text-align: center;
 }
 
-.howitworks-cta-button:hover, .hero-cta-button:hover {
+.howitworks-cta-button:hover, .hero-cta-button:hover, .cta-button:hover {
   background-color: #005f39;
   color: white;
   text-decoration: none;
 }
 
 /* Secondary button style for login */
-.hero-secondary-button {
+.hero-secondary-button, .secondary-button {
   background-color: white;
   color: #007a4d;
   border: 2px solid #007a4d;
 }
 
-.hero-secondary-button:hover {
+.hero-secondary-button:hover, .secondary-button:hover {
   background-color: #e8f5e9;
   color: #007a4d;
 }
