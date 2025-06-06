@@ -617,7 +617,8 @@ def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None
             <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
             '''
         
-        # Send the morning-of email to your address for testing
+        # Use the updated send_morning_of_email function with override for testing
+        from services.email import send_morning_of_email
         from services.sendgrid_service import send_email
         from services.email import get_session_attendees_count, get_session_meetup_count
         
@@ -635,6 +636,12 @@ def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None
             <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
             '''
         
+        # Check if user's session matches the requested session
+        session_label = user_tournament.session_label.lower()
+        if session_name.lower() not in session_label:
+            # Still send test email even if session doesn't match exactly
+            pass
+            
         # Count attendees for this specific session
         session_attendees = get_session_attendees_count(tournament.id, session_name)
         meetup_count = get_session_meetup_count(tournament.id, session_name)
@@ -643,44 +650,38 @@ def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None
         if user_tournament.open_to_meet:
             meetup_count = max(0, meetup_count - 1)
         
-        # Session display name
-        session_display = f"{session_date} – {session_name} Session"
+        # Clean session display name (remove date formatting)
+        session_display = f"{session_name} Session"
         
-        # Attendee counts
-        attendee_msg = f"<p><strong>{session_attendees} fan{'s' if session_attendees != 1 else ''}</strong> will be at today's session"
-        if meetup_count > 0:
-            attendee_msg += f", with <strong>{meetup_count}</strong> open to meeting up."
-        else:
-            attendee_msg += "."
-        attendee_msg += "</p>"
+        # Meetup info (if set by admin)
+        meetup_info = ""
+        if hasattr(tournament, 'meetup_location') and hasattr(tournament, 'meetup_time') and tournament.meetup_location and tournament.meetup_time:
+            meetup_info = f"<p>📍 <strong>Meet-up Spot:</strong> {tournament.meetup_location} at {tournament.meetup_time}</p>"
         
-        # Lanyard reminder
+        # Lanyard reminder (only if user has lanyard)
         has_lanyard = getattr(user, 'lanyard_ordered', False)
         if has_lanyard:
-            lanyard_msg = "<p>🧢 Don't forget to bring your CourtSideClub lanyard to help other fans spot you!</p>"
+            lanyard_msg = "<p>🟢 Don't forget your <strong>CourtSide Club</strong> lanyard so other members can find you!</p>"
         else:
             lanyard_msg = ""
-        
-        # Instagram CTA
-        instagram_cta = "<p>📸 Tag your meetups on Instagram <strong>@courtsideclub</strong> — we love seeing the community in action!</p>"
         
         morning_html = f"""
         <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
 
-        <p>Today's the day! You're all set for <strong>{tournament.name}</strong>.</p>
+        <p><strong>It's game day!</strong> You're all set for <strong>{tournament.name}</strong>, and we're so glad you're part of it.</p>
 
-        <p><strong>Your Session:</strong> {session_display}</p>
+        <p><strong>🎾 Today's Session:</strong> {session_display}<br>
+        <strong>👥 {session_attendees} fan{'s' if session_attendees != 1 else ''}</strong> are attending — <strong>{meetup_count} open to meeting up</strong>.</p>
 
-        {attendee_msg}
+        {meetup_info}
 
         {lanyard_msg}
 
-        <p>🎾 Have an amazing time at the tournament! The energy courtside is incredible — soak it all in.</p>
+        <p>📸 Tag your meetups on Instagram <strong>@courtsideclub</strong> — we love seeing CSC in the wild!</p>
 
-        {instagram_cta}
+        <p>☀️ Soak up the vibe, say hey to fellow members, and enjoy your day courtside. The energy is real.</p>
 
-        <p>Enjoy the tennis!<br>
-        – The CourtSideClub Team</p>
+        <p>– The CourtSide Club Team</p>
         """
         
         success = send_email(

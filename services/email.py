@@ -87,34 +87,44 @@ def send_tournament_reminder_email(user_id, tournament_id):
         # Lanyard message
         has_lanyard = getattr(user, 'lanyard_ordered', False)
         if has_lanyard:
-            lanyard_msg = "<p>🎉 Your lanyard is on its way — bring it with you to help fellow fans spot you!</p>"
+            lanyard_msg = "<p>🧢 <strong>Your lanyard is on its way</strong> — bring it with you to help fellow fans spot you!</p>"
         else:
-            lanyard_msg = f"<p>🧢 Don't forget — your free lanyard is still waiting. <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Log in to claim yours</a> so it arrives before the tournament!</p>"
+            lanyard_msg = f"<p>🧢 <strong>Don't forget:</strong> your free lanyard is still waiting. <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Log in to claim yours</a> so it arrives before the tournament.</p>"
         
         # Build schedule URL
         schedule_link = ""
         if hasattr(tournament, 'schedule_url') and tournament.schedule_url:
-            schedule_link = f"<p>🗓 Want to plan your day? <a href=\"{tournament.schedule_url}\">Check the official tournament schedule</a>.</p>"
+            schedule_link = f"<p>📅 Want to plan your visit? <a href=\"{tournament.schedule_url}\">Check the official tournament schedule</a>.</p>"
         
         reminder_html = f"""
         <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
 
-        <p>We're two weeks away from <strong>{tournament.name}</strong>, and we want to make sure you're ready.</p>
+        <p>We're just two weeks away from <strong>the {tournament.name}</strong> — here's a quick look at your plans so you're ready to go:</p>
 
-        {session_summary}
+        <p><strong>🎾 Sessions You've Selected:</strong></p>
+        <ul>
+          <li>✅ {user_tournament.session_label}</li>
+        </ul>
+
+        <p><strong>👋 {meetup_count} other member{'s' if meetup_count != 1 else ''}</strong> are open to meeting up at these sessions.</p>
+
+        <hr style="border:none; border-top:1px solid #ddd;">
 
         {lanyard_msg}
 
         {schedule_link}
 
-        <p>📍 The tournament takes place in <strong>{tournament.city}, {tournament.country}</strong>. Make sure to plan ahead for entry and transport.</p>
+        <p>📍 The tournament is taking place in <strong>{tournament.city}, {tournament.country}</strong>. Make sure to plan ahead for entry and transport.</p>
 
-        <p>🎒 Pro tip: bring sunscreen, a refillable water bottle, and your lanyard. The courtside energy is real — stay ready.</p>
+        <p>🎒 <strong>Pro tip:</strong> Bring sunscreen, a refillable water bottle, and your lanyard. The courtside energy is real — stay ready.</p>
 
-        <p>Need to make a change? You can <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">log into your account</a> anytime to update your session or raise your hand.</p>
+        <hr style="border:none; border-top:1px solid #ddd;">
 
-        <p>Thanks for being part of CourtSideClub — we can't wait to see you there!<br>
-        – The CourtSideClub Team</p>
+        <p>Need to make a change? <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Log in to update your sessions or raise your hand</a>.</p>
+
+        <p>Thanks for being part of <strong>CourtSide Club</strong> — we can't wait to see you there!</p>
+
+        <p style="color:#666;">– The CourtSide Club Team</p>
         """
         
         return send_email(
@@ -180,53 +190,38 @@ def send_morning_of_email(user_id, tournament_id, session_date, session_name):
         if user_tournament.open_to_meet:
             meetup_count = max(0, meetup_count - 1)
         
-        # Session display name
-        session_display = f"{session_date} – {session_name} Session"
-        
-        # Attendee counts
-        attendee_msg = f"<p><strong>{session_attendees} fan{'s' if session_attendees != 1 else ''}</strong> will be at today's session"
-        if meetup_count > 0:
-            attendee_msg += f", with <strong>{meetup_count}</strong> open to meeting up."
-        else:
-            attendee_msg += "."
-        attendee_msg += "</p>"
-        
-        # Lanyard reminder
-        has_lanyard = getattr(user, 'lanyard_ordered', False)
-        if has_lanyard:
-            lanyard_msg = "<p>🧢 Don't forget to bring your CourtSideClub lanyard to help other fans spot you!</p>"
-        else:
-            lanyard_msg = ""
+        # Clean session display name (remove date formatting)
+        session_display = f"{session_name} Session"
         
         # Meetup info (if set by admin)
         meetup_info = ""
-        if hasattr(tournament, 'meetup_time') and tournament.meetup_time:
-            meetup_info += f"<p>📍 <strong>Meetup Time:</strong> {tournament.meetup_time}</p>"
-        if hasattr(tournament, 'meetup_location') and tournament.meetup_location:
-            meetup_info += f"<p>📍 <strong>Meetup Location:</strong> {tournament.meetup_location}</p>"
+        if hasattr(tournament, 'meetup_location') and hasattr(tournament, 'meetup_time') and tournament.meetup_location and tournament.meetup_time:
+            meetup_info = f"<p>📍 <strong>Meet-up Spot:</strong> {tournament.meetup_location} at {tournament.meetup_time}</p>"
         
-        # Instagram CTA
-        instagram_cta = "<p>📸 Tag your meetups on Instagram <strong>@courtsideclub</strong> — we love seeing the community in action!</p>"
+        # Lanyard reminder (only if user has lanyard)
+        has_lanyard = getattr(user, 'lanyard_ordered', False)
+        if has_lanyard:
+            lanyard_msg = "<p>🟢 Don't forget your <strong>CourtSide Club</strong> lanyard so other members can find you!</p>"
+        else:
+            lanyard_msg = ""
         
         morning_html = f"""
         <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
 
-        <p>Today's the day! You're all set for <strong>{tournament.name}</strong>.</p>
+        <p><strong>It's game day!</strong> You're all set for <strong>{tournament.name}</strong>, and we're so glad you're part of it.</p>
 
-        <p><strong>Your Session:</strong> {session_display}</p>
-
-        {attendee_msg}
-
-        {lanyard_msg}
+        <p><strong>🎾 Today's Session:</strong> {session_display}<br>
+        <strong>👥 {session_attendees} fan{'s' if session_attendees != 1 else ''}</strong> are attending — <strong>{meetup_count} open to meeting up</strong>.</p>
 
         {meetup_info}
 
-        <p>🎾 Have an amazing time at the tournament! The energy courtside is incredible — soak it all in.</p>
+        {lanyard_msg}
 
-        {instagram_cta}
+        <p>📸 Tag your meetups on Instagram <strong>@courtsideclub</strong> — we love seeing CSC in the wild!</p>
 
-        <p>Enjoy the tennis!<br>
-        – The CourtSideClub Team</p>
+        <p>☀️ Soak up the vibe, say hey to fellow members, and enjoy your day courtside. The energy is real.</p>
+
+        <p>– The CourtSide Club Team</p>
         """
         
         return send_email(

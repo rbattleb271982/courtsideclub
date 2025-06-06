@@ -1,0 +1,39 @@
+Update the Pre-Tournament Reminder Email (Email #1) template used by send_tournament_reminder() in services/email.py.
+Changes to make:
+Replace the current HTML body with the updated version below
+Make sure the session list is rendered as a bulleted <ul> (not inline)
+Style emojis and CTA links cleanly for mobile readability
+Ensure the number of “other members open to meeting up” is dynamically inserted
+Insert the tournament name and location dynamically
+Use the following updated HTML template:
+<p>Hi {{ user.first_name }},</p>
+
+<p>We’re just two weeks away from <strong>the {{ tournament.name }}</strong> — here’s a quick look at your plans so you’re ready to go:</p>
+
+<p><strong>🎾 Sessions You’ve Selected:</strong></p>
+<ul>
+  {% for session in user_sessions %}
+    <li>✅ {{ session }}</li>
+  {% endfor %}
+</ul>
+
+<p><strong>👋 {{ open_to_meet_count }} other members</strong> are open to meeting up at these sessions.</p>
+
+<hr style="border:none; border-top:1px solid #ddd;">
+
+<p>🧢 <strong>Don’t forget:</strong> your free lanyard is still waiting. <a href="{{ url_for('user.account', _external=True) }}">Log in to claim yours</a> so it arrives before the tournament.</p>
+
+<p>📅 Want to plan your visit? <a href="{{ tournament.schedule_url }}">Check the official tournament schedule</a>.</p>
+
+<p>📍 The tournament is taking place in <strong>{{ tournament.city }}, {{ tournament.country }}</strong>. Make sure to plan ahead for entry and transport.</p>
+
+<p>🎒 <strong>Pro tip:</strong> Bring sunscreen, a refillable water bottle, and your lanyard. The courtside energy is real — stay ready.</p>
+
+<hr style="border:none; border-top:1px solid #ddd;">
+
+<p>Need to make a change? <a href="{{ url_for('user.account', _external=True) }}">Log in to update your sessions or raise your hand</a>.</p>
+
+<p>Thanks for being part of <strong>CourtSide Club</strong> — we can't wait to see you there!</p>
+
+<p style="color:#666;">– The CourtSide Club Team</p>
+Do not use checkpoints unless absolutely necessary. Test by triggering /debug/send_tournament_reminder and verifying mobile layout and personalization.
