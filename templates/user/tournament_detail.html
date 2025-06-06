@@ -96,7 +96,7 @@
                         </p>
                         <ul id="tournamentList" class="collapsed shared-history-list" style="display: none; list-style: none; padding-left: 0; margin: 0.5rem 0;">
                             {% for name, count in sorted_shared_tournaments %}
-                            <li style="font-size: 0.85rem; color: #666; margin-bottom: 0.25rem;">{{ name }} <span class="small text-muted">({{ count }} {{ 'people have' if count > 1 else 'person has' }} been to this tournament)</span></li>
+                            <li style="font-size: 0.85rem; color: #666; margin-bottom: 0.25rem;">{{ name }} <span class="small text-muted">({{ count }} attended)</span></li>
                             {% endfor %}
                         </ul>
                         {% elif current_user.is_authenticated %}
