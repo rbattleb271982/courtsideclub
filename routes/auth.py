@@ -168,7 +168,7 @@ def logout():
     
     logout_user()
     flash("You've been logged out.", "info")
-    return redirect(url_for('main.home'))
+    return redirect(url_for('main.public_home'))
 
 @auth_bp.route('/reset_password', methods=['GET', 'POST'])
 def reset_password_request():
