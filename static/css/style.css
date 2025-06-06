@@ -26,6 +26,8 @@
   align-items: center;
   padding: 0.75rem 1rem;
   background: none;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .logo {
@@ -1121,7 +1123,7 @@ body {
   color: var(--gray-dark);
 }
 
-/* Hero Section */
+/* Hero Section - Full Width */
 .hero-section {
   background-image: url('/static/images/hero-tennis.jpg');
   background-size: cover;
@@ -1133,6 +1135,8 @@ body {
   position: relative;
   max-width: none;
   margin: 0;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
   min-height: 400px;
   display: flex;
   flex-direction: column;
@@ -1204,6 +1208,22 @@ body {
 .hero-secondary-button:hover {
   background-color: #e8f5e9;
   color: #007a4d;
+}
+
+/* Homepage Footer - Full Width */
+.homepage-footer {
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  text-align: center;
+  padding: 2rem 1rem;
+  margin-top: 3rem;
+  background-color: #f8f9fa;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.homepage-footer p {
+  margin: 0;
 }
 
 /* Utilities */
@@ -1518,15 +1538,7 @@ input:checked + .toggle-slider:before {
   background-color: #cde8cd;
 }
 
-.main-content {
-  margin-top: 20px;
-  padding: 0 16px;
-}
-
-.main-content {
-  margin-top: 20px;
-  padding: 0 16px;
-}
+/* Removed duplicate .main-content rules that added padding constraints */
 
 .footer-links {
   display: flex;
