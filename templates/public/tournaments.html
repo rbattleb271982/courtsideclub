@@ -19,14 +19,16 @@
 }
 
 .tournament-table {
-  width: 100%;
+  width: 100vw;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin: 1rem 0 0 0;
   background: white;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  table-layout: fixed;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 .tournament-table th {
