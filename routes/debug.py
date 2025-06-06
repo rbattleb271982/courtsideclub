@@ -5,6 +5,7 @@ import logging
 import os
 import sys
 import traceback
+import datetime
 from werkzeug.security import generate_password_hash
 
 # Initialize logging
@@ -330,3 +331,71 @@ def send_reminder(user_id, tournament_slug):
     )
 
     return f"Tournament reminder sent to {user.email}"
+
+@debug_bp.route('/debug/send_test_email')
+def send_test_email():
+    """Send a basic test email using SendGrid"""
+    from services.sendgrid_service import send_email
+    import os
+    from flask import current_app
+    
+    # Your test email address - replace with your actual email
+    test_email = "youremail@example.com"  # Replace this with your actual email
+    
+    # Get FROM_EMAIL from config
+    from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
+    
+    # Check if SendGrid API key is available
+    api_key = os.environ.get('SENDGRID_API_KEY')
+    api_key_status = "Not provided" if not api_key else f"Available (length: {len(api_key)})"
+    
+    # Send the test email
+    try:
+        success = send_email(
+            to_email=test_email,
+            subject='CourtSide Club - Debug Test Email',
+            content_html='''
+            <h2>Debug Test Email</h2>
+            <p>This is a test email from the CourtSide Club debug system.</p>
+            <p><strong>Purpose:</strong> Testing SendGrid email functionality</p>
+            <p><strong>Timestamp:</strong> {}</p>
+            <p>If you received this email, the SendGrid integration is working correctly!</p>
+            '''.format(datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC'))
+        )
+        
+        if success:
+            return f'''
+            <h1>✅ Email Test Successful</h1>
+            <p><strong>Sent to:</strong> {test_email}</p>
+            <p><strong>From:</strong> {from_email}</p>
+            <p><strong>API Key Status:</strong> {api_key_status}</p>
+            <p><strong>Result:</strong> Email sent successfully</p>
+            <p>Check your inbox for the test email!</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        else:
+            return f'''
+            <h1>❌ Email Test Failed</h1>
+            <p><strong>Recipient:</strong> {test_email}</p>
+            <p><strong>From:</strong> {from_email}</p>
+            <p><strong>API Key Status:</strong> {api_key_status}</p>
+            <p><strong>Result:</strong> Email sending failed</p>
+            <p>Common issues:</p>
+            <ul>
+                <li>Invalid or missing SendGrid API key</li>
+                <li>Unverified sender domain/email</li>
+                <li>SendGrid account restrictions</li>
+                <li>Network connectivity issues</li>
+            </ul>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+            
+    except Exception as e:
+        logger.error(f"Error sending test email: {str(e)}", exc_info=True)
+        return f'''
+        <h1>❌ Email Test Error</h1>
+        <p><strong>Error:</strong> {str(e)}</p>
+        <p><strong>API Key Status:</strong> {api_key_status}</p>
+        <p>Check the server logs for detailed error information.</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        ''', 500
