@@ -157,14 +157,10 @@
                                                     </div>
                                                     <div class="week-days" id="days-week-{{ ut.tournament.id }}-{{ week_idx }}">
                                                         {% for day in week_days %}
-                                                        <div class="compact-day">
-                                                            <div class="compact-day-date">
-                                                                {{ day.date.strftime('%a, %b %d') }}:
-                                                            </div>
-                                                            <div class="compact-day-sessions">
-                                                                <span>{{ day.day_count }} Day</span>
-                                                                <span>{{ day.night_count }} Night</span>
-                                                            </div>
+                                                        <div class="session-row">
+                                                            <div class="session-date">{{ day.date.strftime('%a, %b %d') }}</div>
+                                                            <div class="session-day-count">{{ day.day_count }} Day</div>
+                                                            <div class="session-night-count">{{ day.night_count }} Night</div>
                                                         </div>
                                                         {% endfor %}
                                                     </div>

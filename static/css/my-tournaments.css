@@ -166,23 +166,27 @@
   display: block;
 }
 
-.compact-day {
-  display: flex;
+/* Session row with clean grid-based column layout */
+.session-row {
+  display: grid;
+  grid-template-columns: auto 80px 80px;
+  gap: 0.5rem;
   align-items: center;
   font-size: 13.5px;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.3rem;
   line-height: 1.3;
+  padding: 0.1rem 0;
 }
 
-.compact-day-date {
-  min-width: 75px;
+.session-date {
   font-weight: 500;
+  color: #333;
 }
 
-.compact-day-sessions {
-  display: flex;
-  gap: 1rem;
+.session-day-count,
+.session-night-count {
   color: #666;
+  text-align: left;
 }
 
 /* Session counts styling */
@@ -265,9 +269,10 @@
     font-size: 0.8rem;
   }
 
-  .session-day-row {
-    flex-direction: column;
-    gap: 0.25rem;
+  .session-row {
+    grid-template-columns: auto 70px 70px;
+    gap: 0.3rem;
+    font-size: 12px;
   }
 
   .session-counts {
@@ -277,5 +282,12 @@
   .accordion-button {
     font-size: 0.8rem;
     padding: 0.4rem 0.6rem;
+  }
+}
+
+/* Medium mobile screens */
+@media (min-width: 481px) and (max-width: 767px) {
+  .session-row {
+    grid-template-columns: auto 75px 75px;
   }
 }
