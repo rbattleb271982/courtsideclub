@@ -19,31 +19,84 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.tournament-table th, .tournament-table td {
-  padding: 0.25rem 0.75rem;
+.tournament-table th {
+  background: #f8f9fa;
+  padding: 0.75rem;
   text-align: left;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #dee2e6;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.tournament-table th:hover {
+  background: #e9ecef;
+}
+
+.tournament-table th.sortable::after {
+  content: ' ↕';
+  color: #999;
+  font-size: 0.8rem;
+}
+
+.tournament-table th.sort-asc::after {
+  content: ' ↑';
+  color: #065f46;
+}
+
+.tournament-table th.sort-desc::after {
+  content: ' ↓';
+  color: #065f46;
+}
+
+.tournament-table td {
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.95rem;
   border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+
+.tournament-table tr:hover {
+  background: #f8f9fa;
 }
 
 .tournament-table a {
-  display: block;
-  padding: 0.25rem 0;
-  font-weight: 500;
   color: #065f46;
-  border-bottom: none;
+  font-weight: 500;
   text-decoration: none;
-  line-height: 1.4;
 }
 
 .tournament-table a:hover {
   text-decoration: underline;
 }
 
+.date-column {
+  width: 25%;
+  font-weight: 500;
+  color: #555;
+}
+
+.name-column {
+  width: 45%;
+}
+
+.location-column {
+  width: 30%;
+  color: #666;
+}
+
 .tournaments-container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -73,6 +126,36 @@
   .search-input {
     font-size: 16px; /* Prevents zoom on iOS */
   }
+  
+  .tournament-table th,
+  .tournament-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.85rem;
+  }
+  
+  .date-column {
+    width: 30%;
+  }
+  
+  .name-column {
+    width: 40%;
+  }
+  
+  .location-column {
+    width: 30%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tournament-table th,
+  .tournament-table td {
+    padding: 0.4rem 0.2rem;
+    font-size: 0.8rem;
+  }
+  
+  .tournament-table th {
+    font-size: 0.75rem;
+  }
 }
 </style>
 {% endblock %}
@@ -85,29 +168,92 @@
   <input type="text" id="tournamentSearch" placeholder="Search tournaments..." class="search-input" />
 
   <table class="tournament-table" id="tournamentTable">
+    <thead>
+      <tr>
+        <th class="sortable date-column" data-column="date">Date</th>
+        <th class="sortable name-column" data-column="name">Tournament Name</th>
+        <th class="sortable location-column" data-column="location">Location</th>
+      </tr>
+    </thead>
     <tbody>
       {% for t in tournaments %}
-      <tr>
-        <td>
+      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-location="{{ t.location.lower() if t.location else '' }}">
+        <td class="date-column">{{ t.start_date.strftime('%b %d, %Y') }}</td>
+        <td class="name-column">
           <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}">
             {{ t.name }}
           </a>
         </td>
+        <td class="location-column">{{ t.location or 'TBD' }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 
   <script>
+  let currentSort = { column: 'date', direction: 'asc' };
+
+  // Search functionality
   document.getElementById("tournamentSearch").addEventListener("input", function () {
     const filter = this.value.toLowerCase();
     const rows = document.querySelectorAll("#tournamentTable tbody tr");
 
     rows.forEach(row => {
-      const name = row.textContent.toLowerCase();
-      row.style.display = name.includes(filter) ? "" : "none";
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(filter) ? "" : "none";
     });
   });
+
+  // Sort functionality
+  document.querySelectorAll('.sortable').forEach(header => {
+    header.addEventListener('click', () => {
+      const column = header.dataset.column;
+      const tbody = document.querySelector('#tournamentTable tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      
+      // Toggle direction if clicking same column
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.direction = 'asc';
+      }
+      currentSort.column = column;
+      
+      // Update header classes
+      document.querySelectorAll('.sortable').forEach(h => {
+        h.classList.remove('sort-asc', 'sort-desc');
+      });
+      header.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+      
+      // Sort rows
+      rows.sort((a, b) => {
+        let aVal, bVal;
+        
+        if (column === 'date') {
+          aVal = a.dataset.date;
+          bVal = b.dataset.date;
+        } else if (column === 'name') {
+          aVal = a.dataset.name;
+          bVal = b.dataset.name;
+        } else if (column === 'location') {
+          aVal = a.dataset.location;
+          bVal = b.dataset.location;
+        }
+        
+        if (currentSort.direction === 'asc') {
+          return aVal.localeCompare(bVal);
+        } else {
+          return bVal.localeCompare(aVal);
+        }
+      });
+      
+      // Reorder DOM
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
+
+  // Initialize with date sort
+  document.querySelector('[data-column="date"]').classList.add('sort-asc');
   </script>
 </div>
 {% endblock %}
