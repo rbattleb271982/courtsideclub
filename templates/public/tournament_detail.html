@@ -146,6 +146,46 @@ body {
     border-right: none;
   }
 }
+
+@media (max-width: 600px) {
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 1.1rem;
+  }
+  
+  .stat-block {
+    margin: 0;
+    padding: 4px 0;
+  }
+  
+  .tournament-container h1 {
+    font-size: 1.5rem;
+  }
+  
+  .tournament-container p {
+    font-size: 0.95rem;
+  }
+  
+  .tournament-container h3 {
+    font-size: 1rem;
+  }
+  
+  .snapshot-card {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .tournament-links {
+    margin-bottom: 12px;
+  }
+  
+  .tournament-container {
+    padding-top: 12px;
+  }
+}
 </style>
 {% endblock %}
 
@@ -163,8 +203,10 @@ body {
 
   <div class="snapshot-card">
     <h3>Tournament Snapshot</h3>
-    <p>✅ <strong>{{ attending_count }}</strong> Attending</p>
-    <p>👥 <strong>{{ meeting_count }}</strong> Open to Meet</p>
+    <div class="stats">
+      <div class="stat-block">✅ <strong>{{ attending_count }}</strong> Attending</div>
+      <div class="stat-block">👥 <strong>{{ meeting_count }}</strong> Open to Meet</div>
+    </div>
 
     <h3>See who's attending — and meet fellow fans!</h3>
     <p>Join CourtSide Club to view attendee lists and connect with other fans at {{ tournament.name }}.</p>
