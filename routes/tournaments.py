@@ -175,11 +175,13 @@ def list_tournaments():
     # Exclude current user for consistent display across all views
     stats = get_tournament_attendance_stats(tournament.id, include_current_user=False)
     
-    # Add lanyards count (not part of standard stats)
+    # Add lanyards count (not part of standard stats) - only count users with session selections
     other_users_filter = UserTournament.user_id != current_user.id if current_user.is_authenticated else True
     stats['lanyards'] = UserTournament.query.filter(
         UserTournament.tournament_id == tournament.id,
         UserTournament.attending == True,
+        UserTournament.session_label.isnot(None),
+        UserTournament.session_label != '',
         other_users_filter
     ).join(User).filter_by(lanyard_ordered=True).count()
     
