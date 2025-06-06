@@ -1482,3 +1482,44 @@ input:checked + .toggle-slider:before {
   font-size: 1rem;
   color: #333;
 }
+
+/* Session container layout for tournament detail page */
+.session-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.session-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.fan-count {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
+.day-count {
+  color: #15803d; /* green */
+}
+
+.night-count {
+  color: #1e40af; /* blue */
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+  .session-container {
+    gap: 0.5rem;
+  }
+  
+  .fan-count {
+    font-size: 0.8rem;
+  }
+}
