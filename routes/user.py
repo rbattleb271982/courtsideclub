@@ -226,30 +226,17 @@ def tournament_detail(tournament_slug):
             selected_sessions = user_tournament.session_label.split(',')
             print(f"DEBUG: selected_sessions = {selected_sessions}")
     
-    # Get tournament stats - include the current user for their own page
-    # This allows users to see themselves in the counts right after saving
+    # Get tournament stats using the shared helper function
+    # Include current user to show accurate counts including themselves
+    stats = get_tournament_attendance_stats(tournament.id, include_current_user=True)
     
-    # Static override for demonstration - force inclusion of the current user
-    # This ensures that we see at least 1 person attending if the user has selected sessions
-    my_attending = False
-    my_wants_to_meet = False
-    
-    # Check if the current user should be counted - must have session(s) selected
-    if user_tournament and user_tournament.attending and user_tournament.session_label and user_tournament.session_label != '':
-        my_attending = True
-        my_wants_to_meet = user_tournament.wants_to_meet
-        
-    # Calculate total stats including the current user if they're attending with sessions
-    attending_count = 1 if my_attending else 0
-    # Only count as "open to meeting" if they have sessions selected AND wants_to_meet is True
-    meetup_count = 1 if (my_attending and my_wants_to_meet) else 0
-    lanyard_count = 1 if (my_attending and current_user.lanyard_ordered) else 0
-    
-    stats = {
-        'attending': attending_count,
-        'meetup': meetup_count,
-        'lanyards': lanyard_count
-    }
+    # Add lanyard count - only count users with session selections and lanyard ordered
+    stats['lanyards'] = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament.id,
+        UserTournament.attending == True,
+        UserTournament.session_label.isnot(None),
+        UserTournament.session_label != ''
+    ).join(User).filter_by(lanyard_ordered=True).count()
     
     print(f"DEBUG: Final stats: {stats}")
     
