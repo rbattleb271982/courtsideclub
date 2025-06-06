@@ -45,6 +45,12 @@
   }
 }
 
+@media (min-width: 1200px) {
+  .tournament-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 .tournament-card {
   background: #fff;
   border: 1px solid #e0e0e0;
