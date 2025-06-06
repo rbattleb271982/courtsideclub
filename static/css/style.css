@@ -108,6 +108,20 @@
   margin-bottom: 1rem;
 }
 
+/* Lanyard section spacing improvements */
+.lanyard-section h2 {
+  margin-bottom: 12px;
+}
+
+.lanyard-section p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.lanyard-section .button-primary {
+  margin-top: 16px;
+}
+
 .nav {
   display: flex;
   justify-content: space-between;
