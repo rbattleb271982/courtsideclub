@@ -399,3 +399,297 @@ def send_test_email():
         <p>Check the server logs for detailed error information.</p>
         <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
         ''', 500
+
+@debug_bp.route('/debug/send_tournament_reminder')
+@debug_bp.route('/debug/send_tournament_reminder/<int:user_id>/<int:tournament_id>')
+def send_tournament_reminder_debug(user_id=None, tournament_id=None):
+    """Debug route to test tournament reminder email"""
+    from services.email import send_tournament_reminder_email
+    
+    try:
+        # Use default test values if not provided
+        if not user_id:
+            # Find a test user with tournament attendance
+            test_user = db.session.query(User).join(UserTournament).filter(
+                UserTournament.attending == True,
+                UserTournament.session_label.isnot(None),
+                User.notifications == True
+            ).first()
+            if test_user:
+                user_id = test_user.id
+            else:
+                return '''
+                <h1>❌ No Test User Found</h1>
+                <p>No users found with tournament attendance and notifications enabled.</p>
+                <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+                '''
+        
+        if not tournament_id:
+            # Find a tournament this user is attending
+            user_tournament = db.session.query(UserTournament).filter_by(
+                user_id=user_id,
+                attending=True
+            ).first()
+            if user_tournament:
+                tournament_id = user_tournament.tournament_id
+            else:
+                return '''
+                <h1>❌ No Tournament Found</h1>
+                <p>User is not attending any tournaments.</p>
+                <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+                '''
+        
+        # Get user and tournament details
+        user = db.session.get(User, user_id)
+        tournament = db.session.get(Tournament, tournament_id)
+        
+        if not user or not tournament:
+            return f'''
+            <h1>❌ Invalid User or Tournament</h1>
+            <p>User ID: {user_id}, Tournament ID: {tournament_id}</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        
+        # Send the reminder email
+        success = send_tournament_reminder_email(user_id, tournament_id)
+        
+        if success:
+            return f'''
+            <h1>✅ Tournament Reminder Sent</h1>
+            <p><strong>User:</strong> {user.email} ({getattr(user, 'first_name', 'No name')})</p>
+            <p><strong>Tournament:</strong> {tournament.name}</p>
+            <p><strong>Location:</strong> {tournament.city}, {tournament.country}</p>
+            <p><strong>Dates:</strong> {tournament.start_date} to {tournament.end_date}</p>
+            <p>Check the recipient's inbox for the reminder email!</p>
+            <p><a href="/debug/send_test_email">Send Test Email</a> | <a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        else:
+            return f'''
+            <h1>❌ Tournament Reminder Failed</h1>
+            <p><strong>User:</strong> {user.email}</p>
+            <p><strong>Tournament:</strong> {tournament.name}</p>
+            <p>Check server logs for detailed error information.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+            
+    except Exception as e:
+        logger.error(f"Error in tournament reminder debug: {str(e)}", exc_info=True)
+        return f'''
+        <h1>❌ Debug Error</h1>
+        <p><strong>Error:</strong> {str(e)}</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        ''', 500
+
+@debug_bp.route('/debug/send_morning_email')
+@debug_bp.route('/debug/send_morning_email/<int:user_id>/<int:tournament_id>/<session_date>/<session_name>')
+def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None, session_name=None):
+    """Debug route to test morning-of tournament email"""
+    from services.email import send_morning_of_email
+    
+    try:
+        # Use default test values if not provided
+        if not user_id:
+            # Find a test user with tournament attendance
+            test_user = db.session.query(User).join(UserTournament).filter(
+                UserTournament.attending == True,
+                UserTournament.session_label.isnot(None),
+                User.notifications == True
+            ).first()
+            if test_user:
+                user_id = test_user.id
+            else:
+                return '''
+                <h1>❌ No Test User Found</h1>
+                <p>No users found with tournament attendance and notifications enabled.</p>
+                <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+                '''
+        
+        if not tournament_id:
+            # Find a tournament this user is attending
+            user_tournament = db.session.query(UserTournament).filter_by(
+                user_id=user_id,
+                attending=True
+            ).first()
+            if user_tournament:
+                tournament_id = user_tournament.tournament_id
+            else:
+                return '''
+                <h1>❌ No Tournament Found</h1>
+                <p>User is not attending any tournaments.</p>
+                <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+                '''
+        
+        # Default session info if not provided
+        if not session_date:
+            session_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        if not session_name:
+            session_name = "Day"
+        
+        # Get user and tournament details
+        user = db.session.get(User, user_id)
+        tournament = db.session.get(Tournament, tournament_id)
+        
+        if not user or not tournament:
+            return f'''
+            <h1>❌ Invalid User or Tournament</h1>
+            <p>User ID: {user_id}, Tournament ID: {tournament_id}</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        
+        # Send the morning-of email
+        success = send_morning_of_email(user_id, tournament_id, session_date, session_name)
+        
+        if success:
+            return f'''
+            <h1>✅ Morning-Of Email Sent</h1>
+            <p><strong>User:</strong> {user.email} ({getattr(user, 'first_name', 'No name')})</p>
+            <p><strong>Tournament:</strong> {tournament.name}</p>
+            <p><strong>Session:</strong> {session_date} – {session_name} Session</p>
+            <p><strong>Location:</strong> {tournament.city}, {tournament.country}</p>
+            <p>Check the recipient's inbox for the morning-of email!</p>
+            <p><a href="/debug/send_test_email">Send Test Email</a> | <a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        else:
+            return f'''
+            <h1>❌ Morning-Of Email Failed</h1>
+            <p><strong>User:</strong> {user.email}</p>
+            <p><strong>Tournament:</strong> {tournament.name}</p>
+            <p><strong>Session:</strong> {session_date} – {session_name}</p>
+            <p>Check server logs for detailed error information.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+            
+    except Exception as e:
+        logger.error(f"Error in morning email debug: {str(e)}", exc_info=True)
+        return f'''
+        <h1>❌ Debug Error</h1>
+        <p><strong>Error:</strong> {str(e)}</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        ''', 500
+
+@debug_bp.route('/debug/send_welcome_email')
+@debug_bp.route('/debug/send_welcome_email/<int:user_id>')
+def send_welcome_email_debug(user_id=None):
+    """Debug route to test welcome email"""
+    from services.email import send_welcome_email
+    
+    try:
+        # Use default test user if not provided
+        if not user_id:
+            # Find a test user
+            test_user = db.session.query(User).filter(
+                User.notifications == True
+            ).first()
+            if test_user:
+                user_id = test_user.id
+            else:
+                return '''
+                <h1>❌ No Test User Found</h1>
+                <p>No users found with notifications enabled.</p>
+                <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+                '''
+        
+        # Get user details
+        user = db.session.get(User, user_id)
+        if not user:
+            return f'''
+            <h1>❌ Invalid User</h1>
+            <p>User ID: {user_id}</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        
+        # Send the welcome email
+        success = send_welcome_email(user_id)
+        
+        if success:
+            return f'''
+            <h1>✅ Welcome Email Sent</h1>
+            <p><strong>User:</strong> {user.email} ({getattr(user, 'first_name', 'No name')})</p>
+            <p>Check the recipient's inbox for the welcome email!</p>
+            <p><a href="/debug/send_test_email">Send Test Email</a> | <a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+        else:
+            return f'''
+            <h1>❌ Welcome Email Failed</h1>
+            <p><strong>User:</strong> {user.email}</p>
+            <p>Check server logs for detailed error information.</p>
+            <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+            '''
+            
+    except Exception as e:
+        logger.error(f"Error in welcome email debug: {str(e)}", exc_info=True)
+        return f'''
+        <h1>❌ Debug Error</h1>
+        <p><strong>Error:</strong> {str(e)}</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        ''', 500
+
+@debug_bp.route('/debug/email_status')
+def email_status():
+    """Debug route to check email system status and eligible users"""
+    try:
+        # Check SendGrid API key
+        api_key = os.environ.get('SENDGRID_API_KEY')
+        api_key_status = "Available" if api_key else "Missing"
+        
+        # Count users with notifications enabled
+        users_with_notifications = User.query.filter_by(notifications=True).count()
+        total_users = User.query.count()
+        
+        # Count users attending tournaments
+        attending_users = db.session.query(User).join(UserTournament).filter(
+            UserTournament.attending == True
+        ).distinct().count()
+        
+        # Count users with session selections
+        users_with_sessions = db.session.query(User).join(UserTournament).filter(
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None),
+            UserTournament.session_label != ''
+        ).distinct().count()
+        
+        # Get sample eligible users
+        sample_users = db.session.query(User).join(UserTournament).filter(
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None),
+            User.notifications == True
+        ).limit(5).all()
+        
+        sample_list = ""
+        for user in sample_users:
+            sample_list += f"<li>{user.email} ({getattr(user, 'first_name', 'No name')})</li>"
+        
+        return f'''
+        <h1>📧 Email System Status</h1>
+        
+        <h2>SendGrid Configuration</h2>
+        <p><strong>API Key:</strong> {api_key_status}</p>
+        <p><strong>From Email:</strong> richardbattlebaxter@gmail.com</p>
+        
+        <h2>User Statistics</h2>
+        <p><strong>Total Users:</strong> {total_users}</p>
+        <p><strong>Users with Notifications Enabled:</strong> {users_with_notifications}</p>
+        <p><strong>Users Attending Tournaments:</strong> {attending_users}</p>
+        <p><strong>Users with Session Selections:</strong> {users_with_sessions}</p>
+        
+        <h2>Sample Eligible Users (for email testing)</h2>
+        <ul>{sample_list}</ul>
+        
+        <h2>Debug Email Routes</h2>
+        <ul>
+            <li><a href="/debug/send_test_email">Send Basic Test Email</a></li>
+            <li><a href="/debug/send_welcome_email">Send Welcome Email</a></li>
+            <li><a href="/debug/send_tournament_reminder">Send Tournament Reminder</a></li>
+            <li><a href="/debug/send_morning_email">Send Morning-Of Email</a></li>
+        </ul>
+        
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        '''
+        
+    except Exception as e:
+        logger.error(f"Error in email status debug: {str(e)}", exc_info=True)
+        return f'''
+        <h1>❌ Email Status Error</h1>
+        <p><strong>Error:</strong> {str(e)}</p>
+        <p><a href="/debug/system-info">View System Info</a> | <a href="/">Back to Home</a></p>
+        ''', 500
