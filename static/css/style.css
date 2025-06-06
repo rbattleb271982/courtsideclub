@@ -1033,7 +1033,7 @@ body {
 
 /* Hero Section */
 .hero-section {
-  background-image: url('/static/images/hero-tennis.svg');
+  background-image: url('/static/images/hero-tennis.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
