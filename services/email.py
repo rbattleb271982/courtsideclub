@@ -225,7 +225,7 @@ def send_morning_of_email(user_id, tournament_id, session_date, session_name, de
         """
         
         return send_email(
-            to_email=user.email,
+            to_email=debug_email_override or user.email,
             subject=f"Today's the day! {tournament.name} – {session_name} Session 🎾",
             content_html=morning_html
         )
