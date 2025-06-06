@@ -2,30 +2,123 @@
 {% block title %}FAQs – CourtSide Club{% endblock %}
 {% block description %}Answers to your questions about how CourtSide Club works, lanyards, meetups, and more.{% endblock %}
 
+{% block head %}
+<style>
+/* FAQ Expandable Groups Styling */
+details {
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+details summary {
+  padding: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #004d26;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+details summary:hover {
+  background-color: #f8f9fa;
+}
+
+details[open] summary {
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 8px 8px 0 0;
+}
+
+/* Nested question details */
+details details {
+  margin: 0.5rem 0;
+  border: none;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+details details summary {
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+}
+
+details details summary:hover {
+  background-color: #e9ecef;
+}
+
+details details[open] summary {
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 6px 6px 0 0;
+}
+
+details details p {
+  padding: 0.75rem;
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+  background-color: #fff;
+  border-radius: 0 0 6px 6px;
+}
+
+/* Group content padding */
+details > details {
+  margin: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  details summary {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  details details summary {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  details details p {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
-  <h1>Frequently Asked Questions</h1>
+  <h2>Frequently Asked Questions</h2>
 
-  <div style="margin-top: 2rem;">
-    <div class="faq-item" style="margin-bottom: 16px;">
-      <h3>Do I have to pay for a lanyard?</h3>
-      <p>Nope! It's totally free if you've signed up and selected at least one tournament session.</p>
-    </div>
+  <details>
+    <summary><strong>🎟️ Signing Up & Getting Started</strong></summary>
+    <details><summary>Do I have to pay for a lanyard?</summary><p>Nope! It's totally free if you've signed up and selected at least one tournament session.</p></details>
+    <details><summary>How do I sign up?</summary><p>Just click "Join Now" on the homepage. You'll create a quick profile and select which tournaments and sessions you're attending.</p></details>
+    <details><summary>What happens after I sign up?</summary><p>You'll be able to see who else is going to tournaments, opt in to meetups, and order your free lanyard.</p></details>
+    <details><summary>Can I invite a friend?</summary><p>Yes! Once you sign up, you'll be able to refer friends and unlock perks.</p></details>
+  </details>
 
-    <div class="faq-item" style="margin-bottom: 16px;">
-      <h3>Can I see who else is attending a tournament?</h3>
-      <p>Yes — once logged in, just visit any tournament page to see who's going and who's open to meeting up.</p>
-    </div>
+  <details>
+    <summary><strong>🧑‍🤝‍🧑 Meeting Up with Members</strong></summary>
+    <details><summary>Can I see who else is attending a tournament?</summary><p>Yes — once logged in, just visit any tournament page to see who's going and who's open to meeting up.</p></details>
+    <details><summary>What's the point of the lanyard?</summary><p>It's a visual signal that you're part of CourtSide Club and open to connecting with others at the event.</p></details>
+    <details><summary>How do I opt in to meet up?</summary><p>On each tournament page, you can toggle whether you're open to meeting. You'll also choose which sessions you're attending.</p></details>
+    <details><summary>Is there an official meet-up spot?</summary><p>Some events will have suggested meeting spots or times — we'll include those in your reminder emails if available.</p></details>
+  </details>
 
-    <div class="faq-item" style="margin-bottom: 16px;">
-      <h3>What's the point of the lanyard?</h3>
-      <p>It's a visual signal that you're part of CourtSide Club and open to connecting with others at the event.</p>
-    </div>
+  <details>
+    <summary><strong>🧳 Attending Tournaments</strong></summary>
+    <details><summary>Can I attend more than one tournament?</summary><p>Absolutely — just add them to your profile and select which sessions you're going to.</p></details>
+    <details><summary>What if my plans change?</summary><p>You can update your attendance or session selections at any time from your dashboard.</p></details>
+    <details><summary>Do I have to attend with friends?</summary><p>Not at all. CourtSide Club is built for solo fans, friend groups, and everyone in between.</p></details>
+  </details>
 
-    <div class="faq-item" style="margin-bottom: 16px;">
-      <h3>Can I invite a friend?</h3>
-      <p>Yes! Once you sign up, you'll be able to refer friends and unlock perks.</p>
-    </div>
-  </div>
+  <details>
+    <summary><strong>📦 Lanyard & Perks</strong></summary>
+    <details><summary>When will my lanyard arrive?</summary><p>Once you order it, we'll ship it to you in advance of your selected tournament(s). You'll get a tracking number too.</p></details>
+    <details><summary>Do I get a new lanyard for each tournament?</summary><p>No — it's a one-time lanyard you can use across multiple events.</p></details>
+    <details><summary>Are there other perks?</summary><p>Yes! We're working on exclusive offers and extras for active members — stay tuned.</p></details>
+  </details>
 </div>
 {% endblock %}
