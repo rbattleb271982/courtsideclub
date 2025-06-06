@@ -1035,7 +1035,7 @@ def lanyard():
             user_id=current_user.id,
             attending=True
         ).all()
-        has_session = any(ut.session_label for ut in attending_sessions)
+        has_session = any(ut.session_label and ut.session_label.strip() for ut in attending_sessions)
 
         if not has_session:
             flash("You must select at least one tournament session before ordering a lanyard.", "warning")
