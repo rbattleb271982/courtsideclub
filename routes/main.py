@@ -98,7 +98,7 @@ def how_it_works():
                          page_title="How CourtSide Club Works - Tennis Fan Community",
                          page_description="Learn how CourtSide Club helps tennis fans connect at tournaments. Find other fans, get your lanyard, and join the community.")
 
-@main_bp.route('/lanyard')
+@main_bp.route('/public-lanyard')
 def lanyard_info():
     return render_template('public/lanyard.html')
     
@@ -145,7 +145,7 @@ def sitemap():
         pages = [
             url_for('main.public_home', _external=True),
             url_for('main.how_it_works', _external=True),
-            url_for('main.lanyard_info', _external=True),
+            url_for('main.lanyard_info_public', _external=True),
             url_for('main.faqs', _external=True),
             url_for('main.blog', _external=True),
             url_for('main.privacy', _external=True),
@@ -160,7 +160,7 @@ def sitemap():
         pages = [
             url_for('main.public_home', _external=True),
             url_for('main.how_it_works', _external=True),
-            url_for('main.lanyard_info', _external=True),
+            url_for('main.lanyard_info_public', _external=True),
             url_for('main.faqs', _external=True),
             url_for('main.blog', _external=True),
             url_for('main.privacy', _external=True),
