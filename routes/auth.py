@@ -71,28 +71,13 @@ def login():
                     user.welcome_seen = True
                     db.session.commit()
 
-                # Check if this is running in an iframe (Safari blocks cookies in iframes)
-                is_iframe = request.headers.get('Sec-Fetch-Dest') == 'iframe'
+                # Set session flag for welcome message
+                session['show_welcome'] = True
+                session.modified = True
+                session.permanent = True
                 
-                if is_iframe:
-                    # For iframe context, redirect to a new tab with proper domain
-                    redirect_url = f"https://{request.host}/login-success?user_id={user.id}"
-                    # Create a JavaScript redirect that opens in parent window
-                    return f"""
-                    <script>
-                        if (window.parent !== window) {{
-                            window.parent.location.href = "{redirect_url}";
-                        }} else {{
-                            window.location.href = "{url_for('user.my_tournaments')}";
-                        }}
-                    </script>
-                    """
-                else:
-                    # Normal login flow
-                    session['show_welcome'] = True
-                    session.modified = True
-                    session.permanent = True
-                    return redirect(url_for('user.my_tournaments'))
+                # Always redirect to login-success for proper session establishment
+                return redirect(url_for('auth.login_success'))
 
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
@@ -285,26 +270,9 @@ def reset_password_confirm():
 
 @auth_bp.route('/login-success')
 def login_success():
-    """Handle iframe login redirects by establishing session in parent window"""
-    user_id = request.args.get('user_id')
-    if not user_id:
-        return redirect(url_for('auth.login'))
-    
-    try:
-        user = User.query.get(int(user_id))
-        if user:
-            # Establish session in the parent window context
-            login_user(user)
-            session['show_welcome'] = True
-            session.modified = True
-            session.permanent = True
-            
-            # Log the successful login
-            logging.info(f"Login success route: User {user.email} logged in")
-            
-            return redirect(url_for('user.my_tournaments'))
-        else:
-            return redirect(url_for('auth.login'))
-    except (ValueError, TypeError):
+    """Confirm login session is established and redirect to my-tournaments"""
+    if current_user.is_authenticated:
+        return render_template("auth/login_success.html")
+    else:
         return redirect(url_for('auth.login'))
 
