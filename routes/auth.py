@@ -74,25 +74,24 @@ def login():
                 # Set session flag for welcome message
                 session['show_welcome'] = True
                 
-                # Force session save before redirect
-                from flask import current_app
+                # Force session save and mark as modified
                 session.modified = True
+                session.permanent = True
                 
-                # Always redirect to my_tournaments after login
-                logging.info(f"Redirecting user to my_tournaments")
+                # Create redirect response first
                 redirect_url = url_for('user.my_tournaments')
-                logging.info(f"Redirect URL generated: {redirect_url}")
-                
-                # Verify session before returning response
-                logging.info(f"Final session contents before response: {dict(session)}")
-                logging.info(f"User ID in session: {session.get('_user_id')}")
-                
-                # Create response with explicit cookie settings
                 response = make_response(redirect(redirect_url))
                 
-                # Log request details for debugging
-                logging.info(f"Request host: {request.host}")
-                logging.info(f"Request headers: {dict(request.headers)}")
+                # Manually set session cookie on response to ensure it's sent
+                from flask import current_app
+                if '_user_id' in session:
+                    # Force Flask to save the session by accessing the session interface
+                    current_app.session_interface.save_session(current_app, session, response)
+                
+                # Verify session and response details
+                logging.info(f"Final session contents: {dict(session)}")
+                logging.info(f"User ID in session: {session.get('_user_id')}")
+                logging.info(f"Response headers after session save: {dict(response.headers)}")
                 
                 return response
 
