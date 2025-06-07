@@ -2,12 +2,9 @@ import os
 import secrets
 import string
 import logging
-try:
-    from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-    from flask_login import login_user, logout_user, login_required, current_user
-    from werkzeug.security import generate_password_hash, check_password_hash
-except ImportError:
-    pass  # Imports will be available at runtime
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from models import db, User
 from services.sendgrid_service import send_email
