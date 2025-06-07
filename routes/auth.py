@@ -45,7 +45,6 @@ def login():
                 logging.info(f"login_user result: {login_result}")
                 
                 # Check if user is actually logged in
-                from flask_login import current_user
                 logging.info(f"current_user.is_authenticated after login: {current_user.is_authenticated}")
 
                 # Log the successful login event
