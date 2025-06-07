@@ -35,6 +35,11 @@ def log_response_info(response):
     import logging
     logging.info(f"=== RESPONSE: {response.status_code} ===")
     logging.info(f"Response headers: {dict(response.headers)}")
+    
+    # Add proper headers for iframe compatibility
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['Content-Security-Policy'] = "frame-ancestors 'self' *.replit.dev *.replit.co *.replit.com"
+    
     return response
 
 app.config.from_object('config.Config')
@@ -293,6 +298,56 @@ def session_test():
     logging.info(f"Is authenticated: {current_user.is_authenticated}")
     
     return f"Session Test - Check logs for details"
+
+# Add iframe test route for debugging preview window issues
+@app.route('/iframe-test')
+def iframe_test():
+    """Simple test page to check iframe functionality"""
+    from flask import render_template_string
+    return render_template_string('''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Iframe Test - CourtSide Club</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+            .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+            .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        </style>
+    </head>
+    <body>
+        <h1>Iframe Test Page</h1>
+        <div class="status success">✓ Page loaded successfully</div>
+        <div class="status info" id="iframe-status">Checking iframe status...</div>
+        <div class="status info">
+            <strong>Current URL:</strong> <span id="current-url"></span>
+        </div>
+        <div class="status info">
+            <strong>Session Status:</strong> 
+            {% if current_user.is_authenticated %}
+                Logged in as {{ current_user.email }}
+            {% else %}
+                Not logged in
+            {% endif %}
+        </div>
+        
+        <script>
+            document.getElementById('current-url').textContent = window.location.href;
+            
+            if (window.parent !== window) {
+                document.getElementById('iframe-status').innerHTML = 
+                    '<strong>Status:</strong> Running inside iframe (Preview Window)';
+                document.getElementById('iframe-status').className = 'status info';
+            } else {
+                document.getElementById('iframe-status').innerHTML = 
+                    '<strong>Status:</strong> Running in full window (Direct Access)';
+                document.getElementById('iframe-status').className = 'status success';
+            }
+        </script>
+    </body>
+    </html>
+    ''')
 
 # Configure debug mode
 app.debug = True
