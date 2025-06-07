@@ -5,7 +5,7 @@ class Config:
     SECRET_KEY = os.environ.get('SESSION_SECRET', 'dev_secret_key')
     
     # Session configuration for proper login persistence in Replit
-    SESSION_COOKIE_SAMESITE = 'Lax'        # Safe for logged-in flows
+    SESSION_COOKIE_SAMESITE = 'None'       # Required for iframe compatibility
     SESSION_COOKIE_SECURE = True           # MUST be True over HTTPS
     SESSION_COOKIE_HTTPONLY = True
     PERMANENT_SESSION_LIFETIME = 86400
