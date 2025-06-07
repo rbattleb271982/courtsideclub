@@ -1200,14 +1200,22 @@ body {
 
 /* Secondary button style for login */
 .hero-secondary-button, .secondary-button {
+  display: inline-block;
   background-color: white;
   color: #007a4d;
   border: 2px solid #007a4d;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  min-width: 120px;
+  text-align: center;
 }
 
 .hero-secondary-button:hover, .secondary-button:hover {
   background-color: #e8f5e9;
   color: #007a4d;
+  text-decoration: none;
 }
 
 /* Homepage Footer - Full Width */
