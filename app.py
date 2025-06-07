@@ -251,5 +251,11 @@ def handle_exception(e):
     # Return the error template
     return render_template('error.html', error=str(e)), 500
 
+# Add debug route for cookie inspection
+@app.route('/debug/cookies')
+def debug_cookies():
+    from flask import request, session
+    return f"Cookies: {dict(request.cookies)}<br>Session: {dict(session)}"
+
 # Configure debug mode
 app.debug = True
