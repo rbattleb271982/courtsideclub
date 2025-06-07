@@ -41,7 +41,15 @@ def login():
             if is_valid:
                 # Check if the remember checkbox was selected
                 remember = 'remember' in request.form
-                login_user(user, remember=remember)
+                
+                # Debug logging before login_user
+                logging.info(f"About to call login_user for user {user.id}")
+                login_result = login_user(user, remember=remember)
+                logging.info(f"login_user result: {login_result}")
+                
+                # Check if user is actually logged in
+                from flask_login import current_user
+                logging.info(f"current_user.is_authenticated after login: {current_user.is_authenticated}")
 
                 # Log the successful login event
                 from services.event_logger import log_event
