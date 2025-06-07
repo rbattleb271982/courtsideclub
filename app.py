@@ -21,6 +21,22 @@ app = Flask(__name__)
 from werkzeug.middleware.proxy_fix import ProxyFix
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
+# Add middleware to log all requests and responses for debugging
+@app.before_request
+def log_request_info():
+    from flask import request
+    import logging
+    logging.info(f"=== REQUEST: {request.method} {request.path} ===")
+    logging.info(f"Request cookies: {dict(request.cookies)}")
+    logging.info(f"Request headers: {dict(request.headers)}")
+
+@app.after_request
+def log_response_info(response):
+    import logging
+    logging.info(f"=== RESPONSE: {response.status_code} ===")
+    logging.info(f"Response headers: {dict(response.headers)}")
+    return response
+
 app.config.from_object('config.Config')
 
 # Set the remember me cookie duration to 30 days

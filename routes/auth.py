@@ -2,7 +2,7 @@ import os
 import secrets
 import string
 import logging
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -87,7 +87,14 @@ def login():
                 logging.info(f"Final session contents before response: {dict(session)}")
                 logging.info(f"User ID in session: {session.get('_user_id')}")
                 
-                return redirect(redirect_url)
+                # Create response with explicit cookie settings
+                response = make_response(redirect(redirect_url))
+                
+                # Log request details for debugging
+                logging.info(f"Request host: {request.host}")
+                logging.info(f"Request headers: {dict(request.headers)}")
+                
+                return response
 
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
