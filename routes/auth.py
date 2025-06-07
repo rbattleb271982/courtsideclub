@@ -153,8 +153,14 @@ def signup():
 
                 # Show welcome message
                 flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
+                
+                # Set session flags
+                session['show_welcome'] = True
+                session.modified = True
+                session.permanent = True
 
-                return redirect(url_for('user.my_tournaments'))
+                # Use same iframe-compatible flow as login
+                return redirect(url_for('auth.login_success', user_id=new_user.id))
             except Exception as e:
                 db.session.rollback()
                 logging.error(f"Error creating new user: {str(e)}", exc_info=True)

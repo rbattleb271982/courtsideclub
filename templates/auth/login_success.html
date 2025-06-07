@@ -34,23 +34,50 @@
         function redirectToMyTournaments() {
             const targetUrl = "{{ url_for('user.my_tournaments') }}";
             
-            // Check if we're in an iframe
+            // Multiple strategies to break out of iframe
             if (window.parent !== window) {
-                // If in iframe, try to redirect parent
+                // Strategy 1: Try to redirect parent window
                 try {
                     window.parent.location.href = targetUrl;
+                    return;
                 } catch (e) {
-                    // If cross-origin, open in new tab
-                    window.open(targetUrl, '_blank');
+                    console.log('Parent redirect failed:', e);
                 }
+                
+                // Strategy 2: Try to access top window
+                try {
+                    window.top.location.href = targetUrl;
+                    return;
+                } catch (e) {
+                    console.log('Top redirect failed:', e);
+                }
+                
+                // Strategy 3: Force break out with _top target
+                try {
+                    window.open(targetUrl, '_top');
+                    return;
+                } catch (e) {
+                    console.log('Top target failed:', e);
+                }
+                
+                // Strategy 4: Open in new tab/window as fallback
+                window.open(targetUrl, '_blank');
             } else {
-                // Normal redirect
+                // Normal redirect for non-iframe context
                 window.location.href = targetUrl;
             }
         }
         
         // Start redirect after 1 second
         setTimeout(redirectToMyTournaments, 1000);
+        
+        // Also add click handler for immediate redirect
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.querySelector('button');
+            if (button) {
+                button.addEventListener('click', redirectToMyTournaments);
+            }
+        });
     </script>
 </body>
 </html>
