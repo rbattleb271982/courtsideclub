@@ -1143,14 +1143,14 @@ body {
   justify-content: center;
 }
 
-.hero-section::before {
-  content: "";
+/* Hero overlay - darker for better readability */
+.hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75);
   z-index: 0;
 }
 
@@ -1159,6 +1159,7 @@ body {
   z-index: 1;
 }
 
+.hero-section h1,
 .hero-section h2 {
   font-size: 2rem;
   font-weight: bold;
