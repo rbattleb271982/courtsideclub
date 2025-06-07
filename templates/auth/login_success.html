@@ -1,83 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Successful - CourtSide Club</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <title>Redirecting...</title>
+  <script>
+    // Force full-page redirect even if inside an iframe
+    if (window.top !== window.self) {
+      window.top.location = "{{ url_for('user.my_tournaments') }}";
+    } else {
+      window.location = "{{ url_for('user.my_tournaments') }}";
+    }
+  </script>
 </head>
-<body class="bg-gray-50">
-    <div class="min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-md text-center">
-            <div class="mb-4">
-                <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-            </div>
-            <h1 class="text-xl font-semibold text-gray-900 mb-2">Login Successful!</h1>
-            <p class="text-gray-600 mb-4">Welcome to CourtSide Club. Redirecting to your tournaments...</p>
-            <div class="inline-flex items-center mb-4">
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span class="text-sm text-gray-500">Loading...</span>
-            </div>
-            <button onclick="redirectToMyTournaments()" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-md transition duration-200">
-                Continue to My Tournaments
-            </button>
-        </div>
-    </div>
-
-    <script>
-        // Handle iframe context by redirecting parent window
-        function redirectToMyTournaments() {
-            const targetUrl = "{{ url_for('user.my_tournaments') }}";
-            
-            // Multiple strategies to break out of iframe
-            if (window.parent !== window) {
-                // Strategy 1: Try to redirect parent window
-                try {
-                    window.parent.location.href = targetUrl;
-                    return;
-                } catch (e) {
-                    console.log('Parent redirect failed:', e);
-                }
-                
-                // Strategy 2: Try to access top window
-                try {
-                    window.top.location.href = targetUrl;
-                    return;
-                } catch (e) {
-                    console.log('Top redirect failed:', e);
-                }
-                
-                // Strategy 3: Force break out with _top target
-                try {
-                    window.open(targetUrl, '_top');
-                    return;
-                } catch (e) {
-                    console.log('Top target failed:', e);
-                }
-                
-                // Strategy 4: Open in new tab/window as fallback
-                window.open(targetUrl, '_blank');
-            } else {
-                // Normal redirect for non-iframe context
-                window.location.href = targetUrl;
-            }
-        }
-        
-        // Start redirect after 1 second
-        setTimeout(redirectToMyTournaments, 1000);
-        
-        // Also add click handler for immediate redirect
-        document.addEventListener('DOMContentLoaded', function() {
-            const button = document.querySelector('button');
-            if (button) {
-                button.addEventListener('click', redirectToMyTournaments);
-            }
-        });
-    </script>
+<body>
+  <p>Redirecting you to your tournaments...</p>
 </body>
 </html>
