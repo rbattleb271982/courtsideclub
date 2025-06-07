@@ -800,6 +800,11 @@ def my_tournaments():
     from datetime import datetime, timedelta
     import logging
 
+    # Debug session persistence
+    logging.info(f"my_tournaments route accessed by user: {current_user.id if current_user.is_authenticated else 'ANONYMOUS'}")
+    logging.info(f"current_user.is_authenticated: {current_user.is_authenticated}")
+    logging.info(f"Session contents in my_tournaments: {dict(session)}")
+
     # Check for welcome message flag in session
     show_welcome = session.pop('show_welcome', False)
     

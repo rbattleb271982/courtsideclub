@@ -4,10 +4,10 @@ class Config:
     # Flask configuration
     SECRET_KEY = os.environ.get('SESSION_SECRET', 'dev_secret_key')
     
-    # Session configuration for proper login persistence
-    SESSION_COOKIE_SECURE = True  # HTTPS required in Replit
+    # Session configuration for proper login persistence in Replit
+    SESSION_COOKIE_SECURE = False  # Allow HTTP in development
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SAMESITE = None  # More permissive for Replit
     SESSION_COOKIE_DOMAIN = None  # Let Flask handle domain automatically
     PERMANENT_SESSION_LIFETIME = 86400  # 24 hours
     

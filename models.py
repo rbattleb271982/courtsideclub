@@ -223,4 +223,15 @@ class UserWishlistTournament(db.Model):
 
 
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    import logging
+    logging.info(f"User loader called with user_id: {user_id}")
+    try:
+        user = User.query.get(int(user_id))
+        if user:
+            logging.info(f"User loader found user: {user.email}")
+        else:
+            logging.info(f"User loader: No user found with ID {user_id}")
+        return user
+    except Exception as e:
+        logging.error(f"User loader error: {e}")
+        return None
