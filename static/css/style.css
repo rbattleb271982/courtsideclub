@@ -1143,14 +1143,14 @@ body {
   justify-content: center;
 }
 
-/* Hero dark overlay - 90% black for maximum text readability */
+/* Hero dark overlay - 75% black for balanced readability */
 .hero-dark-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.75);
   z-index: 10;
 }
 
