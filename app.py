@@ -260,7 +260,23 @@ def handle_exception(e):
 @app.route('/debug/cookies')
 def debug_cookies():
     from flask import request, session
-    return f"Cookies: {dict(request.cookies)}<br>Session: {dict(session)}"
+    from flask_login import current_user
+    return f"Cookies: {dict(request.cookies)}<br>Session: {dict(session)}<br>Current User: {current_user}<br>Is Authenticated: {current_user.is_authenticated}"
+
+# Add a simple test route that doesn't require login
+@app.route('/debug/session-test')
+def session_test():
+    from flask import request, session
+    from flask_login import current_user
+    import logging
+    
+    logging.info(f"=== SESSION TEST ROUTE ===")
+    logging.info(f"Request cookies: {dict(request.cookies)}")
+    logging.info(f"Session contents: {dict(session)}")
+    logging.info(f"Current user: {current_user}")
+    logging.info(f"Is authenticated: {current_user.is_authenticated}")
+    
+    return f"Session Test - Check logs for details"
 
 # Configure debug mode
 app.debug = True
