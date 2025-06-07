@@ -76,8 +76,8 @@ def login():
                 session.modified = True
                 session.permanent = True
                 
-                # Always redirect to login-success for proper session establishment
-                return redirect(url_for('auth.login_success'))
+                # Pass user ID to login-success to re-establish session if cookies are blocked
+                return redirect(url_for('auth.login_success', user_id=user.id))
 
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
@@ -270,9 +270,29 @@ def reset_password_confirm():
 
 @auth_bp.route('/login-success')
 def login_success():
-    """Confirm login session is established and redirect to my-tournaments"""
+    """Re-establish session if cookies were blocked, then redirect to my-tournaments"""
+    user_id = request.args.get('user_id')
+    
+    # If already authenticated, proceed to redirect
     if current_user.is_authenticated:
         return render_template("auth/login_success.html")
-    else:
-        return redirect(url_for('auth.login'))
+    
+    # If not authenticated but have user_id, re-establish session
+    if user_id:
+        try:
+            user = User.query.get(int(user_id))
+            if user:
+                # Re-establish the session
+                login_user(user)
+                session['show_welcome'] = True
+                session.modified = True
+                session.permanent = True
+                
+                logging.info(f"Re-established session for user {user.email} via login-success")
+                return render_template("auth/login_success.html")
+        except (ValueError, TypeError):
+            pass
+    
+    # If no valid session can be established, redirect to login
+    return redirect(url_for('auth.login'))
 
