@@ -272,10 +272,13 @@ def tournament_detail(tournament_slug):
     # Add debugging to see what session_counts contains
     print(f"DEBUG: session_counts = {dict(session_counts)}")
     
+    # Sort sessions alphabetically (case-insensitive) for better UX
+    sorted_sessions = sorted(tournament.sessions, key=str.lower) if tournament.sessions else []
+    
     # Create session stats dictionary with actual counts
     session_stats = {}
-    if tournament.sessions:
-        for session in tournament.sessions:
+    if sorted_sessions:
+        for session in sorted_sessions:
             # Get the count directly from our Counter (already includes current user)
             attendee_count = session_counts.get(session, 0)
             
@@ -1118,10 +1121,9 @@ def lanyard():
         # Log the lanyard order event - temporarily disabled due to event name issue
         print(f"DEBUG: Lanyard order placed for user {current_user.id}, name: {request.form['name']}, country: {request.form['country']}")
         
-        # Return to the same page but with lanyard_ordered=True to show confirmation
-        return render_template('order_lanyard.html', 
-                            states=sorted(STATE_ABBRS),
-                            lanyard_ordered=True)
+        # Flash success message and redirect to My Tournaments
+        flash("You're all set! See you at the tournament.", "success")
+        return redirect(url_for('user.my_tournaments'))
 
     return render_template('order_lanyard.html', 
                          states=sorted(STATE_ABBRS),
