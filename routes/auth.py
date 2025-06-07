@@ -41,11 +41,19 @@ def login():
                 
                 # Debug logging before login_user
                 logging.info(f"About to call login_user for user {user.id}")
+                
+                # Make session permanent for proper persistence
+                session.permanent = True
+                
                 login_result = login_user(user, remember=remember)
                 logging.info(f"login_user result: {login_result}")
                 
+                # Commit any pending database changes
+                db.session.commit()
+                
                 # Check if user is actually logged in
                 logging.info(f"current_user.is_authenticated after login: {current_user.is_authenticated}")
+                logging.info(f"Session contents: {dict(session)}")
 
                 # Log the successful login event
                 from services.event_logger import log_event
