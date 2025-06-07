@@ -93,13 +93,19 @@ body {
 }
 
 .date-column {
-  width: 25%;
+  width: 22%;
   font-weight: 500;
   color: #555;
 }
 
 .name-column {
-  width: 60%;
+  width: 45%;
+}
+
+.type-column {
+  width: 18%;
+  font-weight: 500;
+  color: #374151;
 }
 
 .attending-column {
@@ -140,11 +146,15 @@ body {
   }
   
   .date-column {
-    width: 30%;
+    width: 25%;
   }
   
   .name-column {
-    width: 55%;
+    width: 40%;
+  }
+  
+  .type-column {
+    width: 20%;
   }
   
   .attending-column {
@@ -199,18 +209,21 @@ body {
       <tr>
         <th class="sortable date-column" data-column="date">Start Date</th>
         <th class="sortable name-column" data-column="name">Tournament Name</th>
+        <th class="sortable type-column" data-column="type">Type</th>
         <th class="sortable attending-column" data-column="attending">Attending</th>
       </tr>
     </thead>
     <tbody>
       {% for t in tournaments %}
-      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-attending="{{ attendance_counts.get(t.id, 0) }}">
+      {% set tournament_type = (t.event_type + ' ' + t.tour_type) if t.event_type != 'Grand Slam' else 'Grand Slam' %}
+      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-type="{{ tournament_type.lower() }}" data-attending="{{ attendance_counts.get(t.id, 0) }}">
         <td class="date-column">{{ t.start_date.strftime('%b %d, %Y') }}</td>
         <td class="name-column">
           <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}">
             {{ t.name }}
           </a>
         </td>
+        <td class="type-column">{{ tournament_type }}</td>
         <td class="attending-column">{{ attendance_counts.get(t.id, 0) }}</td>
       </tr>
       {% endfor %}
