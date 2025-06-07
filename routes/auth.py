@@ -71,29 +71,28 @@ def login():
                     user.welcome_seen = True
                     db.session.commit()
 
-                # Set session flag for welcome message
-                session['show_welcome'] = True
+                # Check if this is running in an iframe (Safari blocks cookies in iframes)
+                is_iframe = request.headers.get('Sec-Fetch-Dest') == 'iframe'
                 
-                # Force session save and mark as modified
-                session.modified = True
-                session.permanent = True
-                
-                # Create redirect response first
-                redirect_url = url_for('user.my_tournaments')
-                response = make_response(redirect(redirect_url))
-                
-                # Manually set session cookie on response to ensure it's sent
-                from flask import current_app
-                if '_user_id' in session:
-                    # Force Flask to save the session by accessing the session interface
-                    current_app.session_interface.save_session(current_app, session, response)
-                
-                # Verify session and response details
-                logging.info(f"Final session contents: {dict(session)}")
-                logging.info(f"User ID in session: {session.get('_user_id')}")
-                logging.info(f"Response headers after session save: {dict(response.headers)}")
-                
-                return response
+                if is_iframe:
+                    # For iframe context, redirect to a new tab with proper domain
+                    redirect_url = f"https://{request.host}/login-success?user_id={user.id}"
+                    # Create a JavaScript redirect that opens in parent window
+                    return f"""
+                    <script>
+                        if (window.parent !== window) {{
+                            window.parent.location.href = "{redirect_url}";
+                        }} else {{
+                            window.location.href = "{url_for('user.my_tournaments')}";
+                        }}
+                    </script>
+                    """
+                else:
+                    # Normal login flow
+                    session['show_welcome'] = True
+                    session.modified = True
+                    session.permanent = True
+                    return redirect(url_for('user.my_tournaments'))
 
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
@@ -283,3 +282,29 @@ def reset_password_confirm():
         db.session.rollback()
         flash('An error occurred while updating your password. Please try again.', 'danger')
         return render_template('reset_password.html', email=email, token=token)
+
+@auth_bp.route('/login-success')
+def login_success():
+    """Handle iframe login redirects by establishing session in parent window"""
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return redirect(url_for('auth.login'))
+    
+    try:
+        user = User.query.get(int(user_id))
+        if user:
+            # Establish session in the parent window context
+            login_user(user)
+            session['show_welcome'] = True
+            session.modified = True
+            session.permanent = True
+            
+            # Log the successful login
+            logging.info(f"Login success route: User {user.email} logged in")
+            
+            return redirect(url_for('user.my_tournaments'))
+        else:
+            return redirect(url_for('auth.login'))
+    except (ValueError, TypeError):
+        return redirect(url_for('auth.login'))
+
