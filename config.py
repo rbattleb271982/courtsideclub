@@ -4,6 +4,12 @@ class Config:
     # Flask configuration
     SECRET_KEY = os.environ.get('SESSION_SECRET', 'dev_secret_key')
     
+    # Session configuration for proper login persistence
+    SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    PERMANENT_SESSION_LIFETIME = 86400  # 24 hours
+    
     # Database configuration
     # Use a fallback SQLite database if the main database is unavailable
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')

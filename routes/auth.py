@@ -67,7 +67,10 @@ def login():
                 session['show_welcome'] = True
                 
                 # Always redirect to my_tournaments after login
-                return redirect(url_for('user.my_tournaments'))
+                logging.info(f"Redirecting user to my_tournaments")
+                redirect_url = url_for('user.my_tournaments')
+                logging.info(f"Redirect URL generated: {redirect_url}")
+                return redirect(redirect_url)
 
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
