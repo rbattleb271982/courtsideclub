@@ -4,7 +4,6 @@
     <title>Login Successful - CourtSide Club</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="1;url={{ url_for('user.my_tournaments') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body class="bg-gray-50">
@@ -26,5 +25,29 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Handle iframe context by redirecting parent window
+        function redirectToMyTournaments() {
+            const targetUrl = "{{ url_for('user.my_tournaments') }}";
+            
+            // Check if we're in an iframe
+            if (window.parent !== window) {
+                // If in iframe, try to redirect parent
+                try {
+                    window.parent.location.href = targetUrl;
+                } catch (e) {
+                    // If cross-origin, open in new tab
+                    window.open(targetUrl, '_blank');
+                }
+            } else {
+                // Normal redirect
+                window.location.href = targetUrl;
+            }
+        }
+        
+        // Start redirect after 1 second
+        setTimeout(redirectToMyTournaments, 1000);
+    </script>
 </body>
 </html>
