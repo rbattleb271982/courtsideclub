@@ -1,0 +1,752 @@
+[
+  {
+    "id": "brisbane_250",
+    "name": "Brisbane International",
+    "start_date": "2025-01-01",
+    "end_date": "2025-01-07",
+    "city": "Brisbane",
+    "country": "Australia",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "hobart_250",
+    "name": "Hobart International",
+    "start_date": "2025-01-08",
+    "end_date": "2025-01-14",
+    "city": "Hobart",
+    "country": "Australia",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "houston_250",
+    "name": "U.S. Men's Clay Court Championships",
+    "start_date": "2025-03-31",
+    "end_date": "2025-04-06",
+    "city": "Houston",
+    "country": "USA",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "cluj_250",
+    "name": "Transylvania Open",
+    "start_date": "2025-02-03",
+    "end_date": "2025-02-09",
+    "city": "Cluj-Napoca",
+    "country": "Romania",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "eastbourne_250_atp_wta",
+    "name": "Eastbourne International",
+    "start_date": "2025-06-24",
+    "end_date": "2025-06-30",
+    "city": "Eastbourne",
+    "country": "United Kingdom",
+    "event_type": "250",
+    "tour_type": "ATP/WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "adel_250",
+    "name": "Adelaide International",
+    "start_date": "2025-01-08",
+    "end_date": "2025-01-14",
+    "city": "Adelaide",
+    "country": "Australia",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "montpellier_250",
+    "name": "Open Sud de France",
+    "start_date": "2025-02-05",
+    "end_date": "2025-02-11",
+    "city": "Montpellier",
+    "country": "France",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "buenos_aires_250",
+    "name": "Argentina Open",
+    "start_date": "2025-02-12",
+    "end_date": "2025-02-18",
+    "city": "Buenos Aires",
+    "country": "Argentina",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "marseille_250",
+    "name": "Open 13 Provence",
+    "start_date": "2025-02-19",
+    "end_date": "2025-02-25",
+    "city": "Marseille",
+    "country": "France",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "geneva_250",
+    "name": "Gonet Geneva Open",
+    "start_date": "2025-05-20",
+    "end_date": "2025-05-26",
+    "city": "Geneva",
+    "country": "Switzerland",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "linz_250",
+    "name": "Upper Austria Ladies Linz",
+    "start_date": "2025-01-29",
+    "end_date": "2025-02-04",
+    "city": "Linz",
+    "country": "Austria",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "mumbai_250",
+    "name": "L&T Mumbai Open",
+    "start_date": "2025-02-05",
+    "end_date": "2025-02-11",
+    "city": "Mumbai",
+    "country": "India",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "merida_250",
+    "name": "M\u00e9rida Open Akron",
+    "start_date": "2025-02-25",
+    "end_date": "2025-03-03",
+    "city": "M\u00e9rida",
+    "country": "Mexico",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "rouen_250",
+    "name": "Open Capfinances Rouen",
+    "start_date": "2025-04-14",
+    "end_date": "2025-04-20",
+    "city": "Rouen",
+    "country": "France",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "strasbourg_250",
+    "name": "Internationaux de Strasbourg",
+    "start_date": "2025-05-19",
+    "end_date": "2025-05-25",
+    "city": "Strasbourg",
+    "country": "France",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "santiago_250",
+    "name": "Movistar Chile Open",
+    "start_date": "2025-02-26",
+    "end_date": "2025-03-03",
+    "city": "Santiago",
+    "country": "Chile",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "dallas_250",
+    "name": "Dallas Open",
+    "start_date": "2025-02-05",
+    "end_date": "2025-02-11",
+    "city": "Dallas",
+    "country": "USA",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "gstaad_250",
+    "name": "Swiss Open Gstaad",
+    "start_date": "2025-07-15",
+    "end_date": "2025-07-21",
+    "city": "Gstaad",
+    "country": "Switzerland",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "umag_250",
+    "name": "Croatia Open Umag",
+    "start_date": "2025-07-22",
+    "end_date": "2025-07-28",
+    "city": "Umag",
+    "country": "Croatia",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "chengdu_250",
+    "name": "Chengdu Open",
+    "start_date": "2025-09-18",
+    "end_date": "2025-09-24",
+    "city": "Chengdu",
+    "country": "China",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "antwerp_250",
+    "name": "European Open",
+    "start_date": "2025-10-14",
+    "end_date": "2025-10-20",
+    "city": "Antwerp",
+    "country": "Belgium",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "nottingham_250",
+    "name": "Rothesay Nottingham Open",
+    "start_date": "2025-06-17",
+    "end_date": "2025-06-23",
+    "city": "Nottingham",
+    "country": "United Kingdom",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "iasi_250",
+    "name": "UniCredit Iasi Open",
+    "start_date": "2025-07-22",
+    "end_date": "2025-07-28",
+    "city": "Iasi",
+    "country": "Romania",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "prague_250",
+    "name": "Livesport Prague Open",
+    "start_date": "2025-07-29",
+    "end_date": "2025-08-04",
+    "city": "Prague",
+    "country": "Czech Republic",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "seoul_250",
+    "name": "Korea Open",
+    "start_date": "2025-10-20",
+    "end_date": "2025-10-26",
+    "city": "Seoul",
+    "country": "South Korea",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "los_cabos_250",
+    "name": "Mifel Tennis Open",
+    "start_date": "2025-07-15",
+    "end_date": "2025-07-21",
+    "city": "Los Cabos",
+    "country": "Mexico",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "kitzbuhel_250",
+    "name": "Generali Open",
+    "start_date": "2025-07-22",
+    "end_date": "2025-07-28",
+    "city": "Kitzb\u00fchel",
+    "country": "Austria",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "bastad_250",
+    "name": "Nordea Open",
+    "start_date": "2025-07-15",
+    "end_date": "2025-07-21",
+    "city": "B\u00e5stad",
+    "country": "Sweden",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "stockholm_250",
+    "name": "Stockholm Open",
+    "start_date": "2025-10-14",
+    "end_date": "2025-10-20",
+    "city": "Stockholm",
+    "country": "Sweden",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "belgrade_250",
+    "name": "Belgrade Open",
+    "start_date": "2025-11-04",
+    "end_date": "2025-11-10",
+    "city": "Belgrade",
+    "country": "Serbia",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "metz_250",
+    "name": "Moselle Open",
+    "start_date": "2025-11-04",
+    "end_date": "2025-11-10",
+    "city": "Metz",
+    "country": "France",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "strasbourg_250_2",
+    "name": "Internationaux de Strasbourg",
+    "start_date": "2025-05-19",
+    "end_date": "2025-05-25",
+    "city": "Strasbourg",
+    "country": "France",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "budapest_250",
+    "name": "Hungarian Grand Prix",
+    "start_date": "2025-07-15",
+    "end_date": "2025-07-21",
+    "city": "Budapest",
+    "country": "Hungary",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "sao_paulo_250",
+    "name": "SP Open",
+    "start_date": "2025-09-07",
+    "end_date": "2025-09-13",
+    "city": "S\u00e3o Paulo",
+    "country": "Brazil",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "singapore_250",
+    "name": "Singapore Tennis Open",
+    "start_date": "2025-10-14",
+    "end_date": "2025-10-20",
+    "city": "Singapore",
+    "country": "Singapore",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "auckland_250",
+    "name": "ASB Classic",
+    "start_date": "2025-01-08",
+    "end_date": "2025-01-14",
+    "city": "Auckland",
+    "country": "New Zealand",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "delray_250",
+    "name": "Delray Beach Open",
+    "start_date": "2025-02-12",
+    "end_date": "2025-02-18",
+    "city": "Delray Beach",
+    "country": "USA",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "almaty_250",
+    "name": "Almaty Open",
+    "start_date": "2025-10-13",
+    "end_date": "2025-10-19",
+    "city": "Almaty",
+    "country": "Kazakhstan",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "hong_kong_250",
+    "name": "Bank of China Hong Kong Open",
+    "start_date": "2025-01-01",
+    "end_date": "2025-01-07",
+    "city": "Hong Kong",
+    "country": "Hong Kong",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "metz_250_2",
+    "name": "Moselle Open (Duplicate Check)",
+    "start_date": "2025-11-03",
+    "end_date": "2025-11-09",
+    "city": "Metz",
+    "country": "France",
+    "event_type": "250",
+    "tour_type": "ATP",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "bogota_250_2",
+    "name": "Copa Colsanitas Zurich",
+    "start_date": "2025-04-08",
+    "end_date": "2025-04-14",
+    "city": "Bogot\u00e1",
+    "country": "Colombia",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "cancun_250",
+    "name": "Cancun Tennis Open",
+    "start_date": "2025-02-11",
+    "end_date": "2025-02-17",
+    "city": "Cancun",
+    "country": "Mexico",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "linz_250_2",
+    "name": "Linz Ladies Open",
+    "start_date": "2025-01-29",
+    "end_date": "2025-02-04",
+    "city": "Linz",
+    "country": "Austria",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "mumbai_250_2",
+    "name": "Mumbai Open",
+    "start_date": "2025-02-05",
+    "end_date": "2025-02-11",
+    "city": "Mumbai",
+    "country": "India",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "merida_250_2",
+    "name": "Merida Open Akron",
+    "start_date": "2025-02-25",
+    "end_date": "2025-03-03",
+    "city": "Merida",
+    "country": "Mexico",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "hobart_250",
+    "name": "Hobart International",
+    "start_date": "2025-01-06",
+    "end_date": "2025-01-12",
+    "city": "Hobart",
+    "country": "Australia",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "nottingham_250",
+    "name": "Lexus Nottingham Open",
+    "start_date": "2025-06-10",
+    "end_date": "2025-06-16",
+    "city": "Nottingham",
+    "country": "UK",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Day"
+    ]
+  },
+  {
+    "id": "cluj_250",
+    "name": "Transylvania Open",
+    "start_date": "2025-02-03",
+    "end_date": "2025-02-09",
+    "city": "Cluj-Napoca",
+    "country": "Romania",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "rabat_250",
+    "name": "Morocco Open",
+    "start_date": "2025-05-19",
+    "end_date": "2025-05-25",
+    "city": "Rabat",
+    "country": "Morocco",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Day",
+      "Day 3 - Night"
+    ]
+  },
+  {
+    "id": "cleveland_250",
+    "name": "Tennis in the Land",
+    "start_date": "2025-08-18",
+    "end_date": "2025-08-24",
+    "city": "Cleveland",
+    "country": "USA",
+    "event_type": "250",
+    "tour_type": "WTA",
+    "sessions": [
+      "Day 1 - Day",
+      "Day 2 - Night",
+      "Day 3 - Day"
+    ]
+  }
+]
