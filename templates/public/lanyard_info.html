@@ -1,11 +1,187 @@
 {% extends "public/base.html" %}
 {% block title %}Get Your Free Lanyard - CourtSide Club{% endblock %}
 {% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
-  <h1>Get Your Free Lanyard</h1>
-  <p>🎾 Show you're part of the community! CourtSide Club lanyards are free for fans who RSVP to a tournament.</p>
-  <p>When you wear one, it signals you're open to meeting other tennis fans. It's your pass to spontaneous social moments.</p>
-  <p>Once you've signed up and marked your sessions, you can request one — and we'll ship it for free.</p>
-  <a href="{{ url_for('auth.signup') }}" class="hero-cta-button">Sign Up to Get Yours</a>
+<div class="lanyard-container">
+  <div class="lanyard-grid">
+    <!-- Left Column: Image -->
+    <div class="lanyard-image-section">
+      <div class="lanyard-image-placeholder">
+        <div class="placeholder-content">
+          <div class="placeholder-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="5"/>
+              <path d="M12 14v10"/>
+              <path d="M8 18h8"/>
+              <path d="M10 16h4"/>
+            </svg>
+          </div>
+          <p class="placeholder-text">Tennis Fan with Lanyard</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column: Content -->
+    <div class="lanyard-content-section">
+      <h1 class="lanyard-title">Get Your Free Lanyard</h1>
+      
+      <p class="lanyard-paragraph">Show you're part of the community! CourtSide Club lanyards are free for fans who RSVP to a tournament.</p>
+      
+      <p class="lanyard-paragraph">When you wear one, it signals you're open to meeting other tennis fans. It's your pass to spontaneous social moments.</p>
+      
+      <p class="lanyard-paragraph">Once you've signed up and marked your sessions, you can request one — and we'll ship it for free.</p>
+      
+      <a href="{{ url_for('auth.signup') }}" class="lanyard-cta-button">Sign Up to Get Yours</a>
+    </div>
+  </div>
 </div>
+
+<style>
+.lanyard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  background: white;
+}
+
+.lanyard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+}
+
+.lanyard-image-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lanyard-image-placeholder {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+  border: 2px dashed #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #64748b;
+}
+
+.placeholder-content {
+  text-align: center;
+}
+
+.placeholder-icon {
+  margin-bottom: 1rem;
+  opacity: 0.7;
+}
+
+.placeholder-text {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.lanyard-content-section {
+  padding: 1rem 0;
+}
+
+.lanyard-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.lanyard-paragraph {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.lanyard-cta-button {
+  display: inline-block;
+  background: #059669;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.125rem;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.lanyard-cta-button:hover {
+  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile Layout - Stacked */
+@media (max-width: 768px) {
+  .lanyard-container {
+    padding: 2rem 1rem;
+  }
+  
+  .lanyard-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem 1.5rem;
+  }
+  
+  .lanyard-image-placeholder {
+    max-width: 300px;
+    aspect-ratio: 4/3;
+  }
+  
+  .lanyard-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .lanyard-paragraph {
+    font-size: 1rem;
+    text-align: center;
+  }
+  
+  .lanyard-cta-button {
+    width: 100%;
+    text-align: center;
+    padding: 1.25rem 2rem;
+    font-size: 1.2rem;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .lanyard-container {
+    padding: 1.5rem 0.75rem;
+  }
+  
+  .lanyard-grid {
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+  }
+  
+  .lanyard-title {
+    font-size: 1.75rem;
+  }
+  
+  .lanyard-image-placeholder {
+    max-width: 250px;
+  }
+}
+</style>
 {% endblock %}
