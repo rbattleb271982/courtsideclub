@@ -78,7 +78,16 @@ def login():
                 logging.info(f"Redirecting user to my_tournaments")
                 redirect_url = url_for('user.my_tournaments')
                 logging.info(f"Redirect URL generated: {redirect_url}")
-                return redirect(redirect_url)
+                
+                # Create response and ensure session is saved
+                from flask import make_response
+                response = make_response(redirect(redirect_url))
+                
+                # Verify session before returning response
+                logging.info(f"Final session contents before response: {dict(session)}")
+                logging.info(f"User ID in session: {session.get('_user_id')}")
+                
+                return response
 
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')
