@@ -801,9 +801,15 @@ def my_tournaments():
     import logging
 
     # Debug session persistence
-    logging.info(f"my_tournaments route accessed by user: {current_user.id if current_user.is_authenticated else 'ANONYMOUS'}")
+    logging.info(f"=== MY_TOURNAMENTS ROUTE ACCESS ===")
     logging.info(f"current_user.is_authenticated: {current_user.is_authenticated}")
-    logging.info(f"Session contents in my_tournaments: {dict(session)}")
+    logging.info(f"current_user object: {current_user}")
+    logging.info(f"Session contents: {dict(session)}")
+    logging.info(f"Request cookies: {dict(request.cookies)}")
+    
+    if not current_user.is_authenticated:
+        logging.info(f"User not authenticated, redirecting to login")
+        return redirect(url_for('auth.login'))
 
     # Check for welcome message flag in session
     show_welcome = session.pop('show_welcome', False)

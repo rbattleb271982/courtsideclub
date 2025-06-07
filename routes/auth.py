@@ -74,20 +74,20 @@ def login():
                 # Set session flag for welcome message
                 session['show_welcome'] = True
                 
+                # Force session save before redirect
+                from flask import current_app
+                session.modified = True
+                
                 # Always redirect to my_tournaments after login
                 logging.info(f"Redirecting user to my_tournaments")
                 redirect_url = url_for('user.my_tournaments')
                 logging.info(f"Redirect URL generated: {redirect_url}")
                 
-                # Create response and ensure session is saved
-                from flask import make_response
-                response = make_response(redirect(redirect_url))
-                
                 # Verify session before returning response
                 logging.info(f"Final session contents before response: {dict(session)}")
                 logging.info(f"User ID in session: {session.get('_user_id')}")
                 
-                return response
+                return redirect(redirect_url)
 
         # If we get here, authentication failed
         flash('Invalid email or password', 'danger')

@@ -6,9 +6,10 @@ class Config:
     
     # Session configuration for proper login persistence in Replit
     SESSION_COOKIE_SECURE = False  # HTTP for Replit preview
-    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_HTTPONLY = False  # Allow JS access for debugging
     SESSION_COOKIE_SAMESITE = 'Lax'  # Required for cross-page persistence
     SESSION_COOKIE_DOMAIN = None  # Let Flask handle domain automatically
+    SESSION_COOKIE_PATH = '/'  # Explicit path
     PERMANENT_SESSION_LIFETIME = 86400  # 24 hours
     
     # Database configuration
