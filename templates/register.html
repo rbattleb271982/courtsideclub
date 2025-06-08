@@ -2,13 +2,90 @@
 
 {% block title %}Register{% endblock %}
 
+{% block head %}
+<style>
+/* Mobile spacing optimizations for signup form */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 1rem 0.75rem;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-header {
+    padding: 1rem 1rem 0.75rem 1rem;
+  }
+  
+  .card-header h2 {
+    margin-bottom: 0;
+    font-size: 1.5rem;
+  }
+  
+  .card-body {
+    padding: 0.75rem 1rem 1rem 1rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.75rem;
+  }
+  
+  .form-group:last-of-type {
+    margin-bottom: 0.5rem;
+  }
+  
+  .row {
+    margin: 0 -0.25rem;
+  }
+  
+  .row .col-12 {
+    padding: 0 0.25rem;
+  }
+  
+  .mt-4 {
+    margin-top: 1rem !important;
+  }
+  
+  .card-footer {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .card-header {
+    padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+  }
+  
+  .card-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .card-body {
+    padding: 0.5rem 0.75rem 0.75rem 0.75rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.6rem;
+  }
+  
+  .mt-4 {
+    margin-top: 0.75rem !important;
+  }
+  
+  .card-footer {
+    padding: 0.6rem 0.75rem;
+  }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="auth-container">
-    <div class="auth-logo">
-        <h1>CourtSide Club</h1>
-        <p>Join our community of tennis enthusiasts</p>
-    </div>
-    
     <div class="card">
         <div class="card-header">
             <h2>Create an Account</h2>
