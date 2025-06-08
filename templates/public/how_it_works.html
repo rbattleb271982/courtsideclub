@@ -33,35 +33,104 @@
   }
 }
 </script>
+
+<style>
+/* FAQ-style expandable sections for How It Works */
+details {
+  margin-bottom: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+details summary {
+  padding: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #004d26;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  font-weight: 600;
+}
+
+details summary:hover {
+  background-color: #f8f9fa;
+}
+
+details[open] summary {
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 8px 8px 0 0;
+}
+
+details p {
+  padding: 1rem;
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+  background-color: #fff;
+  border-radius: 0 0 8px 8px;
+}
+
+.get-started-btn {
+  display: inline-block;
+  background-color: #007a4d;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 2rem;
+  transition: background-color 0.2s ease;
+}
+
+.get-started-btn:hover {
+  background-color: #005f39;
+  text-decoration: none;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  details summary {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+  
+  details p {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+}
+</style>
 {% endblock %}
+
 {% block description %}CourtSide Club helps tennis fans connect at tournaments. Here's how to find people, meet up, and join the fun.{% endblock %}
 
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
   <h1>How It Works</h1>
 
-  <div class="how-it-works-step">
-    <h3>📩 Step 1: Join the Club</h3>
+  <details open>
+    <summary>📩 Step 1: Join the Club</summary>
     <p>Sign up with Google or email — it's fast and free.</p>
-  </div>
+  </details>
 
-  <div class="how-it-works-step">
-    <h3>📍 Step 2: Pick Tournaments</h3>
+  <details>
+    <summary>📍 Step 2: Pick Tournaments</summary>
     <p>Select your tournament, days, and sessions.</p>
-  </div>
+  </details>
 
-  <div class="how-it-works-step">
-    <h3>🎟️ Step 3: Get Your Lanyard</h3>
+  <details>
+    <summary>🎟️ Step 3: Get Your Lanyard</summary>
     <p>We'll ship your free lanyard so you're ready courtside.</p>
-  </div>
+  </details>
 
-  <div class="how-it-works-step">
-    <h3>🤝 Step 4: Meet Other Fans</h3>
+  <details>
+    <summary>🤝 Step 4: Meet Other Fans</summary>
     <p>Wear your lanyard — it signals you're open to connecting.</p>
-  </div>
+  </details>
 
-  <div class="mt-4">
-    <a href="{{ url_for('auth.signup') }}" class="hero-cta-button">Get Started</a>
+  <div class="text-center">
+    <a href="{{ url_for('auth.signup') }}" class="get-started-btn">Get Started</a>
   </div>
 </div>
 {% endblock %}
