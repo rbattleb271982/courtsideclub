@@ -1,255 +1,41 @@
+{% extends "public/base.html" %}
+{% block title %}Browse Upcoming Tournaments - CourtSide Club{% endblock %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Browse Tournaments - CourtSide Club</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<style>
-/* Complete override of main-content constraints for tournaments page */
-body {
-  margin: 0;
-  padding: 0;
-}
-
-.main-content {
-  padding: 0 !important;
-  margin: 0 !important;
-  max-width: none !important;
-  width: 100% !important;
-}
-.search-input {
-  width: 100%;
-  max-width: 400px;
-  padding: 0.6rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.tournament-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0;
-  background: white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.tournament-table th {
-  background: #f8f9fa;
-  padding: 0.75rem;
-  text-align: left;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #555;
-  border-bottom: 2px solid #dee2e6;
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-}
-
-.tournament-table th:hover {
-  background: #e9ecef;
-}
-
-.tournament-table th.sortable::after {
-  content: ' ↕';
-  color: #999;
-  font-size: 0.8rem;
-}
-
-.tournament-table th.sort-asc::after {
-  content: ' ↑';
-  color: #065f46;
-}
-
-.tournament-table th.sort-desc::after {
-  content: ' ↓';
-  color: #065f46;
-}
-
-.tournament-table td {
-  padding: 6px 8px;
-  text-align: left;
-  font-size: 14px;
-  border-bottom: 1px solid #eee;
-  vertical-align: top;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
-
-.tournament-table td:nth-child(1) { max-width: 90px; }
-.tournament-table td:nth-child(2) { max-width: 180px; }
-.tournament-table td:nth-child(3) { max-width: 100px; }
-.tournament-table td:nth-child(4) { max-width: 70px; }
-
-.tournament-table tr:hover {
-  background: #f8f9fa;
-}
-
-.tournament-table a {
-  color: #065f46;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.tournament-table a:hover {
-  text-decoration: underline;
-}
-
-.date-column {
-  width: 22%;
-  font-weight: 500;
-  color: #555;
-}
-
-.name-column {
-  width: 45%;
-}
-
-.type-column {
-  width: 18%;
-  font-weight: 500;
-  color: #374151;
-}
-
-.attending-column {
-  width: 15%;
-  text-align: center;
-  font-weight: 500;
-  color: #065f46;
-}
-
-.tournaments-header {
-  padding: 2rem 1rem 1rem 1rem;
-}
-
-.tournaments-header h1 {
-  font-size: 2rem;
-  color: #2c7a7b;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
-
-@media (max-width: 768px) {
-  .tournaments-header {
-    padding: 1rem;
-  }
-  
-  .tournaments-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .search-input {
-    font-size: 16px; /* Prevents zoom on iOS */
-  }
-  
-  .tournament-table th,
-  .tournament-table td {
-    padding: 6px 4px;
-    font-size: 14px;
-  }
-  
-  .tournament-table th {
-    font-size: 13px;
-  }
-  
-  .tournament-table td:nth-child(1) { max-width: 80px; }
-  .tournament-table td:nth-child(2) { max-width: 150px; }
-  .tournament-table td:nth-child(3) { max-width: 80px; }
-  .tournament-table td:nth-child(4) { max-width: 50px; }
-  
-  .date-column {
-    width: 25%;
-  }
-  
-  .name-column {
-    width: 40%;
-  }
-  
-  .type-column {
-    width: 20%;
-  }
-  
-  .attending-column {
-    width: 15%;
-  }
-}
-
-@media (max-width: 480px) {
-  .tournament-table th,
-  .tournament-table td {
-    padding: 4px 3px;
-    font-size: 13px;
-  }
-  
-  .tournament-table th {
-    font-size: 12px;
-  }
-  
-  .tournament-table td:nth-child(1) { max-width: 70px; }
-  .tournament-table td:nth-child(2) { max-width: 120px; }
-  .tournament-table td:nth-child(3) { max-width: 70px; }
-  .tournament-table td:nth-child(4) { max-width: 40px; }
-}
-</style>
-</head>
-<body>
-  <header class="mobile-header">
-    <div class="nav-container">
-      <div class="logo">🎾 CourtSide Club</div>
-      <nav id="mobile-menu" class="mobile-menu">
-        <a href="{{ url_for('main.public_home') }}">Home</a>
-        <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
-        <a href="{{ url_for('main.public_tournaments') }}">Browse Tournaments</a>
-        <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
-        <a href="{{ url_for('main.faqs') }}">FAQ</a>
-        <a href="{{ url_for('auth.login') }}">Login</a>
-        <a href="{{ url_for('auth.signup') }}">Sign Up</a>
-      </nav>
-      <button class="menu-toggle" onclick="toggleMenu(event)">☰</button>
+{% block content %}
+  <section class="tournaments-header">
+    <h1 class="page-title">Browse Upcoming Tournaments</h1>
+    <div class="search-bar">
+      <input type="text" id="tournamentSearch" class="search-input" placeholder="Search tournaments...">
     </div>
-  </header>
+  </section>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-<div class="tournaments-header">
-  <h1>Browse Upcoming Tournaments</h1>
-  <input type="text" id="tournamentSearch" placeholder="Search tournaments..." class="search-input" />
-</div>
-
-<table class="tournament-table" id="tournamentTable">
-    <thead>
-      <tr>
-        <th class="sortable date-column" data-column="date">Start Date</th>
-        <th class="sortable name-column" data-column="name">Tournament Name</th>
-        <th class="sortable type-column" data-column="type">Type</th>
-        <th class="sortable attending-column" data-column="attending">Attending</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for t in tournaments %}
-      {% set tournament_type = (t.event_type + ' ' + t.tour_type) if t.event_type != 'Grand Slam' else 'Grand Slam' %}
-      <tr data-date="{{ t.start_date.strftime('%Y-%m-%d') }}" data-name="{{ t.name.lower() }}" data-type="{{ tournament_type.lower() }}" data-attending="{{ attendance_counts.get(t.id, 0) }}">
-        <td class="date-column">{{ t.start_date.strftime('%b %-d, %Y') }}</td>
-        <td class="name-column">
-          <a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}">
-            {{ t.name }}
-          </a>
-        </td>
-        <td class="type-column">{{ tournament_type }}</td>
-        <td class="attending-column">{{ attendance_counts.get(t.id, 0) }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <section class="tournament-table-wrapper">
+    <table class="tournament-table" id="tournamentTable">
+      <thead>
+        <tr>
+          <th class="sortable sort-asc" data-column="date">Start Date</th>
+          <th class="sortable" data-column="name">Tournament Name</th>
+          <th class="sortable" data-column="type">Type</th>
+          <th class="sortable" data-column="attending">Attending</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tournaments %}
+        {% set tournament_type = (t.event_type + ' ' + t.tour_type) if t.event_type != 'Grand Slam' else 'Grand Slam' %}
+        <tr 
+          data-date="{{ t.start_date.strftime('%Y-%m-%d') }}"
+          data-name="{{ t.name.lower() }}"
+          data-type="{{ tournament_type.lower() }}"
+          data-attending="{{ attendance_counts.get(t.id, 0) }}">
+          <td>{{ t.start_date.strftime('%b %-d, %Y') }}</td>
+          <td><a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="tournament-name">{{ t.name }}</a></td>
+          <td class="type-text">{{ tournament_type }}</td>
+          <td class="attending-count">{{ attendance_counts.get(t.id, 0) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
 
   <script>
   let currentSort = { column: 'date', direction: 'asc' };
@@ -328,28 +114,5 @@ body {
 
   // Initialize with date sort
   document.querySelector('[data-column="date"]').classList.add('sort-asc');
-  
-  function toggleMenu(event) {
-    event.stopPropagation();
-    const menu = document.getElementById('mobile-menu');
-    const isOpen = menu.style.display === 'flex';
-    menu.style.display = isOpen ? 'none' : 'flex';
-  }
-
-  document.addEventListener('click', function(event) {
-    const menu = document.getElementById('mobile-menu');
-    const toggle = document.querySelector('.menu-toggle');
-    if (!menu.contains(event.target) && !toggle.contains(event.target)) {
-      menu.style.display = 'none';
-    }
-  });
-
-  document.addEventListener('DOMContentLoaded', function () {
-    const menu = document.getElementById('mobile-menu');
-    if (window.innerWidth < 768) {
-      menu.style.display = 'none';
-    }
-  });
   </script>
-</body>
-</html>
+{% endblock %}

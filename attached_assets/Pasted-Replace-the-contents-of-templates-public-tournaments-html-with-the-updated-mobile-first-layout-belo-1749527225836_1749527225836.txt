@@ -1,0 +1,134 @@
+Replace the contents of templates/public/tournaments.html with the updated, mobile-first layout below. Then move all table styling out of inline <style> blocks and into static/css/style.css using the styles provided. This new version includes a modern table with soft rounded corners, clean spacing, and a light green search bar. Keep the JavaScript sorting and search logic exactly as is.
+🟢 Use checkpoints only if needed.
+🟢 Do not finish until confirmed visually at /tournaments in both mobile and desktop views.
+🟦 Replace templates/public/tournaments.html with:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Browse Upcoming Tournaments</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="{{ url_for('static', filename='js/tournament-sorting.js') }}"></script>
+</head>
+<body>
+  <section class="tournaments-header">
+    <h1 class="page-title">Browse Upcoming Tournaments</h1>
+    <div class="search-bar">
+      <input type="text" id="tournamentSearch" class="search-input" placeholder="Search tournaments...">
+    </div>
+  </section>
+
+  <section class="tournament-table-wrapper">
+    <table class="tournament-table">
+      <thead>
+        <tr>
+          <th class="sortable sort-asc" data-sort="date">Start Date</th>
+          <th class="sortable" data-sort="name">Tournament Name</th>
+          <th class="sortable" data-sort="type">Type</th>
+          <th class="sortable" data-sort="attending">Attending</th>
+        </tr>
+      </thead>
+      <tbody id="tournamentTableBody">
+        {% for t in tournaments %}
+        <tr 
+          data-date="{{ t.start_date }}"
+          data-name="{{ t.name }}"
+          data-type="{{ t.type }}"
+          data-attending="{{ t.attending_count }}">
+          <td>{{ t.start_date.strftime('%b %d, %Y') }}</td>
+          <td><a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="tournament-name">{{ t.name }}</a></td>
+          <td class="type-text">{{ t.type }}</td>
+          <td class="attending-count">{{ "{:,}".format(t.attending_count) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>
+🟨 Append this CSS to static/css/style.css
+/* Browse Tournaments Page */
+.tournaments-header {
+  padding: 2rem 1rem 1rem;
+  text-align: center;
+}
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.search-input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 400px;
+  border: none;
+  border-radius: 0.75rem;
+  background-color: #e6f2e6;
+}
+
+.tournament-table-wrapper {
+  padding: 0 1rem 3rem;
+  overflow-x: auto;
+}
+.tournament-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fdfdfd;
+  border-radius: 1rem;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+.tournament-table thead {
+  background: #f5f5f5;
+}
+.tournament-table th,
+.tournament-table td {
+  padding: 1rem;
+  text-align: left;
+  white-space: nowrap;
+}
+.tournament-table th {
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid #ddd;
+}
+.tournament-table td {
+  border-bottom: 1px solid #eee;
+}
+.tournament-table tr:last-child td {
+  border-bottom: none;
+}
+.tournament-name {
+  color: #14532d;
+  text-decoration: none;
+  font-weight: 500;
+}
+.tournament-name:hover {
+  text-decoration: underline;
+}
+.type-text,
+.attending-count {
+  color: #3b7f4f;
+  font-weight: 500;
+}
+
+/* Sort indicators (↑ ↓) can be added via pseudo-elements if needed */
+.sortable::after {
+  content: " ↕";
+  color: #aaa;
+}
+.sortable.sort-asc::after {
+  content: " ↑";
+}
+.sortable.sort-desc::after {
+  content: " ↓";
+}
