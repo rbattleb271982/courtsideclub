@@ -7,8 +7,12 @@
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <h1 class="hero-heading">See You at the Changeover</h1>
-    <p class="hero-subtext">CourtSide Club helps fans connect at tournaments, meet up, and make match days unforgettable.</p>
-    <a href="{{ url_for('auth.signup') }}" class="cta-button">Join CourtSide Club</a>
+    <p class="hero-subheading">Tennis is better together.</p>
+    <p class="hero-subtext">From Grand Slams to 500s, CourtSide Club helps tennis fans connect in real life and turn match days into unforgettable experiences.</p>
+    <div class="hero-buttons">
+      <a href="{{ url_for('auth.signup') }}" class="cta-button">Join Now</a>
+      <a href="{{ url_for('auth.login') }}" class="cta-button secondary">Log In</a>
+    </div>
   </div>
 </section>
 
