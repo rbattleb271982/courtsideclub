@@ -1,0 +1,172 @@
+Replace the contents of templates/public/how_it_works.html with the mobile-first, modern version below. Then append the CSS to static/css/style.css. This redesign includes a hero section, 4 alternating side-by-side step sections (with images), and a CTA footer. It matches the visual style of the redesigned homepage.
+🟢 Use existing class conventions — no Tailwind.
+🟢 Only use checkpoints if necessary.
+🟢 Do not finish until the page is fully tested on both desktop and mobile view at /how-it-works.
+🟦 Paste this into templates/public/how_it_works.html
+(Replace entire contents)
+
+{% extends "public/base.html" %}
+{% block title %}How It Works - CourtSide Club{% endblock %}
+
+{% block content %}
+
+<section class="how-hero">
+  <div class="how-hero-overlay"></div>
+  <div class="how-hero-content">
+    <h1 class="how-hero-title">How It Works</h1>
+    <p class="how-hero-subtitle">It’s not a group chat. It’s a match-day meet-up tool.</p>
+    <a href="{{ url_for('auth.signup') }}" class="cta-button">Get Started</a>
+  </div>
+</section>
+
+<section class="how-steps">
+  <div class="how-step">
+    <div class="how-step-text">
+      <h3>Step 1: Join the Club</h3>
+      <p>Sign up with Google or email — it’s fast and free.</p>
+    </div>
+    <div class="how-step-image">
+      <img src="{{ url_for('static', filename='images/how-step1.jpg') }}" alt="Join">
+    </div>
+  </div>
+
+  <div class="how-step">
+    <div class="how-step-text">
+      <h3>Step 2: Pick Tournaments</h3>
+      <p>Select your tournament, days, and sessions.</p>
+    </div>
+    <div class="how-step-image">
+      <img src="{{ url_for('static', filename='images/how-step2.jpg') }}" alt="Pick tournaments">
+    </div>
+  </div>
+
+  <div class="how-step">
+    <div class="how-step-text">
+      <h3>Step 3: Get Your Lanyard</h3>
+      <p>We’ll ship your free lanyard so you're ready courtside.</p>
+    </div>
+    <div class="how-step-image">
+      <img src="{{ url_for('static', filename='images/how-step3.jpg') }}" alt="Get lanyard">
+    </div>
+  </div>
+
+  <div class="how-step">
+    <div class="how-step-text">
+      <h3>Step 4: Meet Other Fans</h3>
+      <p>Wear your lanyard — it signals you're open to connecting.</p>
+    </div>
+    <div class="how-step-image">
+      <img src="{{ url_for('static', filename='images/how-step4.jpg') }}" alt="Meet others">
+    </div>
+  </div>
+</section>
+
+<section class="how-cta">
+  <h2>Ready to get started?</h2>
+  <a href="{{ url_for('auth.signup') }}" class="cta-button">Get Started</a>
+</section>
+
+{% endblock %}
+🟨 Append this to static/css/style.css
+/* How It Works Hero */
+.how-hero {
+  position: relative;
+  background: url('/static/images/hero-tennis.jpg') center center / cover no-repeat;
+  color: white;
+  padding: 4rem 1rem;
+  text-align: center;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+}
+.how-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.how-hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.how-hero-title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.how-hero-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* CTA button (shared) */
+.cta-button {
+  background-color: #1d4ed8;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  display: inline-block;
+}
+.cta-button:hover {
+  background-color: #1e40af;
+}
+
+/* Steps section */
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 1rem;
+}
+.how-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+.how-step-text {
+  max-width: 600px;
+  text-align: center;
+}
+.how-step-image img {
+  width: 100%;
+  max-width: 320px;
+  border-radius: 0.5rem;
+}
+@media screen and (min-width: 768px) {
+  .how-step {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+  }
+  .how-step:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+  .how-step-text {
+    flex: 1;
+    text-align: left;
+  }
+  .how-step-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+/* CTA Footer */
+.how-cta {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+.how-cta h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+✅ Don’t forget to upload the new step images to static/images/:
+
+how-step1.jpg
+how-step2.jpg
+how-step3.jpg
+how-step4.jpg
