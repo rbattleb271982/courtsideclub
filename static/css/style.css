@@ -738,9 +738,9 @@ a:hover {
 }
 
 .card-footer {
-  background-color: var(--gray-light);
+  background-color: white;
   padding: var(--spacing-md);
-  border-top: 1px solid var(--gray);
+  border-top: none;
 }
 
 /* Buttons */
@@ -1552,6 +1552,15 @@ input:checked + .toggle-slider:before {
 
   .auth-container {
     margin: var(--spacing-lg) auto;
+    padding: 0 1rem;
+  }
+  
+  .card-header h2 {
+    text-align: center;
+  }
+  
+  .card-footer {
+    text-align: center;
   }
 
   .btn {
