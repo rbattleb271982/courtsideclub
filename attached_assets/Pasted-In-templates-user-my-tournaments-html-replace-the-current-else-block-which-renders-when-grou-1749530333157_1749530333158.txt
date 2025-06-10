@@ -1,0 +1,80 @@
+In templates/user/my_tournaments.html, replace the current {% else %} block (which renders when grouped_tournaments is empty) with the following new layout:
+🧱 HTML:
+{% else %}
+<section class="empty-onboarding">
+  <h2 class="onboarding-title">Let’s get you into the action.</h2>
+  <p class="onboarding-text">
+    Add tournaments you’ve attended or plan to go to — it helps other fans know you’re going.
+    You can also browse what’s coming up and raise your hand to meet others.
+  </p>
+  <div class="onboarding-buttons">
+    <a href="{{ url_for('user.profile') }}" class="onboarding-button primary">Complete My Profile</a>
+    <a href="{{ url_for('user.add_tournaments') }}" class="onboarding-button secondary">Add My Tournaments</a>
+    <a href="{{ url_for('user.browse_tournaments') }}" class="onboarding-button secondary">Browse Upcoming Events</a>
+  </div>
+</section>
+{% endif %}
+🎨 CSS (in static/css/style.css):
+Add the following styles near the bottom of the file:
+.empty-onboarding {
+  text-align: center;
+  padding: 3rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.onboarding-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.onboarding-text {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.onboarding-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.onboarding-button {
+  display: block;
+  padding: 0.85rem 1.5rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.onboarding-button.primary {
+  background-color: #007a4d;
+  color: #fff;
+}
+
+.onboarding-button.secondary {
+  background-color: #f1f5f3;
+  color: #222;
+}
+
+.onboarding-button.primary:hover {
+  background-color: #00613e;
+}
+
+.onboarding-button.secondary:hover {
+  background-color: #e2ece8;
+}
+✅ Additional Instructions:
+Remove any prior .alert-based empty state content
+Keep the {% if grouped_tournaments %} logic intact — only replace the {% else %} block
+Visually verify:
+The layout is vertically centered and mobile-friendly
+Buttons appear in this order: Complete My Profile, Add My Tournaments, Browse Upcoming Events
+CTA buttons are easy to tap/click and use existing font styling
+❗ Do not finish until the new layout is visually confirmed working on both desktop and mobile.

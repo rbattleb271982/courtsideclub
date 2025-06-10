@@ -196,11 +196,18 @@
             {% endfor %}
         </div>
     {% else %}
-        <div class="alert alert-info">
-            <p>You haven't registered for any upcoming tournaments yet.</p>
-            <p class="mb-0">Select specific sessions for tournaments you're attending to see them here.</p>
-            <a href="{{ url_for('user.browse_tournaments') }}" class="btn btn-primary mt-3">Browse Tournaments</a>
-        </div>
+        <section class="empty-onboarding">
+            <h2 class="onboarding-title">Let's get you into the action.</h2>
+            <p class="onboarding-text">
+                Add tournaments you've attended or plan to go to — it helps other fans know you're going.
+                You can also browse what's coming up and raise your hand to meet others.
+            </p>
+            <div class="onboarding-buttons">
+                <a href="{{ url_for('user.profile') }}" class="onboarding-button primary">Complete My Profile</a>
+                <a href="{{ url_for('user.add_tournaments') }}" class="onboarding-button secondary">Add My Tournaments</a>
+                <a href="{{ url_for('user.browse_tournaments') }}" class="onboarding-button secondary">Browse Upcoming Events</a>
+            </div>
+        </section>
     {% endif %}
 </div>
 {% endblock %}

@@ -969,6 +969,15 @@ def my_tournaments():
         show_profile_reminder=show_profile_reminder
     )
 
+@user_bp.route('/add-tournaments')
+@login_required
+def add_tournaments():
+    """
+    Redirect users to browse tournaments page where they can add tournaments to their schedule.
+    This route exists for onboarding flow clarity.
+    """
+    return redirect(url_for('user.browse_tournaments'))
+
 @user_bp.route('/browse-tournaments')
 @login_required
 def browse_tournaments():
