@@ -1724,3 +1724,132 @@ input:checked + .toggle-slider:before {
     font-size: 0.8rem;
   }
 }
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  background: url('/static/images/hero-tennis.jpg') center center / cover no-repeat;
+  color: white;
+  padding: 4rem 1rem;
+  text-align: center;
+  border-radius: 1rem;
+  margin: 2rem auto;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: auto;
+}
+.hero-heading {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+.hero-subtext {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.cta-button {
+  background-color: #1d4ed8;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0.5rem 0;
+}
+.cta-button.secondary {
+  background-color: #2563eb;
+}
+
+/* Sections */
+.info-section {
+  padding: 2rem 1rem;
+}
+.section-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Cards */
+.info-cards,
+.tournament-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+@media screen and (min-width: 768px) {
+  .info-cards,
+  .tournament-cards {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+.info-card,
+.tournament-card {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  flex: 1;
+  text-align: center;
+}
+.tournament-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+.tournament-info {
+  padding: 0.5rem 0;
+}
+
+/* Lanyard highlight */
+.lanyard-highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.lanyard-highlight img {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 0.5rem;
+}
+.lanyard-text h3 {
+  margin: 0 0 0.5rem;
+}
+@media screen and (min-width: 768px) {
+  .lanyard-highlight {
+    flex-direction: row;
+    align-items: center;
+  }
+  .lanyard-text {
+    padding-left: 1rem;
+  }
+}
+
+/* Footer */
+.homepage-footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.footer-links a {
+  color: #666;
+  text-decoration: none;
+}

@@ -1,22 +1,101 @@
 {% extends "public/base.html" %}
-{% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
-
+{% block title %}CourtSide Club – See You at the Changeover{% endblock %}
 {% block content %}
-<div class="hero-section">
-  <div class="hero-dark-overlay"></div>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-overlay"></div>
   <div class="hero-content">
-    <h1 class="main-heading">Tennis is better together.</h1>
-    <p>From Grand Slams to 500s, CourtSide Club helps tennis fans connect in real life and turn match days into unforgettable experiences.</p>
-    <p>This isn't just about meetups. CourtSide Club is building a new way to experience tournaments — with curated gatherings, elevated perks, and a shared love of the game. It's part Eventbrite, part members club, and all tennis.</p>
-    <p>Looking ahead, we plan to host official meetups, exclusive member events, and — when possible — suite-level access to the game's biggest moments.</p>
-    <div class="hero-buttons">
-      <a href="{{ url_for('auth.signup') }}" class="cta-button">Join Now</a>
-      <a href="{{ url_for('auth.login') }}" class="secondary-button">Log In</a>
+    <h1 class="hero-heading">See You at the Changeover</h1>
+    <p class="hero-subtext">CourtSide Club helps fans connect at tournaments, meet up, and make match days unforgettable.</p>
+    <a href="{{ url_for('auth.signup') }}" class="cta-button">Join CourtSide Club</a>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="info-section">
+  <h2 class="section-heading">How It Works</h2>
+  <div class="info-cards">
+    <div class="info-card">
+      <h3>See Who's Going</h3>
+      <p>Find out which tournaments your fellow fans are attending.</p>
+    </div>
+    <div class="info-card">
+      <h3>Raise Your Hand</h3>
+      <p>Let others know you're interested in meeting up at a specific match.</p>
+    </div>
+    <div class="info-card">
+      <h3>Meet at the Match</h3>
+      <p>Connect with fans in person and share the excitement of the game.</p>
     </div>
   </div>
-</div>
+</section>
 
+<!-- Upcoming Tournaments Section -->
+<section class="info-section">
+  <h2 class="section-heading">Upcoming Tournaments</h2>
+  <div class="tournament-cards">
+    <div class="tournament-card">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Grand Showcase">
+      <div class="tournament-info">
+        <h4>The Grand Showcase</h4>
+        <p>Starts: July 15 • Type: Grand Slam • Attending: 250+</p>
+      </div>
+    </div>
+    <div class="tournament-card">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Sunshine Open">
+      <div class="tournament-info">
+        <h4>The Sunshine Open</h4>
+        <p>Starts: August 5 • Type: Masters 1000 • Attending: 180+</p>
+      </div>
+    </div>
+    <div class="tournament-card">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Clay Court Classic">
+      <div class="tournament-info">
+        <h4>The Clay Court Classic</h4>
+        <p>Starts: September 2 • Type: ATP 500 • Attending: 120+</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Join Section -->
+<section class="info-section">
+  <h2 class="section-heading">Why Join?</h2>
+  <div class="info-cards">
+    <div class="info-card">
+      <h3>No Group Chats Needed</h3>
+      <p>Connect directly with fans interested in the same matches.</p>
+    </div>
+    <div class="info-card">
+      <h3>Meetups Made Simple</h3>
+      <p>Easily coordinate meetups at specific times and locations.</p>
+    </div>
+    <div class="info-card">
+      <h3>It's Free</h3>
+      <p>Enjoy all the benefits of CourtSide Club without any cost.</p>
+    </div>
+  </div>
+  <div class="lanyard-highlight">
+    <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Lanyard">
+    <div class="lanyard-text">
+      <h3>Get Your CourtSide Club Lanyard</h3>
+      <p>Show your fan pride and easily identify fellow members at tournaments with our exclusive lanyard.</p>
+      <a href="{{ url_for('main.lanyard_info_public') }}" class="cta-button secondary">Learn About the Lanyard</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
 <footer class="homepage-footer">
-  <p>© {{ current_year }} CourtSide Club</p>
+  <nav class="footer-links">
+    <a href="{{ url_for('main.public_home') }}">Home</a>
+    <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
+    <a href="{{ url_for('main.faqs') }}">FAQs</a>
+    <a href="{{ url_for('main.public_tournaments') }}">Browse Tournaments</a>
+    <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
+  </nav>
+  <p>© {{ current_year }} CourtSide Club. All rights reserved.</p>
 </footer>
+
 {% endblock %}
