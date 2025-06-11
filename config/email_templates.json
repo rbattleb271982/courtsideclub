@@ -1,18 +1,18 @@
 {
   "pre_tournament_reminder": {
-    "subject": "🎾 Your CourtSide Club match day is almost here!",
-    "body": "Hey {{ user.first_name }},<br><br>Just a heads-up — your visit to {{ tournament_name }} is coming up!<br><br>✅ Don't forget your lanyard<br>✅ Check your session selections<br>✅ Invite a friend if they're coming too<br><br>👉 <a href='https://courtsideclub.com/login'>courtsideclub.com/login</a><br><br>Have a great time —<br>The Lounge is Courtside."
+    "subject": "\ud83c\udfbe Your CourtSide Club match day is almost here!",
+    "body": "Hey {{ user.first_name }},<br><br>Just a heads-up \u2014 your visit to {{ tournament_name }} is coming up!<br><br>\u2705 Don't forget your lanyard<br>\u2705 Check your session selections<br>\u2705 Invite a friend if they're coming too<br><br>\ud83d\udc49 <a href='https://courtsideclub.com/login'>courtsideclub.com/login</a><br><br>Have a great time \u2014<br>The Lounge is Courtside."
   },
   "lanyard_reminder": {
-    "subject": "🎾 Don't forget your CourtSide Club lanyard!",
-    "body": "Hey {{ user.first_name }},<br><br>Your tournament is coming up soon, and you've marked yourself as attending. Just a reminder to pack your CourtSide Club lanyard!<br><br>Safe travels —<br>The Lounge is Courtside."
+    "subject": "\ud83c\udfbe Updated lanyard reminder subject",
+    "body": "Hey {{ user.first_name }},<br><br>This is an updated template test.<br><br>\u2014<br>The Lounge is Courtside."
   },
   "tournament_summary": {
-    "subject": "🎾 Tournament Summary Update",
-    "body": "Hey {{ user.first_name }},<br><br>We've updated tournament summaries with fresh content about upcoming events.<br><br>Check out the latest information at {{ tournament_name }}.<br><br>—<br>The Lounge is Courtside."
+    "subject": "\ud83c\udfbe Tournament Summary Update",
+    "body": "Hey {{ user.first_name }},<br><br>We've updated tournament summaries with fresh content about upcoming events.<br><br>Check out the latest information at {{ tournament_name }}.<br><br>\u2014<br>The Lounge is Courtside."
   },
   "post_event_followup": {
-    "subject": "🎾 Thanks for being part of CourtSide Club at {{ tournament_name }}!",
-    "body": "Hey {{ user.first_name }},<br><br>We hope you had an unforgettable time at <strong>{{ tournament_name }}</strong>.<br><br>You weren't the only one — over <strong>{{ total_attending }} CSC members</strong> went too!<br><br>Already thinking about your next event? We'd love to have you back.<br><br>—<br>The Lounge is Courtside."
+    "subject": "\ud83c\udfbe Thanks for being part of CourtSide Club at {{ tournament_name }}!",
+    "body": "Hey {{ user.first_name }},<br><br>We hope you had an unforgettable time at <strong>{{ tournament_name }}</strong>.<br><br>You weren't the only one \u2014 over <strong>{{ total_attending }} CSC members</strong> went too!<br><br>Already thinking about your next event? We'd love to have you back.<br><br>\u2014<br>The Lounge is Courtside."
   }
 }
