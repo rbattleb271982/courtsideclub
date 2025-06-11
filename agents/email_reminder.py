@@ -5,14 +5,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def run_email_reminder():
+def run_email_reminder(preview_mode=False):
     """
     AI Agent: Send tournament reminder emails to users
     
     Finds users attending tournaments starting in 12-15 days and sends personalized reminder emails.
+    
+    Args:
+        preview_mode (bool): If True, logs email content without sending actual emails
     """
     try:
-        logger.info("Email Reminder Agent: Starting execution")
+        logger.info(f"Email Reminder Agent: Starting execution (preview mode: {preview_mode})")
         
         today = datetime.utcnow().date()
         window_start = today + timedelta(days=12)
@@ -79,17 +82,25 @@ def run_email_reminder():
                 <p>—<br>The Lounge is Courtside.</p>
                 """
 
-                try:
-                    response_code = send_email(to_email=user.email, subject=subject, content_html=body)
-                    if response_code and response_code == 202:  # SendGrid success status
-                        total_sent += 1
-                        logger.info(f"Email Reminder Agent: Sent to {user.email} for {tournament.name}")
-                    else:
+                if preview_mode:
+                    # Preview mode: just log the email content without sending
+                    total_sent += 1
+                    logger.info(f"Email Reminder Agent (PREVIEW): Would send to {user.email} for {tournament.name}")
+                    logger.info(f"Email Reminder Agent (PREVIEW): Subject: {subject}")
+                    logger.info(f"Email Reminder Agent (PREVIEW): Body preview: {body[:200]}...")
+                else:
+                    # Send actual email
+                    try:
+                        response_code = send_email(to_email=user.email, subject=subject, content_html=body)
+                        if response_code and response_code == 202:  # SendGrid success status
+                            total_sent += 1
+                            logger.info(f"Email Reminder Agent: Sent to {user.email} for {tournament.name}")
+                        else:
+                            total_skipped += 1
+                            logger.error(f"Email Reminder Agent: Failed to send to {user.email} (status: {response_code})")
+                    except Exception as e:
                         total_skipped += 1
-                        logger.error(f"Email Reminder Agent: Failed to send to {user.email} (status: {response_code})")
-                except Exception as e:
-                    total_skipped += 1
-                    logger.error(f"Email Reminder Agent: Error sending to {user.email}: {str(e)}")
+                        logger.error(f"Email Reminder Agent: Error sending to {user.email}: {str(e)}")
 
         message = f"Sent {total_sent} reminder emails, skipped {total_skipped} users"
         logger.info(f"Email Reminder Agent: Completed - {message}")

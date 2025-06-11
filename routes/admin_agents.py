@@ -29,19 +29,32 @@ def agents_overview():
 def run_email_reminder_agent():
     """Execute the email reminder agent manually"""
     try:
-        logger.info(f"Admin {current_user.email} triggered email reminder agent")
+        preview_mode = request.form.get('preview_mode') == 'on'
+        logger.info(f"Admin {current_user.email} triggered email reminder agent (preview: {preview_mode})")
         
         # Run the email reminder agent
-        result = run_email_reminder()
+        result = run_email_reminder(preview_mode=preview_mode)
         
         if result['status'] == 'success':
-            flash(f"Email Reminder Agent completed successfully: {result['message']}", 'success')
+            emails_sent = result.get('emails_sent', 0)
+            tournaments_processed = result.get('tournaments_processed', 0)
+            
+            if preview_mode:
+                flash(f"✅ Email Reminder Agent preview completed — would have sent {emails_sent} emails for {tournaments_processed} tournament(s)", 'info')
+            else:
+                if emails_sent > 0:
+                    import datetime
+                    now = datetime.datetime.now()
+                    time_str = now.strftime("%B %d at %I:%M%p").lower()
+                    flash(f"✅ Email Reminder Agent ran successfully on {time_str} — {emails_sent} users emailed", 'success')
+                else:
+                    flash(f"✅ Email Reminder Agent completed — no emails needed at this time", 'info')
         else:
-            flash(f"Email Reminder Agent failed: {result['message']}", 'error')
+            flash(f"❌ Email Reminder Agent failed: {result['message']}", 'danger')
             
     except Exception as e:
         logger.error(f"Error running email reminder agent: {str(e)}", exc_info=True)
-        flash(f"Error running Email Reminder Agent: {str(e)}", 'error')
+        flash(f"❌ Error running Email Reminder Agent: {str(e)}", 'danger')
     
     return redirect(url_for('admin_agents.agents_dashboard'))
 

@@ -35,6 +35,7 @@
           {% if current_user.is_authenticated %}
             {% if current_user.is_admin %}
               <a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
+              <a href="{{ url_for('admin_agents.agents_dashboard') }}">AI Agents</a>
               <a href="{{ url_for('admin.list_tournaments') }}">Manage Tournaments</a>
               <a href="{{ url_for('admin.lanyard_fulfillment') }}">Lanyards</a>
               <a href="{{ url_for('admin.view_events') }}">Event Log</a>
