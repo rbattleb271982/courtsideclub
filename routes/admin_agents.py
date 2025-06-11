@@ -315,23 +315,30 @@ def suggest_blog_topics(tournament_id):
         prompt = f"Suggest 5 blog post titles for {tournament.name} that are helpful to first-time attendees or casual tennis fans. Include travel tips, what to expect, what to bring, or venue-specific ideas. Keep them SEO-friendly."
         
         # Call OpenAI API
-        response = openai_client.chat.completions.create(
-            model="gpt-4o",  # the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that creates SEO-friendly blog post titles for tennis tournaments. Respond with exactly 5 titles, one per line, without numbering or bullet points."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=200,
-            temperature=0.7
-        )
-        
-        # Extract and format the topics
-        topics_text = response.choices[0].message.content
-        if topics_text:
-            topics_text = topics_text.strip()
-            topics = [topic.strip() for topic in topics_text.split('\n') if topic.strip()]
-        else:
-            topics = []
+        try:
+            response = openai_client.chat.completions.create(
+                model="gpt-4o",  # the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that creates SEO-friendly blog post titles for tennis tournaments. Respond with exactly 5 titles, one per line, without numbering or bullet points."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=200,
+                temperature=0.7
+            )
+            
+            # Extract and format the topics
+            topics_text = response.choices[0].message.content
+            if topics_text:
+                topics_text = topics_text.strip()
+                topics = [topic.strip() for topic in topics_text.split('\n') if topic.strip()]
+            else:
+                topics = []
+        except Exception as openai_error:
+            logger.error(f"OpenAI API error for tournament {tournament_id}: {str(openai_error)}")
+            return jsonify({
+                'success': False,
+                'error': 'OpenAI API key required or quota exceeded. Please check your API configuration.'
+            }), 500
         
         # Ensure we have exactly 5 topics
         topics = topics[:5]
