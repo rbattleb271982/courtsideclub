@@ -1,0 +1,99 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#006400">CourtSide Club AI Agent Architecture</text>
+  
+  <!-- Central Database -->
+  <rect x="350" y="250" width="100" height="60" rx="10" fill="#006400" stroke="#004d00" stroke-width="2"/>
+  <text x="400" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">Database</text>
+  <text x="400" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">Users &amp;</text>
+  <text x="400" y="302" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">Tournaments</text>
+  
+  <!-- Scheduler -->
+  <rect x="50" y="100" width="120" height="50" rx="8" fill="#28a745" stroke="#1e7e34" stroke-width="2"/>
+  <text x="110" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Background</text>
+  <text x="110" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Scheduler</text>
+  
+  <!-- Email Reminder Agent -->
+  <rect x="50" y="200" width="120" height="50" rx="8" fill="#17a2b8" stroke="#117a8b" stroke-width="2"/>
+  <text x="110" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Email Reminder</text>
+  <text x="110" y="235" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Agent</text>
+  
+  <!-- Content Agents -->
+  <rect x="250" y="80" width="120" height="50" rx="8" fill="#6f42c1" stroke="#5a32a3" stroke-width="2"/>
+  <text x="310" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Tournament</text>
+  <text x="310" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Summary Agent</text>
+  
+  <rect x="450" y="80" width="120" height="50" rx="8" fill="#6f42c1" stroke="#5a32a3" stroke-width="2"/>
+  <text x="510" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Blog Generator</text>
+  <text x="510" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Agent</text>
+  
+  <rect x="630" y="100" width="120" height="50" rx="8" fill="#6f42c1" stroke="#5a32a3" stroke-width="2"/>
+  <text x="690" y="120" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Social Caption</text>
+  <text x="690" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Agent</text>
+  
+  <!-- Event-Triggered Agents -->
+  <rect x="250" y="400" width="120" height="50" rx="8" fill="#dc3545" stroke="#bd2130" stroke-width="2"/>
+  <text x="310" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Post-Event</text>
+  <text x="310" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Follow-Up</text>
+  
+  <rect x="450" y="400" width="120" height="50" rx="8" fill="#fd7e14" stroke="#e55100" stroke-width="2"/>
+  <text x="510" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white">Lanyard</text>
+  <text x="510" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="white">Reminder</text>
+  
+  <!-- SendGrid Email Service -->
+  <rect x="630" y="250" width="120" height="60" rx="10" fill="#ff6b35" stroke="#e55100" stroke-width="2"/>
+  <text x="690" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white">SendGrid</text>
+  <text x="690" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="white">Email Service</text>
+  
+  <!-- Arrows -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Scheduler to Email Agent -->
+  <line x1="110" y1="150" x2="110" y2="200" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Email Agent to Database -->
+  <line x1="170" y1="225" x2="350" y2="280" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Database to Content Agents -->
+  <line x1="380" y1="250" x2="330" y2="130" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="420" y1="250" x2="490" y2="130" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="450" y1="270" x2="630" y2="125" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Database to Event Agents -->
+  <line x1="380" y1="310" x2="330" y2="400" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="420" y1="310" x2="490" y2="400" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Email Agents to SendGrid -->
+  <line x1="170" y1="210" x2="630" y2="265" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="370" y1="415" x2="630" y2="285" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="570" y1="415" x2="630" y2="295" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Legend -->
+  <rect x="50" y="500" width="700" height="80" rx="5" fill="white" stroke="#ddd" stroke-width="1"/>
+  <text x="60" y="520" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">Legend:</text>
+  
+  <rect x="60" y="530" width="15" height="15" fill="#28a745"/>
+  <text x="85" y="542" font-family="Arial, sans-serif" font-size="12" fill="#333">Scheduled (Daily @ 10am)</text>
+  
+  <rect x="220" y="530" width="15" height="15" fill="#6f42c1"/>
+  <text x="245" y="542" font-family="Arial, sans-serif" font-size="12" fill="#333">Manual Content Generation</text>
+  
+  <rect x="420" y="530" width="15" height="15" fill="#dc3545"/>
+  <text x="445" y="542" font-family="Arial, sans-serif" font-size="12" fill="#333">Event-Triggered</text>
+  
+  <rect x="60" y="550" width="15" height="15" fill="#17a2b8"/>
+  <text x="85" y="562" font-family="Arial, sans-serif" font-size="12" fill="#333">Email Automation</text>
+  
+  <rect x="220" y="550" width="15" height="15" fill="#fd7e14"/>
+  <text x="245" y="562" font-family="Arial, sans-serif" font-size="12" fill="#333">User Reminders</text>
+  
+  <rect x="420" y="550" width="15" height="15" fill="#ff6b35"/>
+  <text x="445" y="562" font-family="Arial, sans-serif" font-size="12" fill="#333">External Services</text>
+</svg>

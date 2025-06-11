@@ -1,0 +1,186 @@
+{% extends "layout.html" %}
+
+{% block title %}AI Agent Architecture Overview - CourtSide Club Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="admin-header">
+    <h1>AI Agent Architecture Overview</h1>
+    <p class="text-muted">Visual diagram and comprehensive agent management</p>
+  </div>
+  
+  <!-- Architecture Diagram -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h3>Agent Architecture Diagram</h3>
+    </div>
+    <div class="card-body text-center">
+      <img src="{{ url_for('static', filename='img/agent_flowchart.svg') }}" 
+           alt="AI Agent Architecture Flowchart" 
+           class="img-fluid" 
+           style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px;">
+    </div>
+  </div>
+
+  <!-- Comprehensive Agent List -->
+  <div class="card">
+    <div class="card-header">
+      <h3>All AI Agents</h3>
+      <p class="text-muted mb-0">Current and planned automation agents for CourtSide Club</p>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Agent Name</th>
+              <th>Description</th>
+              <th>Trigger Type</th>
+              <th>Last Run</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Email Reminder Agent</strong></td>
+              <td>Sends pre-event emails to users attending tournaments in 2 weeks</td>
+              <td><span class="badge bg-success">Daily @ 10am</span></td>
+              <td><span class="text-muted">June 11, 2025 4:21 AM</span></td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_agents.run_email_reminder_agent') }}" style="display: inline;">
+                  <button type="submit" class="btn btn-sm btn-success" title="Run Email Reminder Agent">
+                    ✅ Run
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Tournament Summary Agent</strong></td>
+              <td>Writes editorial blurbs and commentary for tournament pages</td>
+              <td><span class="badge bg-primary">Manual</span></td>
+              <td><span class="text-muted">N/A</span></td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_agents.run_tournament_summary_agent') }}" style="display: inline;">
+                  <button type="submit" class="btn btn-sm btn-success" title="Run Tournament Summary Agent">
+                    ✅ Run
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Blog Generator Agent</strong></td>
+              <td>Writes longtail SEO blog posts about tournaments and tennis</td>
+              <td><span class="badge bg-primary">Manual</span></td>
+              <td><span class="text-muted">N/A</span></td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_agents.run_blog_generator_agent') }}" style="display: inline;">
+                  <button type="submit" class="btn btn-sm btn-success" title="Run Blog Generator Agent">
+                    ✅ Run
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Social Caption Agent</strong></td>
+              <td>Writes Instagram and Twitter captions for tournament content</td>
+              <td><span class="badge bg-primary">Manual</span></td>
+              <td><span class="text-muted">N/A</span></td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_agents.run_social_caption_agent') }}" style="display: inline;">
+                  <button type="submit" class="btn btn-sm btn-success" title="Run Social Caption Agent">
+                    ✅ Run
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Post-Event Follow-Up</strong></td>
+              <td>Sends recap emails after user's last session at a tournament</td>
+              <td><span class="badge bg-warning">Triggered</span></td>
+              <td><span class="text-muted">N/A</span></td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_agents.run_post_event_followup_agent') }}" style="display: inline;">
+                  <button type="submit" class="btn btn-sm btn-success" title="Run Post-Event Follow-Up Agent">
+                    ✅ Run
+                  </button>
+                </form>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Lanyard Reminder</strong></td>
+              <td>Reminds users to bring their lanyard to upcoming tournaments</td>
+              <td><span class="badge bg-info">3 days before</span></td>
+              <td><span class="text-muted">N/A</span></td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_agents.run_lanyard_reminder_agent') }}" style="display: inline;">
+                  <button type="submit" class="btn btn-sm btn-success" title="Run Lanyard Reminder Agent">
+                    ✅ Run
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="{{ url_for('admin_agents.agents_dashboard') }}" class="btn btn-secondary">← Back to Agent Panel</a>
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline-secondary">← Back to Admin Dashboard</a>
+  </div>
+</div>
+
+<style>
+.admin-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.admin-header h1 {
+  color: #006400;
+  margin-bottom: 0.5rem;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 1.25rem;
+}
+
+.card-header h3 {
+  margin-bottom: 0.25rem;
+  color: #006400;
+}
+
+.table th {
+  border-top: none;
+  font-weight: 600;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.btn-success {
+  background-color: #006400;
+  border-color: #006400;
+}
+
+.btn-success:hover {
+  background-color: #004d00;
+  border-color: #004d00;
+}
+
+.badge {
+  font-size: 0.75em;
+}
+</style>
+{% endblock %}
