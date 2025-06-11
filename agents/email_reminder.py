@@ -1,7 +1,6 @@
-import datetime
-from flask import current_app
+from datetime import datetime, timedelta
 from models import db, User, Tournament, UserTournament
-from services.email import send_tournament_reminder_email
+from services.email import send_email
 import logging
 
 logger = logging.getLogger(__name__)
@@ -10,73 +9,95 @@ def run_email_reminder():
     """
     AI Agent: Send tournament reminder emails to users
     
-    Finds users attending tournaments starting in 2 weeks and sends reminder emails.
-    Only sends to users who have:
-    - UserTournament.attending == True
-    - UserTournament.session_label is not empty
-    - User.notifications == True (haven't opted out)
+    Finds users attending tournaments starting in 12-15 days and sends personalized reminder emails.
     """
     try:
         logger.info("Email Reminder Agent: Starting execution")
         
-        # Calculate date range (2 weeks from today)
-        target_date = datetime.date.today() + datetime.timedelta(days=14)
-        
-        # Find tournaments starting in 2 weeks
-        upcoming_tournaments = Tournament.query.filter(
-            Tournament.start_date == target_date
+        today = datetime.utcnow().date()
+        window_start = today + timedelta(days=12)
+        window_end = today + timedelta(days=15)
+
+        tournaments = Tournament.query.filter(
+            Tournament.start_date >= window_start,
+            Tournament.start_date <= window_end
         ).all()
-        
-        if not upcoming_tournaments:
-            logger.info(f"Email Reminder Agent: No tournaments starting on {target_date}")
-            return {"status": "success", "message": f"No tournaments starting on {target_date}"}
-        
+
+        if not tournaments:
+            logger.info(f"Email Reminder Agent: No tournaments found in window {window_start} to {window_end}")
+            return {"status": "success", "message": f"No tournaments in reminder window ({window_start} to {window_end})"}
+
         total_sent = 0
         total_skipped = 0
-        
-        for tournament in upcoming_tournaments:
+
+        for tournament in tournaments:
             logger.info(f"Email Reminder Agent: Processing {tournament.name}")
             
-            # Find users attending this tournament with sessions selected
-            user_tournaments = db.session.query(UserTournament).filter(
-                UserTournament.tournament_id == tournament.id,
-                UserTournament.attending == True,
-                UserTournament.session_label.isnot(None),
-                UserTournament.session_label != ''
-            ).all()
-            
-            for user_tournament in user_tournaments:
-                user = db.session.get(User, user_tournament.user_id)
-                
-                if not user:
+            user_tournaments = UserTournament.query.filter_by(
+                tournament_id=tournament.id,
+                attending=True
+            ).filter(UserTournament.session_label != '').all()
+
+            if not user_tournaments:
+                logger.info(f"Email Reminder Agent: No attending users with sessions for {tournament.name}")
+                continue
+
+            total_attending = len(user_tournaments)
+            total_meeting = sum(1 for ut in user_tournaments if ut.open_to_meet)
+
+            for ut in user_tournaments:
+                user = ut.user
+                if not user.email:
+                    total_skipped += 1
                     continue
-                    
+
                 # Check if user has opted out of notifications
                 if hasattr(user, 'notifications') and not user.notifications:
                     total_skipped += 1
                     logger.info(f"Email Reminder Agent: Skipped {user.email} (opted out)")
                     continue
-                
-                # Send reminder email
-                success = send_tournament_reminder_email(
-                    user_id=user.id,
-                    tournament_id=tournament.id
-                )
-                
-                if success:
-                    total_sent += 1
-                    logger.info(f"Email Reminder Agent: Sent reminder to {user.email}")
-                else:
+
+                sessions = ut.session_label.split(',')
+                session_display = '<br>'.join(f"- {s.strip()}" for s in sessions if s.strip())
+
+                subject = f"🎾 See you soon at {tournament.name}?"
+                body = f"""
+                <p>Hey {user.first_name},</p>
+
+                <p>You're all set for <strong>{tournament.name}</strong> — and you're not alone!</p>
+
+                <p><strong>{total_attending}</strong> fans are attending, and <strong>{total_meeting}</strong> are open to meeting up.</p>
+
+                <p>Don't forget your <strong>lanyard</strong> (if you ordered one), and keep an eye on your sessions:</p>
+
+                <p><strong>You selected:</strong><br>{session_display}</p>
+
+                <p>👉 <a href="https://courtsideclub.com/login">Log in to see who's going</a></p>
+
+                <p>If we set a meet-up spot, you'll see it there.</p>
+
+                <p>—<br>The Lounge is Courtside.</p>
+                """
+
+                try:
+                    response_code = send_email(to_email=user.email, subject=subject, content_html=body)
+                    if response_code and response_code == 202:  # SendGrid success status
+                        total_sent += 1
+                        logger.info(f"Email Reminder Agent: Sent to {user.email} for {tournament.name}")
+                    else:
+                        total_skipped += 1
+                        logger.error(f"Email Reminder Agent: Failed to send to {user.email} (status: {response_code})")
+                except Exception as e:
                     total_skipped += 1
-                    logger.error(f"Email Reminder Agent: Failed to send to {user.email}")
-        
+                    logger.error(f"Email Reminder Agent: Error sending to {user.email}: {str(e)}")
+
         message = f"Sent {total_sent} reminder emails, skipped {total_skipped} users"
         logger.info(f"Email Reminder Agent: Completed - {message}")
         
         return {
-            "status": "success",
+            "status": "success", 
             "message": message,
-            "tournaments_processed": len(upcoming_tournaments),
+            "tournaments_processed": len(tournaments),
             "emails_sent": total_sent,
             "emails_skipped": total_skipped
         }

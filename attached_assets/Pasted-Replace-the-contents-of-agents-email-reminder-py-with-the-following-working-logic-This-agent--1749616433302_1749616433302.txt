@@ -1,0 +1,74 @@
+Replace the contents of `/agents/email_reminder.py` with the following working logic:
+
+This agent:
+- Finds tournaments starting 12–15 days from today
+- Gets users attending those tournaments (with sessions selected)
+- Counts total attendees and how many opted in to meetups
+- Builds a personalized reminder email for each user
+- Sends the email via SendGrid (using `send_email()` from `services/email.py`)
+- Logs each email sent
+
+Here’s the code to paste into `email_reminder.py`:
+
+```python
+from datetime import datetime, timedelta
+from models import db, User, Tournament, UserTournament
+from services.email import send_email  # adjust path if needed
+
+def run_email_reminder():
+    today = datetime.utcnow().date()
+    window_start = today + timedelta(days=12)
+    window_end = today + timedelta(days=15)
+
+    tournaments = Tournament.query.filter(
+        Tournament.start_date >= window_start,
+        Tournament.start_date <= window_end
+    ).all()
+
+    if not tournaments:
+        print("No upcoming tournaments found in the reminder window.")
+        return
+
+    for tournament in tournaments:
+        user_tournaments = UserTournament.query.filter_by(
+            tournament_id=tournament.id,
+            attending=True
+        ).filter(UserTournament.session_label != '').all()
+
+        if not user_tournaments:
+            continue
+
+        total_attending = len(user_tournaments)
+        total_meeting = sum(1 for ut in user_tournaments if ut.open_to_meet)
+
+        for ut in user_tournaments:
+            user = ut.user
+            if not user.email:
+                continue
+
+            sessions = ut.session_label.split(',')
+            session_display = '<br>'.join(f"- {s.strip()}" for s in sessions if s.strip())
+
+            subject = f"🎾 See you soon at {tournament.name}?"
+            body = f"""
+            <p>Hey {user.first_name},</p>
+
+            <p>You’re all set for <strong>{tournament.name}</strong> — and you’re not alone!</p>
+
+            <p><strong>{total_attending}</strong> fans are attending, and <strong>{total_meeting}</strong> are open to meeting up.</p>
+
+            <p>Don’t forget your <strong>lanyard</strong> (if you ordered one), and keep an eye on your sessions:</p>
+
+            <p><strong>You selected:</strong><br>{session_display}</p>
+
+            <p>👉 <a href="https://courtsideclub.com/login">Log in to see who’s going</a></p>
+
+            <p>If we set a meet-up spot, you’ll see it there.</p>
+
+            <p>—<br>The Lounge is Courtside.</p>
+            """
+
+            send_email(to=user.email, subject=subject, html=body)
+            print(f"✅ Sent to {user.email} for {tournament.name}")
+
+    print("✅ Email reminder agent completed.")
