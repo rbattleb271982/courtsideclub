@@ -300,9 +300,9 @@ def blog_agent():
         Tournament.start_date <= thirty_days_from_now
     ).order_by(Tournament.start_date).all()
     
-    return render_template('admin/blog_agent.html', tournaments=upcoming_tournaments)
+    return render_template('admin/blog_agent.html', tournaments=upcoming_tournaments, now=datetime.now())
 
-@admin_agents_bp.route('/blog-agent/suggest/<int:tournament_id>', methods=['POST'])
+@admin_agents_bp.route('/blog-agent/suggest/<tournament_id>', methods=['POST'])
 def suggest_blog_topics(tournament_id):
     """Generate blog topic suggestions for a specific tournament using OpenAI"""
     try:
@@ -326,8 +326,12 @@ def suggest_blog_topics(tournament_id):
         )
         
         # Extract and format the topics
-        topics_text = response.choices[0].message.content.strip()
-        topics = [topic.strip() for topic in topics_text.split('\n') if topic.strip()]
+        topics_text = response.choices[0].message.content
+        if topics_text:
+            topics_text = topics_text.strip()
+            topics = [topic.strip() for topic in topics_text.split('\n') if topic.strip()]
+        else:
+            topics = []
         
         # Ensure we have exactly 5 topics
         topics = topics[:5]
