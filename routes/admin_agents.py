@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from agents.email_reminder import run_email_reminder
 from agents.lanyard_reminder import run_lanyard_reminder_agent as run_lanyard_agent
+from agents.post_event_followup import run_post_event_followup_agent
 import logging
 
 logger = logging.getLogger(__name__)
@@ -160,6 +161,46 @@ def run_lanyard_reminder_route():
     except Exception as e:
         logger.error(f"Error running lanyard reminder agent: {str(e)}", exc_info=True)
         flash(f"❌ Error running Lanyard Reminder Agent: Check logs for details", 'danger')
+    
+    return redirect(url_for('admin_agents.agents_dashboard'))
+
+@admin_agents_bp.route('/run/post_event_followup', methods=['POST'])
+def run_post_event_followup():
+    """Execute the post-event follow-up agent manually"""
+    try:
+        logger.info(f"Admin {current_user.email} triggered post-event follow-up agent")
+        
+        # Set a timeout for the entire operation
+        import signal
+        
+        def agent_timeout_handler(signum, frame):
+            raise TimeoutError("Agent execution timeout")
+        
+        signal.signal(signal.SIGALRM, agent_timeout_handler)
+        signal.alarm(60)  # 1 minute timeout for post-event follow-up operations
+        
+        try:
+            # Import and run the post-event follow-up agent
+            result = run_post_event_followup_agent()
+            signal.alarm(0)  # Cancel timeout
+            
+            if result:
+                import datetime
+                now = datetime.datetime.now()
+                time_str = now.strftime("%B %d at %I:%M%p").lower()
+                flash(f"✅ Post-Event Follow-Up Agent ran successfully on {time_str} — {result}", 'success')
+            else:
+                flash(f"✅ Post-Event Follow-Up Agent completed — no qualifying tournaments found", 'info')
+                
+        except TimeoutError:
+            signal.alarm(0)
+            flash("❌ Post-Event Follow-Up Agent timed out — operation took too long", 'danger')
+        finally:
+            signal.alarm(0)  # Ensure timeout is cancelled
+            
+    except Exception as e:
+        logger.error(f"Error running post-event follow-up agent: {str(e)}", exc_info=True)
+        flash(f"❌ Error running Post-Event Follow-Up Agent: Check logs for details", 'danger')
     
     return redirect(url_for('admin_agents.agents_dashboard'))
 

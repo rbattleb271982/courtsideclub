@@ -68,6 +68,11 @@
       grid-column: 1;
       grid-row: 2;
     }
+    
+    .followup-agent {
+      grid-column: 2;
+      grid-row: 2;
+    }
   }
 
   .bottom-buttons {
@@ -167,6 +172,25 @@
           <form method="POST" action="{{ url_for('admin_agents.run_lanyard_reminder_route') }}">
             <button type="submit" class="btn btn-success w-100">
               ✅ Run Lanyard Reminder Agent Now
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="agent-card followup-agent">
+      <div class="card">
+        <div class="card-header">
+          <h3>Post-Event Follow-Up Agent</h3>
+        </div>
+        <div class="card-body">
+          <p>Sends a thank-you email 1 day after a user's tournament ends — includes attendance stats and encourages future participation.</p>
+          <p><strong>📅 Target:</strong> Users who attended tournaments that ended yesterday<br>
+          <strong>📊 Includes total CourtSide Club attendance numbers</strong></p>
+          
+          <form method="POST" action="{{ url_for('admin_agents.run_post_event_followup') }}">
+            <button type="submit" class="btn btn-success w-100">
+              ✅ Run Follow-Up Agent Now
             </button>
           </form>
         </div>

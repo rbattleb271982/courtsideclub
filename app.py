@@ -354,10 +354,12 @@ def iframe_test():
 # Background scheduler for AI agents
 import threading, time, schedule
 from agents.email_reminder import run_email_reminder
+from agents.post_event_followup import run_post_event_followup_agent
 
 def run_scheduler():
     """Background scheduler that runs AI agents on a schedule"""
     schedule.every().day.at("10:00").do(run_email_reminder)
+    schedule.every().day.at("10:10").do(run_post_event_followup_agent)
     while True:
         schedule.run_pending()
         time.sleep(60)
