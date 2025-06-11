@@ -382,11 +382,11 @@ def run_lanyard_export_agent():
     try:
         logger.info(f"Admin {current_user.email} triggered lanyard export agent")
         
-        # Query all users who ordered lanyards but haven't been exported yet
+        # Query all users who ordered lanyards but haven't been exported yet (limit to 100 per batch)
         users_to_export = db.session.query(User).filter(
             User.lanyard_ordered == True, 
             User.lanyard_exported == False
-        ).all()
+        ).limit(100).all()
         
         if not users_to_export:
             flash("✅ Lanyard Export Agent completed — no new orders to export", 'info')
@@ -491,7 +491,16 @@ def run_lanyard_export_agent():
         with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
             f.write(csv_content)
         
-        flash(f"✅ Lanyard Export Agent completed — exported {exported_count} orders to {csv_filename}", 'success')
+        # Check if there are more orders to export
+        remaining_orders = db.session.query(User).filter(
+            User.lanyard_ordered == True, 
+            User.lanyard_exported == False
+        ).count()
+        
+        if remaining_orders > 0:
+            flash(f"✅ Lanyard Export Agent completed — exported {exported_count} orders to {csv_filename}. {remaining_orders} orders remaining for next batch.", 'success')
+        else:
+            flash(f"✅ Lanyard Export Agent completed — exported {exported_count} orders to {csv_filename}. All orders exported!", 'success')
         
     except Exception as e:
         logger.error(f"Error running lanyard export agent: {str(e)}", exc_info=True)
