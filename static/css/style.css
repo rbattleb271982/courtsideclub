@@ -2096,4 +2096,28 @@ input:checked + .toggle-slider:before {
   background-color: #e2ece8;
 }
 
+/* Browse all tournaments link */
+.browse-all-link {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.browse-all-link a {
+  color: #007a4d;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.browse-all-link a:hover {
+  text-decoration: underline;
+}
+
+/* Lanyard image mobile styling */
+@media (max-width: 768px) {
+  .lanyard-image {
+    max-height: 250px;
+    object-fit: cover;
+  }
+}
+
 

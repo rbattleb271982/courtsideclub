@@ -43,10 +43,18 @@
 
   <script>
     function toggleMenu(event) {
-      event.stopPropagation(); // prevent click from bubbling
+      event.stopPropagation();
       const menu = document.getElementById('mobile-menu');
-      const isOpen = menu.style.display === 'flex';
-      menu.style.display = isOpen ? 'none' : 'flex';
+      const toggle = document.querySelector('.menu-toggle');
+      
+      // Toggle between flex and none based on current state
+      if (menu.style.display === 'flex') {
+        menu.style.display = 'none';
+        toggle.innerHTML = '☰';
+      } else {
+        menu.style.display = 'flex';
+        toggle.innerHTML = '✕';
+      }
     }
 
     document.addEventListener('click', function(event) {
@@ -54,14 +62,17 @@
       const toggle = document.querySelector('.menu-toggle');
       if (!menu.contains(event.target) && !toggle.contains(event.target)) {
         menu.style.display = 'none';
+        toggle.innerHTML = '☰';
       }
     });
 
-    // Ensure the menu is hidden on load
+    // Ensure proper initial state
     document.addEventListener('DOMContentLoaded', function () {
       const menu = document.getElementById('mobile-menu');
+      const toggle = document.querySelector('.menu-toggle');
       if (window.innerWidth < 768) {
         menu.style.display = 'none';
+        toggle.innerHTML = '☰';
       }
     });
   </script>

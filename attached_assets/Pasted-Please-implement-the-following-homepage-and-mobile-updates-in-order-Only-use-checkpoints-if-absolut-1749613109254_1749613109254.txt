@@ -1,0 +1,75 @@
+Please implement the following homepage and mobile updates in order. Only use checkpoints if absolutely necessary.
+
+🔧 1. Fix mobile hamburger menu toggle
+
+Make the hamburger icon toggle the menu open and closed on tap.
+📝 2. Homepage Hero Edits
+
+Replace the large hero headline “See You at the Changeover” with:
+“Tennis is better together.”
+🧹 3. Remove and Merge Sections
+
+Remove the “How It Works” header from the homepage (it’s being consolidated).
+Merge the “How It Works” and “Why Join?” sections into one refined “Why Join CourtSide Club?” section with these tiles:
+1. See Who’s Going
+   Know which fans are attending the same matches.
+
+2. Meetups Made Simple
+   Link up at the right place, at the right time.
+
+3. No Group Chats Needed
+   Skip the chaos — connect with fans directly.
+🔗 4. Make Homepage Tournaments Clickable
+
+Each card in the “Upcoming Tournaments” homepage section should link to its individual tournament page.
+Below the section, add a link:
+Browse all tournaments → (links to /tournaments)
+🎯 5. Lanyard Section Tweaks
+
+Set a max image height on mobile (e.g., max-height: 250px) with object-fit: cover.
+Update the text to:
+Get Your CourtSide Club Lanyard
+Easily spot and connect with other members at tournaments using our official lanyard.
+📣 6. Add “Our Mission” Section
+
+Just above the homepage footer, add:
+Our Mission
+CourtSide Club exists to make tennis tournaments more social, welcoming, and unforgettable. Whether you're traveling solo or with friends, we help fans connect, meet up, and create match-day memories together.
+📁 7. Add Menu Item: About
+
+Add “About” to the public site’s menu.
+Create a new /about route and page.
+For now, just render the same mission text as above on that page.
+🧼 8. Clean Up the Existing “How It Works” Page
+
+Remove all images from the current /how-it-works page.
+Update the step descriptions to the following:
+1. Join CourtSide Club  
+   Sign up with your email. It’s fast, free, and takes 30 seconds.
+
+2. Pick Your Tournaments  
+   Tell us which sessions you’re going to — day, night, or both.
+
+3. Get Your Lanyard  
+   We’ll ship you a free lanyard so other members can spot you instantly.
+
+4. Meet Up IRL  
+   Your lanyard signals you're open to connecting. Say hey, grab a drink, or just share the vibes.
+📱 9. Fix “Browse Tournaments” Table on Mobile
+
+Ensure “Type” and “Attending” columns are visible on mobile
+If they’re being hidden by CSS, remove the mobile display: none rule
+Reduce font size and padding in the table on small screens
+E.g., font-size: 14px, padding: 6px
+📆 10. Display Dates Differently for Mobile/Desktop
+
+Use two <span> elements for dates:
+<span class="desktop-date">June 16, 2025</span>
+<span class="mobile-date">Jun 16</span>
+Add CSS to toggle visibility:
+@media (max-width: 600px) {
+  .desktop-date { display: none; }
+}
+@media (min-width: 601px) {
+  .mobile-date { display: none; }
+}
