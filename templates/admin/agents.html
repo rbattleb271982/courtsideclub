@@ -10,11 +10,11 @@
     margin-bottom: 2rem;
   }
 
-  /* Desktop layout: 2x2 grid with status card in top-right */
+  /* Desktop layout: 2x3 grid with status card in top-right */
   @media (min-width: 768px) {
     .agents-grid {
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto auto;
+      grid-template-rows: auto auto auto auto;
     }
     
     .agent-card {
@@ -40,14 +40,75 @@
       grid-column: 2;
       grid-row: 2;
     }
+    
+    .followup-agent {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    
+    .pre-tournament-agent {
+      grid-column: 2;
+      grid-row: 3;
+    }
+    
+    .blog-agent {
+      grid-column: 1;
+      grid-row: 4;
+    }
+    
+    .lanyard-export-agent {
+      grid-column: 2;
+      grid-row: 4;
+    }
   }
 
   /* Large desktop: 3 columns for agents */
   @media (min-width: 1200px) {
     .agents-grid {
       grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: auto auto;
+      grid-template-rows: auto auto auto;
     }
+    
+    .status-card {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    
+    .email-agent {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    
+    .summary-agent {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    
+    .lanyard-agent {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    
+    .followup-agent {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    
+    .pre-tournament-agent {
+      grid-column: 3;
+      grid-row: 2;
+    }
+    
+    .blog-agent {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    
+    .lanyard-export-agent {
+      grid-column: 2;
+      grid-row: 3;
+    }
+  }
     
     .status-card {
       grid-column: 3;
@@ -260,6 +321,27 @@
             <a href="{{ url_for('admin_agents.blog_agent') }}" class="btn btn-success w-100">
               📝 Open Blog Agent
             </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="agent-card lanyard-export-agent">
+      <div class="card">
+        <div class="card-header">
+          <h3>Lanyard Export Agent</h3>
+        </div>
+        <div class="card-body">
+          <p>Exports unfulfilled lanyard orders to CSV for daily fulfillment processing. Includes customer details, shipping addresses, and tournament attendance.</p>
+          <p><strong>📅 Target:</strong> Users with lanyard_ordered=True, lanyard_exported=False<br>
+          <strong>📁 Saves to:</strong> exports/lanyards/YYYY-MM-DD.csv</p>
+          
+          <div class="agent-actions">
+            <form method="POST" action="{{ url_for('admin_agents.run_lanyard_export_agent') }}">
+              <button type="submit" class="btn btn-success w-100">
+                📦 Export Lanyard Orders
+              </button>
+            </form>
           </div>
         </div>
       </div>

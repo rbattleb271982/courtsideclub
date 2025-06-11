@@ -400,11 +400,11 @@ def run_lanyard_export_agent():
         writer.writerow([
             'Name', 
             'Email', 
-            'Address Line 1', 
-            'Address Line 2', 
+            'Address 1', 
+            'Address 2', 
             'City', 
             'State', 
-            'Postal Code', 
+            'Zip Code', 
             'Country',
             'Tournaments Attending',
             'Order Date'
@@ -431,30 +431,30 @@ def run_lanyard_export_agent():
             tournaments_str = "; ".join(attending_tournaments) if attending_tournaments else "None"
             
             # Prepare address fields with safe defaults
-            address_line_1 = ""
-            address_line_2 = ""
+            address1 = ""
+            address2 = ""
             city = ""
             state = ""
-            postal_code = ""
+            zip_code = ""
             country = ""
             
             if shipping_address:
-                address_line_1 = shipping_address.address_line_1 or ""
-                address_line_2 = shipping_address.address_line_2 or ""
+                address1 = shipping_address.address1 or ""
+                address2 = shipping_address.address2 or ""
                 city = shipping_address.city or ""
                 state = shipping_address.state or ""
-                postal_code = shipping_address.postal_code or ""
+                zip_code = shipping_address.zip_code or ""
                 country = shipping_address.country or ""
             
             # Write user data to CSV
             writer.writerow([
                 user.get_full_name(),
                 user.email,
-                address_line_1,
-                address_line_2,
+                address1,
+                address2,
                 city,
                 state,
-                postal_code,
+                zip_code,
                 country,
                 tournaments_str,
                 user.date_created.strftime('%Y-%m-%d') if user.date_created else ""
