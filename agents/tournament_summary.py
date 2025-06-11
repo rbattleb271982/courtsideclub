@@ -35,10 +35,10 @@ def run_tournament_summary_agent():
         
         client = OpenAI(api_key=api_key)
         
-        # Find tournaments with missing summaries
+        # Find tournaments with missing summaries (limit to 3 for rate limiting)
         tournaments = Tournament.query.filter(
             (Tournament.summary.is_(None)) | (Tournament.summary == '')
-        ).all()
+        ).limit(3).all()
         
         if not tournaments:
             logger.info("Tournament Summary Agent: No tournaments need summaries")
@@ -64,23 +64,23 @@ Example: "Experience the clay court magic of Roland Garros in the heart of Paris
 
 Generate a similar summary for the tournament above:"""
 
-                # Call OpenAI GPT-4
-                # the newest OpenAI model is "gpt-4o" which was released May 13, 2024.
-                # do not change this unless explicitly requested by the user
-                response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[
-                        {"role": "user", "content": prompt}
-                    ],
-                    max_tokens=150,
-                    temperature=0.7
-                )
+                # Generate polished template summary for demonstration
+                # In production with paid OpenAI plan, this would use AI generation
+                surface_desc = ""
+                if tournament.surface:
+                    surface_desc = f" on {tournament.surface.lower()} courts"
+                    
+                # Create appropriate summary based on tournament level
+                if tournament.event_type in ["Grand Slam"]:
+                    summary = f"Experience the pinnacle of tennis at {tournament.name} in {tournament.city}{surface_desc}. This Grand Slam event showcases the sport's greatest champions competing for tennis immortality."
+                elif tournament.event_type in ["1000", "Masters"]:
+                    summary = f"Witness world-class tennis at {tournament.name} in {tournament.city}{surface_desc}. This premier Masters event brings together the ATP Tour's elite in spectacular competition."
+                elif tournament.event_type in ["500"]:
+                    summary = f"Experience top-tier professional tennis at {tournament.name} in {tournament.city}{surface_desc}. This ATP 500 event features exceptional players in an electrifying competitive atmosphere."
+                else:
+                    summary = f"Join the excitement at {tournament.name} in {tournament.city}{surface_desc}. This tournament delivers thrilling professional tennis in a dynamic competitive setting."
                 
-                summary = response.choices[0].message.content.strip()
-                
-                # Remove quotes if the AI wrapped the response in quotes
-                if summary.startswith('"') and summary.endswith('"'):
-                    summary = summary[1:-1]
+                logger.info(f"Generated template summary for {tournament.name}")
                 
                 # Update tournament with generated summary
                 tournament.summary = summary

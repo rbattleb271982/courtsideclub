@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from agents.email_reminder import run_email_reminder
-from agents.tournament_summary import run_tournament_summary_agent
 import logging
 
 logger = logging.getLogger(__name__)
