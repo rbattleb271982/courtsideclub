@@ -4,6 +4,8 @@ from agents.email_reminder import run_email_reminder
 from agents.lanyard_reminder import run_lanyard_reminder_agent as run_lanyard_agent
 from agents.post_event_followup import run_post_event_followup_agent
 import logging
+import json
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -204,39 +206,41 @@ def run_post_event_followup():
     
     return redirect(url_for('admin_agents.agents_dashboard'))
 
-@admin_agents_bp.route('/run/blog_generator', methods=['POST'])
-def run_blog_generator_agent():
-    """Execute the blog generator agent manually"""
-    try:
-        logger.info(f"Admin {current_user.email} triggered blog generator agent")
-        flash("Blog Generator Agent: This feature is coming soon!", 'info')
-    except Exception as e:
-        logger.error(f"Error running blog generator agent: {str(e)}", exc_info=True)
-        flash(f"Error running Blog Generator Agent: {str(e)}", 'error')
+@admin_agents_bp.route('/edit/<agent_name>', methods=['GET', 'POST'])
+def edit_agent_email(agent_name):
+    """Edit email templates for agents"""
+    filepath = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config', 'email_templates.json')
     
-    return redirect(request.referrer or url_for('admin_agents.agents_dashboard'))
+    try:
+        with open(filepath, 'r') as f:
+            templates = json.load(f)
+    except FileNotFoundError:
+        flash('Email templates file not found', 'error')
+        return redirect(url_for('admin_agents.agents_dashboard'))
+    except json.JSONDecodeError:
+        flash('Error reading email templates file', 'error')
+        return redirect(url_for('admin_agents.agents_dashboard'))
 
-@admin_agents_bp.route('/run/social_caption', methods=['POST'])
-def run_social_caption_agent():
-    """Execute the social caption agent manually"""
-    try:
-        logger.info(f"Admin {current_user.email} triggered social caption agent")
-        flash("Social Caption Agent: This feature is coming soon!", 'info')
-    except Exception as e:
-        logger.error(f"Error running social caption agent: {str(e)}", exc_info=True)
-        flash(f"Error running Social Caption Agent: {str(e)}", 'error')
-    
-    return redirect(request.referrer or url_for('admin_agents.agents_dashboard'))
+    if agent_name not in templates:
+        flash(f'Template "{agent_name}" not found', 'error')
+        return redirect(url_for('admin_agents.agents_dashboard'))
 
-@admin_agents_bp.route('/run/post_event_followup', methods=['POST'])
-def run_post_event_followup_agent():
-    """Execute the post-event follow-up agent manually"""
-    try:
-        logger.info(f"Admin {current_user.email} triggered post-event follow-up agent")
-        flash("Post-Event Follow-Up Agent: This feature is coming soon!", 'info')
-    except Exception as e:
-        logger.error(f"Error running post-event follow-up agent: {str(e)}", exc_info=True)
-        flash(f"Error running Post-Event Follow-Up Agent: {str(e)}", 'error')
-    
-    return redirect(request.referrer or url_for('admin_agents.agents_dashboard'))
+    if request.method == 'POST':
+        try:
+            templates[agent_name]['subject'] = request.form['subject']
+            templates[agent_name]['body'] = request.form['body']
+            
+            with open(filepath, 'w') as f:
+                json.dump(templates, f, indent=2)
+                
+            flash(f'Email template for "{agent_name}" updated successfully', 'success')
+            return redirect(url_for('admin_agents.edit_agent_email', agent_name=agent_name))
+        except Exception as e:
+            logger.error(f"Error saving email template: {str(e)}")
+            flash('Error saving email template', 'error')
+
+    return render_template('admin/edit_agent_email.html',
+                           agent_name=agent_name,
+                           subject=templates[agent_name].get('subject', ''),
+                           body=templates[agent_name].get('body', ''))
 

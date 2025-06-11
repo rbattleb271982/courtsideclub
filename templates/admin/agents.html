@@ -123,19 +123,24 @@
           <p><strong>🧑‍💻 Target:</strong> Attending users with at least one session selected<br>
           <strong>🔔 Emails only go to users with valid email addresses</strong></p>
           
-          <form method="POST" action="{{ url_for('admin_agents.run_email_reminder_agent') }}">
-            <div class="mb-3">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="preview_mode" name="preview_mode">
-                <label class="form-check-label" for="preview_mode">
-                  Preview only (no emails sent)
-                </label>
+          <div class="agent-actions">
+            <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='pre_tournament_reminder') }}" class="btn btn-outline-primary w-100 mb-2">
+              📝 Edit Email Template
+            </a>
+            <form method="POST" action="{{ url_for('admin_agents.run_email_reminder_agent') }}">
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="preview_mode" name="preview_mode">
+                  <label class="form-check-label" for="preview_mode">
+                    Preview only (no emails sent)
+                  </label>
+                </div>
               </div>
-            </div>
-            <button type="submit" class="btn btn-success w-100">
-              ✅ Run Reminder Agent Now
-            </button>
-          </form>
+              <button type="submit" class="btn btn-success w-100">
+                ✅ Run Reminder Agent Now
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -150,11 +155,16 @@
           <p><strong>🎾 Target:</strong> Tournaments with empty or missing summary fields<br>
           <strong>📝 Uses template-based generation for consistent quality</strong></p>
           
-          <form method="POST" action="{{ url_for('admin_agents.run_tournament_summary_agent') }}">
-            <button type="submit" class="btn btn-success w-100">
-              ✅ Run Summary Agent Now
-            </button>
-          </form>
+          <div class="agent-actions">
+            <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='tournament_summary') }}" class="btn btn-outline-primary w-100 mb-2">
+              📝 Edit Email Template
+            </a>
+            <form method="POST" action="{{ url_for('admin_agents.run_tournament_summary_agent') }}">
+              <button type="submit" class="btn btn-success w-100">
+                ✅ Run Summary Agent Now
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

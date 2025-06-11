@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Email Template - {{ agent_name|title|replace('_', ' ') }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-header">
+        <h1>Edit Email Template</h1>
+        <p class="admin-subtitle">{{ agent_name|title|replace('_', ' ') }}</p>
+    </div>
+
+    <div class="admin-content">
+        <form method="POST" class="email-template-form">
+            <div class="form-group">
+                <label for="subject">Email Subject:</label>
+                <input type="text" 
+                       id="subject" 
+                       name="subject" 
+                       value="{{ subject }}" 
+                       class="form-control"
+                       placeholder="Enter email subject line"
+                       required>
+                <small class="form-text">Use {{ user.first_name }}, {{ tournament_name }}, {{ total_attending }} for dynamic content</small>
+            </div>
+
+            <div class="form-group">
+                <label for="body">Email Body (HTML):</label>
+                <textarea id="body" 
+                          name="body" 
+                          rows="15" 
+                          class="form-control email-body-textarea"
+                          placeholder="Enter HTML email content"
+                          required>{{ body }}</textarea>
+                <small class="form-text">HTML tags supported. Use {{ user.first_name }}, {{ tournament_name }}, {{ total_attending }} for dynamic content</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Template</button>
+                <a href="{{ url_for('admin_agents.agents_dashboard') }}" class="btn btn-secondary">Back to Agents</a>
+            </div>
+        </form>
+
+        <div class="template-help">
+            <h3>Available Variables</h3>
+            <ul>
+                <li><code>{{ user.first_name }}</code> - User's first name (or email prefix if not available)</li>
+                <li><code>{{ tournament_name }}</code> - Tournament name</li>
+                <li><code>{{ total_attending }}</code> - Total number of CourtSide Club members attending (post-event only)</li>
+            </ul>
+            
+            <h3>HTML Tips</h3>
+            <ul>
+                <li>Use <code>&lt;br&gt;</code> for line breaks</li>
+                <li>Use <code>&lt;strong&gt;</code> for bold text</li>
+                <li>Use <code>&lt;a href="URL"&gt;Link Text&lt;/a&gt;</code> for links</li>
+                <li>Keep email HTML simple for better compatibility</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+.email-template-form {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #006400;
+}
+
+.email-body-textarea {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    resize: vertical;
+    min-height: 300px;
+}
+
+.form-text {
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #006400;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #004d00;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+.template-help {
+    max-width: 800px;
+    margin: 30px auto 0;
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+}
+
+.template-help h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.template-help ul {
+    margin: 0 0 20px 20px;
+    padding: 0;
+}
+
+.template-help li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.template-help code {
+    background: #e9ecef;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .email-template-form,
+    .template-help {
+        margin: 0 15px;
+        padding: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}

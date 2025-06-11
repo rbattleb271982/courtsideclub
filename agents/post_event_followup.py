@@ -10,6 +10,7 @@ import logging
 from datetime import datetime, timedelta
 from models import db, Tournament, User, UserTournament
 from services.sendgrid_service import send_email
+from utils.email_templates import load_email_template, render_template
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -65,24 +66,24 @@ def run_post_event_followup_agent():
                     logger.warning(f"Post-Event Follow-Up Agent: Skipping user {user.id} - invalid email")
                     continue
                 
-                # Prepare email content
-                subject = f"🎾 Thanks for being part of CourtSide Club at {tournament.name}!"
+                # Load email template and prepare content
+                template = load_email_template('post_event_followup')
                 
                 # Use first name if available, otherwise email prefix
                 first_name = user.first_name if hasattr(user, 'first_name') and user.first_name else user.email.split('@')[0]
                 
+                # Render template with variables
+                subject = render_template(template['subject'], 
+                                        user={'first_name': first_name}, 
+                                        tournament_name=tournament.name,
+                                        total_attending=total_attending)
+                
                 body_html = f"""
                 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                    <p>Hey {first_name},</p>
-                    
-                    <p>We hope you had an unforgettable time at <strong>{tournament.name}</strong>.</p>
-                    
-                    <p>You weren't the only one — over <strong>{total_attending} CSC members</strong> went too!</p>
-                    
-                    <p>Already thinking about your next event? We'd love to have you back.</p>
-                    
-                    <p>—<br>
-                    The Lounge is Courtside.</p>
+                    {render_template(template['body'], 
+                                   user={'first_name': first_name}, 
+                                   tournament_name=tournament.name,
+                                   total_attending=total_attending)}
                 </div>
                 """
                 
