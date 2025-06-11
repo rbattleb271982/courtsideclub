@@ -129,6 +129,7 @@ class Tournament(db.Model):
     # New optional fields for admin use
     surface = db.Column(db.String(50), nullable=True)  # e.g., "Hard", "Clay", "Grass"
     commentary = db.Column(db.Text, nullable=True)  # Editorial commentary for tournament
+    summary = db.Column(db.Text, nullable=True)  # AI-generated summary for tournament
     
     user_registrations = relationship('UserTournament', back_populates='tournament')
     

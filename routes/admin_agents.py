@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from agents.email_reminder import run_email_reminder
+from agents.tournament_summary import run_tournament_summary_agent
 import logging
 
 logger = logging.getLogger(__name__)
@@ -81,12 +82,46 @@ def run_tournament_summary_agent():
     """Execute the tournament summary agent manually"""
     try:
         logger.info(f"Admin {current_user.email} triggered tournament summary agent")
-        flash("Tournament Summary Agent: This feature is coming soon!", 'info')
+        
+        # Set a timeout for the entire operation
+        import signal
+        
+        def agent_timeout_handler(signum, frame):
+            raise TimeoutError("Agent execution timeout")
+        
+        signal.signal(signal.SIGALRM, agent_timeout_handler)
+        signal.alarm(120)  # 2 minute timeout for OpenAI operations
+        
+        try:
+            # Import and run the tournament summary agent
+            from agents.tournament_summary import run_tournament_summary_agent as run_agent
+            result = run_agent()
+            signal.alarm(0)  # Cancel timeout
+            
+            if result and result.get('status') == 'success':
+                summaries_added = result.get('summaries_added', 0)
+                
+                if summaries_added > 0:
+                    import datetime
+                    now = datetime.datetime.now()
+                    time_str = now.strftime("%B %d at %I:%M%p").lower()
+                    flash(f"✅ Tournament Summary Agent ran successfully on {time_str} — {summaries_added} summaries added", 'success')
+                else:
+                    flash(f"✅ Tournament Summary Agent completed — all tournaments already have summaries", 'info')
+            else:
+                error_msg = result.get('message', 'Unknown error') if result else 'Agent returned no result'
+                flash(f"❌ Tournament Summary Agent failed: {error_msg}", 'danger')
+        except TimeoutError:
+            signal.alarm(0)
+            flash("❌ Tournament Summary Agent timed out — operation took too long", 'danger')
+        finally:
+            signal.alarm(0)  # Ensure timeout is cancelled
+            
     except Exception as e:
         logger.error(f"Error running tournament summary agent: {str(e)}", exc_info=True)
-        flash(f"Error running Tournament Summary Agent: {str(e)}", 'error')
+        flash(f"❌ Error running Tournament Summary Agent: Check logs for details", 'danger')
     
-    return redirect(request.referrer or url_for('admin_agents.agents_dashboard'))
+    return redirect(url_for('admin_agents.agents_dashboard'))
 
 @admin_agents_bp.route('/run/blog_generator', methods=['POST'])
 def run_blog_generator_agent():
