@@ -5,17 +5,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def run_email_reminder(preview_mode=False):
+def run_email_reminder(preview=False):
     """
     AI Agent: Send tournament reminder emails to users
     
     Finds users attending tournaments starting in 12-15 days and sends personalized reminder emails.
     
     Args:
-        preview_mode (bool): If True, logs email content without sending actual emails
+        preview (bool): If True, logs email content without sending actual emails
     """
     try:
-        logger.info(f"Email Reminder Agent: Starting execution (preview mode: {preview_mode})")
+        logger.info(f"Email Reminder Agent: Starting execution (preview mode: {preview})")
         
         today = datetime.utcnow().date()
         window_start = today + timedelta(days=12)
@@ -82,7 +82,7 @@ def run_email_reminder(preview_mode=False):
                 <p>—<br>The Lounge is Courtside.</p>
                 """
 
-                if preview_mode:
+                if preview:
                     # Preview mode: just log the email content without sending
                     total_sent += 1
                     logger.info(f"Email Reminder Agent (PREVIEW): Would send to {user.email} for {tournament.name}")

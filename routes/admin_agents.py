@@ -29,24 +29,25 @@ def agents_overview():
 def run_email_reminder_agent():
     """Execute the email reminder agent manually"""
     try:
-        preview_mode = request.form.get('preview_mode') == 'on'
-        logger.info(f"Admin {current_user.email} triggered email reminder agent (preview: {preview_mode})")
+        preview = request.form.get('preview_mode') == 'on'
+        logger.info(f"Admin {current_user.email} triggered email reminder agent (preview: {preview})")
         
         # Run the email reminder agent
-        result = run_email_reminder(preview_mode=preview_mode)
+        result = run_email_reminder(preview=preview)
         
         if result['status'] == 'success':
             emails_sent = result.get('emails_sent', 0)
             tournaments_processed = result.get('tournaments_processed', 0)
             
-            if preview_mode:
+            if preview:
                 flash(f"✅ Email Reminder Agent preview completed — would have sent {emails_sent} emails for {tournaments_processed} tournament(s)", 'info')
             else:
-                if emails_sent > 0:
+                emails_count = int(emails_sent) if emails_sent else 0
+                if emails_count > 0:
                     import datetime
                     now = datetime.datetime.now()
                     time_str = now.strftime("%B %d at %I:%M%p").lower()
-                    flash(f"✅ Email Reminder Agent ran successfully on {time_str} — {emails_sent} users emailed", 'success')
+                    flash(f"✅ Email Reminder Agent ran successfully on {time_str} — {emails_count} users emailed", 'success')
                 else:
                     flash(f"✅ Email Reminder Agent completed — no emails needed at this time", 'info')
         else:
