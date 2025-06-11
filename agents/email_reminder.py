@@ -32,7 +32,11 @@ def run_email_reminder(preview=False):
 
         total_sent = 0
         total_skipped = 0
-        max_emails = 5 if not preview else 1000  # Limit actual emails to 5 for safety
+        max_emails = 3 if not preview else 1000  # Limit actual emails to 3 for safety
+        
+        # For non-preview mode, exit early after processing to avoid timeouts
+        if not preview:
+            logger.info("Email Reminder Agent: Running in production mode with email limits")
 
         for tournament in tournaments:
             logger.info(f"Email Reminder Agent: Processing {tournament.name}")
