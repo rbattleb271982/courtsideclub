@@ -2120,4 +2120,98 @@ input:checked + .toggle-slider:before {
   }
 }
 
+/* Mission section styling */
+.mission-section {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.mission-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #444;
+}
+
+/* Mobile responsive helpers */
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+  
+  .mobile-only {
+    display: block;
+  }
+}
+
+/* Mobile tournament cards */
+.tournament-cards {
+  padding: 1rem;
+}
+
+.tournament-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  flex: 1;
+}
+
+.card-header h3 a {
+  color: #007a4d;
+  text-decoration: none;
+}
+
+.card-header h3 a:hover {
+  text-decoration: underline;
+}
+
+.attending-badge {
+  background: #007a4d;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+
+.card-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.tournament-date {
+  font-weight: 500;
+}
+
+.tournament-type {
+  color: #888;
+}
+
 

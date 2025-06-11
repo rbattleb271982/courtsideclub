@@ -9,7 +9,8 @@
     </div>
   </section>
 
-  <section class="tournament-table-wrapper">
+  <!-- Desktop Table View -->
+  <section class="tournament-table-wrapper desktop-only">
     <table class="tournament-table" id="tournamentTable">
       <thead>
         <tr>
@@ -37,17 +38,46 @@
     </table>
   </section>
 
+  <!-- Mobile Card View -->
+  <section class="tournament-cards mobile-only" id="tournamentCards">
+    {% for t in tournaments %}
+    {% set tournament_type = (t.event_type + ' ' + t.tour_type) if t.event_type != 'Grand Slam' else 'Grand Slam' %}
+    <div class="tournament-card"
+         data-date="{{ t.start_date.strftime('%Y-%m-%d') }}"
+         data-name="{{ t.name.lower() }}"
+         data-type="{{ tournament_type.lower() }}"
+         data-attending="{{ attendance_counts.get(t.id, 0) }}">
+      <div class="card-header">
+        <h3><a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="tournament-name">{{ t.name }}</a></h3>
+        <span class="attending-badge">{{ attendance_counts.get(t.id, 0) }} attending</span>
+      </div>
+      <div class="card-details">
+        <span class="tournament-date">{{ t.start_date.strftime('%b %-d, %Y') }}</span>
+        <span class="tournament-type">{{ tournament_type }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
   <script>
   let currentSort = { column: 'date', direction: 'asc' };
 
   // Search functionality
   document.getElementById("tournamentSearch").addEventListener("input", function () {
     const filter = this.value.toLowerCase();
+    
+    // Search table rows
     const rows = document.querySelectorAll("#tournamentTable tbody tr");
-
     rows.forEach(row => {
       const text = row.textContent.toLowerCase();
       row.style.display = text.includes(filter) ? "" : "none";
+    });
+    
+    // Search mobile cards
+    const cards = document.querySelectorAll("#tournamentCards .tournament-card");
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = text.includes(filter) ? "" : "none";
     });
   });
 
