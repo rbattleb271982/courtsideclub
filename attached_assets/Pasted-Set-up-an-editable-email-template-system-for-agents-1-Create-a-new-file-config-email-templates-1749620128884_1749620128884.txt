@@ -1,0 +1,58 @@
+Set up an editable email template system for agents.
+
+1. Create a new file: `/config/email_templates.json`
+   Initial contents:
+   ```json
+   {
+     "pre_tournament_reminder": {
+       "subject": "🎾 Your CourtSide Club match day is almost here!",
+       "body": "Hey {{ user.first_name }},<br><br>Just a heads-up — your visit to {{ tournament_name }} is coming up!<br><br>✅ Don’t forget your lanyard<br>✅ Check your session selections<br>✅ Invite a friend if they’re coming too<br><br>👉 <a href='https://courtsideclub.com/login'>courtsideclub.com/login</a><br><br>Have a great time —<br>The Lounge is Courtside."
+     },
+     "lanyard_reminder": {
+       "subject": "🎾 Don’t forget your CourtSide Club lanyard!",
+       "body": "Hey {{ user.first_name }},<br><br>Your tournament is coming up soon, and you’ve marked yourself as attending. Just a reminder to pack your CourtSide Club lanyard!<br><br>Safe travels —<br>The Lounge is Courtside."
+     }
+   }
+Update your agents (e.g., pre_tournament_reminder.py) to read subject/body from this file:
+import json
+
+with open('config/email_templates.json') as f:
+    templates = json.load(f)
+
+email = templates['pre_tournament_reminder']
+subject = email['subject']
+body = email['body']
+In routes/admin_agents.py, add a new route:
+@admin_bp.route('/admin/agents/edit/<agent_name>', methods=['GET', 'POST'])
+@login_required
+def edit_agent_email(agent_name):
+    filepath = 'config/email_templates.json'
+    with open(filepath) as f:
+        templates = json.load(f)
+
+    if request.method == 'POST':
+        templates[agent_name]['subject'] = request.form['subject']
+        templates[agent_name]['body'] = request.form['body']
+        with open(filepath, 'w') as f:
+            json.dump(templates, f, indent=2)
+        flash('Template updated.')
+        return redirect(url_for('admin.edit_agent_email', agent_name=agent_name))
+
+    return render_template('admin/edit_agent_email.html',
+                           agent_name=agent_name,
+                           subject=templates.get(agent_name, {}).get('subject', ''),
+                           body=templates.get(agent_name, {}).get('body', ''))
+Create templates/admin/edit_agent_email.html:
+<h2>Edit Email Template: {{ agent_name }}</h2>
+<form method="POST">
+    <label>Subject:</label><br>
+    <input type="text" name="subject" value="{{ subject }}" style="width: 100%;"><br><br>
+
+    <label>Body (HTML):</label><br>
+    <textarea name="body" rows="15" style="width: 100%;">{{ body }}</textarea><br><br>
+
+    <button type="submit">Save</button>
+    <a href="{{ url_for('admin.agents') }}">Back to Agents</a>
+</form>
+On your /admin/agents/overview or /admin/agents table, add a new column with:
+<a href="{{ url_for('admin.edit_agent_email', agent_name='pre_tournament_reminder') }}">Edit Email</a>

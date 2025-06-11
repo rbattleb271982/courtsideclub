@@ -10,6 +10,7 @@ import logging
 from datetime import datetime, timedelta
 from models import db, Tournament, User, UserTournament
 from services.sendgrid_service import send_email
+from utils.email_templates import load_email_template, render_template
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -60,25 +61,22 @@ def run_lanyard_reminder_agent():
                     logger.warning(f"Lanyard Reminder Agent: Skipping user {user.id} - invalid email")
                     continue
                 
-                # Prepare email content
-                subject = f"🎾 Don't forget your lanyard — {tournament.name} is coming up!"
+                # Load email template and prepare content
+                template = load_email_template('lanyard_reminder')
                 
                 # Use first name if available, otherwise email prefix
                 first_name = user.first_name if hasattr(user, 'first_name') and user.first_name else user.email.split('@')[0]
                 
+                # Render template with variables
+                subject = render_template(template['subject'], 
+                                        user={'first_name': first_name}, 
+                                        tournament_name=tournament.name)
+                
                 body_html = f"""
                 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                    <p>Hey {first_name},</p>
-                    
-                    <p>You're attending <strong>{tournament.name}</strong> soon!</p>
-                    
-                    <p>If you ordered a lanyard, don't forget to bring it so other CourtSide Club members can spot you.</p>
-                    
-                    <p>Want to see who else is going?<br>
-                    👉 <a href="https://courtsideclub.com/login" style="color: #006400; text-decoration: none;">Log in to your dashboard</a></p>
-                    
-                    <p>—<br>
-                    The Lounge is Courtside.</p>
+                    {render_template(template['body'], 
+                                   user={'first_name': first_name}, 
+                                   tournament_name=tournament.name)}
                 </div>
                 """
                 
