@@ -1,3 +1,14 @@
+/* Reset margins and padding to remove gray space */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+}
+
 .page-intro-message {
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
@@ -1245,7 +1256,7 @@ body {
 /* CTA Buttons */
 .howitworks-cta-button, .hero-cta-button, .cta-button {
   display: inline-block;
-  background-color: #007a4d;
+  background-color: #006400;
   color: white;
   padding: 12px 20px;
   border-radius: 8px;
@@ -1256,7 +1267,7 @@ body {
 }
 
 .howitworks-cta-button:hover, .hero-cta-button:hover, .cta-button:hover {
-  background-color: #005f39;
+  background-color: #004d00;
   color: white;
   text-decoration: none;
 }
@@ -1264,9 +1275,9 @@ body {
 /* Secondary button style for login */
 .hero-secondary-button, .secondary-button {
   display: inline-block;
-  background-color: white;
-  color: #007a4d;
-  border: 2px solid #007a4d;
+  background-color: #006400;
+  color: white;
+  border: 2px solid #006400;
   padding: 12px 20px;
   border-radius: 8px;
   text-decoration: none;
@@ -1276,8 +1287,8 @@ body {
 }
 
 .hero-secondary-button:hover, .secondary-button:hover {
-  background-color: #e8f5e9;
-  color: #007a4d;
+  background-color: #004d00;
+  color: white;
   text-decoration: none;
 }
 
