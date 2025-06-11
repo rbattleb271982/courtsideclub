@@ -383,9 +383,9 @@ def run_lanyard_export_agent():
         logger.info(f"Admin {current_user.email} triggered lanyard export agent")
         
         # Query all users who ordered lanyards but haven't been exported yet
-        users_to_export = User.query.filter_by(
-            lanyard_ordered=True, 
-            lanyard_exported=False
+        users_to_export = db.session.query(User).filter(
+            User.lanyard_ordered == True, 
+            User.lanyard_exported == False
         ).all()
         
         if not users_to_export:
@@ -414,17 +414,17 @@ def run_lanyard_export_agent():
         
         for user in users_to_export:
             # Get user's shipping address
-            shipping_address = ShippingAddress.query.filter_by(user_id=user.id).first()
+            shipping_address = db.session.query(ShippingAddress).filter(ShippingAddress.user_id == user.id).first()
             
             # Get user's attending tournaments
             attending_tournaments = []
-            user_tournaments = UserTournament.query.filter_by(
-                user_id=user.id, 
-                attending=True
+            user_tournaments = db.session.query(UserTournament).filter(
+                UserTournament.user_id == user.id, 
+                UserTournament.attending == True
             ).all()
             
             for ut in user_tournaments:
-                tournament = Tournament.query.get(ut.tournament_id)
+                tournament = db.session.query(Tournament).get(ut.tournament_id)
                 if tournament:
                     attending_tournaments.append(tournament.name)
             
