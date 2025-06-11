@@ -20,6 +20,7 @@
           <a href="{{ url_for('main.public_tournaments') }}">Browse Tournaments</a>
           <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
           <a href="{{ url_for('main.faqs') }}">FAQ</a>
+          <a href="{{ url_for('main.hello_michael') }}">Hello Michael</a>
           {% if request.path not in ['/login', '/signup'] %}
             <a href="{{ url_for('auth.login') }}">Login</a>
             <a href="{{ url_for('auth.signup') }}">Sign Up</a>

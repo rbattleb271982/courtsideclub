@@ -128,6 +128,10 @@ def lanyard_info_public():
 def faqs():
     return render_template('public/faqs.html')
 
+@main_bp.route('/hello-michael')
+def hello_michael():
+    return render_template('public/hello_michael.html')
+
 # About page content has been moved to the homepage
 # @main_bp.route('/about')
 # def about():
