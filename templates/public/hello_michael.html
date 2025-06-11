@@ -1,11 +1,13 @@
 {% extends "public/base.html" %}
 {% block title %}Hello Michael - CourtSide Club{% endblock %}
 {% block content %}
-<div class="info-section" style="text-align: center; padding: 3rem 1rem; max-width: 600px; margin: 0 auto;">
-  <div style="background: #f9fdfb; border: 1px solid #d9f4e6; border-radius: 1rem; padding: 2rem;">
-    <h1 style="font-weight: 700; font-size: 1.8rem;">This page is just for you 😎</h1>
-    <p style="margin-top: 0.5rem;">Welcome to your very own CourtSide Club page.</p>
-    <a href="{{ url_for('main.public_home') }}" class="cta-button" style="margin-top: 1.5rem;">Go Back Home</a>
+<div class="hello-wrapper">
+  <h1 class="hello-title">This page is just for you 😎</h1>
+  <p class="hello-subtitle">Welcome to your very own CourtSide Club page.</p>
+  <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Tennis fan celebration" class="hello-image">
+  <div class="hello-buttons">
+    <a href="{{ url_for('auth.login') }}" class="hello-login">Login</a>
+    <a href="{{ url_for('main.public_home') }}" class="hello-back">Back to Homepage</a>
   </div>
 </div>
 {% endblock %}
