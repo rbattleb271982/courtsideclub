@@ -60,30 +60,9 @@ def run_pre_tournament_reminder_agent():
                     emails_skipped += 1
                     continue
                 
-                # Get tournament sessions from JSON
-                if not tournament.sessions:
-                    emails_skipped += 1
-                    continue
-                
-                try:
-                    sessions_data = json.loads(tournament.sessions) if isinstance(tournament.sessions, str) else tournament.sessions
-                except (json.JSONDecodeError, TypeError):
-                    logger.warning(f"Pre-Tournament Reminder Agent: Invalid sessions data for tournament {tournament.id}")
-                    emails_skipped += 1
-                    continue
-                
-                # Find the earliest session date from user's selected sessions
-                earliest_session_date = None
-                
-                for session_label in session_labels:
-                    for session in sessions_data:
-                        if session.get('label') == session_label and session.get('date'):
-                            try:
-                                session_date = datetime.strptime(session['date'], '%Y-%m-%d').date()
-                                if earliest_session_date is None or session_date < earliest_session_date:
-                                    earliest_session_date = session_date
-                            except ValueError:
-                                continue
+                # For sessions, we'll use the tournament start date as the session date
+                # since the sessions are stored as simple string labels
+                earliest_session_date = tournament.start_date
                 
                 if earliest_session_date is None:
                     emails_skipped += 1
