@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, make_response
 from flask_login import login_required, current_user
 from agents.email_reminder import run_email_reminder
 from agents.lanyard_reminder import run_lanyard_reminder_agent as run_lanyard_agent
@@ -466,45 +466,27 @@ def run_lanyard_export_agent():
         csv_content = output.getvalue()
         output.close()
         
-        # Print CSV to console for admin review
-        print("\n" + "="*60)
-        print(f"LANYARD EXPORT AGENT - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print(f"Found {exported_count} users with unfulfilled lanyard orders:")
-        print("="*60)
-        print(csv_content)
-        print("="*60)
-        
         # Mark users as exported
         for user in users_to_export:
             user.lanyard_exported = True
         
         db.session.commit()
         
-        # Create exports directory if it doesn't exist
-        exports_dir = "exports/lanyards"
-        os.makedirs(exports_dir, exist_ok=True)
-        
-        # Save CSV file with today's date
+        # Create filename with today's date
         today_str = datetime.now().strftime('%Y-%m-%d')
-        csv_filename = f"{exports_dir}/{today_str}.csv"
+        filename = f"lanyard_orders_{today_str}.csv"
         
-        with open(csv_filename, 'w', newline='', encoding='utf-8') as f:
-            f.write(csv_content)
+        # Create response with CSV download
+        response = make_response(csv_content)
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = f'attachment; filename={filename}'
         
-        # Check if there are more orders to export
-        remaining_orders = db.session.query(User).filter(
-            User.lanyard_ordered == True, 
-            User.lanyard_exported == False
-        ).count()
+        logger.info(f"Lanyard Export Agent: Generated CSV download with {exported_count} orders for admin {current_user.email}")
         
-        if remaining_orders > 0:
-            flash(f"✅ Lanyard Export Agent completed — exported {exported_count} orders to {csv_filename}. {remaining_orders} orders remaining for next batch.", 'success')
-        else:
-            flash(f"✅ Lanyard Export Agent completed — exported {exported_count} orders to {csv_filename}. All orders exported!", 'success')
+        return response
         
     except Exception as e:
         logger.error(f"Error running lanyard export agent: {str(e)}", exc_info=True)
         flash(f"❌ Error running Lanyard Export Agent: Check logs for details", 'danger')
-    
-    return redirect(url_for('admin_agents.agents_dashboard'))
+        return redirect(url_for('admin_agents.agents_dashboard'))
 
