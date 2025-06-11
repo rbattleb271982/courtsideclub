@@ -217,6 +217,30 @@
       </div>
     </div>
     
+    <div class="agent-card pre-tournament-agent">
+      <div class="card">
+        <div class="card-header">
+          <h3>Pre-Tournament Reminder Agent</h3>
+        </div>
+        <div class="card-body">
+          <p>Sends reminder emails 1-2 days before a user's earliest selected tournament session — helps ensure users are prepared and excited.</p>
+          <p><strong>📅 Target:</strong> Users attending tournaments with sessions starting in 1-2 days<br>
+          <strong>🎯 Timing:</strong> Based on earliest selected session date</p>
+          
+          <div class="agent-actions">
+            <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='pre_tournament_reminder') }}" class="btn btn-outline-primary w-100 mb-2">
+              📝 Edit Email Template
+            </a>
+            <form method="POST" action="{{ url_for('admin_agents.run_pre_tournament_reminder') }}">
+              <button type="submit" class="btn btn-success w-100">
+                ✅ Run Pre-Tournament Reminder Now
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="agent-card status-card">
       <div class="card">
         <div class="card-header">

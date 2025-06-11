@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from agents.email_reminder import run_email_reminder
 from agents.lanyard_reminder import run_lanyard_reminder_agent as run_lanyard_agent
 from agents.post_event_followup import run_post_event_followup_agent
+from agents.pre_tournament_reminder import run_pre_tournament_reminder_agent
 import logging
 import json
 import os
@@ -203,6 +204,46 @@ def run_post_event_followup():
     except Exception as e:
         logger.error(f"Error running post-event follow-up agent: {str(e)}", exc_info=True)
         flash(f"❌ Error running Post-Event Follow-Up Agent: Check logs for details", 'danger')
+    
+    return redirect(url_for('admin_agents.agents_dashboard'))
+
+@admin_agents_bp.route('/run/pre_tournament_reminder', methods=['POST'])
+def run_pre_tournament_reminder():
+    """Execute the pre-tournament reminder agent manually"""
+    try:
+        logger.info(f"Admin {current_user.email} triggered pre-tournament reminder agent")
+        
+        # Set a timeout for the entire operation
+        import signal
+        
+        def agent_timeout_handler(signum, frame):
+            raise TimeoutError("Agent execution timeout")
+        
+        signal.signal(signal.SIGALRM, agent_timeout_handler)
+        signal.alarm(60)  # 1 minute timeout for pre-tournament reminder operations
+        
+        try:
+            # Import and run the pre-tournament reminder agent
+            result = run_pre_tournament_reminder_agent()
+            signal.alarm(0)  # Cancel timeout
+            
+            if result:
+                import datetime
+                now = datetime.datetime.now()
+                time_str = now.strftime("%B %d at %I:%M%p").lower()
+                flash(f"✅ Pre-Tournament Reminder Agent ran successfully on {time_str} — {result}", 'success')
+            else:
+                flash(f"✅ Pre-Tournament Reminder Agent completed — no qualifying users found", 'info')
+                
+        except TimeoutError:
+            signal.alarm(0)
+            flash("❌ Pre-Tournament Reminder Agent timed out — operation took too long", 'danger')
+        finally:
+            signal.alarm(0)  # Ensure timeout is cancelled
+            
+    except Exception as e:
+        logger.error(f"Error running pre-tournament reminder agent: {str(e)}", exc_info=True)
+        flash(f"❌ Error running Pre-Tournament Reminder Agent: Check logs for details", 'danger')
     
     return redirect(url_for('admin_agents.agents_dashboard'))
 
