@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from agents.email_reminder import run_email_reminder
+from agents.lanyard_reminder import run_lanyard_reminder_agent as run_lanyard_agent
 import logging
 
 logger = logging.getLogger(__name__)
@@ -122,6 +123,46 @@ def run_tournament_summary_agent():
     
     return redirect(url_for('admin_agents.agents_dashboard'))
 
+@admin_agents_bp.route('/run/lanyard_reminder', methods=['POST'])
+def run_lanyard_reminder_agent():
+    """Execute the lanyard reminder agent manually"""
+    try:
+        logger.info(f"Admin {current_user.email} triggered lanyard reminder agent")
+        
+        # Set a timeout for the entire operation
+        import signal
+        
+        def agent_timeout_handler(signum, frame):
+            raise TimeoutError("Agent execution timeout")
+        
+        signal.signal(signal.SIGALRM, agent_timeout_handler)
+        signal.alarm(60)  # 1 minute timeout for lanyard reminder operations
+        
+        try:
+            # Import and run the lanyard reminder agent
+            result = run_lanyard_agent()
+            signal.alarm(0)  # Cancel timeout
+            
+            if result:
+                import datetime
+                now = datetime.datetime.now()
+                time_str = now.strftime("%B %d at %I:%M%p").lower()
+                flash(f"✅ Lanyard Reminder Agent ran successfully on {time_str} — {result}", 'success')
+            else:
+                flash(f"✅ Lanyard Reminder Agent completed — no qualifying users found", 'info')
+                
+        except TimeoutError:
+            signal.alarm(0)
+            flash("❌ Lanyard Reminder Agent timed out — operation took too long", 'danger')
+        finally:
+            signal.alarm(0)  # Ensure timeout is cancelled
+            
+    except Exception as e:
+        logger.error(f"Error running lanyard reminder agent: {str(e)}", exc_info=True)
+        flash(f"❌ Error running Lanyard Reminder Agent: Check logs for details", 'danger')
+    
+    return redirect(url_for('admin_agents.agents_dashboard'))
+
 @admin_agents_bp.route('/run/blog_generator', methods=['POST'])
 def run_blog_generator_agent():
     """Execute the blog generator agent manually"""
@@ -158,14 +199,3 @@ def run_post_event_followup_agent():
     
     return redirect(request.referrer or url_for('admin_agents.agents_dashboard'))
 
-@admin_agents_bp.route('/run/lanyard_reminder', methods=['POST'])
-def run_lanyard_reminder_agent():
-    """Execute the lanyard reminder agent manually"""
-    try:
-        logger.info(f"Admin {current_user.email} triggered lanyard reminder agent")
-        flash("Lanyard Reminder Agent: This feature is coming soon!", 'info')
-    except Exception as e:
-        logger.error(f"Error running lanyard reminder agent: {str(e)}", exc_info=True)
-        flash(f"Error running Lanyard Reminder Agent: {str(e)}", 'error')
-    
-    return redirect(request.referrer or url_for('admin_agents.agents_dashboard'))

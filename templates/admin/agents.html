@@ -55,6 +55,25 @@
       </div>
     </div>
     
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>Lanyard Reminder Agent</h3>
+        </div>
+        <div class="card-body">
+          <p>Sends reminder emails to users attending tournaments in exactly 3 days who ordered lanyards — helps ensure they bring lanyards for meetups.</p>
+          <p><strong>🏷️ Target:</strong> Users with lanyard orders attending tournaments in 3 days<br>
+          <strong>📧 All debug emails redirect to admin address</strong></p>
+          
+          <form method="POST" action="{{ url_for('admin_agents.run_lanyard_reminder_agent') }}">
+            <button type="submit" class="btn btn-success w-100">
+              ✅ Run Lanyard Reminder Agent Now
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
     <div class="col-md-4">
       <div class="card">
         <div class="card-header">
