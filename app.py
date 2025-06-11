@@ -212,6 +212,7 @@ from routes.main import main_bp
 from routes.admin_routes import admin_bp
 from routes.attendance_debug import attendance_debug_bp
 from routes.event_test import event_test_bp
+from routes.admin_agents import admin_agents_bp
 
 app.register_blueprint(main_bp)
 app.register_blueprint(auth_bp)
@@ -221,6 +222,7 @@ app.register_blueprint(debug_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(attendance_debug_bp)
 app.register_blueprint(event_test_bp)
+app.register_blueprint(admin_agents_bp)
 
 # Add context processor for current year
 @app.context_processor
@@ -348,6 +350,20 @@ def iframe_test():
     </body>
     </html>
     ''')
+
+# Background scheduler for AI agents
+import threading, time, schedule
+from agents.email_reminder import run_email_reminder
+
+def run_scheduler():
+    """Background scheduler that runs AI agents on a schedule"""
+    schedule.every().day.at("10:00").do(run_email_reminder)
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
+
+# Start the background scheduler in a daemon thread
+threading.Thread(target=run_scheduler, daemon=True).start()
 
 # Configure debug mode
 app.debug = True
