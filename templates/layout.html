@@ -42,10 +42,12 @@
             {% endif %}
             <a href="{{ url_for('user.my_tournaments') }}">My Tournaments</a>
             <a href="{{ url_for('user.browse_tournaments') }}">Browse Tournaments</a>
+            <a href="/blog">Blog</a>
             <a href="{{ url_for('user.lanyard') }}">Order Lanyard</a>
             <a href="{{ url_for('user.profile') }}">Profile</a>
             <a href="{{ url_for('auth.logout') }}">Log Out</a>
           {% else %}
+            <a href="/blog">Blog</a>
             <a href="{{ url_for('auth.signup') }}">Register</a>
             <a href="{{ url_for('auth.login') }}">Login</a>
           {% endif %}
