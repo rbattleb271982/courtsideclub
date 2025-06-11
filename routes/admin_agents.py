@@ -124,7 +124,7 @@ def run_tournament_summary_agent():
     return redirect(url_for('admin_agents.agents_dashboard'))
 
 @admin_agents_bp.route('/run/lanyard_reminder', methods=['POST'])
-def run_lanyard_reminder_agent():
+def run_lanyard_reminder_route():
     """Execute the lanyard reminder agent manually"""
     try:
         logger.info(f"Admin {current_user.email} triggered lanyard reminder agent")
