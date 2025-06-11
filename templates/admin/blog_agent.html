@@ -1,0 +1,421 @@
+{% extends "layout.html" %}
+
+{% block title %}Blog Generator Agent - CourtSide Club Admin{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Header Section -->
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <h1 class="admin-title">Blog Generator Agent</h1>
+            <p class="admin-subtitle">Generate SEO-friendly blog topics for upcoming tournaments</p>
+        </div>
+        <div class="admin-nav">
+            <a href="{{ url_for('admin_agents.agents_dashboard') }}" class="btn btn-secondary">← Back to Agents</a>
+        </div>
+    </div>
+
+    <!-- Tournaments Section -->
+    <div class="admin-content">
+        {% if tournaments %}
+            <div class="tournament-list">
+                <h2>Upcoming Tournaments (Next 30 Days)</h2>
+                <div class="tournaments-table-container">
+                    <table class="tournaments-table">
+                        <thead>
+                            <tr>
+                                <th>Tournament Name</th>
+                                <th>Start Date</th>
+                                <th>Days Away</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tournament in tournaments %}
+                            <tr id="tournament-row-{{ tournament.id }}">
+                                <td>
+                                    <strong>{{ tournament.name }}</strong>
+                                    {% if tournament.location %}
+                                        <br><small class="text-muted">{{ tournament.location }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>{{ tournament.start_date.strftime('%B %d, %Y') }}</td>
+                                <td>
+                                    {% set days_away = (tournament.start_date - now.date()).days %}
+                                    {% if days_away == 0 %}
+                                        <span class="badge badge-warning">Today</span>
+                                    {% elif days_away == 1 %}
+                                        <span class="badge badge-info">Tomorrow</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">{{ days_away }} days</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary suggest-topics-btn" 
+                                            data-tournament-id="{{ tournament.id }}"
+                                            data-tournament-name="{{ tournament.name }}">
+                                        Suggest Topics
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Topic suggestions will be inserted here -->
+                            <tr id="topics-row-{{ tournament.id }}" class="topics-row" style="display: none;">
+                                <td colspan="4">
+                                    <div class="topics-container">
+                                        <div class="loading-message" style="display: none;">
+                                            <div class="spinner"></div>
+                                            <span>Generating blog topics with AI...</span>
+                                        </div>
+                                        <div class="topics-content"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📅</div>
+                <h3>No Upcoming Tournaments</h3>
+                <p>There are no tournaments starting within the next 30 days.</p>
+                <a href="{{ url_for('admin_agents.agents_dashboard') }}" class="btn btn-primary">Back to Agents</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.admin-title {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.admin-subtitle {
+    color: #6c757d;
+    margin: 0.5rem 0 0 0;
+    font-size: 1.1rem;
+}
+
+.tournaments-table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.tournaments-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tournaments-table thead {
+    background: #f8f9fa;
+}
+
+.tournaments-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.tournaments-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: top;
+}
+
+.tournaments-table tr:hover {
+    background: #f8f9fa;
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.badge-warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.badge-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.badge-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.suggest-topics-btn {
+    background: #006400;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.suggest-topics-btn:hover {
+    background: #004d00;
+}
+
+.suggest-topics-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.topics-row {
+    background: #f8f9fa;
+}
+
+.topics-container {
+    padding: 1rem;
+}
+
+.loading-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #e9ecef;
+    border-top: 2px solid #006400;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.topics-list {
+    margin-top: 1rem;
+}
+
+.topic-item {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.topic-content {
+    flex: 1;
+}
+
+.topic-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+}
+
+.topic-type {
+    display: inline-block;
+    background: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.topic-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-outline-primary {
+    color: #006400;
+    border: 1px solid #006400;
+    background: white;
+}
+
+.btn-outline-primary:hover {
+    background: #006400;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    color: #dc3545;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-top: 1rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 1rem;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .tournaments-table-container {
+        overflow-x: auto;
+    }
+    
+    .tournaments-table {
+        min-width: 600px;
+    }
+    
+    .topic-item {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .topic-actions {
+        align-self: stretch;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const suggestButtons = document.querySelectorAll('.suggest-topics-btn');
+    
+    suggestButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tournamentId = this.getAttribute('data-tournament-id');
+            const tournamentName = this.getAttribute('data-tournament-name');
+            const topicsRow = document.getElementById(`topics-row-${tournamentId}`);
+            const loadingMessage = topicsRow.querySelector('.loading-message');
+            const topicsContent = topicsRow.querySelector('.topics-content');
+            
+            // Show loading state
+            this.disabled = true;
+            this.textContent = 'Generating...';
+            topicsRow.style.display = 'table-row';
+            loadingMessage.style.display = 'flex';
+            topicsContent.innerHTML = '';
+            
+            // Make API request
+            fetch(`/admin/agents/blog-agent/suggest/${tournamentId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingMessage.style.display = 'none';
+                
+                if (data.success) {
+                    displayTopics(topicsContent, data.topics, tournamentName);
+                } else {
+                    displayError(topicsContent, data.error || 'Failed to generate topics');
+                }
+            })
+            .catch(error => {
+                loadingMessage.style.display = 'none';
+                displayError(topicsContent, 'Network error. Please try again.');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                this.disabled = false;
+                this.textContent = 'Suggest Topics';
+            });
+        });
+    });
+    
+    function displayTopics(container, topics, tournamentName) {
+        const topicsHtml = `
+            <h4>Blog Topic Suggestions for ${tournamentName}</h4>
+            <div class="topics-list">
+                ${topics.map(topic => `
+                    <div class="topic-item">
+                        <div class="topic-content">
+                            <div class="topic-title">${topic.title}</div>
+                            <span class="topic-type">${topic.type}</span>
+                        </div>
+                        <div class="topic-actions">
+                            <button class="btn btn-sm btn-outline-primary" disabled>
+                                Generate Draft
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        container.innerHTML = topicsHtml;
+    }
+    
+    function displayError(container, message) {
+        container.innerHTML = `
+            <div class="error-message">
+                <strong>Error:</strong> ${message}
+            </div>
+        `;
+    }
+});
+</script>
+
+{% endblock %}
