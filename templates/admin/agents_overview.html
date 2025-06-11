@@ -73,33 +73,21 @@
               <td><span class="badge bg-primary">Manual</span></td>
               <td><span class="text-muted">N/A</span></td>
               <td>
-                <form method="POST" action="{{ url_for('admin_agents.run_blog_generator_agent') }}" style="display: inline;">
+                <form method="POST" action="{{ url_for('admin_agents.blog_agent') }}" style="display: inline;">
                   <button type="submit" class="btn btn-sm btn-success" title="Run Blog Generator Agent">
                     ✅ Run
                   </button>
                 </form>
               </td>
             </tr>
-            <tr>
-              <td><strong>Social Caption Agent</strong></td>
-              <td>Writes Instagram and Twitter captions for tournament content</td>
-              <td><span class="badge bg-primary">Manual</span></td>
-              <td><span class="text-muted">N/A</span></td>
-              <td>
-                <form method="POST" action="{{ url_for('admin_agents.run_social_caption_agent') }}" style="display: inline;">
-                  <button type="submit" class="btn btn-sm btn-success" title="Run Social Caption Agent">
-                    ✅ Run
-                  </button>
-                </form>
-              </td>
-            </tr>
+
             <tr>
               <td><strong>Post-Event Follow-Up</strong></td>
               <td>Sends recap emails after user's last session at a tournament</td>
               <td><span class="badge bg-warning">Triggered</span></td>
               <td><span class="text-muted">N/A</span></td>
               <td>
-                <form method="POST" action="{{ url_for('admin_agents.run_post_event_followup_agent') }}" style="display: inline;">
+                <form method="POST" action="{{ url_for('admin_agents.run_post_event_followup') }}" style="display: inline;">
                   <button type="submit" class="btn btn-sm btn-success" title="Run Post-Event Follow-Up Agent">
                     ✅ Run
                   </button>
@@ -112,7 +100,7 @@
               <td><span class="badge bg-info">3 days before</span></td>
               <td><span class="text-muted">N/A</span></td>
               <td>
-                <form method="POST" action="{{ url_for('admin_agents.run_lanyard_reminder_agent') }}" style="display: inline;">
+                <form method="POST" action="{{ url_for('admin_agents.run_lanyard_reminder_route') }}" style="display: inline;">
                   <button type="submit" class="btn btn-sm btn-success" title="Run Lanyard Reminder Agent">
                     ✅ Run
                   </button>
