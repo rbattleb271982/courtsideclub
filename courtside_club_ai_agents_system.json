@@ -1,0 +1,177 @@
+{
+  "system_name": "CourtSide Club AI Agents",
+  "description": "Automated agent system for tennis tournament attendance management",
+  "total_agents": 7,
+  "last_updated": "2025-06-11",
+  
+  "agents": [
+    {
+      "id": "email_reminder",
+      "name": "Email Reminder Agent",
+      "description": "Sends tournament reminder emails to users attending tournaments starting in 12-15 days",
+      "trigger_type": "Manual",
+      "schedule": "Admin-triggered only",
+      "external_services": ["SendGrid"],
+      "data_sources": ["User", "Tournament", "UserTournament"],
+      "output_type": "Email",
+      "route": "/admin/agents/run/email_reminder",
+      "implementation_file": "agents/email_reminder.py",
+      "target_criteria": "Users attending tournaments starting in 12-15 days",
+      "email_template": "pre_tournament_reminder",
+      "status": "Active"
+    },
+    {
+      "id": "pre_tournament_reminder",
+      "name": "Pre-Tournament Reminder Agent", 
+      "description": "Sends reminder emails 1-2 days before a user's earliest selected tournament session",
+      "trigger_type": "Triggered",
+      "schedule": "Based on user session dates",
+      "external_services": ["SendGrid"],
+      "data_sources": ["User", "Tournament", "UserTournament"],
+      "output_type": "Email",
+      "route": "/admin/agents/run/pre_tournament_reminder",
+      "implementation_file": "agents/pre_tournament_reminder.py",
+      "target_criteria": "Users with sessions starting in 1-2 days",
+      "email_template": "pre_tournament_reminder",
+      "status": "Active"
+    },
+    {
+      "id": "post_event_followup",
+      "name": "Post-Event Follow-Up Agent",
+      "description": "Sends thank-you emails to users who attended tournaments that ended yesterday",
+      "trigger_type": "Triggered",
+      "schedule": "Day after tournament ends",
+      "external_services": ["SendGrid"],
+      "data_sources": ["User", "Tournament", "UserTournament"],
+      "output_type": "Email",
+      "route": "/admin/agents/run/post_event_followup",
+      "implementation_file": "agents/post_event_followup.py",
+      "target_criteria": "Users who attended tournaments ending yesterday",
+      "email_template": "post_event_followup",
+      "status": "Active"
+    },
+    {
+      "id": "lanyard_reminder",
+      "name": "Lanyard Reminder Agent",
+      "description": "Sends reminder emails to users with lanyard orders attending tournaments in exactly 3 days",
+      "trigger_type": "Daily",
+      "schedule": "Daily execution",
+      "external_services": ["SendGrid"],
+      "data_sources": ["User", "Tournament", "UserTournament"],
+      "output_type": "Email",
+      "route": "/admin/agents/run/lanyard_reminder",
+      "implementation_file": "agents/lanyard_reminder.py",
+      "target_criteria": "Users with lanyard orders attending tournaments in 3 days",
+      "email_template": "lanyard_reminder",
+      "status": "Active"
+    },
+    {
+      "id": "tournament_summary",
+      "name": "Tournament Summary Agent",
+      "description": "Generates AI-powered editorial summaries for tournaments missing descriptions",
+      "trigger_type": "Triggered", 
+      "schedule": "When tournaments lack summaries",
+      "external_services": ["OpenAI GPT-4"],
+      "data_sources": ["Tournament"],
+      "output_type": "Content Update",
+      "route": "/admin/agents/run/tournament_summary",
+      "implementation_file": "agents/tournament_summary.py",
+      "target_criteria": "Tournaments with null or empty summary fields",
+      "ai_model": "gpt-4o",
+      "status": "Active"
+    },
+    {
+      "id": "lanyard_export",
+      "name": "Lanyard Export Agent",
+      "description": "Exports unfulfilled lanyard orders to CSV for daily fulfillment processing",
+      "trigger_type": "Daily",
+      "schedule": "Daily execution for fulfillment",
+      "external_services": [],
+      "data_sources": ["User", "UserTournament", "ShippingAddress"],
+      "output_type": "CSV Download",
+      "route": "/admin/agents/run/lanyard_export",
+      "implementation_file": "routes/admin_agents.py (embedded)",
+      "target_criteria": "Users with lanyard_ordered=True, lanyard_exported=False",
+      "batch_size": 100,
+      "filename_format": "lanyard_orders_YYYY-MM-DD.csv",
+      "status": "Active"
+    },
+    {
+      "id": "blog_generator",
+      "name": "Blog Generator Agent",
+      "description": "Suggests and generates SEO blog content for upcoming tournaments",
+      "trigger_type": "Manual",
+      "schedule": "Admin-triggered only",
+      "external_services": ["OpenAI GPT-4"],
+      "data_sources": ["Tournament"],
+      "output_type": "Content Suggestions",
+      "route": "/admin/agents/blog",
+      "implementation_file": "routes/admin_agents.py (embedded)",
+      "target_criteria": "Tournaments starting within next 30 days",
+      "ai_model": "gpt-4o",
+      "content_types": ["Travel tips", "Packing guides", "Venue insights"],
+      "status": "Active"
+    }
+  ],
+  
+  "infrastructure": {
+    "email_service": {
+      "provider": "SendGrid",
+      "api_key_env": "SENDGRID_API_KEY",
+      "from_email_env": "FROM_EMAIL",
+      "templates_file": "config/email_templates.json"
+    },
+    "ai_service": {
+      "provider": "OpenAI",
+      "api_key_env": "OPENAI_API_KEY", 
+      "model": "gpt-4o",
+      "usage": ["Content generation", "Tournament summaries", "Blog topics"]
+    },
+    "database": {
+      "type": "PostgreSQL",
+      "models": ["User", "Tournament", "UserTournament", "ShippingAddress"],
+      "connection_env": "DATABASE_URL"
+    },
+    "admin_interface": {
+      "framework": "Flask",
+      "route_prefix": "/admin/agents",
+      "authentication": "Admin role required",
+      "templates": ["agents_console.html", "agents_overview.html", "edit_agent_email.html"]
+    }
+  },
+  
+  "scheduling_patterns": {
+    "daily_agents": ["lanyard_reminder", "lanyard_export"],
+    "triggered_agents": ["pre_tournament_reminder", "post_event_followup", "tournament_summary"],
+    "manual_agents": ["email_reminder", "blog_generator"]
+  },
+  
+  "data_flow": {
+    "user_communication": [
+      "User registration and tournament selection",
+      "Agent trigger based on timing",
+      "Email template loading and personalization", 
+      "SendGrid delivery",
+      "User engagement tracking"
+    ],
+    "content_generation": [
+      "Tournament data analysis",
+      "AI processing via OpenAI",
+      "Content generation and review",
+      "Database updates"
+    ],
+    "administrative_operations": [
+      "Order processing and tracking",
+      "CSV export generation",
+      "Fulfillment integration",
+      "Status updates"
+    ]
+  },
+  
+  "monitoring": {
+    "logging_level": "INFO",
+    "timeout_handling": "120 seconds for AI operations, 60 seconds for email operations",
+    "error_reporting": "Flash messages to admin interface",
+    "execution_tracking": "Database status flags and admin logs"
+  }
+}
