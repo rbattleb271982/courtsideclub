@@ -28,7 +28,7 @@ def require_admin():
 @admin_agents_bp.route('/')
 def agents_dashboard():
     """Main AI agents control panel"""
-    return render_template('admin/agents.html')
+    return render_template('admin/agents_console.html')
 
 @admin_agents_bp.route('/overview')
 def agents_overview():

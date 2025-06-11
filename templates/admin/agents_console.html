@@ -1,0 +1,492 @@
+{% extends "layout.html" %}
+{% block title %}AI Agent Console - CourtSide Club Admin{% endblock %}
+
+{% block content %}
+<style>
+  .console-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .console-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .console-header h1 {
+    color: #006400;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  .console-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .agent-group {
+    margin-bottom: 2.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .group-header {
+    background: linear-gradient(135deg, #006400, #228B22);
+    color: white;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .agent-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .agent-row {
+    border-bottom: 1px solid #e5e5e5;
+    transition: background-color 0.2s;
+  }
+
+  .agent-row:hover {
+    background-color: #f8f9fa;
+  }
+
+  .agent-row:last-child {
+    border-bottom: none;
+  }
+
+  .agent-cell {
+    padding: 1rem 1.5rem;
+    vertical-align: top;
+  }
+
+  .agent-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+  }
+
+  .agent-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .trigger-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .trigger-daily {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .trigger-manual {
+    background: #f3e5f5;
+    color: #7b1fa2;
+  }
+
+  .trigger-auto {
+    background: #e8f5e8;
+    color: #388e3c;
+  }
+
+  .last-run {
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .btn-compact {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.2s;
+  }
+
+  .btn-run {
+    background: #006400;
+    color: white;
+  }
+
+  .btn-run:hover {
+    background: #004d00;
+    color: white;
+  }
+
+  .btn-edit {
+    background: #f8f9fa;
+    color: #666;
+    border: 1px solid #ddd;
+  }
+
+  .btn-edit:hover {
+    background: #e9ecef;
+    color: #333;
+  }
+
+  .status-icon {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+  }
+
+  .status-ready {
+    background: #4caf50;
+  }
+
+  .status-warning {
+    background: #ff9800;
+  }
+
+  .quick-nav {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    color: #666;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  .nav-link:hover {
+    background: #006400;
+    color: white;
+  }
+
+  .bottom-actions {
+    margin-top: 2rem;
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .bottom-actions .btn {
+    margin: 0 0.5rem;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .console-container {
+      padding: 1rem 0.5rem;
+    }
+
+    .agent-table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .agent-cell {
+      padding: 0.75rem 1rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .quick-nav {
+      justify-content: flex-start;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+  }
+</style>
+
+<div class="console-container">
+  <div class="console-header">
+    <h1>AI Agent Console</h1>
+    <p class="console-subtitle">Monitor and trigger automation agents across the system</p>
+  </div>
+
+  <!-- Quick Navigation -->
+  <div class="quick-nav">
+    <a href="#user-emails" class="nav-link">📧 User Emails</a>
+    <a href="#content-generators" class="nav-link">📝 Content Generators</a>
+    <a href="#admin-utilities" class="nav-link">🔧 Admin Utilities</a>
+  </div>
+
+  <!-- User-Facing Emails Section -->
+  <div id="user-emails" class="agent-group">
+    <div class="group-header">
+      <span>📧</span>
+      <span>User-Facing Email Agents</span>
+    </div>
+    <table class="agent-table">
+      <tbody>
+        <tr class="agent-row">
+          <td class="agent-cell">
+            <div class="agent-name">
+              <span class="status-icon status-ready"></span>
+              Pre-Tournament Reminder Agent
+            </div>
+            <div class="agent-description">
+              Sends reminder emails 1-2 days before a user's earliest selected tournament session — helps ensure users are prepared and excited.
+            </div>
+          </td>
+          <td class="agent-cell">
+            <span class="trigger-badge trigger-auto">Triggered</span>
+          </td>
+          <td class="agent-cell">
+            <div class="last-run">Manual execution only</div>
+          </td>
+          <td class="agent-cell">
+            <div class="action-buttons">
+              <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='pre_tournament_reminder') }}" class="btn-compact btn-edit">
+                ✏️ Edit
+              </a>
+              <form method="POST" action="{{ url_for('admin_agents.run_pre_tournament_reminder') }}" style="display: inline;">
+                <button type="submit" class="btn-compact btn-run">▶️ Run</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <tr class="agent-row">
+          <td class="agent-cell">
+            <div class="agent-name">
+              <span class="status-icon status-ready"></span>
+              Post-Event Follow-Up Agent
+            </div>
+            <div class="agent-description">
+              Sends a thank-you email 1 day after a user's tournament ends — includes attendance stats and encourages future participation.
+            </div>
+          </td>
+          <td class="agent-cell">
+            <span class="trigger-badge trigger-auto">Triggered</span>
+          </td>
+          <td class="agent-cell">
+            <div class="last-run">Manual execution only</div>
+          </td>
+          <td class="agent-cell">
+            <div class="action-buttons">
+              <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='post_event_followup') }}" class="btn-compact btn-edit">
+                ✏️ Edit
+              </a>
+              <form method="POST" action="{{ url_for('admin_agents.run_post_event_followup') }}" style="display: inline;">
+                <button type="submit" class="btn-compact btn-run">▶️ Run</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <tr class="agent-row">
+          <td class="agent-cell">
+            <div class="agent-name">
+              <span class="status-icon status-ready"></span>
+              Lanyard Reminder Agent
+            </div>
+            <div class="agent-description">
+              Sends targeted reminders to users who haven't ordered their lanyard but are attending upcoming tournaments.
+            </div>
+          </td>
+          <td class="agent-cell">
+            <span class="trigger-badge trigger-daily">Daily</span>
+          </td>
+          <td class="agent-cell">
+            <div class="last-run">Manual execution only</div>
+          </td>
+          <td class="agent-cell">
+            <div class="action-buttons">
+              <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='lanyard_reminder') }}" class="btn-compact btn-edit">
+                ✏️ Edit
+              </a>
+              <form method="POST" action="{{ url_for('admin_agents.run_lanyard_reminder_route') }}" style="display: inline;">
+                <button type="submit" class="btn-compact btn-run">▶️ Run</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <tr class="agent-row">
+          <td class="agent-cell">
+            <div class="agent-name">
+              <span class="status-icon status-ready"></span>
+              Email Reminder Agent
+            </div>
+            <div class="agent-description">
+              Comprehensive email automation system for tournament notifications and user engagement campaigns.
+            </div>
+          </td>
+          <td class="agent-cell">
+            <span class="trigger-badge trigger-manual">Manual</span>
+          </td>
+          <td class="agent-cell">
+            <div class="last-run">Manual execution only</div>
+          </td>
+          <td class="agent-cell">
+            <div class="action-buttons">
+              <form method="POST" action="{{ url_for('admin_agents.run_email_reminder_agent') }}" style="display: inline;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <label style="font-size: 0.8rem;">
+                    <input type="checkbox" name="preview_mode" style="margin-right: 0.25rem;">
+                    Preview
+                  </label>
+                  <button type="submit" class="btn-compact btn-run">▶️ Run</button>
+                </div>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Content Generators Section -->
+  <div id="content-generators" class="agent-group">
+    <div class="group-header">
+      <span>📝</span>
+      <span>Content Generator Agents</span>
+    </div>
+    <table class="agent-table">
+      <tbody>
+        <tr class="agent-row">
+          <td class="agent-cell">
+            <div class="agent-name">
+              <span class="status-icon status-ready"></span>
+              Blog Generator Agent
+            </div>
+            <div class="agent-description">
+              Suggest and generate SEO blog content for upcoming tournaments. Uses AI to create engaging topics for first-time attendees and casual tennis fans.
+            </div>
+          </td>
+          <td class="agent-cell">
+            <span class="trigger-badge trigger-manual">Manual</span>
+          </td>
+          <td class="agent-cell">
+            <div class="last-run">Manual execution only</div>
+          </td>
+          <td class="agent-cell">
+            <div class="action-buttons">
+              <a href="{{ url_for('admin_agents.blog_agent') }}" class="btn-compact btn-run">
+                📝 Open Agent
+              </a>
+            </div>
+          </td>
+        </tr>
+
+        <tr class="agent-row">
+          <td class="agent-cell">
+            <div class="agent-name">
+              <span class="status-icon status-ready"></span>
+              Tournament Summary Agent
+            </div>
+            <div class="agent-description">
+              Generates AI-powered tournament summaries and insights for upcoming events to enhance user engagement.
+            </div>
+          </td>
+          <td class="agent-cell">
+            <span class="trigger-badge trigger-auto">Triggered</span>
+          </td>
+          <td class="agent-cell">
+            <div class="last-run">Manual execution only</div>
+          </td>
+          <td class="agent-cell">
+            <div class="action-buttons">
+              <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='tournament_summary') }}" class="btn-compact btn-edit">
+                ✏️ Edit
+              </a>
+              <form method="POST" action="{{ url_for('admin_agents.run_tournament_summary_agent') }}" style="display: inline;">
+                <button type="submit" class="btn-compact btn-run">▶️ Run</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Admin Utilities Section -->
+  <div id="admin-utilities" class="agent-group">
+    <div class="group-header">
+      <span>🔧</span>
+      <span>Admin Utility Agents</span>
+    </div>
+    <table class="agent-table">
+      <tbody>
+        <tr class="agent-row">
+          <td class="agent-cell">
+            <div class="agent-name">
+              <span class="status-icon status-ready"></span>
+              Lanyard Export Agent
+            </div>
+            <div class="agent-description">
+              Exports unfulfilled lanyard orders to CSV for daily fulfillment processing. Includes customer details, shipping addresses, and tournament attendance.
+            </div>
+          </td>
+          <td class="agent-cell">
+            <span class="trigger-badge trigger-daily">Daily</span>
+          </td>
+          <td class="agent-cell">
+            <div class="last-run">Manual execution only</div>
+          </td>
+          <td class="agent-cell">
+            <div class="action-buttons">
+              <form method="POST" action="{{ url_for('admin_agents.run_lanyard_export_agent') }}" style="display: inline;">
+                <button type="submit" class="btn-compact btn-run">📦 Export CSV</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bottom Actions -->
+  <div class="bottom-actions">
+    <a href="{{ url_for('admin_agents.agents_overview') }}" class="btn btn-outline-primary">View Agent Architecture</a>
+    <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">← Back to Admin Dashboard</a>
+  </div>
+</div>
+
+<script>
+// Smooth scrolling for navigation links
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href').substring(1);
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+{% endblock %}
