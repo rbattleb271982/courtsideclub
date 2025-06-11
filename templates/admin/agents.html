@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}AI Agent Control Panel - CourtSide Club Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>AI Agent Control Panel</h1>
+    <p class="text-muted">Manage and execute automated tasks</p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3>Email Reminder Agent</h3>
+        </div>
+        <div class="card-body">
+          <p>Sends tournament reminder emails to users attending events starting in 2 weeks.</p>
+          <p><strong>Target users:</strong> Those with attending=True, session selections, and notifications enabled.</p>
+          
+          <form method="POST" action="{{ url_for('admin_agents.run_email_reminder_agent') }}">
+            <button type="submit" class="btn btn-primary">
+              Run Email Reminder Agent
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h4>Agent Status</h4>
+        </div>
+        <div class="card-body">
+          <p><strong>Scheduler:</strong> Daily at 10:00 AM</p>
+          <p><strong>Last Run:</strong> Manual execution only</p>
+          <p class="text-muted">Agents run automatically based on configured schedules.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Back to Admin Dashboard</a>
+  </div>
+</div>
+{% endblock %}
