@@ -20,7 +20,7 @@
                        class="form-control"
                        placeholder="Enter email subject line"
                        required>
-                <small class="form-text">Use {{ user.first_name }}, {{ tournament_name }}, {{ total_attending }} for dynamic content</small>
+                <small class="form-text">Use &#123;&#123; user.first_name &#125;&#125;, &#123;&#123; tournament_name &#125;&#125;, &#123;&#123; total_attending &#125;&#125; for dynamic content</small>
             </div>
 
             <div class="form-group">
@@ -31,7 +31,7 @@
                           class="form-control email-body-textarea"
                           placeholder="Enter HTML email content"
                           required>{{ body }}</textarea>
-                <small class="form-text">HTML tags supported. Use {{ user.first_name }}, {{ tournament_name }}, {{ total_attending }} for dynamic content</small>
+                <small class="form-text">HTML tags supported. Use &#123;&#123; user.first_name &#125;&#125;, &#123;&#123; tournament_name &#125;&#125;, &#123;&#123; total_attending &#125;&#125; for dynamic content</small>
             </div>
 
             <div class="form-actions">
@@ -43,9 +43,9 @@
         <div class="template-help">
             <h3>Available Variables</h3>
             <ul>
-                <li><code>{{ user.first_name }}</code> - User's first name (or email prefix if not available)</li>
-                <li><code>{{ tournament_name }}</code> - Tournament name</li>
-                <li><code>{{ total_attending }}</code> - Total number of CourtSide Club members attending (post-event only)</li>
+                <li><code>&#123;&#123; user.first_name &#125;&#125;</code> - User's first name (or email prefix if not available)</li>
+                <li><code>&#123;&#123; tournament_name &#125;&#125;</code> - Tournament name</li>
+                <li><code>&#123;&#123; total_attending &#125;&#125;</code> - Total number of CourtSide Club members attending (post-event only)</li>
             </ul>
             
             <h3>HTML Tips</h3>

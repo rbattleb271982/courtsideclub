@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from models import db, User, Tournament, UserTournament
 from services.email import send_email
+from utils.email_templates import load_email_template, render_template
 import logging
 
 logger = logging.getLogger(__name__)
@@ -70,27 +71,20 @@ def run_email_reminder(preview=False):
                     logger.info(f"Email Reminder Agent: Skipped {user.email} (opted out)")
                     continue
 
-                sessions = ut.session_label.split(',')
-                session_display = '<br>'.join(f"- {s.strip()}" for s in sessions if s.strip())
-
-                subject = f"🎾 See you soon at {tournament.name}?"
-                body = f"""
-                <p>Hey {user.first_name},</p>
-
-                <p>You're all set for <strong>{tournament.name}</strong> — and you're not alone!</p>
-
-                <p><strong>{total_attending}</strong> fans are attending, and <strong>{total_meeting}</strong> are open to meeting up.</p>
-
-                <p>Don't forget your <strong>lanyard</strong> (if you ordered one), and keep an eye on your sessions:</p>
-
-                <p><strong>You selected:</strong><br>{session_display}</p>
-
-                <p>👉 <a href="https://courtsideclub.com/login">Log in to see who's going</a></p>
-
-                <p>If we set a meet-up spot, you'll see it there.</p>
-
-                <p>—<br>The Lounge is Courtside.</p>
-                """
+                # Load email template and prepare content
+                template = load_email_template('pre_tournament_reminder')
+                
+                # Use first name if available, otherwise email prefix
+                first_name = user.first_name if hasattr(user, 'first_name') and user.first_name else user.email.split('@')[0]
+                
+                # Render template with variables
+                subject = render_template(template['subject'], 
+                                        user={'first_name': first_name}, 
+                                        tournament_name=tournament.name)
+                
+                body = render_template(template['body'], 
+                                     user={'first_name': first_name}, 
+                                     tournament_name=tournament.name)
 
                 if preview:
                     # Preview mode: just log the email content without sending
