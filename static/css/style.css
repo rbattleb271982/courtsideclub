@@ -2599,7 +2599,13 @@ input:checked + .toggle-slider:before {
 
 /* Hero Text Shadow Styles */
 .hero-text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Ensure text shadow applies to all hero elements */
+h1.hero-text-shadow,
+h1.hero-text-shadow span {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
 }
 
 /* CourtSide Experience Section */
