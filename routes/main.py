@@ -60,18 +60,28 @@ def public_tournaments():
     
     # Get attendance counts for each tournament
     attendance_counts = {}
+    maybe_counts = {}
     for tournament in tournaments:
-        count = UserTournament.query.filter(
+        # Count users definitely attending
+        attending_count = UserTournament.query.filter(
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
             UserTournament.session_label.isnot(None),
             UserTournament.session_label != ''
         ).count()
-        attendance_counts[tournament.id] = count
+        attendance_counts[tournament.id] = attending_count
+        
+        # Count users who marked "maybe"
+        maybe_count = UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attendance_type == 'maybe'
+        ).count()
+        maybe_counts[tournament.id] = maybe_count
     
     return render_template('public/tournaments.html', 
                          tournaments=tournaments, 
-                         attendance_counts=attendance_counts)
+                         attendance_counts=attendance_counts,
+                         maybe_counts=maybe_counts)
 
 @main_bp.route('/tournaments/<slug>')
 def public_tournament_detail(slug):
