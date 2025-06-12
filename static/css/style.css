@@ -1189,6 +1189,27 @@ body {
   overflow-x: hidden;
 }
 
+/* Mobile Header Button Visibility Control */
+.btn-join-club {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .btn-join-club {
+    display: inline-flex !important;
+  }
+}
+
+.btn-sign-in {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .btn-sign-in {
+    display: inline !important;
+  }
+}
+
 .mobile-header {
   background-color: #ffffff;
   color: #004d26;
