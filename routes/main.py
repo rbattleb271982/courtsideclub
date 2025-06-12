@@ -136,10 +136,12 @@ def public_tournament_detail(slug):
     blog_posts = BlogPost.query.filter_by(published=True).all()
     related_blog_posts = []
     for post in blog_posts:
-        # Check for tournament name or slug in title and content
-        search_text = f"{post.title} {post.content}"
-        if re.search(rf"\b{re.escape(tournament.name)}\b", search_text, re.IGNORECASE) or \
-           re.search(rf"\b{re.escape(tournament.slug)}\b", search_text, re.IGNORECASE):
+        # Check for tournament name or slug in title and content (case insensitive)
+        search_text = f"{post.title} {post.content}".lower()
+        tournament_name_lower = tournament.name.lower()
+        tournament_slug_lower = tournament.slug.lower()
+        
+        if tournament_name_lower in search_text or tournament_slug_lower in search_text:
             related_blog_posts.append(post)
 
     return render_template(
