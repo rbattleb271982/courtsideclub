@@ -278,12 +278,17 @@
       background: white;
       border-bottom: 1px solid #e5e5e5;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      z-index: 40;
+      z-index: 50;
       display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s ease-in-out;
     }
 
     .mobile-menu.active {
-      display: block;
+      display: block !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
     }
 
     .mobile-menu-content {
@@ -426,7 +431,9 @@
   <script>
     function toggleMobileMenu() {
       const mobileMenu = document.getElementById('mobile-menu');
+      console.log('Toggle clicked, menu element:', mobileMenu);
       mobileMenu.classList.toggle('active');
+      console.log('Menu classes after toggle:', mobileMenu.className);
     }
 
     // Close mobile menu when clicking on links
