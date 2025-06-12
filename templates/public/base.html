@@ -5,7 +5,102 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>{% block title %}CourtSide Club{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'bounce': 'bounce 1s infinite',
+            'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    .bg-clip-text {
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    
+    .text-transparent {
+      color: transparent;
+    }
+    
+    .backdrop-blur-sm {
+      backdrop-filter: blur(4px);
+    }
+    
+    .transform {
+      transform: translateZ(0);
+    }
+    
+    .hover\:scale-105:hover {
+      transform: scale(1.05);
+    }
+    
+    .group:hover .group-hover\:rotate-12 {
+      transform: rotate(12deg);
+    }
+    
+    .group:hover .group-hover\:scale-110 {
+      transform: scale(1.1);
+    }
+    
+    .group:hover .group-hover\:-translate-y-3 {
+      transform: translateY(-0.75rem);
+    }
+    
+    .group:hover .group-hover\:shadow-xl {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .animate-bounce {
+      animation: bounce 1s infinite;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    .delay-500 {
+      animation-delay: 500ms;
+    }
+    
+    .delay-1000 {
+      animation-delay: 1000ms;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+      50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .5; }
+    }
+    
+    .blur-xl {
+      filter: blur(24px);
+    }
+    
+    .blur-2xl {
+      filter: blur(40px);
+    }
+    
+    /* Hide the old navigation for the new homepage design */
+    .min-h-screen .top-nav-wrapper {
+      display: none;
+    }
+  </style>
   {% block head %}{% endblock %}
 </head>
 <body>
