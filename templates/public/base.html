@@ -101,14 +101,8 @@
       backdrop-filter: blur(12px);
     }
     
-    /* Mobile menu animations */
+    /* Mobile menu styling */
     .mobile-nav-link {
-      opacity: 0;
-      transform: translateX(30px);
-      transition: all 0.5s ease-out;
-    }
-    
-    .mobile-nav-link.animate-in {
       opacity: 1;
       transform: translateX(0);
     }
@@ -274,7 +268,6 @@
       const overlay = document.getElementById('mobile-menu-overlay');
       const menuIcon = document.getElementById('menu-icon');
       const closeIcon = document.getElementById('close-icon');
-      const navLinks = document.querySelectorAll('.mobile-nav-link');
       
       isMenuOpen = !isMenuOpen;
       
@@ -284,30 +277,12 @@
         menuIcon.classList.add('hidden');
         closeIcon.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
-        
-        // Animate menu items
-        navLinks.forEach((link, index) => {
-          link.style.opacity = '0';
-          link.style.transform = 'translateX(30px)';
-          setTimeout(() => {
-            link.style.transition = 'all 0.5s ease-out';
-            link.style.opacity = '1';
-            link.style.transform = 'translateX(0)';
-          }, index * 100);
-        });
       } else {
         // Hide menu
         overlay.classList.add('hidden');
         menuIcon.classList.remove('hidden');
         closeIcon.classList.add('hidden');
         document.body.style.overflow = '';
-        
-        // Reset animations
-        navLinks.forEach(link => {
-          link.style.transition = '';
-          link.style.opacity = '';
-          link.style.transform = '';
-        });
       }
     }
 
