@@ -24,29 +24,153 @@
 
   <!-- FAQ Sections -->
   <section class="px-4 py-16 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto space-y-16">
+    <div class="max-w-4xl mx-auto">
       
-      <!-- Getting Started -->
-      <div>
-        <h2 class="text-2xl sm:text-3xl font-bold mb-8 bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text text-transparent">
-          Getting Started
-        </h2>
-        <div class="space-y-6">
-          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
-            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq1')">
-              <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-white">What is CourtSide Club?</h3>
-                <svg id="faq1-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
+      <div class="space-y-8">
+        <details class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+          <summary class="text-xl font-bold text-white p-6 cursor-pointer hover:bg-gray-800/30 rounded-t-2xl">
+            🎟️ Signing Up & Getting Started
+          </summary>
+          <div class="px-6 pb-6 space-y-4">
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Do I have to pay for a lanyard?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Nope! It's totally free if you've signed up and selected at least one tournament session.</p>
               </div>
-            </button>
-            <div id="faq1-content" class="hidden px-6 pb-6">
-              <p class="text-gray-300 leading-relaxed">
-                CourtSide Club is an exclusive community for tennis fans who want to connect with like-minded enthusiasts at tournaments. We help you find and meet other passionate fans, making your tournament experience more social and memorable.
-              </p>
-            </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                How do I sign up?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Just click "Join Now" on the homepage. You'll create a quick profile and select which tournaments and sessions you're attending.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                What happens after I sign up?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">You'll be able to see who else is going to tournaments, opt in to meetups, and order your free lanyard.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Can I invite a friend?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Yes! Once you sign up, you'll be able to refer friends and unlock perks.</p>
+              </div>
+            </details>
           </div>
+        </details>
+
+        <details class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+          <summary class="text-xl font-bold text-white p-6 cursor-pointer hover:bg-gray-800/30 rounded-t-2xl">
+            🧑‍🤝‍🧑 Meeting Up with Members
+          </summary>
+          <div class="px-6 pb-6 space-y-4">
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Can I see who else is attending a tournament?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Yes — once logged in, just visit any tournament page to see who's going and who's open to meeting up.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                What's the point of the lanyard?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">It's a visual signal that you're part of CourtSide Club and open to connecting with others at the event.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                How do I opt in to meet up?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">On each tournament page, you can toggle whether you're open to meeting. You'll also choose which sessions you're attending.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Is there an official meet-up spot?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Some events will have suggested meeting spots or times — we'll include those in your reminder emails if available.</p>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <details class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+          <summary class="text-xl font-bold text-white p-6 cursor-pointer hover:bg-gray-800/30 rounded-t-2xl">
+            🧳 Attending Tournaments
+          </summary>
+          <div class="px-6 pb-6 space-y-4">
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Can I attend more than one tournament?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Absolutely — just add them to your profile and select which sessions you're going to.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                What if my plans change?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">You can update your attendance or session selections at any time from your dashboard.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Do I have to attend with friends?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Not at all. CourtSide Club is built for solo fans, friend groups, and everyone in between.</p>
+              </div>
+            </details>
+          </div>
+        </details>
+
+        <details class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+          <summary class="text-xl font-bold text-white p-6 cursor-pointer hover:bg-gray-800/30 rounded-t-2xl">
+            📦 Lanyard & Perks
+          </summary>
+          <div class="px-6 pb-6 space-y-4">
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                When will my lanyard arrive?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Once you order it, we'll ship it to you in advance of your selected tournament(s). You'll get a tracking number too.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Do I get a new lanyard for each tournament?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">No — it's a one-time lanyard you can use across multiple events.</p>
+              </div>
+            </details>
+            <details class="bg-gray-800/30 rounded-xl">
+              <summary class="text-lg font-semibold text-white p-4 cursor-pointer hover:bg-gray-700/30 rounded-xl">
+                Are there other perks?
+              </summary>
+              <div class="px-4 pb-4">
+                <p class="text-gray-300">Yes! We're working on exclusive offers and extras for active members — stay tuned.</p>
+              </div>
+            </details>
+          </div>
+        </details>
+      </div>
 
           <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
             <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq2')">
