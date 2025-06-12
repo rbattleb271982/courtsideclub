@@ -2111,6 +2111,13 @@ input:checked + .toggle-slider:before {
   padding: 2rem 1rem 1rem;
   text-align: center;
 }
+
+/* Fix text cutoff on mobile for Tournaments page */
+@media (max-width: 768px) {
+  .tournaments-header {
+    padding: 12rem 1rem 1rem;
+  }
+}
 .page-title {
   font-size: 2rem;
   font-weight: bold;

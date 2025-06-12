@@ -477,6 +477,13 @@
           mobileMenu.classList.remove('active');
         }
       });
+
+      // Close mobile menu on scroll
+      window.addEventListener('scroll', function() {
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+          mobileMenu.classList.remove('active');
+        }
+      });
     });
   </script>
 </body>
