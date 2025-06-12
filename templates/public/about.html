@@ -1,4 +1,5 @@
 {% extends "public/base.html" %}
+{% from "macros/hero.html" import hero_section %}
 {% block title %}About CourtSide Club - Why We Started{% endblock %}
 
 {% block content %}
@@ -10,26 +11,11 @@
     <div class="absolute -bottom-40 right-1/4 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
   </div>
 
-  <!-- Hero Section -->
-  <section class="relative py-32 text-center text-white overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
-           alt="Tennis stadium at sunset" 
-           class="w-full h-full object-cover opacity-60" />
-      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/50 to-slate-950/70"></div>
-    </div>
-
-    <div class="relative z-10 px-6 max-w-4xl mx-auto">
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-light leading-tight tracking-tight mb-6">
-        Why <span class="font-normal text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-purple-400 bg-clip-text">CourtSide Club</span> <br />
-        Was Started
-      </h1>
-
-      <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10">
-        We created CourtSide Club to make the tennis experience more social, inclusive, and unforgettable.
-      </p>
-    </div>
-  </section>
+  {{ hero_section(
+    top_text="Why CourtSide Club",
+    highlight_text="Was Started",
+    subtitle="We created CourtSide Club to make the tennis experience more social, inclusive, and unforgettable."
+  ) }}
 
   <!-- Our Story Section -->
   <section class="px-4 py-16 sm:px-6 lg:px-8">
