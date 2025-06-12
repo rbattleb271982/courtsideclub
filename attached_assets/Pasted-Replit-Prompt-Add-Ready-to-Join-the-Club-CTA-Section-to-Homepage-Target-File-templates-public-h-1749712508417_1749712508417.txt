@@ -1,0 +1,68 @@
+Replit Prompt: Add "Ready to Join the Club?" CTA Section to Homepage
+Target File: templates/public/home.html
+1. Add this section just above the </body> (after the lanyard section):
+<section class="join-cta">
+  <div class="cta-container">
+    <h2>Ready to join <span class="cta-highlight">the club?</span></h2>
+    <p>Connect with tennis fans at your next tournament and create unforgettable experiences together.</p>
+    <div class="cta-buttons">
+      <a href="{{ url_for('auth.signup') }}" class="btn btn-gradient">Join Now</a>
+      <a href="{{ url_for('main.tournaments') }}" class="btn btn-outline">Browse Tournaments</a>
+    </div>
+  </div>
+</section>
+2. In static/css/style.css, add this styling:
+.join-cta {
+  background: radial-gradient(circle at center, #1e3347, #1b1d26);
+  text-align: center;
+  padding: 4rem 1rem;
+  border-top: 1px solid #2d2f36;
+}
+
+.cta-container h2 {
+  font-size: 2.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.cta-highlight {
+  background: linear-gradient(to right, #7ecdf7, #5a7bfc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+.cta-container p {
+  font-size: 1.125rem;
+  color: #b8bcc6;
+  margin-bottom: 2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.cta-buttons .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cta-buttons .btn-gradient {
+  background: linear-gradient(to right, #8ce35b, #4f9cf9);
+  color: #fff;
+}
+
+.cta-buttons .btn-outline {
+  border: 2px solid #4f9cf9;
+  color: #c9d1dc;
+}
+✅ Replit Agent Instruction:
+Insert this CTA block at the very bottom of home.html, directly under the existing “Membership Signal” section. Style using the CSS above, ensuring gradient and outline buttons are responsive and stack vertically on mobile.
+Test both buttons to confirm routing works properly.
+Do not finish until mobile and desktop behavior is confirmed. Use minimal checkpoints.

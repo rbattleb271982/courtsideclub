@@ -16,7 +16,7 @@
     <div class="relative z-10 px-6 max-w-4xl mx-auto">
       <h1 class="text-5xl sm:text-6xl md:text-7xl font-light leading-tight tracking-tight mb-6">
         Tennis is <br />
-        <span class="highlight font-normal text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+        <span class="highlight font-normal text-transparent bg-gradient-to-r from-green-400 via-blue-400 to-yellow-400 bg-clip-text" style="background: linear-gradient(to right, #a4e447, #6db1f7, #f2cc63); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
           better together.
         </span>
       </h1>
@@ -234,56 +234,73 @@
     </div>
   </section>
 
-  <!-- What's Happening on CourtSide Club Section -->
-  <section class="py-16 px-6 bg-slate-950 text-white">
-    <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-lime-400 to-blue-500 bg-clip-text text-transparent">
-        What's Happening on CourtSide Club
-      </h2>
-      <p class="text-slate-400 max-w-2xl mx-auto mb-10">
-        We're more than just match-day vibes. Here's where we're exploring in-person meetups, seating sections, and special experiences — all powered by fans like you.
-      </p>
-
-      <div class="grid gap-8 md:grid-cols-2">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
-          <h3 class="text-xl font-semibold text-white mb-2">US Open 2025</h3>
-          <p class="text-slate-400 mb-4">
-            Considering a dedicated seating section and daily meetups near the Grandstand.
-          </p>
-          <a href="{{ url_for('auth.signup') }}" class="text-lime-400 font-medium hover:underline">
-            Get Updates →
-          </a>
+  <!-- CourtSide Experience Section -->
+  <section class="courtside-experience">
+    <div class="experience-content">
+      <div class="experience-left">
+        <h2>The CourtSide <span class="highlight">Experience</span></h2>
+        <p>Our platform transforms how tennis fans connect at tournaments, creating memorable experiences and lasting friendships.</p>
+        <ul class="experience-benefits">
+          <li>✅ No more awkward introductions</li>
+          <li>✅ Skip the chaotic group chats</li>
+          <li>✅ Find fans with similar interests</li>
+          <li>✅ Discover the best viewing spots</li>
+          <li>✅ Share transportation to venues</li>
+          <li>✅ Create lasting tennis friendships</li>
+        </ul>
+      </div>
+      <div class="experience-right">
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <div class="testimonial-icon">👥</div>
+            <div>
+              <strong>Real Connections</strong><br>
+              <small>Meet fellow tennis enthusiasts</small>
+            </div>
+          </div>
+          <blockquote>
+            "CourtSide Club helped me find other fans with similar interests. Now I have friends to meet at every tournament!"
+          </blockquote>
+          <footer>Sarah T.<br><small>Member since 2023</small></footer>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
-          <h3 class="text-xl font-semibold text-white mb-2">Indian Wells 2025</h3>
-          <p class="text-slate-400 mb-4">
-            Exploring meetups at the Village, early entry tips, and shared food recs nearby.
-          </p>
-          <a href="{{ url_for('auth.signup') }}" class="text-lime-400 font-medium hover:underline">
-            Get Updates →
-          </a>
+  <!-- Membership Signal Section -->
+  <section class="membership-signal">
+    <div class="signal-content">
+      <div class="signal-image">
+        <div class="lanyard-card">
+          <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V22H13V11C14.1 11 15 10.1 15 9H21Z"/>
+          </svg>
         </div>
+      </div>
+      <div class="signal-text">
+        <h2>Your Membership <span class="highlight">Signal</span></h2>
+        <p>
+          Wear your CourtSide Club lanyard to easily connect with other fans — 
+          <span class="signal-highlight">no awkward intros needed.</span>
+        </p>
+        <ul class="signal-benefits">
+          <li>✅ Instantly recognizable to other members</li>
+          <li>✅ Premium design with your member ID</li>
+          <li>✅ Includes tournament schedule card</li>
+        </ul>
+        <a href="{{ url_for('main.lanyard_info') }}" class="btn btn-gradient">Learn About the Lanyard</a>
+      </div>
+    </div>
+  </section>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
-          <h3 class="text-xl font-semibold text-white mb-2">Miami Open 2025</h3>
-          <p class="text-slate-400 mb-4">
-            Looking into a night session happy hour and optional group ticketing block.
-          </p>
-          <a href="{{ url_for('auth.signup') }}" class="text-lime-400 font-medium hover:underline">
-            Get Updates →
-          </a>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
-          <h3 class="text-xl font-semibold text-white mb-2">Madrid Open 2025</h3>
-          <p class="text-slate-400 mb-4">
-            Potential for international meetup coordination and shared travel tips.
-          </p>
-          <a href="{{ url_for('auth.signup') }}" class="text-lime-400 font-medium hover:underline">
-            Get Updates →
-          </a>
-        </div>
+  <!-- Final CTA Section -->
+  <section class="join-cta">
+    <div class="cta-container">
+      <h2>Ready to join <span class="cta-highlight">the club?</span></h2>
+      <p>Connect with tennis fans at your next tournament and create unforgettable experiences together.</p>
+      <div class="cta-buttons">
+        <a href="{{ url_for('auth.signup') }}" class="btn btn-gradient">Join Now</a>
+        <a href="{{ url_for('main.public_tournaments') }}" class="btn btn-outline">Browse Tournaments</a>
       </div>
     </div>
   </section>

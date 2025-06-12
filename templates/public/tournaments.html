@@ -39,7 +39,7 @@
   </section>
 
   <!-- Filter Bar -->
-  <section class="py-8 px-6 bg-slate-950/85 backdrop-blur-md border-y border-slate-800/50 lg:sticky lg:top-20 z-40">
+  <section class="py-8 px-6 bg-slate-950/85 backdrop-blur-md border-y border-slate-800/50">
     <div class="max-w-7xl mx-auto">
       <!-- Mobile Search Bar -->
       <div class="lg:hidden mb-6">
@@ -317,18 +317,12 @@
               </div>
             </div>
 
-            <div class="flex gap-3">
+            <div class="flex justify-center">
               <a
                 href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}"
-                class="flex-1 bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white font-bold py-3 px-4 rounded-xl text-sm text-center shadow-lg hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 no-underline"
+                class="w-full bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white font-bold py-3 px-4 rounded-xl text-sm text-center shadow-lg hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 no-underline"
               >
                 VIEW DETAILS
-              </a>
-              <a
-                href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}"
-                class="flex-1 border-2 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-500 font-bold py-3 px-4 rounded-xl text-sm text-center transition-all duration-300 no-underline"
-              >
-                LEARN MORE
               </a>
             </div>
           </div>

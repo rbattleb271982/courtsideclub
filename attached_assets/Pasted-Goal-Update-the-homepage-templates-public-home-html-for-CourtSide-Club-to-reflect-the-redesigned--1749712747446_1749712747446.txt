@@ -1,0 +1,81 @@
+Goal: Update the homepage (templates/public/home.html) for CourtSide Club to reflect the redesigned layout and styles. Use mobile-first, responsive CSS in static/css/style.css.
+1. HERO SECTION
+Update hero title text to:
+Tennis is better together.
+Apply heavier font weight (same as “Exclusive Tournaments” text weight before).
+Use a flat gradient with these colors:
+Green: #a4e447
+Blue: #6db1f7
+Gold (for "er."): #f2cc63
+Remove any overly saturated gradient from earlier.
+Background image:
+Use the stadium hero image that shows the court clearly.
+Adjust image position lower so the tennis court is visible (not sky).
+Keep a dark transparent overlay so text remains readable, but do NOT over-fade the image.
+2. “Four Simple Steps” SECTION
+Replace the “Exclusive Tournaments” section with the Four Simple Steps section.
+Style this like “The CourtSide Advantage” — use flat icon blocks with clear visual hierarchy.
+Use headings:
+Join CourtSide Club
+Pick Your Tournaments
+See Who's Going
+Meet Up IRL
+Use font weights and spacing consistent with the “CourtSide Advantage” blocks.
+Remove all emojis.
+After this block, still display the Upcoming Tournaments block:
+Rename heading from “Exclusive Tournaments” to “Upcoming Tournaments”
+Display the next 3 tournaments from the database.
+Use the same layout and card styles already present.
+3. “CourtSide Experience” SECTION (Replaces “CourtSide Advantage”)
+Replace the “CourtSide Advantage” section with the following block:
+Title: The CourtSide Experience
+Subtitle:
+Our platform transforms how tennis fans connect at tournaments, creating memorable experiences and lasting friendships.
+Left side: list of benefits with check icons:
+No more awkward introductions
+Skip the chaotic group chats
+Find fans with similar interests
+Discover the best viewing spots
+Share transportation to venues
+Create lasting tennis friendships
+Right side: testimonial box
+Title: Real Connections
+Subtitle: Meet fellow tennis enthusiasts
+Quote:
+"CourtSide Club helped me find other fans with similar interests. Now I have friends to meet at every tournament!"
+Attribution: Sarah T., Member since 2023
+4. “Membership Signal” CTA (new section)
+Add this new section above the footer:
+Title: Your Membership Signal
+Subtitle:
+Wear your CourtSide Club lanyard to easily connect with other fans — no awkward intros needed.
+3 bullet benefits with check icons:
+Instantly recognizable to other members
+Premium design with your member ID
+Includes tournament schedule card
+Gradient button labeled:
+Learn About the Lanyard →
+Link it to: /lanyard
+5. Final CTA: “Ready to Join?”
+Add a final full-width CTA banner at the bottom of the homepage:
+Heading: Ready to join the club?
+Subheading:
+Connect with tennis fans at your next tournament and create unforgettable experiences together.
+Buttons:
+Join Now → link to /signup
+Browse Tournaments → link to /tournaments
+6. Color + Font Fixes
+Apply flat color style across all sections (no gradients except on CTA buttons).
+Replace all bright/neon greens with more refined tones:
+Use #a4e447 for green
+Use #6db1f7 for blue
+Use #f2cc63 for gold/yellow
+All icons should use matching tone from the icon set.
+Match font weights and spacing from the “CourtSide Advantage” section — no large emojis, use consistent professional typography.
+✅ TESTING
+Do not finish until you've fully tested:
+Mobile responsiveness
+Hero image alignment
+Section spacing
+Link functionality for /lanyard and /tournaments
+👉 Use checkpoints sparingly.
