@@ -1,0 +1,69 @@
+# Extend blog logic to match tournaments
+# In routes/blog.py (or routes/main.py if blog routes live there)
+
+from flask import render_template
+from models import Tournament, BlogPost
+import re
+
+@main_bp.route('/blog/<slug>')
+def blog_post(slug):
+    blog = BlogPost.query.filter_by(slug=slug).first_or_404()
+    tournaments = Tournament.query.all()
+
+    matched_tournaments = []
+    content_to_check = f"{blog.title} {blog.content}"
+
+    for t in tournaments:
+        if re.search(rf"\b{re.escape(t.name)}\b", content_to_check, re.IGNORECASE) or \
+           re.search(rf"\b{re.escape(t.slug)}\b", content_to_check, re.IGNORECASE):
+            matched_tournaments.append(t)
+
+    blog.related_tournaments = matched_tournaments
+
+    return render_template('blog_post.html', blog=blog)
+
+# Tournament detail logic (routes/tournament_routes.py)
+
+@main_bp.route('/tournaments/<slug>')
+def tournament_detail(slug):
+    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
+    blog_posts = BlogPost.query.all()
+
+    related_blog_posts = []
+    for post in blog_posts:
+        if re.search(rf"\b{re.escape(tournament.name)}\b", post.content, re.IGNORECASE) or \
+           re.search(rf"\b{re.escape(tournament.slug)}\b", post.content, re.IGNORECASE):
+            related_blog_posts.append(post)
+
+    return render_template('tournament_detail.html', tournament=tournament, related_blog_posts=related_blog_posts)
+
+# In blog_post.html template:
+"""
+{% if blog.related_tournaments %}
+  <div class="back-to-tournament">
+    <p>Read more about this tournament:</p>
+    <ul>
+      {% for t in blog.related_tournaments %}
+        <li><a href="{{ url_for('main.tournament_detail', slug=t.slug) }}">{{ t.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+"""
+
+# In tournament_detail.html template:
+"""
+{% if related_blog_posts %}
+  <section class="related-blogs">
+    <h2>From the Blog</h2>
+    <ul>
+      {% for post in related_blog_posts %}
+        <li>
+          <a href="{{ url_for('main.blog_post', slug=post.slug) }}">{{ post.title }}</a>
+          <p>{{ post.excerpt or post.content[:120] }}...</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endif %}
+"""
