@@ -3,18 +3,18 @@
 {% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-[#F7F5EF]">
+<div class="min-h-screen bg-slate-950">
   {{ hero_section(
     top_text="Tennis is",
     highlight_text="better together.",
     subtitle="From Grand Slams to 500s, CourtSide Club helps tennis fans connect in real life and turn match days into unforgettable experiences.",
-    primary_cta='<a href="' + url_for('auth.signup') + '" class="bg-[#4A743D] hover:bg-[#3B5F31] text-white font-bold py-4 px-8 rounded-full shadow-md transition-all duration-300">Join Now</a>',
-    secondary_cta='<a href="' + url_for('auth.login') + '" class="border-2 border-[#2F2F2F] text-[#2F2F2F] hover:bg-[#2F2F2F] hover:text-white font-semibold px-8 py-4 rounded-full transition-all duration-300">Member Login</a>'
+    primary_cta='<a href="' + url_for('auth.signup') + '" class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-600 hover:to-blue-600 text-white font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">Join Now</a>',
+    secondary_cta='<a href="' + url_for('auth.login') + '" class="border-2 border-slate-300 text-slate-300 hover:bg-slate-800 hover:text-white font-semibold px-8 py-4 rounded-full transition-all duration-300">Member Login</a>'
   ) }}
 
   <!-- Features Section -->
-  <section class="py-32 px-6 bg-[#F7F5EF] relative overflow-hidden">
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#4A743D] to-transparent opacity-50"></div>
+  <section class="py-32 px-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-lime-400 to-transparent opacity-50"></div>
     
     <div class="max-w-7xl mx-auto relative z-10">
       <div class="text-center mb-20">
