@@ -1,516 +1,343 @@
 {% extends "public/base.html" %}
-{% block title %}Browse Tournaments - CourtSide Club{% endblock %}
+
+{% block title %}Tournaments - CourtSide Club{% endblock %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', sans-serif !important;
+    color: #171717 !important;
+    background: #FFFFFF !important;
+  }
+
+  /* Hero Section */
+  .hero {
+    background: #F9FAF8;
+    text-align: center;
+    padding: 5rem 1.5rem;
+  }
+
+  .hero h1 {
+    font-family: 'Crimson Text', serif;
+    font-size: clamp(3rem, 5vw, 6rem);
+    font-weight: 400;
+    margin-bottom: 2rem;
+    line-height: 1.1;
+  }
+
+  .hero-line-1 {
+    color: #1E293B;
+    display: block;
+  }
+
+  .hero-line-2 {
+    color: #669127;
+    display: block;
+  }
+
+  .hero .description {
+    font-size: 1.25rem;
+    max-width: 48rem;
+    margin: 2rem auto 0;
+    color: #4B5563;
+    line-height: 1.6;
+  }
+
+  /* Tournaments Section */
+  .tournaments-section {
+    background: #FFFFFF;
+    padding: 4rem 1.5rem;
+  }
+
+  .tournaments-container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
+  .tournaments-title {
+    font-family: 'Crimson Text', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .tournaments-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .tournaments-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .tournaments-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  .tournament-card {
+    background: #FFFFFF;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .tournament-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: #669127;
+  }
+
+  .tournament-name {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .tournament-location {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .tournament-date {
+    color: #669127;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(102, 145, 39, 0.1);
+    border-radius: 0.5rem;
+    display: inline-block;
+  }
+
+  .tournament-surface {
+    color: #4b5563;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .tournament-link {
+    color: #669127;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.2s ease;
+  }
+
+  .tournament-link:hover {
+    color: #4a6b1c;
+  }
+
+  .tournament-link svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .no-tournaments {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: #6b7280;
+  }
+
+  .no-tournaments h3 {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 1rem;
+  }
+
+  /* CTA Section */
+  .cta-section {
+    background: #464C3F;
+    color: #FBFAFB;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  .cta-container {
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .cta-title {
+    font-family: 'Crimson Text', serif;
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-description {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  @media (min-width: 640px) {
+    .cta-buttons {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .cta-primary {
+    background: #FFFFFF;
+    color: #669127;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .cta-primary:hover {
+    background: #f8f9fa;
+  }
+
+  .cta-secondary {
+    border: 1px solid #FFFFFF;
+    color: #FBFAFB;
+    background: transparent;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .cta-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .hero {
+      padding: 3rem 1rem;
+    }
+
+    .tournaments-section {
+      padding: 3rem 1rem;
+    }
+
+    .cta-section {
+      padding: 3rem 1rem;
+    }
+
+    .tournaments-title {
+      font-size: 2rem;
+    }
+
+    .cta-title {
+      font-size: 2.5rem;
+    }
+
+    .tournament-card {
+      padding: 1.25rem;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-950">
+<main class="pt-16">
   <!-- Hero Section -->
-  <section class="relative py-32 text-center text-white overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
-           alt="Tennis stadium at sunset" 
-           class="w-full h-full object-cover opacity-60" 
-           style="object-position: center 65%;" />
-      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/50 to-slate-950/90"></div>
-    </div>
-
-    <div class="relative z-10 px-6 max-w-4xl mx-auto">
-      <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 hero-text-shadow">
-        Browse <span class="text-csc-blue">Upcoming Tournaments</span>
-      </h1>
-
-      <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-        Explore ATP and WTA events. Mark your spot, connect with other fans, and make the most of your match-day experience.
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <a href="{{ url_for('auth.signup') }}" 
-           class="bg-csc-green hover:bg-csc-blue text-white font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-          Join
-        </a>
-        
-        <a href="{{ url_for('auth.login') }}" 
-           class="border-2 border-white text-white hover:bg-white hover:text-slate-900 font-semibold px-8 py-4 rounded-full transition-all duration-300">
-          Login
-        </a>
-      </div>
-    </div>
+  <section class="hero">
+    <h1>
+      <span class="hero-line-1">Upcoming</span>
+      <span class="hero-line-2">Tournaments</span>
+    </h1>
+    <p class="description">
+      Discover ATP and WTA events where tennis fans connect. Join the community and never watch alone again.
+    </p>
   </section>
 
-  <!-- Filter Bar -->
-  <section class="py-8 px-6 bg-slate-950/85 backdrop-blur-md border-y border-slate-800/50">
-    <div class="max-w-7xl mx-auto">
-      <!-- Mobile Search Bar -->
-      <div class="lg:hidden mb-6">
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </div>
-          <input
-            type="text"
-            id="mobileSearch"
-            placeholder="Search tournaments by name or location..."
-            class="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-slate-700 text-slate-300 placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lime-500/50 focus:border-lime-500/50 transition-all duration-300"
-          />
-          <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
-            <button
-              id="clearMobileSearch"
-              class="hidden text-slate-400 hover:text-slate-300 transition-colors duration-200"
-              onclick="clearMobileSearchInput()"
-            >
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile Filter Toggle -->
-      <div class="lg:hidden mb-6">
-        <button
-          id="mobileFilterToggle"
-          class="w-full bg-slate-800/50 border border-slate-700 text-slate-300 hover:bg-slate-700/50 font-medium py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-between"
-        >
-          <span class="flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
-            </svg>
-            Filters
-          </span>
-          <svg id="filterChevron" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Filter Content -->
-      <div id="filterContent" class="hidden lg:block space-y-6">
-        <!-- Search Bar -->
-        <div>
-          <div class="relative max-w-lg mx-auto">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-            </div>
-            <input
-              type="text"
-              id="tournamentSearch"
-              placeholder="Search tournaments by name or location..."
-              class="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-slate-700 text-slate-300 placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lime-500/50 focus:border-lime-500/50 transition-all duration-300"
-            />
-            <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
-              <button
-                id="clearSearch"
-                class="hidden text-slate-400 hover:text-slate-300 transition-colors duration-200"
-                onclick="clearSearchInput()"
-              >
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+  <!-- Tournaments Section -->
+  <section class="tournaments-section">
+    <div class="tournaments-container">
+      <h2 class="tournaments-title">Featured Tournaments</h2>
+      
+      {% if tournaments and tournaments|length > 0 %}
+        <div class="tournaments-grid">
+          {% for tournament in tournaments %}
+            <div class="tournament-card">
+              <h3 class="tournament-name">{{ tournament.name }}</h3>
+              
+              <div class="tournament-location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
                 </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Month Pills -->
-        <div>
-          <h3 class="text-slate-400 font-medium mb-4 text-sm uppercase tracking-wider">Month</h3>
-          <div class="flex flex-wrap gap-3" id="monthFilters">
-            <button
-              data-month="all"
-              class="month-filter active px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-lime-500 to-blue-500 text-white shadow-lg shadow-lime-500/25"
-            >
-              All
-            </button>
-            <button
-              data-month="1"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              January
-            </button>
-            <button
-              data-month="2"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              February
-            </button>
-            <button
-              data-month="3"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              March
-            </button>
-            <button
-              data-month="4"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              April
-            </button>
-            <button
-              data-month="5"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              May
-            </button>
-            <button
-              data-month="6"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              June
-            </button>
-            <button
-              data-month="7"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              July
-            </button>
-            <button
-              data-month="8"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              August
-            </button>
-            <button
-              data-month="9"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              September
-            </button>
-            <button
-              data-month="10"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              October
-            </button>
-            <button
-              data-month="11"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              November
-            </button>
-            <button
-              data-month="12"
-              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
-            >
-              December
-            </button>
-          </div>
-        </div>
-
-        <!-- Category Dropdown -->
-        <div>
-          <h3 class="text-slate-400 font-medium mb-4 text-sm uppercase tracking-wider">Category</h3>
-          <div class="relative max-w-xs">
-            <select
-              id="categoryFilter"
-              class="w-full bg-slate-800/50 border border-slate-700 text-slate-300 rounded-xl px-6 py-3 font-medium appearance-none cursor-pointer hover:bg-slate-700/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lime-500/50"
-            >
-              <option value="all">All Categories</option>
-              <option value="grand slam">Grand Slam</option>
-              <option value="masters 1000">Masters 1000</option>
-              <option value="atp 500">ATP 500</option>
-              <option value="wta 1000">WTA 1000</option>
-              <option value="wta 500">WTA 500</option>
-              <option value="atp 250">ATP 250</option>
-              <option value="wta 250">WTA 250</option>
-            </select>
-            <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Tournaments Grid -->
-  <section class="py-16 px-6 bg-slate-950">
-    <div class="max-w-7xl mx-auto">
-      <div id="tournamentsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {% for t in tournaments %}
-        {% set tournament_type = (t.event_type + ' ' + t.tour_type) if t.event_type != 'Grand Slam' else 'Grand Slam' %}
-        {% set is_featured = t.event_type == 'Grand Slam' %}
-        <div
-          class="tournament-card bg-slate-800/50 backdrop-blur-sm border-2 border-slate-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group cursor-pointer transform hover:-translate-y-3 {{ 'ring-4 ring-lime-400/50 border-lime-400/50' if is_featured else '' }}"
-          data-month="{{ t.start_date.month }}"
-          data-category="{{ tournament_type.lower() }}"
-          data-name="{{ t.name.lower() }}"
-        >
-          {% if is_featured %}
-          <div class="bg-gradient-to-r from-lime-500 to-blue-500 text-white text-center py-2 font-bold text-sm flex items-center justify-center gap-2">
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-            FEATURED
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-          </div>
-          {% endif %}
-
-          <div class="relative h-48 overflow-hidden">
-            <img
-              src="{{ url_for('static', filename='images/hero-tennis.jpg') }}"
-              alt="{{ t.name }}"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
-
-            <div class="absolute top-4 left-4">
-              <span class="
-                {% if tournament_type == 'Grand Slam' %}
-                  bg-gradient-to-r from-amber-400 to-amber-500
-                {% elif 'Masters 1000' in tournament_type or 'WTA 1000' in tournament_type %}
-                  bg-gradient-to-r from-lime-500 to-lime-600
-                {% elif 'ATP 500' in tournament_type or 'WTA 500' in tournament_type %}
-                  bg-gradient-to-r from-blue-500 to-blue-600
-                {% else %}
-                  bg-gradient-to-r from-slate-600 to-slate-700
-                {% endif %}
-                text-white px-3 py-1 text-xs font-bold tracking-wider rounded-xl shadow-lg">
-                {{ tournament_type.upper() }}
-              </span>
-            </div>
-
-            <div class="absolute bottom-4 left-4 right-4">
-              <div class="flex items-center gap-4 text-white">
-                <div class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-                  </svg>
-                  <span class="text-sm font-medium">{{ attendance_counts.get(t.id, 0) }}</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                  </svg>
-                  <span class="text-sm font-medium">{{ maybe_counts.get(t.id, 0) }}</span>
-                </div>
+                {{ tournament.location }}
               </div>
-            </div>
-          </div>
-
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-white mb-3 tracking-wide">{{ t.name }}</h3>
-
-            <div class="space-y-3 mb-6">
-              <div class="flex items-center text-slate-300">
-                <svg class="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              
+              <div class="tournament-date">
+                {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}
+              </div>
+              
+              {% if tournament.surface %}
+                <div class="tournament-surface">{{ tournament.surface }}</div>
+              {% endif %}
+              
+              <a href="{{ url_for('main.public_tournament_detail', slug=tournament.slug) }}" class="tournament-link">
+                View Details
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 17l9.2-9.2M17 17V7H7"/>
                 </svg>
-                <span class="font-medium">
-                  {{ t.start_date.strftime('%b %-d') }} - {{ t.end_date.strftime('%b %-d, %Y') }}
-                </span>
-              </div>
-
-              <div class="flex items-center text-slate-300">
-                <svg class="w-5 h-5 text-lime-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <span class="font-medium">{{ t.city }}, {{ t.country }}</span>
-              </div>
-            </div>
-
-            <div class="flex justify-center">
-              <a
-                href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}"
-                class="w-full bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white font-bold py-3 px-4 rounded-xl text-sm text-center shadow-lg hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 no-underline"
-              >
-                VIEW DETAILS
               </a>
             </div>
-          </div>
+          {% endfor %}
         </div>
-        {% endfor %}
-      </div>
-
-      <!-- No Results Message -->
-      <div id="noResults" class="text-center py-16 hidden">
-        <div class="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-6">
-          <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.291-.974-5.709-2.292"/>
-          </svg>
+      {% else %}
+        <div class="no-tournaments">
+          <h3>Tournament Schedule Coming Soon</h3>
+          <p>We're preparing an exciting lineup of ATP and WTA tournaments for you to explore. Check back soon for the latest schedule and start connecting with fellow tennis fans.</p>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-2">No tournaments found</h3>
-        <p class="text-slate-400">Try adjusting your filters to see more results.</p>
-      </div>
+      {% endif %}
     </div>
   </section>
 
   <!-- CTA Section -->
-  <section class="py-24 px-6 bg-gradient-to-br from-slate-950 via-blue-950/50 to-slate-950 relative overflow-hidden">
-    <div class="absolute top-10 left-10 w-32 h-32 bg-csc-green/20 rounded-full blur-2xl animate-pulse"></div>
-    <div class="absolute bottom-10 right-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
-
-    <div class="max-w-4xl mx-auto relative z-10 text-center">
-      <div class="w-16 h-16 bg-csc-green rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 9-14 9V3z"/>
-        </svg>
-      </div>
-
-      <h2 class="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">
-        Ready to
-        <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-purple-400 bg-clip-text">
-          Connect?
-        </span>
-      </h2>
-
-      <p class="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed font-medium">
-        Join CourtSide Club and start connecting with tennis fans at your favorite tournaments.
+  <section class="cta-section">
+    <div class="cta-container">
+      <h2 class="cta-title">Ready to Connect?</h2>
+      <p class="cta-description">
+        Join CourtSide Club and start connecting with fellow tennis fans at tournaments around the world.
       </p>
-
-      <a
-        href="{{ url_for('auth.signup') }}"
-        class="inline-block bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold py-6 px-16 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wider no-underline"
-      >
-        JOIN COURTSIDE CLUB
-      </a>
+      <div class="cta-buttons">
+        <a href="/signup" class="cta-primary">Join CourtSide Club</a>
+        <a href="/community" class="cta-secondary">Learn More</a>
+      </div>
     </div>
   </section>
-</div>
-
-<script>
-// Mobile filter toggle
-document.getElementById('mobileFilterToggle').addEventListener('click', function() {
-  const filterContent = document.getElementById('filterContent');
-  const chevron = document.getElementById('filterChevron');
-  
-  filterContent.classList.toggle('hidden');
-  chevron.classList.toggle('rotate-180');
-});
-
-// Month filtering
-document.querySelectorAll('.month-filter').forEach(button => {
-  button.addEventListener('click', function() {
-    // Update active state
-    document.querySelectorAll('.month-filter').forEach(btn => {
-      btn.classList.remove('active', 'bg-gradient-to-r', 'from-lime-500', 'to-blue-500', 'text-white', 'shadow-lg', 'shadow-lime-500/25');
-      btn.classList.add('bg-slate-800/50', 'text-slate-300', 'hover:bg-slate-700/50', 'border', 'border-slate-700');
-    });
-    
-    this.classList.add('active', 'bg-gradient-to-r', 'from-lime-500', 'to-blue-500', 'text-white', 'shadow-lg', 'shadow-lime-500/25');
-    this.classList.remove('bg-slate-800/50', 'text-slate-300', 'hover:bg-slate-700/50', 'border', 'border-slate-700');
-    
-    filterTournaments();
-  });
-});
-
-// Category filtering
-document.getElementById('categoryFilter').addEventListener('change', filterTournaments);
-
-// Search functionality
-function setupSearchBars() {
-  const desktopSearch = document.getElementById('tournamentSearch');
-  const mobileSearch = document.getElementById('mobileSearch');
-  const clearButton = document.getElementById('clearSearch');
-  const clearMobileButton = document.getElementById('clearMobileSearch');
-
-  if (desktopSearch) {
-    desktopSearch.addEventListener('input', function() {
-      syncSearchInputs(this.value);
-      filterTournaments();
-      toggleClearButton();
-    });
-  }
-
-  if (mobileSearch) {
-    mobileSearch.addEventListener('input', function() {
-      syncSearchInputs(this.value);
-      filterTournaments();
-      toggleClearButton();
-    });
-  }
-}
-
-function syncSearchInputs(value) {
-  const desktopSearch = document.getElementById('tournamentSearch');
-  const mobileSearch = document.getElementById('mobileSearch');
-  
-  if (desktopSearch) desktopSearch.value = value;
-  if (mobileSearch) mobileSearch.value = value;
-}
-
-function toggleClearButton() {
-  const searchValue = document.getElementById('tournamentSearch')?.value || document.getElementById('mobileSearch')?.value || '';
-  const clearButton = document.getElementById('clearSearch');
-  const clearMobileButton = document.getElementById('clearMobileSearch');
-  
-  if (searchValue.length > 0) {
-    if (clearButton) clearButton.classList.remove('hidden');
-    if (clearMobileButton) clearMobileButton.classList.remove('hidden');
-  } else {
-    if (clearButton) clearButton.classList.add('hidden');
-    if (clearMobileButton) clearMobileButton.classList.add('hidden');
-  }
-}
-
-function clearSearchInput() {
-  syncSearchInputs('');
-  filterTournaments();
-  toggleClearButton();
-}
-
-function clearMobileSearchInput() {
-  syncSearchInputs('');
-  filterTournaments();
-  toggleClearButton();
-}
-
-function filterTournaments() {
-  const selectedMonth = document.querySelector('.month-filter.active').dataset.month;
-  const selectedCategory = document.getElementById('categoryFilter').value;
-  const searchValue = (document.getElementById('tournamentSearch')?.value || document.getElementById('mobileSearch')?.value || '').toLowerCase().trim();
-  const cards = document.querySelectorAll('.tournament-card');
-  let visibleCount = 0;
-  
-  cards.forEach(card => {
-    const cardMonth = card.dataset.month;
-    const cardCategory = card.dataset.category;
-    const tournamentName = card.querySelector('h3')?.textContent.toLowerCase() || '';
-    const tournamentLocation = card.querySelector('.text-slate-400')?.textContent.toLowerCase() || '';
-    
-    let showCard = true;
-    
-    // Month filter
-    if (selectedMonth !== 'all' && cardMonth !== selectedMonth) {
-      showCard = false;
-    }
-    
-    // Category filter
-    if (selectedCategory !== 'all' && !cardCategory.includes(selectedCategory)) {
-      showCard = false;
-    }
-    
-    // Search filter
-    if (searchValue && !tournamentName.includes(searchValue) && !tournamentLocation.includes(searchValue)) {
-      showCard = false;
-    }
-    
-    if (showCard) {
-      card.style.display = 'block';
-      visibleCount++;
-    } else {
-      card.style.display = 'none';
-    }
-  });
-  
-  // Show/hide no results message
-  const noResults = document.getElementById('noResults');
-  if (visibleCount === 0) {
-    noResults.classList.remove('hidden');
-  } else {
-    noResults.classList.add('hidden');
-  }
-}
-
-// Initialize search functionality when page loads
-document.addEventListener('DOMContentLoaded', function() {
-  setupSearchBars();
-});
-</script>
+</main>
 {% endblock %}
