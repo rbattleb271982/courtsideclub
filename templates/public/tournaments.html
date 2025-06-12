@@ -4,38 +4,37 @@
 {% block content %}
 <div class="min-h-screen bg-slate-950">
   <!-- Hero Section -->
-  <section class="relative py-32 flex items-center justify-center overflow-hidden pt-32">
+  <section class="relative py-32 text-center text-white overflow-hidden">
     <div class="absolute inset-0 z-0">
-      <div class="absolute inset-0 bg-gradient-to-br from-lime-500/20 via-blue-500/20 to-purple-500/20 animate-pulse"></div>
-      <div class="absolute top-20 left-20 w-32 h-32 bg-lime-400/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-      <div class="absolute bottom-20 right-20 w-40 h-40 bg-blue-400/30 rounded-full blur-3xl animate-pulse delay-2000"></div>
-      <div class="absolute top-1/2 left-1/2 w-24 h-24 bg-purple-400/30 rounded-full blur-2xl animate-pulse delay-500"></div>
-      <div class="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-slate-900/80 to-slate-950/90"></div>
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+           alt="Tennis stadium at sunset" 
+           class="w-full h-full object-cover opacity-60" 
+           style="object-position: center 65%;" />
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/30 to-slate-950/50"></div>
     </div>
 
-    <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
-      <div class="mb-8">
-        <div class="inline-flex items-center gap-3 bg-gradient-to-r from-lime-500 to-blue-500 text-white px-6 py-3 rounded-full mb-8 shadow-lg animate-bounce">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-          </svg>
-          <span class="text-sm font-bold tracking-wide">TOURNAMENT CALENDAR</span>
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </div>
-      </div>
-
-      <h1 class="text-5xl md:text-7xl font-light text-white mb-8 leading-tight tracking-tight">
-        Browse Upcoming
-        <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-purple-400 bg-clip-text animate-pulse">
-          Tournaments
+    <div class="relative z-10 px-6 max-w-4xl mx-auto">
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-light leading-tight tracking-tight mb-6">
+        <span class="font-normal text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+          Browse Upcoming Tournaments
         </span>
       </h1>
 
-      <p class="text-xl md:text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
+      <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
         Explore ATP and WTA events. Mark your spot, connect with other fans, and make the most of your match-day experience.
       </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a href="{{ url_for('auth.signup') }}" 
+           class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-600 hover:to-blue-600 text-white font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          Join Now
+        </a>
+        
+        <a href="{{ url_for('auth.login') }}" 
+           class="border-2 border-white text-white hover:bg-white hover:text-slate-900 font-semibold px-8 py-4 rounded-full transition-all duration-300">
+          Member Login
+        </a>
+      </div>
     </div>
   </section>
 

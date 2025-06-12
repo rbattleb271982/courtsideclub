@@ -1,14 +1,42 @@
 {% extends "public/base.html" %}
-{% from "macros/hero.html" import hero_section %}
 {% block title %}Blog – CourtSide Club{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-slate-950 text-white">
-  {{ hero_section(
-    top_text="CourtSide",
-    highlight_text="Blog",
-    subtitle="Stories, tips, and community highlights from real tennis fans like you."
-  ) }}
+  <!-- Hero Section -->
+  <section class="relative py-32 text-center text-white overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+           alt="Tennis stadium at sunset" 
+           class="w-full h-full object-cover opacity-60" 
+           style="object-position: center 65%;" />
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/30 to-slate-950/50"></div>
+    </div>
+
+    <div class="relative z-10 px-6 max-w-4xl mx-auto">
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-light leading-tight tracking-tight mb-6">
+        <span class="font-normal text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+          CourtSide Blog
+        </span>
+      </h1>
+
+      <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+        Stories, tips, and community highlights from real tennis fans like you.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <a href="{{ url_for('auth.signup') }}" 
+           class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-600 hover:to-blue-600 text-white font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          Join Now
+        </a>
+        
+        <a href="{{ url_for('auth.login') }}" 
+           class="border-2 border-white text-white hover:bg-white hover:text-slate-900 font-semibold px-8 py-4 rounded-full transition-all duration-300">
+          Member Login
+        </a>
+      </div>
+    </div>
+  </section>
 
   <!-- Content Section -->
   <section class="py-16 px-6 sm:px-10">
