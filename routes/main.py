@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, request, Response
-from models import Tournament, User, UserTournament
+from models import Tournament, User, UserTournament, BlogPost
 import datetime
+import re
 from services.event_logger import log_event
 
 main_bp = Blueprint('main', __name__)
@@ -131,12 +132,21 @@ def public_tournament_detail(slug):
 
     most_popular_session = session_counts.most_common(1)[0][0] if session_counts else None
 
+    # Get related blog posts
+    blog_posts = BlogPost.query.filter_by(published=True).all()
+    related_blog_posts = []
+    for post in blog_posts:
+        if re.search(rf"\b{re.escape(tournament.name)}\b", post.content, re.IGNORECASE) or \
+           re.search(rf"\b{re.escape(tournament.slug)}\b", post.content, re.IGNORECASE):
+            related_blog_posts.append(post)
+
     return render_template(
         'public/tournament_detail.html',
         tournament=tournament,
         attending_count=attending_count,
         meeting_count=meeting_count,
-        most_popular_session=most_popular_session
+        most_popular_session=most_popular_session,
+        related_blog_posts=related_blog_posts
     )
 
 @main_bp.route('/how-it-works')
@@ -165,7 +175,26 @@ def about():
 
 @main_bp.route('/blog')
 def blog():
-    return render_template('public/blog.html')
+    # Get all published blog posts
+    blog_posts = BlogPost.query.filter_by(published=True).order_by(BlogPost.created_at.desc()).all()
+    return render_template('public/blog.html', blog_posts=blog_posts)
+
+@main_bp.route('/blog/<slug>')
+def blog_post(slug):
+    blog = BlogPost.query.filter_by(slug=slug, published=True).first_or_404()
+    tournaments = Tournament.query.all()
+
+    matched_tournaments = []
+    content_to_check = f"{blog.title} {blog.content}"
+
+    for t in tournaments:
+        if re.search(rf"\b{re.escape(t.name)}\b", content_to_check, re.IGNORECASE) or \
+           re.search(rf"\b{re.escape(t.slug)}\b", content_to_check, re.IGNORECASE):
+            matched_tournaments.append(t)
+
+    blog.related_tournaments = matched_tournaments
+
+    return render_template('public/blog_post.html', blog=blog)
 
 @main_bp.route('/privacy-policy')
 def privacy():

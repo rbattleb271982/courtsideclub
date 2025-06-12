@@ -224,6 +224,31 @@ class UserWishlistTournament(db.Model):
         return f"<WishlistTournament {self.tournament_id} for User {self.user_id}>"
 
 
+class BlogPost(db.Model):
+    __tablename__ = 'blog_posts'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    slug = db.Column(db.String(200), unique=True, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    excerpt = db.Column(db.String(500))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    published = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relationships
+    author = relationship('User', backref='blog_posts')
+    
+    def __repr__(self):
+        return f"<BlogPost {self.title}>"
+    
+    @property
+    def summary(self):
+        """Return excerpt or first 120 characters of content"""
+        return self.excerpt or (self.content[:120] + "..." if len(self.content) > 120 else self.content)
+
+
 def load_user(user_id):
     import logging
     logging.info(f"User loader called with user_id: {user_id}")
