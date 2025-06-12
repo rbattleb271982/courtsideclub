@@ -19,37 +19,41 @@
 
   /* Hero Section */
   .hero {
-    background: #FFFFFF;
+    background: #F9FAF8;
     text-align: center;
     padding: 5rem 1.5rem;
   }
 
   .hero h1 {
     font-family: 'Crimson Text', serif;
-    font-size: clamp(2.5rem, 5vw, 6rem);
-    font-weight: 600;
+    font-size: clamp(3rem, 5vw, 6rem);
+    font-weight: 400;
     margin-bottom: 2rem;
-    color: #171717;
     line-height: 1.1;
   }
 
-  .hero-accent {
+  .hero-line-1 {
+    color: #1E293B;
+    display: block;
+  }
+
+  .hero-line-2 {
     color: #669127;
     display: block;
   }
 
   .hero .description {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     max-width: 48rem;
-    margin: 0 auto;
-    color: #6b7280;
-    line-height: 1.7;
+    margin: 2rem auto 0;
+    color: #4B5563;
+    line-height: 1.6;
   }
 
   /* Steps and Stats Combined Section */
   .steps-stats-section {
     background: #f8f9fa;
-    padding: 5rem 1.5rem;
+    padding: 3.5rem 1.5rem;
   }
 
   .steps-stats-container {
@@ -197,7 +201,7 @@
   .culture-number {
     width: 3rem;
     height: 3rem;
-    background: rgba(102, 145, 39, 0.1);
+    background: #F2F2F0;
     color: #669127;
     border-radius: 50%;
     display: flex;
@@ -312,6 +316,49 @@
   .engagement-button:hover {
     background: #669127;
     color: #FFFFFF;
+  }
+
+  /* Lanyard Section */
+  .lanyard-section {
+    background: #F8FAFC;
+    padding: 4rem 1.5rem;
+    text-align: center;
+  }
+
+  .lanyard-container {
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .lanyard-title {
+    font-family: 'Crimson Text', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1E293B;
+    margin-bottom: 1rem;
+  }
+
+  .lanyard-description {
+    color: #475569;
+    max-width: 36rem;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+
+  .lanyard-button {
+    background: #669127;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 1.125rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+  }
+
+  .lanyard-button:hover {
+    background: #557a20;
   }
 
   /* Final CTA Section */
@@ -476,10 +523,13 @@
 <main class="pt-16">
   <!-- Hero Section -->
   <section class="hero">
-    <h1>Where tennis passion<br><span class="hero-accent">meets community</span></h1>
+    <h1>
+      <span class="hero-line-1">Where tennis passion</span>
+      <span class="hero-line-2">meets community</span>
+    </h1>
     <p class="description">
-      Join a trusted community, lock in your tournament plans, and show up ready to connect with fellow tennis
-      enthusiasts who share your passion for the sport.
+      Join a trusted community, lock in your tournament plans, and show up ready to connect 
+      with fellow tennis enthusiasts who share your passion for the sport.
     </p>
   </section>
 
@@ -619,6 +669,18 @@
           <a href="/blog" class="engagement-button">Share Story</a>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Lanyard Section -->
+  <section class="lanyard-section">
+    <div class="lanyard-container">
+      <h2 class="lanyard-title">Your Free Lanyard, Your Signal to Connect</h2>
+      <p class="lanyard-description">
+        When you RSVP to at least one tournament and session, you'll unlock a free CourtSide Club lanyard. 
+        It's how members spot each other on-site. No names or usernames—just the lanyard and a QR code that connects you instantly.
+      </p>
+      <a href="/order_lanyard" class="lanyard-button">Get Your Lanyard</a>
     </div>
   </section>
 
