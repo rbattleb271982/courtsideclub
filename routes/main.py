@@ -29,7 +29,9 @@ def public_home():
             'attending_count': count
         })
     
-    return render_template('public/home.html', tournaments_data=tournaments_with_data)
+    return render_template('public/home.html', 
+                         tournaments_data=tournaments_with_data,
+                         featured_tournaments=tournaments_with_data)
 
 @main_bp.route('/invite')
 def track_invite_click():
