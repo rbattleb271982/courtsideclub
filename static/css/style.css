@@ -154,6 +154,18 @@ a:hover {
   background-color: var(--csc-blue);
 }
 
+.border-csc-green {
+  border-color: var(--csc-green);
+}
+
+.border-csc-gold {
+  border-color: var(--csc-gold);
+}
+
+.border-csc-blue {
+  border-color: var(--csc-blue);
+}
+
 /* Legacy classes for backward compatibility */
 .hero-gradient-text {
   font-family: 'Inter', sans-serif;
