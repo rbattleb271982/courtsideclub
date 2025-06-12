@@ -1,0 +1,62 @@
+Please update the /community page with the following fixes and enhancements. Only use checkpoints if I say so. Fully test the result before finishing.
+🧭 Routing Fix:
+Update the Community nav link to point to /community, not the old /how-it-works route.
+🎨 Fonts & Colors (match homepage):
+Headline font: 'Crimson Text', serif
+Body font: 'Inter', sans-serif
+Primary dark green: #464C3F
+Accent green: #669127
+Off-white background: #F9FAF8
+Text on dark backgrounds: #FBFAFB
+Use same font weights and styles as the homepage hero section:
+Line 1: large serif black
+Line 2: large serif green (#669127)
+Line 3: medium-light gray body copy
+🧱 Section Changes (in order of appearance):
+1. Hero Section
+Replace the current hero block with the same headline structure as the homepage:
+<h1>
+  <span className="text-5xl md:text-6xl font-serif text-[#1E293B]">Where tennis passion</span>
+  <br />
+  <span className="text-5xl md:text-6xl font-serif text-[#669127]">meets community</span>
+</h1>
+<p className="mt-6 text-lg md:text-xl text-[#4B5563] max-w-2xl mx-auto leading-relaxed">
+  Join a trusted community, lock in your tournament plans, and show up ready to connect 
+  with fellow tennis enthusiasts who share your passion for the sport.
+</p>
+Remove the hero image for now. Keep it simple and clean like the homepage.
+2. How CourtSide Works + Stats Section
+Reduce vertical padding between sections by 20–30%.
+Place “How CourtSide Works” and “Community at a Glance” side by side in a 2-column layout on desktop (stack on mobile).
+Update font sizes and colors to match homepage style.
+3. Community Culture
+No change to structure, but:
+Remove excess white space above the section title.
+Ensure the “1 / 2 / 3” value badges use background #F2F2F0 with green text (#669127).
+Reduce vertical padding under each value card slightly.
+4. Ways to Engage
+Maintain grid layout (2x2).
+Match typography and button styles to homepage.
+Reduce padding inside each card by 10–15%.
+Ensure button text is green (#669127) and outlined with rounded corners.
+✅ 5. NEW: Lanyard Section (insert before final CTA)
+<section className="py-16 bg-[#F8FAFC] text-center px-6">
+  <h2 className="text-2xl md:text-3xl font-serif font-semibold text-[#1E293B] mb-4">
+    Your Free Lanyard, Your Signal to Connect
+  </h2>
+  <p className="text-[#475569] max-w-xl mx-auto leading-relaxed mb-6">
+    When you RSVP to at least one tournament and session, you’ll unlock a free CourtSide Club lanyard. 
+    It’s how members spot each other on-site. No names or usernames—just the lanyard and a QR code that connects you instantly.
+  </p>
+  <a href="/order_lanyard" className="inline-block bg-[#669127] text-white hover:bg-[#557a20] px-6 py-3 rounded-full font-semibold text-lg">
+    Get Your Lanyard
+  </a>
+</section>
+6. Final CTA (“Ready to Join the Community?”)
+Background should be #464C3F
+All text in this section should be #FBFAFB (off-white)
+Headline should be large serif
+Body copy in Inter
+Buttons:
+Primary: white with green text
+Secondary: outline white
