@@ -19,34 +19,42 @@
 
   /* Hero Section */
   .hero {
-    background: #F9FAF8;
+    background: #F9FAF7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 90vh;
+    padding: 2rem 1.5rem;
+  }
+
+  .hero-content {
     text-align: center;
-    padding: 5rem 1.5rem;
+    max-width: 768px;
+    margin: 0 auto;
   }
 
   .hero h1 {
-    font-family: 'Crimson Text', serif;
-    font-size: clamp(3rem, 5vw, 6rem);
-    font-weight: 400;
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 600;
+    color: #171717;
     margin-bottom: 2rem;
     line-height: 1.1;
+    letter-spacing: -0.02em;
   }
 
-  .hero-line-1 {
-    color: #1E293B;
-    display: block;
-  }
-
-  .hero-line-2 {
+  .hero .accent {
     color: #669127;
     display: block;
   }
 
   .hero .description {
-    font-size: 1.25rem;
-    max-width: 48rem;
-    margin: 2rem auto 0;
-    color: #4B5563;
+    font-size: 1.125rem;
+    color: #525252;
+    margin-bottom: 3rem;
+    max-width: 512px;
+    margin-left: auto;
+    margin-right: auto;
     line-height: 1.6;
   }
 
@@ -157,48 +165,38 @@
     font-weight: 500;
   }
 
-  /* Community Culture Section */
-  .culture-section {
+  /* Values Section */
+  .values-section {
     background: #f8f9fa;
     padding: 3.5rem 1.5rem;
   }
 
-  .culture-container {
-    max-width: 120rem;
+  .values-container {
+    max-width: 1280px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 4rem;
-    align-items: flex-start;
   }
 
-  .culture-intro h2 {
-    font-family: 'Crimson Text', serif;
+  .values-title {
+    font-family: 'Crimson Text', Georgia, serif;
     font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 3rem;
     color: #171717;
-    line-height: 1.2;
   }
 
-  .culture-intro p {
-    color: #6b7280;
-    line-height: 1.6;
-    font-size: 1rem;
-  }
-
-  .culture-grid {
+  .values-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
   }
 
-  .culture-item {
+  .value-item {
     text-align: center;
     padding: 2rem 1rem;
   }
 
-  .culture-number {
+  .value-number {
     width: 3rem;
     height: 3rem;
     background: #F2F2F0;
@@ -212,16 +210,16 @@
     margin: 0 auto 1rem auto;
   }
 
-  .culture-item h3 {
-    font-family: 'Crimson Text', serif;
+  .value-item h3 {
+    font-family: 'Crimson Text', Georgia, serif;
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 600;
     margin-bottom: 0.5rem;
     color: #171717;
   }
 
-  .culture-item p {
-    color: #6b7280;
+  .value-item p {
+    color: #525252;
     line-height: 1.5;
     font-size: 0.9rem;
   }
@@ -533,14 +531,15 @@
 <main class="pt-16">
   <!-- Hero Section -->
   <section class="hero">
-    <h1>
-      <span class="hero-line-1">Where tennis passion</span>
-      <span class="hero-line-2">meets community</span>
-    </h1>
-    <p class="description">
-      Join a trusted community, lock in your tournament plans, and show up ready to connect 
-      with fellow tennis enthusiasts who share your passion for the sport.
-    </p>
+    <div class="hero-content">
+      <h1>
+        Where tennis passion
+        <span class="accent">meets community</span>
+      </h1>
+      <p class="description">
+        Connect with fellow tennis enthusiasts at tournaments worldwide. From intimate 250s to Grand Slam spectacles, experience the sport through shared moments and lasting friendships.
+      </p>
+    </div>
   </section>
 
   <!-- Steps and Stats Combined Section -->
@@ -596,28 +595,25 @@
     </div>
   </section>
 
-  <!-- Community Culture Section -->
-  <section class="culture-section">
-    <div class="culture-container">
-      <div class="culture-intro">
-        <h2>Our Community Culture</h2>
-        <p>Built on shared values that guide our community and shape every interaction. We believe that tennis is more than a sport—it's a way to connect with like-minded individuals around the world.</p>
-      </div>
-      <div class="culture-grid">
-        <div class="culture-item">
-          <div class="culture-number">1</div>
-          <h3>Authentic Connections</h3>
-          <p>We believe in genuine relationships built around shared passion for tennis.</p>
+  <!-- What We Believe Section -->
+  <section class="values-section">
+    <div class="values-container">
+      <h2 class="values-title">What We Believe</h2>
+      <div class="values-grid">
+        <div class="value-item">
+          <div class="value-number">1</div>
+          <h3>Community First</h3>
+          <p>Tennis is better when shared. We prioritize building genuine connections between fans who love the sport as much as you do.</p>
         </div>
-        <div class="culture-item">
-          <div class="culture-number">2</div>
-          <h3>Inclusive Community</h3>
-          <p>Whether you're a casual fan or tennis obsessive, there's a place for you here.</p>
+        <div class="value-item">
+          <div class="value-number">2</div>
+          <h3>Inclusive Access</h3>
+          <p>Whether you're a casual fan or a tennis encyclopedia, there's a place for you in our community. All passion levels welcome.</p>
         </div>
-        <div class="culture-item">
-          <div class="culture-number">3</div>
-          <h3>Memorable Experiences</h3>
-          <p>We create moments that last long after the final point is played.</p>
+        <div class="value-item">
+          <div class="value-number">3</div>
+          <h3>Authentic Experiences</h3>
+          <p>We focus on real connections at real tournaments. No algorithms, no artificial engagement—just tennis fans connecting naturally.</p>
         </div>
       </div>
     </div>
