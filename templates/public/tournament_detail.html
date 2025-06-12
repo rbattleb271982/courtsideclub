@@ -2,62 +2,375 @@
 
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
 
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #FFFFFF;
+    color: #171717;
+  }
+
+  .tournament-hero {
+    background: #F9FAF8;
+    padding: 2rem 1.5rem;
+  }
+
+  .container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    color: #4a5d2a;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #3d4b22;
+  }
+
+  .tournament-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .tournament-info h1 {
+    font-family: 'Crimson Text', serif;
+    font-size: 3rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .meta span {
+    color: #4a5d2a;
+    font-weight: 500;
+  }
+
+  .tournament-info p {
+    color: #6b7280;
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+
+  .tournament-cta {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .tournament-cta h2 {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.5rem;
+  }
+
+  .tournament-cta p {
+    color: #6b7280;
+    margin-bottom: 1rem;
+  }
+
+  .tournament-cta p:last-of-type {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: #4a5d2a;
+    color: white;
+    margin-bottom: 0.75rem;
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    background: #3d4b22;
+    color: white;
+  }
+
+  .btn-outline {
+    border: 1px solid #d1d5db;
+    color: #374151;
+    width: 100%;
+  }
+
+  .btn-outline:hover {
+    background: #f9fafb;
+    color: #374151;
+  }
+
+  .articles-section {
+    padding: 4rem 1.5rem;
+    background: white;
+  }
+
+  .articles-section h2 {
+    font-family: 'Crimson Text', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.5rem;
+  }
+
+  .articles-section > p {
+    color: #6b7280;
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
+
+  .filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-box, .sort-dropdown {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .search-box {
+    flex: 1;
+  }
+
+  .sort-dropdown {
+    min-width: 150px;
+  }
+
+  .category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .tag {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 1.5rem;
+    background: white;
+    color: #374151;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tag.active {
+    background: #4a5d2a;
+    color: white;
+    border-color: #4a5d2a;
+  }
+
+  .tag:hover {
+    border-color: #4a5d2a;
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .article-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .article-card.featured {
+    grid-column: span 2;
+    background: #f8f9fa;
+  }
+
+  .tag-featured {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #4a5d2a;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .article-card h3 {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.75rem;
+  }
+
+  .article-card p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .article-card .meta {
+    color: #9ca3af;
+    font-size: 0.875rem;
+  }
+
+  .load-more {
+    text-align: center;
+  }
+
+  .load-more p {
+    color: #6b7280;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .tournament-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .tournament-info h1 {
+      font-size: 2rem;
+    }
+
+    .filters {
+      flex-direction: column;
+    }
+
+    .article-card.featured {
+      grid-column: span 1;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="min-h-screen bg-slate-950 text-white">
-  <div class="tournament-wrapper">
-    <div class="max-w-xl mx-auto my-16 px-6">
-    <!-- Tournament Info -->
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-white mb-4">{{ tournament.name }}{% if tournament.alt_name %} ({{ tournament.alt_name }}){% endif %}</h1>
-      <p class="text-slate-300 mb-2">📍 {{ tournament.city }}, {{ tournament.country }}</p>
-      <p class="text-slate-300">📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
-    </div>
-
-    <!-- Links -->
-    {% if tournament.external_url %}
-    <div class="mb-8 text-center">
-      <a href="{{ tournament.external_url }}" target="_blank" class="text-lime-400 hover:text-lime-300 font-medium transition-colors">
-        🌐 Official Tournament Site
-      </a>
-    </div>
-    {% endif %}
-
-    <!-- Callout Card -->
-    <div class="bg-slate-800/60 rounded-2xl border border-slate-700 shadow-lg shadow-slate-900/20 p-6 text-center">
-      <h3 class="text-xl font-bold text-white mb-4">{{ attending_count }} fans are attending — {{ meeting_count }} are open to meet!</h3>
-      <p class="text-slate-300 mb-6">
-        <strong>Tennis is better together.</strong> Make match day at <span class="font-semibold text-lime-400">{{ tournament.name }}</span> more social — join CourtSide Club.
-      </p>
-
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="{{ url_for('auth.signup') }}" 
-           class="bg-gradient-to-r from-lime-400 to-blue-500 hover:from-lime-500 hover:to-blue-600 cta-primary-text font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-          Join
-        </a>
-        
-        <a href="{{ url_for('auth.login') }}" 
-           class="border border-white text-white hover:bg-slate-700/50 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
-          Login
-        </a>
+<div class="tournament-hero">
+  <div class="container">
+    <a href="/tournaments" class="back-link">← Back to tournaments</a>
+    <div class="tournament-grid">
+      <div class="tournament-info">
+        <h1>{{ tournament.name }}{% if tournament.alt_name %} ({{ tournament.alt_name }}){% endif %}</h1>
+        <div class="meta">
+          <span>📍 {{ tournament.city }}, {{ tournament.country }}</span>
+          <span>📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</span>
+        </div>
+        <p>
+          Join fellow tennis enthusiasts at one of the most exciting tournaments on the tour. Experience
+          world-class tennis and connect with other passionate fans who share your love for the game.
+        </p>
+      </div>
+      <div class="tournament-cta">
+        <h2>{{ attending_count }} fans attending</h2>
+        <p>{{ meeting_count }} open to meet</p>
+        <p>Tennis is better together. Join CourtSide Club to connect with other fans.</p>
+        <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Join Club</a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
       </div>
     </div>
+  </div>
+</div>
 
-    <!-- Related Blog Posts -->
-    {% if related_blog_posts %}
-    <div class="mt-12">
-      <h3 class="text-2xl font-bold text-white mb-6 text-center">Related Stories</h3>
-      <div class="grid gap-6">
+<div class="articles-section">
+  <div class="container">
+    <h2>Tournament Articles & Guides</h2>
+    <p>Everything you need to know about attending {{ tournament.name }}</p>
+
+    <!-- Filters -->
+    <div class="filters">
+      <input type="text" placeholder="Search articles..." class="search-box" />
+      <select class="sort-dropdown">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="popular">Most Popular</option>
+      </select>
+    </div>
+
+    <!-- Categories -->
+    <div class="category-tags">
+      <button class="tag active">All Articles ({{ related_blog_posts|length }})</button>
+      <button class="tag">Travel & Hotels (0)</button>
+      <button class="tag">Tournament Guide (0)</button>
+      <button class="tag">Player Insights (0)</button>
+      <button class="tag">Local Tips (0)</button>
+      <button class="tag">History (0)</button>
+      <button class="tag">Food & Dining (0)</button>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="articles-grid">
+      {% if related_blog_posts %}
         {% for post in related_blog_posts %}
-        <a href="{{ url_for('main.blog_post', slug=post.slug) }}" 
-           class="block bg-slate-800/50 rounded-2xl border border-slate-700 p-6 hover:bg-slate-800/70 transition-all duration-300">
-          <h4 class="font-bold text-lime-400 mb-2">{{ post.title }}</h4>
-          <p class="text-slate-300 text-sm mb-3">{{ post.summary }}</p>
-          <p class="text-slate-400 text-xs">{{ post.created_at.strftime('%B %d, %Y') }}</p>
-        </a>
+          {% if loop.first %}
+            <div class="article-card featured">
+              <div class="tag-featured">Featured</div>
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.summary or post.content[:150] + '...' if post.content|length > 150 else post.content }}</p>
+              <div class="meta">By CourtSide Club · {{ post.created_at.strftime('%B %d, %Y') }}</div>
+            </div>
+          {% else %}
+            <div class="article-card">
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.summary or post.content[:100] + '...' if post.content|length > 100 else post.content }}</p>
+              <div class="meta">By CourtSide Club · {{ post.created_at.strftime('%B %d, %Y') }}</div>
+            </div>
+          {% endif %}
         {% endfor %}
-      </div>
+      {% else %}
+        <div class="article-card featured">
+          <div class="tag-featured">Featured</div>
+          <h3>Complete Guide to {{ tournament.name }} 2025</h3>
+          <p>Everything you need to know about attending this year's tournament, from tickets to schedules and the best viewing spots.</p>
+          <div class="meta">By CourtSide Club · June 12, 2025</div>
+        </div>
+        
+        <div class="article-card">
+          <h3>Best Hotels Near the Tournament Venue</h3>
+          <p>Top accommodation options within walking distance of the courts, from luxury resorts to budget-friendly stays.</p>
+          <div class="meta">By CourtSide Club · June 10, 2025</div>
+        </div>
+        
+        <div class="article-card">
+          <h3>Getting to {{ tournament.city }}: Travel Tips</h3>
+          <p>Essential transportation information including flights, local transport, and the best routes to the venue.</p>
+          <div class="meta">By CourtSide Club · June 8, 2025</div>
+        </div>
+      {% endif %}
     </div>
-    {% endif %}
+
+    <div class="load-more">
+      <a href="/blog" class="btn btn-outline">View All Articles</a>
+      <p>Showing {{ related_blog_posts|length if related_blog_posts else 3 }} articles</p>
     </div>
   </div>
 </div>
