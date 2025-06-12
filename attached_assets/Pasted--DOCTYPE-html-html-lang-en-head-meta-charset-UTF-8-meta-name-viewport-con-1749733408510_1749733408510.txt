@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mifel Tennis Open – CourtSide Club</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body class="bg-sage-50">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="/" class="logo">CourtSide</a>
+        <ul class="nav-links">
+          <li><a href="/tournaments">Tournaments</a></li>
+          <li><a href="/community">Community</a></li>
+          <li><a href="/blog">Stories</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+        <div class="nav-buttons">
+          <a href="/login" class="btn btn-ghost">Sign In</a>
+          <a href="/signup" class="btn btn-primary">Join Club</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Tournament Hero -->
+    <section class="tournament-hero">
+      <div class="container">
+        <a href="/tournaments" class="back-link">← Back to tournaments</a>
+        <div class="tournament-grid">
+          <div class="tournament-info">
+            <h1>Mifel Tennis Open</h1>
+            <div class="meta">
+              <span>📍 Los Cabos, Mexico</span>
+              <span>📅 July 15 – July 21, 2025</span>
+            </div>
+            <p>
+              Join fellow tennis enthusiasts at one of the most scenic tournaments on the ATP tour. Experience
+              world-class tennis against the backdrop of Los Cabos' stunning coastline.
+            </p>
+          </div>
+          <div class="tournament-cta">
+            <h2>46 fans attending</h2>
+            <p>17 open to meet</p>
+            <p>Tennis is better together. Join CourtSide Club to connect with other fans.</p>
+            <a href="/signup" class="btn btn-primary">Join Club</a>
+            <a href="/login" class="btn btn-outline">Login</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Articles Section -->
+    <section class="articles-section">
+      <div class="container">
+        <h2>Tournament Articles & Guides</h2>
+        <p>Everything you need to know about attending Mifel Tennis Open</p>
+
+        <!-- Filters -->
+        <div class="filters">
+          <input type="text" placeholder="Search articles..." class="search-box" />
+          <select class="sort-dropdown">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="popular">Most Popular</option>
+          </select>
+        </div>
+
+        <!-- Categories -->
+        <div class="category-tags">
+          <button class="tag active">All Articles (28)</button>
+          <button class="tag">Travel & Hotels (8)</button>
+          <button class="tag">Tournament Guide (6)</button>
+          <button class="tag">Player Insights (5)</button>
+          <button class="tag">Local Tips (4)</button>
+          <button class="tag">History (3)</button>
+          <button class="tag">Food & Dining (2)</button>
+        </div>
+
+        <!-- Articles Grid -->
+        <div class="articles-grid">
+          <div class="article-card featured">
+            <div class="tag-featured">Featured</div>
+            <h3>Complete Guide to Mifel Tennis Open 2025</h3>
+            <p>Everything you need to know about attending this year's tournament, from tickets to schedules.</p>
+            <div class="meta">By Sarah Chen · 8 min read · June 12, 2025</div>
+          </div>
+
+          <!-- Sample non-featured -->
+          <div class="article-card">
+            <h3>Best Hotels Near the Tournament Venue</h3>
+            <p>Top accommodation options within walking distance of the courts, from luxury resorts to budget stays.</p>
+            <div class="meta">By Mike Rodriguez · 6 min read · June 10, 2025</div>
+          </div>
+
+          <!-- Repeat more as needed -->
+        </div>
+
+        <div class="load-more text-center">
+          <a href="#" class="btn btn-outline">Load More Articles</a>
+          <p>Showing 6 of 28 articles</p>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

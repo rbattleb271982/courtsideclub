@@ -70,7 +70,7 @@ a:hover {
 
 /* CSS Variables for Brand Colors */
 :root {
-  --csc-green: #669127;
+  --csc-green: #4a5d2a;
   --csc-gold: #EDB418;
   --csc-blue: #318BE8;
 }
@@ -2515,14 +2515,14 @@ h1.hero-text-shadow span {
 
 /* Primary green flat color - no gradients */
 .btn-flat-green {
-  background-color: #669127 !important;
+  background-color: #4a5d2a !important;
   color: white !important;
   border: none !important;
   transition: background-color 0.2s ease !important;
 }
 
 .btn-flat-green:hover {
-  background-color: #557a20 !important;
+  background-color: #3d4b22 !important;
   color: white !important;
 }
 
