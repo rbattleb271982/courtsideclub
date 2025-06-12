@@ -2730,14 +2730,58 @@ h1.hero-text-shadow span {
 }
 
 /* Final CTA Section */
-.join-cta {
-  padding: 3rem 1rem;
-  text-align: center;
+.final-cta {
+  padding: 2.5rem 1.5rem 5rem;
+  background: #464C3F;
+  border-top: 1px solid #e5e5e5;
 }
 
 .cta-container {
-  max-width: 800px;
+  max-width: 1024px;
   margin: 0 auto;
+  text-align: center;
+}
+
+.final-cta h2 {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: clamp(1.875rem, 4vw, 2.25rem);
+  font-weight: 600;
+  color: #FBFAFB;
+  margin-bottom: 1.5rem;
+}
+
+.final-cta p {
+  font-size: 1.125rem;
+  color: #FBFAFB;
+  margin-bottom: 2rem;
+  max-width: 512px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.final-cta .cta-button {
+  background: white;
+  color: #464C3F !important;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.final-cta .cta-button:hover {
+  background: #f8f9fa;
+  transform: translateY(-1px);
+}
+
+.join-cta {
+  padding: 3rem 1rem;
+  text-align: center;
+}n: 0 auto;
 }
 
 .cta-container h2 {
