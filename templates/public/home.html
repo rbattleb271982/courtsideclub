@@ -1,42 +1,16 @@
 {% extends "public/base.html" %}
+{% from "macros/hero.html" import hero_section %}
 {% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-slate-950">
-  <!-- Hero Section -->
-  <section class="relative py-32 flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
-           alt="Tennis Stadium at Sunset" 
-           class="w-full h-full object-cover opacity-50" />
-      <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80"></div>
-    </div>
-
-    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-      <h1 class="text-5xl md:text-6xl font-light text-white mb-6">
-        Tennis is
-        <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
-          better together.
-        </span>
-      </h1>
-
-      <p class="text-lg md:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto">
-        From Grand Slams to 500s, CourtSide Club helps tennis fans connect in real life
-        and turn match days into unforgettable experiences.
-      </p>
-
-      <div class="mt-10 flex justify-center gap-4">
-        <a href="{{ url_for('auth.signup') }}" 
-           class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-600 hover:to-blue-600 text-white font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-          Join Now
-        </a>
-        <a href="{{ url_for('auth.login') }}" 
-           class="border-2 border-slate-300 text-slate-300 hover:bg-slate-800 hover:text-white font-semibold px-8 py-4 rounded-full transition-all duration-300">
-          Member Login
-        </a>
-      </div>
-    </div>
-  </section>
+  {{ hero_section(
+    top_text="Tennis is",
+    highlight_text="better together.",
+    subtitle="From Grand Slams to 500s, CourtSide Club helps tennis fans connect in real life and turn match days into unforgettable experiences.",
+    primary_cta='<a href="' + url_for('auth.signup') + '" class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-600 hover:to-blue-600 text-white font-semibold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">Join Now</a>',
+    secondary_cta='<a href="' + url_for('auth.login') + '" class="border-2 border-slate-300 text-slate-300 hover:bg-slate-800 hover:text-white font-semibold px-8 py-4 rounded-full transition-all duration-300">Member Login</a>'
+  ) }}
 
   <!-- Features Section -->
   <section class="py-32 px-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden">

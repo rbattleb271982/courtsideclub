@@ -1,0 +1,108 @@
+. Create a Shared Hero Component
+Create a new file:
+/components/shared/HeroSection.tsx
+Paste in this component:
+"use client"
+import Image from "next/image"
+
+type HeroSectionProps = {
+  topText: string
+  highlightText: string
+  subtitle?: string
+  backgroundImage?: string
+  primaryCTA?: React.ReactNode
+  secondaryCTA?: React.ReactNode
+}
+
+export default function HeroSection({
+  topText,
+  highlightText,
+  subtitle,
+  backgroundImage = "/backgrounds/stadium-sunset.jpg",
+  primaryCTA,
+  secondaryCTA,
+}: HeroSectionProps) {
+  return (
+    <section className="relative py-32 flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={backgroundImage}
+          alt="Hero Background"
+          layout="fill"
+          objectFit="cover"
+          className="opacity-50"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
+      </div>
+
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        <h1 className="text-5xl md:text-6xl font-light text-white mb-6">
+          {topText}
+          <span className="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+            {highlightText}
+          </span>
+        </h1>
+        {subtitle && (
+          <p className="text-lg md:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto">
+            {subtitle}
+          </p>
+        )}
+        {(primaryCTA || secondaryCTA) && (
+          <div className="mt-10 flex justify-center gap-4">
+            {primaryCTA}
+            {secondaryCTA}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+✅ 2. Apply to These Pages
+Update each page to import and use the new HeroSection:
+🏠 Homepage (/app/pages/index.tsx)
+Replace the existing hero block with:
+import HeroSection from "@/components/shared/HeroSection"
+import { Button } from "@/components/ui/button"
+
+<HeroSection
+  topText="Tennis is"
+  highlightText="better together."
+  subtitle="From Grand Slams to 500s, CourtSide Club helps tennis fans connect in real life and turn match days into unforgettable experiences."
+  primaryCTA={
+    <Button className="bg-gradient-to-r from-lime-500 to-blue-500 text-white px-8 py-4 rounded-full">Join Now</Button>
+  }
+  secondaryCTA={
+    <Button variant="outline" className="border-2 border-slate-300 text-slate-300 px-8 py-4 rounded-full">Member Login</Button>
+  }
+/>
+🧭 Browse Tournaments Page (/app/pages/tournaments.tsx)
+Update to:
+<HeroSection
+  topText="Browse Upcoming"
+  highlightText="Tournaments"
+  subtitle="Explore ATP and WTA events. Mark your spot, connect with other fans, and make the most of your match-day experience."
+/>
+🎟️ Lanyard Page (/app/pages/lanyard.tsx)
+Update to:
+<HeroSection
+  topText="Get Your"
+  highlightText="Free Lanyard"
+  subtitle="Easily spot and connect with other members at tournaments using your official CourtSide Club lanyard."
+/>
+📚 How It Works Page (/app/pages/how-it-works.tsx)
+<HeroSection
+  topText="How It"
+  highlightText="Works"
+  subtitle="It’s not a group chat. It’s a match-day meet-up tool."
+/>
+📖 Blog Page (/app/pages/blog.tsx)
+<HeroSection
+  topText="CourtSide"
+  highlightText="Blog"
+  subtitle="Stories, tips, and community highlights from real tennis fans like you."
+/>
+✅ 3. Update Private Pages (if needed)
+Apply <HeroSection /> to:
+/my-tournaments.tsx
+/order-lanyard.tsx
+Any user dashboard pages that should carry consistent headers

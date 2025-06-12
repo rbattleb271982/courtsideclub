@@ -1,0 +1,36 @@
+{% macro hero_section(top_text, highlight_text, subtitle=None, background_image=None, primary_cta=None, secondary_cta=None) %}
+<section class="relative py-32 flex items-center justify-center overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img src="{{ background_image or url_for('static', filename='images/hero-tennis.jpg') }}" 
+         alt="Hero Background" 
+         class="w-full h-full object-cover opacity-50" />
+    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80"></div>
+  </div>
+
+  <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+    <h1 class="text-5xl md:text-6xl font-light text-white mb-6">
+      {{ top_text }}
+      <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+        {{ highlight_text }}
+      </span>
+    </h1>
+    
+    {% if subtitle %}
+    <p class="text-lg md:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto">
+      {{ subtitle }}
+    </p>
+    {% endif %}
+    
+    {% if primary_cta or secondary_cta %}
+    <div class="mt-10 flex justify-center gap-4">
+      {% if primary_cta %}
+        {{ primary_cta|safe }}
+      {% endif %}
+      {% if secondary_cta %}
+        {{ secondary_cta|safe }}
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endmacro %}
