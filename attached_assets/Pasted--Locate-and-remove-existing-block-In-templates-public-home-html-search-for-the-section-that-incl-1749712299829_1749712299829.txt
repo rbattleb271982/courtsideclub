@@ -1,0 +1,109 @@
+ Locate and remove existing block:
+In templates/public/home.html, search for the <section> that includes the heading “CourtSide Advantage”.
+Delete or comment out the entire section.
+2. Insert the new replacement block:
+Add the following HTML where the old section was:
+<section class="courtside-experience">
+  <div class="experience-content">
+    <div class="experience-left">
+      <h2>The CourtSide <span class="highlight">Experience</span></h2>
+      <p>Our platform transforms how tennis fans connect at tournaments, creating memorable experiences and lasting friendships.</p>
+      <ul class="experience-benefits">
+        <li>✅ No more awkward introductions</li>
+        <li>✅ Skip the chaotic group chats</li>
+        <li>✅ Find fans with similar interests</li>
+        <li>✅ Discover the best viewing spots</li>
+        <li>✅ Share transportation to venues</li>
+        <li>✅ Create lasting tennis friendships</li>
+      </ul>
+    </div>
+    <div class="experience-right">
+      <div class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="testimonial-icon">👥</div>
+          <div>
+            <strong>Real Connections</strong><br>
+            <small>Meet fellow tennis enthusiasts</small>
+          </div>
+        </div>
+        <blockquote>
+          “CourtSide Club helped me find other fans with similar interests. Now I have friends to meet at every tournament!”
+        </blockquote>
+        <footer>Sarah T.<br><small>Member since 2023</small></footer>
+      </div>
+    </div>
+  </div>
+</section>
+3. Add CSS to static/css/style.css:
+Include styling like this (or update your existing classes):
+.courtside-experience {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 1rem;
+}
+
+.experience-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.experience-left {
+  flex: 1;
+  max-width: 500px;
+}
+
+.experience-left h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.experience-left .highlight {
+  color: #76c7a3; /* Soft green-blue */
+}
+
+.experience-benefits {
+  margin-top: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.experience-benefits li {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.experience-right {
+  flex: 1;
+  max-width: 500px;
+}
+
+.testimonial-card {
+  background: #141b29;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: #fff;
+}
+
+.testimonial-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.testimonial-icon {
+  font-size: 1.8rem;
+}
+
+blockquote {
+  font-style: italic;
+  margin: 1rem 0;
+}
+
+footer {
+  font-size: 0.9rem;
+  color: #aaa;
+}

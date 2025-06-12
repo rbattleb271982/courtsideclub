@@ -6,46 +6,89 @@
 html, body {
   margin: 0;
   padding: 0;
-  background-color: #ffffff;
+  color: #dce3f1; /* soft white for readability on dark bg */
+  background-color: #0a0f1c; /* deep navy background */
 }
 
-/* Global Font Color Standards */
+/* Global Color System for CourtSide Club */
+
+/* Headers and Titles */
+h1, h2, h3, h4, h5, h6 {
+  color: #ffffff; /* pure white for strong contrast */
+  font-weight: 600;
+}
+
+/* Subheadings or Section Labels */
+.section-heading {
+  color: #b4bed2;
+  font-weight: 500;
+}
+
+/* Highlight/Accent Text */
+.highlight {
+  color: #a0ff73; /* soft neon green accent */
+  font-weight: 500;
+}
+
+/* Link Styling */
+a {
+  color: #5db8ff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #a0ff73;
+  transition: color 0.3s ease;
+}
+
+/* Button Text */
+.button, .btn, button {
+  color: #ffffff;
+}
+
+.button-outline, .btn-outline {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+/* Hero specific styling */
 .hero-title {
-  color: #F2F2F2 !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
   text-shadow: 0px 1px 2px rgba(0,0,0,0.25) !important;
 }
 
-.hero-subtitle {
-  color: #D1D5DB !important;
+.hero h1 span.highlight {
+  font-weight: 800; /* extra bold for "Better together" */
 }
 
+.hero-subtitle {
+  color: #dce3f1 !important;
+}
+
+/* Legacy classes for backward compatibility */
 .body-text-dark {
-  color: #E5E7EB !important;
+  color: #dce3f1 !important;
 }
 
 .body-text-light {
-  color: #374151 !important;
+  color: #dce3f1 !important;
 }
 
 .cta-primary-text {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 .cta-secondary-text {
-  color: #0F5132 !important;
-}
-
-.section-heading {
-  color: #14532D !important;
+  color: #a0ff73 !important;
 }
 
 .feature-label {
-  color: #065F46 !important;
+  color: #b4bed2 !important;
 }
 
 .footer-text {
-  color: #9CA3AF !important;
+  color: #b4bed2 !important;
 }
 
 /* Tournament Detail Page Wrapper */
@@ -2349,6 +2392,169 @@ input:checked + .toggle-slider:before {
 
 .tournament-type {
   color: #888;
+}
+
+/* Four Simple Steps Section */
+.four-steps {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.four-steps .section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.four-steps .section-subtitle {
+  font-size: 1.2rem;
+  color: #b4bed2;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.step-card {
+  background: rgba(20, 27, 41, 0.8);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  position: relative;
+  border: 1px solid rgba(180, 190, 210, 0.1);
+}
+
+.step-number {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  background: #a0ff73;
+  color: #0a0f1c;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 8px 12px;
+  border-radius: 20px;
+  min-width: 35px;
+}
+
+.step-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.step-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.step-card p {
+  color: #dce3f1;
+  line-height: 1.6;
+}
+
+/* CourtSide Experience Section */
+.courtside-experience {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 1rem;
+}
+
+.experience-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.experience-left {
+  flex: 1;
+  max-width: 500px;
+}
+
+.experience-left h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.experience-left .highlight {
+  color: #a0ff73;
+}
+
+.experience-benefits {
+  margin-top: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.experience-benefits li {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #dce3f1;
+}
+
+.experience-right {
+  flex: 1;
+  max-width: 500px;
+}
+
+.testimonial-card {
+  background: rgba(20, 27, 41, 0.8);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: #ffffff;
+  border: 1px solid rgba(180, 190, 210, 0.1);
+}
+
+.testimonial-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.testimonial-icon {
+  font-size: 1.8rem;
+}
+
+.testimonial-card blockquote {
+  font-style: italic;
+  margin: 1rem 0;
+  color: #dce3f1;
+}
+
+.testimonial-card footer {
+  font-size: 0.9rem;
+  color: #b4bed2;
+}
+
+@media (max-width: 768px) {
+  .four-steps .section-title {
+    font-size: 2rem;
+  }
+  
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .experience-content {
+    flex-direction: column;
+  }
 }
 
 

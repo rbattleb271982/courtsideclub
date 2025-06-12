@@ -1,0 +1,105 @@
+Add "Membership Signal" Section to Bottom of Homepage
+Target File: templates/public/home.html
+1. Add the section just above the footer:
+<section class="membership-signal">
+  <div class="signal-content">
+    <div class="signal-image">
+      <div class="lanyard-card">
+        <img src="{{ url_for('static', filename='img/lanyard-icon.svg') }}" alt="Lanyard Icon" />
+      </div>
+    </div>
+    <div class="signal-text">
+      <h2>Your Membership <span class="highlight">Signal</span></h2>
+      <p>
+        Wear your CourtSide Club lanyard to easily connect with other fans — 
+        <span class="signal-highlight">no awkward intros needed.</span>
+      </p>
+      <ul class="signal-benefits">
+        <li>✅ Instantly recognizable to other members</li>
+        <li>✅ Premium design with your member ID</li>
+        <li>✅ Includes tournament schedule card</li>
+      </ul>
+      <a href="{{ url_for('main.lanyard') }}" class="btn btn-gradient">Learn About the Lanyard</a>
+    </div>
+  </div>
+</section>
+2. In static/css/style.css, add styling:
+.membership-signal {
+  background: #1a1e2a;
+  padding: 3rem 1.5rem;
+  margin-top: 3rem;
+  border-radius: 1.5rem;
+}
+
+.signal-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.signal-image {
+  flex: 1;
+  max-width: 300px;
+  display: flex;
+  justify-content: center;
+}
+
+.lanyard-card {
+  background: linear-gradient(to right, #8ce35b, #4f9cf9);
+  border-radius: 1rem;
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lanyard-card img {
+  width: 60px;
+  height: 60px;
+}
+
+.signal-text {
+  flex: 1;
+  max-width: 500px;
+}
+
+.signal-text h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.signal-text .highlight {
+  color: #8ce35b;
+}
+
+.signal-highlight {
+  color: #d3f93f;
+  font-weight: bold;
+}
+
+.signal-benefits {
+  margin-top: 1rem;
+  list-style: none;
+  padding-left: 0;
+}
+
+.signal-benefits li {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.btn-gradient {
+  margin-top: 1.5rem;
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, #8ce35b, #4f9cf9);
+  color: #fff;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+✅ Replit Agent Instruction:
+Update home.html to include the “Membership Signal” section above the footer and style it using the new CSS block in style.css. Make sure the image path resolves (use lanyard icon or placeholder). Link the CTA to the /lanyard route.
+Do not finish until tested on desktop and mobile for layout and responsiveness. Check that gradient button works and link is functional. Only use checkpoints if needed.
