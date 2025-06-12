@@ -191,6 +191,100 @@
       }
     }
 
+    /* Mobile Menu Panel */
+    .mobile-menu {
+      position: fixed;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      background: white;
+      border-bottom: 1px solid #e5e5e5;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      z-index: 50;
+      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .mobile-menu.active {
+      display: block !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+
+    .mobile-menu-content {
+      padding: 1rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .mobile-nav-link {
+      color: #525252;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f5f5f5;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav-link:hover {
+      color: #3a5a3a;
+    }
+
+    .mobile-nav-link:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-auth-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .mobile-btn-sign-in {
+      color: #525252;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.75rem 0;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-btn-sign-in:hover {
+      color: #3a5a3a;
+    }
+
+    .mobile-btn-join-club {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #4a6b4a;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .mobile-btn-join-club:hover {
+      background: #3a5a3a;
+    }
+
     /* Hero Section */
     .hero {
       padding: 8rem 1rem 5rem;
@@ -593,13 +687,30 @@
       <div class="header-buttons">
         <a href="/login" class="btn-sign-in">Sign In</a>
         <a href="/signup" class="btn-join-club">Join Club</a>
-        <button class="mobile-menu-btn">
+        <button class="mobile-menu-btn" id="mobile-menu-toggle">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="4" y1="6" x2="20" y2="6"></line>
             <line x1="4" y1="12" x2="20" y2="12"></line>
             <line x1="4" y1="18" x2="20" y2="18"></line>
           </svg>
         </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Panel -->
+    <div id="mobile-menu" class="mobile-menu">
+      <div class="mobile-menu-content">
+        <nav class="mobile-nav-links">
+          <a href="/tournaments" class="mobile-nav-link">Tournaments</a>
+          <a href="/community" class="mobile-nav-link">Community</a>
+          <a href="/blog" class="mobile-nav-link">Stories</a>
+          <a href="/about" class="mobile-nav-link">About</a>
+          <a href="/faqs" class="mobile-nav-link">Faqs</a>
+        </nav>
+        <div class="mobile-auth-buttons">
+          <a href="/login" class="mobile-btn-sign-in">Sign In</a>
+          <a href="/signup" class="mobile-btn-join-club">Join Club</a>
+        </div>
       </div>
     </div>
   </header>
@@ -799,5 +910,33 @@
       </a>
     </div>
   </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      if (mobileMenuToggle && mobileMenu) {
+        mobileMenuToggle.addEventListener('click', function() {
+          mobileMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!mobileMenu.contains(event.target) && !mobileMenuToggle.contains(event.target)) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+
+        // Close menu when clicking on a link
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(function(link) {
+          link.addEventListener('click', function() {
+            mobileMenu.classList.remove('active');
+          });
+        });
+      }
+    });
+  </script>
 </body>
 </html>
