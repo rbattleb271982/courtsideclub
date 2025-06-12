@@ -2597,6 +2597,11 @@ input:checked + .toggle-slider:before {
   line-height: 1.6;
 }
 
+/* Hero Text Shadow Styles */
+.hero-text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 /* CourtSide Experience Section */
 .courtside-experience {
   display: flex;
