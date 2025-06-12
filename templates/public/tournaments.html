@@ -1,148 +1,399 @@
 {% extends "public/base.html" %}
-{% block title %}Browse Upcoming Tournaments - CourtSide Club{% endblock %}
+{% block title %}Browse Tournaments - CourtSide Club{% endblock %}
 
 {% block content %}
-  <section class="tournaments-header">
-    <h1 class="page-title">Browse Upcoming Tournaments</h1>
-    <div class="search-bar">
-      <input type="text" id="tournamentSearch" class="search-input" placeholder="Search tournaments...">
+<div class="min-h-screen bg-slate-950">
+  <!-- Hero Section -->
+  <section class="relative py-32 flex items-center justify-center overflow-hidden pt-32">
+    <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 bg-gradient-to-br from-lime-500/20 via-blue-500/20 to-purple-500/20 animate-pulse"></div>
+      <div class="absolute top-20 left-20 w-32 h-32 bg-lime-400/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div class="absolute bottom-20 right-20 w-40 h-40 bg-blue-400/30 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      <div class="absolute top-1/2 left-1/2 w-24 h-24 bg-purple-400/30 rounded-full blur-2xl animate-pulse delay-500"></div>
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-slate-900/80 to-slate-950/90"></div>
+    </div>
+
+    <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
+      <div class="mb-8">
+        <div class="inline-flex items-center gap-3 bg-gradient-to-r from-lime-500 to-blue-500 text-white px-6 py-3 rounded-full mb-8 shadow-lg animate-bounce">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <span class="text-sm font-bold tracking-wide">TOURNAMENT CALENDAR</span>
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-light text-white mb-8 leading-tight tracking-tight">
+        Find Your
+        <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-purple-400 bg-clip-text animate-pulse">
+          Tournament Crew
+        </span>
+      </h1>
+
+      <p class="text-xl md:text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
+        Explore upcoming ATP and WTA tournaments.
+        <span class="text-lime-400 font-semibold"> Mark your spot, connect with other fans.</span>
+      </p>
     </div>
   </section>
 
-  <!-- Desktop Table View -->
-  <section class="tournament-table-wrapper desktop-only">
-    <table class="tournament-table" id="tournamentTable">
-      <thead>
-        <tr>
-          <th class="sortable sort-asc" data-column="date">Start Date</th>
-          <th class="sortable" data-column="name">Tournament Name</th>
-          <th class="sortable" data-column="type">Type</th>
-          <th class="sortable" data-column="attending">Attending</th>
-        </tr>
-      </thead>
-      <tbody>
+  <!-- Filter Bar -->
+  <section class="py-8 px-6 bg-slate-900/50 backdrop-blur-sm border-y border-slate-800/50 sticky top-20 z-40">
+    <div class="max-w-7xl mx-auto">
+      <!-- Mobile Filter Toggle -->
+      <div class="lg:hidden mb-6">
+        <button
+          id="mobileFilterToggle"
+          class="w-full bg-slate-800/50 border border-slate-700 text-slate-300 hover:bg-slate-700/50 font-medium py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-between"
+        >
+          <span class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"/>
+            </svg>
+            Filters
+          </span>
+          <svg id="filterChevron" class="w-5 h-5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Filter Content -->
+      <div id="filterContent" class="hidden lg:block space-y-6">
+        <!-- Month Pills -->
+        <div>
+          <h3 class="text-slate-400 font-medium mb-4 text-sm uppercase tracking-wider">Month</h3>
+          <div class="flex flex-wrap gap-3" id="monthFilters">
+            <button
+              data-month="all"
+              class="month-filter active px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-gradient-to-r from-lime-500 to-blue-500 text-white shadow-lg shadow-lime-500/25"
+            >
+              All
+            </button>
+            <button
+              data-month="1"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              January
+            </button>
+            <button
+              data-month="2"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              February
+            </button>
+            <button
+              data-month="3"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              March
+            </button>
+            <button
+              data-month="4"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              April
+            </button>
+            <button
+              data-month="5"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              May
+            </button>
+            <button
+              data-month="6"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              June
+            </button>
+            <button
+              data-month="7"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              July
+            </button>
+            <button
+              data-month="8"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              August
+            </button>
+            <button
+              data-month="9"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              September
+            </button>
+            <button
+              data-month="10"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              October
+            </button>
+            <button
+              data-month="11"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              November
+            </button>
+            <button
+              data-month="12"
+              class="month-filter px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+            >
+              December
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div>
+          <h3 class="text-slate-400 font-medium mb-4 text-sm uppercase tracking-wider">Category</h3>
+          <div class="relative max-w-xs">
+            <select
+              id="categoryFilter"
+              class="w-full bg-slate-800/50 border border-slate-700 text-slate-300 rounded-xl px-6 py-3 font-medium appearance-none cursor-pointer hover:bg-slate-700/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lime-500/50"
+            >
+              <option value="all">All Categories</option>
+              <option value="grand slam">Grand Slam</option>
+              <option value="masters 1000">Masters 1000</option>
+              <option value="atp 500">ATP 500</option>
+              <option value="wta 1000">WTA 1000</option>
+              <option value="wta 500">WTA 500</option>
+              <option value="atp 250">ATP 250</option>
+              <option value="wta 250">WTA 250</option>
+            </select>
+            <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tournaments Grid -->
+  <section class="py-16 px-6 bg-gradient-to-b from-slate-950 to-slate-900">
+    <div class="max-w-7xl mx-auto">
+      <div id="tournamentsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {% for t in tournaments %}
         {% set tournament_type = (t.event_type + ' ' + t.tour_type) if t.event_type != 'Grand Slam' else 'Grand Slam' %}
-        <tr 
-          data-date="{{ t.start_date.strftime('%Y-%m-%d') }}"
+        {% set is_featured = t.event_type == 'Grand Slam' %}
+        <div
+          class="tournament-card bg-slate-800/50 backdrop-blur-sm border-2 border-slate-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group cursor-pointer transform hover:-translate-y-3 {{ 'ring-4 ring-lime-400/50 border-lime-400/50' if is_featured else '' }}"
+          data-month="{{ t.start_date.month }}"
+          data-category="{{ tournament_type.lower() }}"
           data-name="{{ t.name.lower() }}"
-          data-type="{{ tournament_type.lower() }}"
-          data-attending="{{ attendance_counts.get(t.id, 0) }}">
-          <td>{{ t.start_date.strftime('%b %-d, %Y') }}</td>
-          <td><a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="tournament-name">{{ t.name }}</a></td>
-          <td class="type-text">{{ tournament_type }}</td>
-          <td class="attending-count">{{ attendance_counts.get(t.id, 0) }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </section>
+        >
+          {% if is_featured %}
+          <div class="bg-gradient-to-r from-lime-500 to-blue-500 text-white text-center py-2 font-bold text-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            FEATURED
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          {% endif %}
 
-  <!-- Mobile Card View -->
-  <section class="tournament-cards mobile-only" id="tournamentCards">
-    {% for t in tournaments %}
-    {% set tournament_type = (t.event_type + ' ' + t.tour_type) if t.event_type != 'Grand Slam' else 'Grand Slam' %}
-    <div class="tournament-card"
-         data-date="{{ t.start_date.strftime('%Y-%m-%d') }}"
-         data-name="{{ t.name.lower() }}"
-         data-type="{{ tournament_type.lower() }}"
-         data-attending="{{ attendance_counts.get(t.id, 0) }}">
-      <div class="card-header">
-        <h3><a href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}" class="tournament-name">{{ t.name }}</a></h3>
-        <span class="attending-badge">{{ attendance_counts.get(t.id, 0) }} attending</span>
+          <div class="relative h-48 overflow-hidden">
+            <img
+              src="{{ url_for('static', filename='images/hero-tennis.jpg') }}"
+              alt="{{ t.name }}"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+
+            <div class="absolute top-4 left-4">
+              <span class="
+                {% if tournament_type == 'Grand Slam' %}
+                  bg-gradient-to-r from-amber-400 to-amber-500
+                {% elif 'Masters 1000' in tournament_type or 'WTA 1000' in tournament_type %}
+                  bg-gradient-to-r from-lime-500 to-lime-600
+                {% elif 'ATP 500' in tournament_type or 'WTA 500' in tournament_type %}
+                  bg-gradient-to-r from-blue-500 to-blue-600
+                {% else %}
+                  bg-gradient-to-r from-slate-600 to-slate-700
+                {% endif %}
+                text-white px-3 py-1 text-xs font-bold tracking-wider rounded-xl shadow-lg">
+                {{ tournament_type.upper() }}
+              </span>
+            </div>
+
+            <div class="absolute bottom-4 left-4 right-4">
+              <div class="flex items-center gap-4 text-white">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                  </svg>
+                  <span class="text-sm font-medium">{{ attendance_counts.get(t.id, 0) }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  <span class="text-sm font-medium">{{ maybe_counts.get(t.id, 0) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-white mb-3 tracking-wide">{{ t.name }}</h3>
+
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center text-slate-300">
+                <svg class="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="font-medium">
+                  {{ t.start_date.strftime('%b %-d') }} - {{ t.end_date.strftime('%b %-d, %Y') }}
+                </span>
+              </div>
+
+              <div class="flex items-center text-slate-300">
+                <svg class="w-5 h-5 text-lime-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span class="font-medium">{{ t.city }}, {{ t.country }}</span>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <a
+                href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}"
+                class="flex-1 bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white font-bold py-3 px-4 rounded-xl text-sm text-center shadow-lg hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 no-underline"
+              >
+                VIEW DETAILS
+              </a>
+              <a
+                href="{{ url_for('main.public_tournament_detail', slug=t.slug) }}"
+                class="flex-1 border-2 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-500 font-bold py-3 px-4 rounded-xl text-sm text-center transition-all duration-300 no-underline"
+              >
+                LEARN MORE
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
-      <div class="card-details">
-        <span class="tournament-date">{{ t.start_date.strftime('%b %-d, %Y') }}</span>
-        <span class="tournament-type">{{ tournament_type }}</span>
+
+      <!-- No Results Message -->
+      <div id="noResults" class="text-center py-16 hidden">
+        <div class="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.291-.974-5.709-2.292"/>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">No tournaments found</h3>
+        <p class="text-slate-400">Try adjusting your filters to see more results.</p>
       </div>
     </div>
-    {% endfor %}
   </section>
 
-  <script>
-  let currentSort = { column: 'date', direction: 'asc' };
+  <!-- CTA Section -->
+  <section class="py-24 px-6 bg-gradient-to-br from-slate-950 via-blue-950/50 to-slate-950 relative overflow-hidden">
+    <div class="absolute top-10 left-10 w-32 h-32 bg-lime-400/20 rounded-full blur-2xl animate-pulse"></div>
+    <div class="absolute bottom-10 right-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
 
-  // Search functionality
-  document.getElementById("tournamentSearch").addEventListener("input", function () {
-    const filter = this.value.toLowerCase();
-    
-    // Search table rows
-    const rows = document.querySelectorAll("#tournamentTable tbody tr");
-    rows.forEach(row => {
-      const text = row.textContent.toLowerCase();
-      row.style.display = text.includes(filter) ? "" : "none";
+    <div class="max-w-4xl mx-auto relative z-10 text-center">
+      <div class="w-16 h-16 bg-gradient-to-br from-lime-400 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 9-14 9V3z"/>
+        </svg>
+      </div>
+
+      <h2 class="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">
+        Ready to
+        <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-purple-400 bg-clip-text">
+          Connect?
+        </span>
+      </h2>
+
+      <p class="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed font-medium">
+        Join CourtSide Club and start connecting with tennis fans at your favorite tournaments.
+      </p>
+
+      <a
+        href="{{ url_for('auth.register') }}"
+        class="inline-block bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold py-6 px-16 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wider no-underline"
+      >
+        JOIN COURTSIDE CLUB
+      </a>
+    </div>
+  </section>
+</div>
+
+<script>
+// Mobile filter toggle
+document.getElementById('mobileFilterToggle').addEventListener('click', function() {
+  const filterContent = document.getElementById('filterContent');
+  const chevron = document.getElementById('filterChevron');
+  
+  filterContent.classList.toggle('hidden');
+  chevron.classList.toggle('rotate-180');
+});
+
+// Month filtering
+document.querySelectorAll('.month-filter').forEach(button => {
+  button.addEventListener('click', function() {
+    // Update active state
+    document.querySelectorAll('.month-filter').forEach(btn => {
+      btn.classList.remove('active', 'bg-gradient-to-r', 'from-lime-500', 'to-blue-500', 'text-white', 'shadow-lg', 'shadow-lime-500/25');
+      btn.classList.add('bg-slate-800/50', 'text-slate-300', 'hover:bg-slate-700/50', 'border', 'border-slate-700');
     });
     
-    // Search mobile cards
-    const cards = document.querySelectorAll("#tournamentCards .tournament-card");
-    cards.forEach(card => {
-      const text = card.textContent.toLowerCase();
-      card.style.display = text.includes(filter) ? "" : "none";
-    });
+    this.classList.add('active', 'bg-gradient-to-r', 'from-lime-500', 'to-blue-500', 'text-white', 'shadow-lg', 'shadow-lime-500/25');
+    this.classList.remove('bg-slate-800/50', 'text-slate-300', 'hover:bg-slate-700/50', 'border', 'border-slate-700');
+    
+    filterTournaments();
   });
+});
 
-  // Sort functionality
-  document.querySelectorAll('.sortable').forEach(header => {
-    header.addEventListener('click', () => {
-      const column = header.dataset.column;
-      const tbody = document.querySelector('#tournamentTable tbody');
-      const rows = Array.from(tbody.querySelectorAll('tr'));
-      
-      // Toggle direction if clicking same column
-      if (currentSort.column === column) {
-        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-      } else {
-        currentSort.direction = 'asc';
-      }
-      currentSort.column = column;
-      
-      // Update header classes
-      document.querySelectorAll('.sortable').forEach(h => {
-        h.classList.remove('sort-asc', 'sort-desc');
-      });
-      header.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
-      
-      // Sort rows
-      rows.sort((a, b) => {
-        let aVal, bVal;
-        
-        if (column === 'date') {
-          aVal = a.dataset.date;
-          bVal = b.dataset.date;
-        } else if (column === 'name') {
-          aVal = a.dataset.name;
-          bVal = b.dataset.name;
-        } else if (column === 'type') {
-          aVal = a.dataset.type;
-          bVal = b.dataset.type;
-        } else if (column === 'attending') {
-          aVal = parseInt(a.dataset.attending);
-          bVal = parseInt(b.dataset.attending);
-        }
-        
-        if (column === 'attending') {
-          // Numeric sort for attending column
-          if (currentSort.direction === 'asc') {
-            return aVal - bVal;
-          } else {
-            return bVal - aVal;
-          }
-        } else {
-          // String sort for other columns
-          if (currentSort.direction === 'asc') {
-            return aVal.localeCompare(bVal);
-          } else {
-            return bVal.localeCompare(aVal);
-          }
-        }
-      });
-      
-      // Reorder DOM
-      rows.forEach(row => tbody.appendChild(row));
-    });
+// Category filtering
+document.getElementById('categoryFilter').addEventListener('change', filterTournaments);
+
+function filterTournaments() {
+  const selectedMonth = document.querySelector('.month-filter.active').dataset.month;
+  const selectedCategory = document.getElementById('categoryFilter').value;
+  const cards = document.querySelectorAll('.tournament-card');
+  let visibleCount = 0;
+  
+  cards.forEach(card => {
+    const cardMonth = card.dataset.month;
+    const cardCategory = card.dataset.category;
+    
+    let showCard = true;
+    
+    // Month filter
+    if (selectedMonth !== 'all' && cardMonth !== selectedMonth) {
+      showCard = false;
+    }
+    
+    // Category filter
+    if (selectedCategory !== 'all' && !cardCategory.includes(selectedCategory)) {
+      showCard = false;
+    }
+    
+    if (showCard) {
+      card.style.display = 'block';
+      visibleCount++;
+    } else {
+      card.style.display = 'none';
+    }
   });
-
-  // Initialize with date sort
-  document.querySelector('[data-column="date"]').classList.add('sort-asc');
-  </script>
+  
+  // Show/hide no results message
+  const noResults = document.getElementById('noResults');
+  if (visibleCount === 0) {
+    noResults.classList.remove('hidden');
+  } else {
+    noResults.classList.add('hidden');
+  }
+}
+</script>
 {% endblock %}

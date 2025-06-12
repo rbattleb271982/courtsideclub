@@ -1,0 +1,364 @@
+"use client"
+
+import { useState } from "react"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Calendar, MapPin, Crown, ChevronDown, ChevronUp, Filter, Star, Users } from "lucide-react"
+import Navigation from "@/components/navigation"
+
+export default function TournamentsPage() {
+  const [selectedMonth, setSelectedMonth] = useState("All")
+  const [selectedCategory, setSelectedCategory] = useState("All Categories")
+  const [expandedMonths, setExpandedMonths] = useState<string[]>(["January", "February"])
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+
+  const months = [
+    "All",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+
+  const categories = ["All Categories", "Grand Slam", "Masters 1000", "ATP 500", "WTA 1000", "WTA 500"]
+
+  const tournaments = {
+    January: [
+      {
+        id: 1,
+        name: "Australian Open",
+        dateRange: "Jan 14 - 27",
+        city: "Melbourne",
+        country: "Australia",
+        type: "Grand Slam",
+        typeColor: "bg-gradient-to-r from-amber-400 to-amber-500",
+        attending: 245,
+        maybe: 89,
+        image: "/placeholder.svg?height=200&width=300",
+        featured: true,
+      },
+      {
+        id: 2,
+        name: "Adelaide International",
+        dateRange: "Jan 6 - 12",
+        city: "Adelaide",
+        country: "Australia",
+        type: "ATP 250",
+        typeColor: "bg-gradient-to-r from-slate-600 to-slate-700",
+        attending: 34,
+        maybe: 18,
+        image: "/placeholder.svg?height=200&width=300",
+        featured: false,
+      },
+    ],
+    February: [
+      {
+        id: 3,
+        name: "Dubai Tennis Championships",
+        dateRange: "Feb 19 - Mar 2",
+        city: "Dubai",
+        country: "UAE",
+        type: "ATP 500",
+        typeColor: "bg-gradient-to-r from-blue-500 to-blue-600",
+        attending: 156,
+        maybe: 67,
+        image: "/placeholder.svg?height=200&width=300",
+        featured: false,
+      },
+      {
+        id: 4,
+        name: "Qatar Open",
+        dateRange: "Feb 12 - 18",
+        city: "Doha",
+        country: "Qatar",
+        type: "WTA 1000",
+        typeColor: "bg-gradient-to-r from-purple-500 to-purple-600",
+        attending: 98,
+        maybe: 45,
+        image: "/placeholder.svg?height=200&width=300",
+        featured: false,
+      },
+    ],
+    March: [
+      {
+        id: 5,
+        name: "Indian Wells Masters",
+        dateRange: "Mar 6 - 17",
+        city: "Indian Wells",
+        country: "USA",
+        type: "Masters 1000",
+        typeColor: "bg-gradient-to-r from-lime-500 to-lime-600",
+        attending: 312,
+        maybe: 124,
+        image: "/placeholder.svg?height=200&width=300",
+        featured: true,
+      },
+    ],
+  }
+
+  const toggleMonth = (month: string) => {
+    setExpandedMonths((prev) => (prev.includes(month) ? prev.filter((m) => m !== month) : [...prev, month]))
+  }
+
+  const filteredTournaments = () => {
+    if (selectedMonth === "All") {
+      return tournaments
+    }
+    return { [selectedMonth]: tournaments[selectedMonth as keyof typeof tournaments] || [] }
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-950">
+      <Navigation />
+
+      {/* Hero Section */}
+      <section className="relative py-32 flex items-center justify-center overflow-hidden pt-32">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-lime-500/20 via-blue-500/20 to-purple-500/20 animate-pulse"></div>
+          <div className="absolute top-20 left-20 w-32 h-32 bg-lime-400/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 right-20 w-40 h-40 bg-blue-400/30 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 w-24 h-24 bg-purple-400/30 rounded-full blur-2xl animate-pulse delay-500"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-slate-900/80 to-slate-950/90" />
+        </div>
+
+        <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-lime-500 to-blue-500 text-white px-6 py-3 rounded-full mb-8 shadow-lg animate-bounce">
+              <Calendar className="w-4 h-4" />
+              <span className="text-sm font-bold tracking-wide">TOURNAMENT CALENDAR</span>
+              <Star className="w-4 h-4" />
+            </div>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-light text-white mb-8 leading-tight tracking-tight">
+            Find Your
+            <span className="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-purple-400 bg-clip-text animate-pulse">
+              Tournament Crew
+            </span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
+            Explore upcoming ATP and WTA tournaments.
+            <span className="text-lime-400 font-semibold"> Mark your spot, connect with other fans.</span>
+          </p>
+        </div>
+      </section>
+
+      {/* Filter Bar */}
+      <section className="py-8 px-6 bg-slate-900/50 backdrop-blur-sm border-y border-slate-800/50 sticky top-20 z-40">
+        <div className="max-w-7xl mx-auto">
+          {/* Mobile Filter Toggle */}
+          <div className="lg:hidden mb-6">
+            <Button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className="w-full bg-slate-800/50 border border-slate-700 text-slate-300 hover:bg-slate-700/50 font-medium py-3 px-6 rounded-xl transition-all duration-300 flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <Filter className="w-5 h-5" />
+                Filters
+              </span>
+              {isFilterOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </Button>
+          </div>
+
+          {/* Filter Content */}
+          <div className={`${isFilterOpen ? "block" : "hidden"} lg:block space-y-6`}>
+            {/* Month Pills */}
+            <div>
+              <h3 className="text-slate-400 font-medium mb-4 text-sm uppercase tracking-wider">Month</h3>
+              <div className="flex flex-wrap gap-3">
+                {months.map((month) => (
+                  <button
+                    key={month}
+                    onClick={() => setSelectedMonth(month)}
+                    className={`px-6 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 ${
+                      selectedMonth === month
+                        ? "bg-gradient-to-r from-lime-500 to-blue-500 text-white shadow-lg shadow-lime-500/25"
+                        : "bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-700"
+                    }`}
+                  >
+                    {month}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Category Dropdown */}
+            <div>
+              <h3 className="text-slate-400 font-medium mb-4 text-sm uppercase tracking-wider">Category</h3>
+              <div className="relative max-w-xs">
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full bg-slate-800/50 border border-slate-700 text-slate-300 rounded-xl px-6 py-3 font-medium appearance-none cursor-pointer hover:bg-slate-700/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lime-500/50"
+                >
+                  {categories.map((category) => (
+                    <option key={category} value={category} className="bg-slate-800">
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tournaments Grid */}
+      <section className="py-16 px-6 bg-gradient-to-b from-slate-950 to-slate-900">
+        <div className="max-w-7xl mx-auto">
+          {Object.entries(filteredTournaments()).map(([month, monthTournaments]) => (
+            <div key={month} className="mb-16">
+              {/* Month Header */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-3xl md:text-4xl font-light text-white tracking-tight">
+                    {month}
+                    <span className="ml-3 text-slate-400 text-xl font-normal">
+                      {monthTournaments?.length || 0} tournaments
+                    </span>
+                  </h2>
+                </div>
+
+                {/* Mobile Collapse Toggle */}
+                <button
+                  onClick={() => toggleMonth(month)}
+                  className="lg:hidden w-10 h-10 bg-slate-800/50 border border-slate-700 rounded-xl flex items-center justify-center hover:bg-slate-700/50 transition-all duration-300"
+                >
+                  {expandedMonths.includes(month) ? (
+                    <ChevronUp className="w-5 h-5 text-slate-400" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-slate-400" />
+                  )}
+                </button>
+              </div>
+
+              {/* Tournament Cards */}
+              <div
+                className={`${expandedMonths.includes(month) || window.innerWidth >= 1024 ? "block" : "hidden"} grid md:grid-cols-2 lg:grid-cols-3 gap-8`}
+              >
+                {monthTournaments?.map((tournament) => (
+                  <Card
+                    key={tournament.id}
+                    className={`bg-slate-800/50 backdrop-blur-sm border-2 border-slate-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group cursor-pointer transform hover:-translate-y-3 ${
+                      tournament.featured ? "ring-4 ring-lime-400/50 border-lime-400/50" : ""
+                    }`}
+                  >
+                    {tournament.featured && (
+                      <div className="bg-gradient-to-r from-lime-500 to-blue-500 text-white text-center py-2 font-bold text-sm flex items-center justify-center gap-2">
+                        <Star className="w-4 h-4 fill-current" />
+                        FEATURED
+                        <Star className="w-4 h-4 fill-current" />
+                      </div>
+                    )}
+
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={tournament.image || "/placeholder.svg"}
+                        alt={tournament.name}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
+
+                      <div className="absolute top-4 left-4">
+                        <span
+                          className={`${tournament.typeColor} text-white px-3 py-1 text-xs font-bold tracking-wider rounded-xl shadow-lg`}
+                        >
+                          {tournament.type.toUpperCase()}
+                        </span>
+                      </div>
+
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="flex items-center gap-4 text-white">
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-lime-400" />
+                            <span className="text-sm font-medium">{tournament.attending}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-blue-400" />
+                            <span className="text-sm font-medium">{tournament.maybe}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold text-white mb-3 tracking-wide">{tournament.name}</h3>
+
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center text-slate-300">
+                          <Calendar className="w-5 h-5 text-blue-400 mr-3" />
+                          <span className="font-medium">{tournament.dateRange}</span>
+                        </div>
+
+                        <div className="flex items-center text-slate-300">
+                          <MapPin className="w-5 h-5 text-lime-400 mr-3" />
+                          <span className="font-medium">
+                            {tournament.city}, {tournament.country}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <Button className="flex-1 bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white font-bold py-3 rounded-xl text-sm shadow-lg hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105">
+                          I'M GOING
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="flex-1 border-2 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-500 font-bold py-3 rounded-xl text-sm transition-all duration-300"
+                        >
+                          MAYBE
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 px-6 bg-gradient-to-br from-slate-950 via-blue-950/50 to-slate-950 relative overflow-hidden">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-lime-400/20 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
+
+        <div className="max-w-4xl mx-auto relative z-10 text-center">
+          <div className="w-16 h-16 bg-gradient-to-br from-lime-400 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
+            <Crown className="w-8 h-8 text-white" />
+          </div>
+
+          <h2 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">
+            Ready to
+            <span className="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-purple-400 bg-clip-text">
+              Connect?
+            </span>
+          </h2>
+
+          <p className="text-xl text-slate-300 mb-10 max-w-3xl mx-auto leading-relaxed font-medium">
+            Join CourtSide Club and start connecting with tennis fans at your favorite tournaments.
+          </p>
+
+          <Button
+            size="lg"
+            className="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold py-6 px-16 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wider"
+          >
+            JOIN COURTSIDE CLUB
+          </Button>
+        </div>
+      </section>
+    </div>
+  )
+}
