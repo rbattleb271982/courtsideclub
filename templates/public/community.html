@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community - CourtSide Club</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Crimson+Text:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1E293B;
+      background: #fff;
+    }
+    .hero {
+      background: url('{{ url_for('static', filename='images/hero-tennis.jpg') }}') no-repeat center center / cover;
+      text-align: center;
+      color: white;
+      padding: 6rem 1.5rem 4rem;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-family: 'Crimson Text', serif;
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+    .hero .subtitle {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #E5E7EB;
+      font-weight: 600;
+    }
+    .hero .description {
+      font-size: 1.125rem;
+      max-width: 48rem;
+      margin: 0 auto 3rem;
+      color: #D1D5DB;
+      line-height: 1.6;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 4rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #fff;
+    }
+    .step {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid #E5E7EB;
+    }
+    .step-number {
+      display: inline-block;
+      background: #669127;
+      color: white;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      line-height: 3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    .step h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #1E293B;
+    }
+    .step p {
+      color: #475569;
+      line-height: 1.5;
+    }
+    .section {
+      padding: 4rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-title {
+      font-family: 'Crimson Text', serif;
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #1E293B;
+    }
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.125rem;
+      color: #475569;
+      margin-bottom: 3rem;
+      max-width: 48rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .grid {
+      display: grid;
+      gap: 2rem;
+    }
+    .grid-2 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+    .grid-3 {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1E293B;
+    }
+    .card p {
+      color: #475569;
+      line-height: 1.6;
+    }
+    .testimonial {
+      background: #F8FAFC;
+      border-left: 4px solid #669127;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    .testimonial blockquote {
+      font-style: italic;
+      font-size: 1.125rem;
+      color: #374151;
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    .testimonial cite {
+      font-weight: 600;
+      color: #669127;
+    }
+    .stats {
+      background: #F8FAFC;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'Crimson Text', serif;
+      font-size: 3rem;
+      font-weight: bold;
+      color: #669127;
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      color: #475569;
+      font-weight: 600;
+    }
+    .engage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    .engage-item {
+      background: #fff;
+      border: 2px solid #E5E7EB;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .engage-item:hover {
+      border-color: #669127;
+      transform: translateY(-2px);
+    }
+    .engage-item h4 {
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 0.5rem;
+    }
+    .engage-item p {
+      color: #475569;
+      font-size: 0.9rem;
+    }
+    .cta-section {
+      background: #1E293B;
+      color: white;
+      padding: 4rem 1.5rem;
+      text-align: center;
+    }
+    .btn-primary {
+      background-color: #669127;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: background 0.2s;
+      display: inline-block;
+      margin: 0 0.5rem;
+    }
+    .btn-primary:hover {
+      background-color: #557a20;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.125rem;
+      transition: all 0.2s;
+      display: inline-block;
+      margin: 0 0.5rem;
+    }
+    .btn-secondary:hover {
+      background: white;
+      color: #1E293B;
+    }
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 2.25rem; }
+      .hero .subtitle { font-size: 1.25rem; }
+      .steps { padding: 2rem 1rem; gap: 1.5rem; }
+      .section { padding: 2rem 1rem; }
+      .section-title { font-size: 2rem; }
+      .btn-primary, .btn-secondary { 
+        display: block; 
+        margin: 0.5rem 0; 
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-content">
+      <h1>The CourtSide Advantage</h1>
+      <p class="subtitle">Experience world-class tennis with a crew that gets it.</p>
+      <p class="description">Join a trusted community, lock in your tournament plans, and show up ready to connect.</p>
+    </div>
+  </header>
+
+  <section class="steps">
+    <div class="step">
+      <div class="step-number">01</div>
+      <h3>Create Your Profile</h3>
+      <p>Tell us your tournament plans and what kind of fan you are.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">02</div>
+      <h3>Choose Your Sessions</h3>
+      <p>Mark which days/sessions you're attending — from Grand Slams to 500s.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">03</div>
+      <h3>See Who's Going</h3>
+      <p>Browse fellow members who'll be there and opt in to meet.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">04</div>
+      <h3>Meet Courtside</h3>
+      <p>Order your lanyard and connect with fans IRL, effortlessly.</p>
+    </div>
+  </section>
+
+  <section class="stats">
+    <h2 class="section-title">Local & Global Presence</h2>
+    <p class="section-subtitle">Connect with tennis fans in your city and around the world</p>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-number">25+</div>
+        <div class="stat-label">Cities Worldwide</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">1,200+</div>
+        <div class="stat-label">Active Members</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">150+</div>
+        <div class="stat-label">Tournaments Covered</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Connections Made</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Local Chapters</h2>
+    <p class="section-subtitle">Find your local tennis community</p>
+    <div class="grid grid-3">
+      <div class="card">
+        <h3>New York</h3>
+        <p>US Open and year-round ATP/WTA events. Active community of 200+ members.</p>
+      </div>
+      <div class="card">
+        <h3>London</h3>
+        <p>Wimbledon headquarters with members attending Queen's Club and other UK events.</p>
+      </div>
+      <div class="card">
+        <h3>Melbourne</h3>
+        <p>Australian Open community plus Adelaide and Brisbane tournament groups.</p>
+      </div>
+      <div class="card">
+        <h3>Paris</h3>
+        <p>Roland Garros enthusiasts and European clay court tournament followers.</p>
+      </div>
+      <div class="card">
+        <h3>Miami</h3>
+        <p>Miami Open community extending to Indian Wells and other sunshine swing events.</p>
+      </div>
+      <div class="card">
+        <h3>Global</h3>
+        <p>Join members traveling to tournaments worldwide. No local chapter? Start one!</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Community Culture</h2>
+    <p class="section-subtitle">What makes CourtSide Club special</p>
+    
+    <div class="grid grid-2">
+      <div>
+        <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: #1E293B;">Our Values</h3>
+        <div class="card" style="text-align: left; margin-bottom: 1.5rem;">
+          <h4 style="color: #669127; margin-bottom: 0.5rem;">Inclusive Community</h4>
+          <p>Whether you're a Grand Slam regular or attending your first tournament, you belong here.</p>
+        </div>
+        <div class="card" style="text-align: left; margin-bottom: 1.5rem;">
+          <h4 style="color: #669127; margin-bottom: 0.5rem;">Authentic Connections</h4>
+          <p>We verify all members and foster genuine relationships built around shared tennis passion.</p>
+        </div>
+        <div class="card" style="text-align: left;">
+          <h4 style="color: #669127; margin-bottom: 0.5rem;">Respectful Engagement</h4>
+          <p>Our community guidelines ensure everyone feels safe, welcome, and respected.</p>
+        </div>
+      </div>
+      
+      <div>
+        <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: #1E293B;">Real Testimonials</h3>
+        
+        <div class="testimonial">
+          <blockquote>"I was nervous about going to Roland Garros alone, but CourtSide Club connected me with amazing people. We watched Djokovic together and I made friends for life."</blockquote>
+          <cite>— Sarah M., Paris</cite>
+        </div>
+        
+        <div class="testimonial">
+          <blockquote>"The lanyard system is genius. I spotted three other members at Indian Wells and we ended up sharing a box for the final. Best tennis experience ever."</blockquote>
+          <cite>— Marcus R., Los Angeles</cite>
+        </div>
+        
+        <div class="testimonial">
+          <blockquote>"As someone new to tennis, I thought tournaments would be intimidating. CourtSide Club made my first Wimbledon unforgettable and taught me so much."</blockquote>
+          <cite>— Emma L., London</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section-title">Ways to Engage</h2>
+    <p class="section-subtitle">Start your CourtSide Club journey today</p>
+    
+    <div class="engage-grid">
+      <div class="engage-item">
+        <h4>Join Now</h4>
+        <p>Create your profile and join thousands of tennis fans worldwide</p>
+      </div>
+      <div class="engage-item">
+        <h4>Browse Events</h4>
+        <p>Explore upcoming tournaments and see who's already planning to attend</p>
+      </div>
+      <div class="engage-item">
+        <h4>RSVP</h4>
+        <p>Mark your sessions and connect with other members at your tournaments</p>
+      </div>
+      <div class="engage-item">
+        <h4>Share Your Story</h4>
+        <p>Tell us about your best tennis moments and inspire other fans</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2 style="font-family: 'Crimson Text', serif; font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Ready to Join the Community?</h2>
+    <p style="font-size: 1.25rem; margin-bottom: 2rem; max-width: 48rem; margin-left: auto; margin-right: auto;">Connect with tennis fans who share your passion and make every tournament an unforgettable experience.</p>
+    
+    <div>
+      <a href="{{ url_for('auth.signup') }}" class="btn-primary">Join CourtSide Club</a>
+      <a href="{{ url_for('main.public_tournaments') }}" class="btn-secondary">Browse Tournaments</a>
+    </div>
+  </section>
+</body>
+</html>

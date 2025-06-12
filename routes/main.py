@@ -175,6 +175,10 @@ def faqs():
 def about():
     return render_template('public/about.html')
 
+@main_bp.route('/community')
+def community():
+    return render_template('public/community.html')
+
 
 
 @main_bp.route('/blog')
