@@ -43,6 +43,34 @@
   <!-- Filter Bar -->
   <section class="py-8 px-6 bg-slate-900/50 backdrop-blur-sm border-y border-slate-800/50 sticky top-20 z-40">
     <div class="max-w-7xl mx-auto">
+      <!-- Mobile Search Bar -->
+      <div class="lg:hidden mb-6">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="mobileSearch"
+            placeholder="Search tournaments by name or location..."
+            class="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-slate-700 text-slate-300 placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lime-500/50 focus:border-lime-500/50 transition-all duration-300"
+          />
+          <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+            <button
+              id="clearMobileSearch"
+              class="hidden text-slate-400 hover:text-slate-300 transition-colors duration-200"
+              onclick="clearMobileSearchInput()"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Mobile Filter Toggle -->
       <div class="lg:hidden mb-6">
         <button
@@ -63,6 +91,34 @@
 
       <!-- Filter Content -->
       <div id="filterContent" class="hidden lg:block space-y-6">
+        <!-- Search Bar -->
+        <div>
+          <div class="relative max-w-lg mx-auto">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+              </svg>
+            </div>
+            <input
+              type="text"
+              id="tournamentSearch"
+              placeholder="Search tournaments by name or location..."
+              class="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-slate-700 text-slate-300 placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lime-500/50 focus:border-lime-500/50 transition-all duration-300"
+            />
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+              <button
+                id="clearSearch"
+                class="hidden text-slate-400 hover:text-slate-300 transition-colors duration-200"
+                onclick="clearSearchInput()"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Month Pills -->
         <div>
           <h3 class="text-slate-400 font-medium mb-4 text-sm uppercase tracking-wider">Month</h3>
@@ -357,15 +413,76 @@ document.querySelectorAll('.month-filter').forEach(button => {
 // Category filtering
 document.getElementById('categoryFilter').addEventListener('change', filterTournaments);
 
+// Search functionality
+function setupSearchBars() {
+  const desktopSearch = document.getElementById('tournamentSearch');
+  const mobileSearch = document.getElementById('mobileSearch');
+  const clearButton = document.getElementById('clearSearch');
+  const clearMobileButton = document.getElementById('clearMobileSearch');
+
+  if (desktopSearch) {
+    desktopSearch.addEventListener('input', function() {
+      syncSearchInputs(this.value);
+      filterTournaments();
+      toggleClearButton();
+    });
+  }
+
+  if (mobileSearch) {
+    mobileSearch.addEventListener('input', function() {
+      syncSearchInputs(this.value);
+      filterTournaments();
+      toggleClearButton();
+    });
+  }
+}
+
+function syncSearchInputs(value) {
+  const desktopSearch = document.getElementById('tournamentSearch');
+  const mobileSearch = document.getElementById('mobileSearch');
+  
+  if (desktopSearch) desktopSearch.value = value;
+  if (mobileSearch) mobileSearch.value = value;
+}
+
+function toggleClearButton() {
+  const searchValue = document.getElementById('tournamentSearch')?.value || document.getElementById('mobileSearch')?.value || '';
+  const clearButton = document.getElementById('clearSearch');
+  const clearMobileButton = document.getElementById('clearMobileSearch');
+  
+  if (searchValue.length > 0) {
+    if (clearButton) clearButton.classList.remove('hidden');
+    if (clearMobileButton) clearMobileButton.classList.remove('hidden');
+  } else {
+    if (clearButton) clearButton.classList.add('hidden');
+    if (clearMobileButton) clearMobileButton.classList.add('hidden');
+  }
+}
+
+function clearSearchInput() {
+  syncSearchInputs('');
+  filterTournaments();
+  toggleClearButton();
+}
+
+function clearMobileSearchInput() {
+  syncSearchInputs('');
+  filterTournaments();
+  toggleClearButton();
+}
+
 function filterTournaments() {
   const selectedMonth = document.querySelector('.month-filter.active').dataset.month;
   const selectedCategory = document.getElementById('categoryFilter').value;
+  const searchValue = (document.getElementById('tournamentSearch')?.value || document.getElementById('mobileSearch')?.value || '').toLowerCase().trim();
   const cards = document.querySelectorAll('.tournament-card');
   let visibleCount = 0;
   
   cards.forEach(card => {
     const cardMonth = card.dataset.month;
     const cardCategory = card.dataset.category;
+    const tournamentName = card.querySelector('h3')?.textContent.toLowerCase() || '';
+    const tournamentLocation = card.querySelector('.text-slate-400')?.textContent.toLowerCase() || '';
     
     let showCard = true;
     
@@ -376,6 +493,11 @@ function filterTournaments() {
     
     // Category filter
     if (selectedCategory !== 'all' && !cardCategory.includes(selectedCategory)) {
+      showCard = false;
+    }
+    
+    // Search filter
+    if (searchValue && !tournamentName.includes(searchValue) && !tournamentLocation.includes(searchValue)) {
       showCard = false;
     }
     
@@ -395,5 +517,10 @@ function filterTournaments() {
     noResults.classList.add('hidden');
   }
 }
+
+// Initialize search functionality when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  setupSearchBars();
+});
 </script>
 {% endblock %}
