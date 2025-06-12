@@ -16,7 +16,7 @@
     <!-- Links -->
     {% if tournament.external_url %}
     <div class="mb-8 text-center">
-      <a href="{{ tournament.external_url }}" target="_blank" class="feature-label hover:text-lime-300 font-medium transition-colors">
+      <a href="{{ tournament.external_url }}" target="_blank" class="text-lime-400 hover:text-lime-300 font-medium transition-colors">
         🌐 Official Tournament Site
       </a>
     </div>
@@ -26,17 +26,17 @@
     <div class="bg-slate-800/60 rounded-2xl border border-slate-700 shadow-lg shadow-slate-900/20 p-6 text-center">
       <h3 class="text-xl font-bold text-white mb-4">{{ attending_count }} fans are attending — {{ meeting_count }} are open to meet!</h3>
       <p class="text-slate-300 mb-6">
-        <strong>Tennis is better together.</strong> Make match day at <span class="font-semibold feature-label">{{ tournament.name }}</span> more social — join CourtSide Club.
+        <strong>Tennis is better together.</strong> Make match day at <span class="font-semibold text-lime-400">{{ tournament.name }}</span> more social — join CourtSide Club.
       </p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="{{ url_for('auth.signup') }}" 
-           class="cta-primary font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+           class="bg-gradient-to-r from-lime-400 to-blue-500 hover:from-lime-500 hover:to-blue-600 cta-primary-text font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
           Join
         </a>
         
         <a href="{{ url_for('auth.login') }}" 
-           class="cta-secondary font-semibold px-8 py-3 rounded-xl transition-all duration-300">
+           class="border border-white text-white hover:bg-slate-700/50 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
           Login
         </a>
       </div>

@@ -11,14 +11,13 @@ html, body {
 
 /* Global Font Color Standards */
 .hero-title {
-  color: #ffffff !important;
+  color: #F2F2F2 !important;
   font-weight: 700 !important;
   text-shadow: 0px 1px 2px rgba(0,0,0,0.25) !important;
 }
 
 .hero-subtitle {
-  color: #e2e2e2 !important;
-  font-weight: 400 !important;
+  color: #D1D5DB !important;
 }
 
 .body-text-dark {
@@ -34,7 +33,7 @@ html, body {
 }
 
 .cta-secondary-text {
-  color: #1f8e4d !important;
+  color: #0F5132 !important;
 }
 
 .section-heading {
@@ -42,76 +41,11 @@ html, body {
 }
 
 .feature-label {
-  color: #3ca65c !important;
+  color: #065F46 !important;
 }
 
 .footer-text {
   color: #9CA3AF !important;
-}
-
-/* Hero Section Styling */
-.hero-section h1 span {
-  color: #c1f0c1 !important;
-  font-weight: 600 !important;
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: unset !important;
-}
-
-.hero-section p {
-  color: #e2e2e2 !important;
-  font-weight: 400 !important;
-}
-
-/* Remove gradient text styling */
-.gradient-text {
-  background: none !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: unset !important;
-}
-
-/* CTA Button Styling */
-a.cta.primary, .cta-primary {
-  background: #1f8e4d !important;
-  color: #ffffff !important;
-  border: none !important;
-}
-
-a.cta.secondary, .cta-secondary {
-  border: 1px solid #1f8e4d !important;
-  color: #1f8e4d !important;
-  background: transparent !important;
-}
-
-/* Accent Color Variables */
-:root {
-  --accent-green: #3ca65c;
-}
-
-/* From the Blog Section */
-.from-blog {
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid #333;
-}
-
-.from-blog h2 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: #fff;
-}
-
-.from-blog a {
-  font-weight: 600;
-  color: var(--accent-green);
-  text-decoration: underline;
-}
-
-.from-blog p {
-  color: #ccc;
-  font-size: 0.9rem;
 }
 
 /* Tournament Detail Page Wrapper */
