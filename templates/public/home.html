@@ -507,36 +507,22 @@
       margin-bottom: 0.25rem;
     }
 
-    .tournament-date {
-      color: #6b7280;
-      font-size: 0.875rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .tournament-stats {
+    .tournament-detail {
       display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .member-count {
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
       color: #6b7280;
       font-size: 0.875rem;
-      font-weight: 500;
     }
 
-    .tournament-status {
-      display: inline-block;
-      background: var(--sage-100);
-      color: var(--sage-700);
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      width: fit-content;
+    .tournament-detail svg {
+      color: var(--sage-600);
+      flex-shrink: 0;
+    }
+
+    .tournament-detail:last-child {
+      margin-bottom: 1.5rem;
     }
 
     .tournament-actions {
@@ -718,11 +704,28 @@
         <div class="tournament-card">
           <div class="tournament-info">
             <h3>Wimbledon Championships</h3>
-            <p class="tournament-location">London, England</p>
-            <p class="tournament-date">July 1–14, 2024</p>
-            <div class="tournament-stats">
-              <span class="member-count">247 members attending</span>
-              <span class="tournament-status">Registration Open</span>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>London, England</span>
+            </div>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>July 1–14, 2024</span>
+            </div>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>247 members attending</span>
             </div>
           </div>
           <div class="tournament-actions">
@@ -733,11 +736,28 @@
         <div class="tournament-card">
           <div class="tournament-info">
             <h3>US Open</h3>
-            <p class="tournament-location">New York, USA</p>
-            <p class="tournament-date">Aug 26 – Sep 8, 2024</p>
-            <div class="tournament-stats">
-              <span class="member-count">312 members attending</span>
-              <span class="tournament-status">Registration Open</span>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>New York, USA</span>
+            </div>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>Aug 26 – Sep 8, 2024</span>
+            </div>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>312 members attending</span>
             </div>
           </div>
           <div class="tournament-actions">
@@ -748,11 +768,28 @@
         <div class="tournament-card">
           <div class="tournament-info">
             <h3>French Open</h3>
-            <p class="tournament-location">Paris, France</p>
-            <p class="tournament-date">May 26 – Jun 9, 2024</p>
-            <div class="tournament-stats">
-              <span class="member-count">192 members attending</span>
-              <span class="tournament-status">Registration Open</span>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>Paris, France</span>
+            </div>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>May 26 – Jun 9, 2024</span>
+            </div>
+            <div class="tournament-detail">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span>192 members attending</span>
             </div>
           </div>
           <div class="tournament-actions">
