@@ -265,7 +265,7 @@
   </style>
   {% block head %}{% endblock %}
 </head>
-<body class="bg-slate-950 min-h-screen">
+<body>
   <!-- Site Header -->
   <header class="site-header">
     <div class="header-container">
@@ -287,84 +287,21 @@
       <div class="header-buttons">
         <a href="{{ url_for('auth.login') }}" class="btn-sign-in">Sign In</a>
         <a href="{{ url_for('auth.signup') }}" class="btn-join-club">Join Club</a>
-
-        <!-- Mobile Menu Button -->
-        <button
-          onclick="toggleMobileMenu()"
-          class="lg:hidden w-12 h-12 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl flex items-center justify-center hover:bg-slate-700/50 transition-all duration-300 shadow-lg"
-          aria-label="Toggle menu"
-          id="mobile-menu-btn"
-        >
-          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-          <svg class="w-6 h-6 text-slate-300 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="close-icon">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        <button class="mobile-menu-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
           </svg>
         </button>
       </div>
     </div>
-  </nav>
+  </header>
 
-  <!-- Mobile Menu Overlay -->
-  <div class="fixed inset-0 z-40 lg:hidden hidden" id="mobile-menu-overlay">
-    <!-- Backdrop -->
-    <div class="absolute inset-0 bg-slate-950/95 backdrop-blur-xl" onclick="toggleMobileMenu()"></div>
-
-    <!-- Menu Panel -->
-    <div class="relative h-full flex flex-col">
-      <div class="h-20"></div>
-
-      <div class="flex-1 px-6 py-8 overflow-y-auto">
-        <div class="space-y-8">
-          <!-- Navigation Links -->
-          <div class="space-y-6">
-            <a href="{{ url_for('main.public_tournaments') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
-              Tournaments
-            </a>
-            <a href="{{ url_for('main.community') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
-              Community
-            </a>
-            <a href="{{ url_for('main.blog') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
-              Stories
-            </a>
-            <a href="{{ url_for('main.about') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
-              About
-            </a>
-            <a href="{{ url_for('main.faqs') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
-              Faqs
-            </a>
-          </div>
-
-          <!-- CTA Buttons -->
-          <div class="space-y-6 pt-8">
-            <a href="{{ url_for('auth.signup') }}" onclick="toggleMobileMenu()" class="w-full bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 cta-primary-text font-bold py-6 px-8 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wide inline-flex items-center justify-center mobile-nav-link">
-              JOIN
-              <svg class="ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-              </svg>
-            </a>
-
-            <a href="{{ url_for('auth.login') }}" onclick="toggleMobileMenu()" class="w-full border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-bold py-6 px-8 rounded-2xl text-xl backdrop-blur-sm bg-slate-900/50 transition-all duration-300 tracking-wide inline-flex items-center justify-center mobile-nav-link">
-              LOGIN
-            </a>
-          </div>
-
-          <!-- Footer -->
-          <div class="pt-12 text-center mobile-nav-link">
-            <div class="inline-flex items-center gap-3 text-slate-400 mb-4">
-              <div class="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
-              <svg class="w-5 h-5 text-lime-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"></path>
-              </svg>
-              <div class="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
-            </div>
-            <p class="text-slate-400 font-medium tracking-wide">Tennis is better together.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Main Content -->
+  <main class="pt-16">
+    {% block content %}{% endblock %}
+  </main>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -373,10 +310,6 @@
       {% endfor %}
     {% endif %}
   {% endwith %}
-
-  <main class="main-content">
-    {% block content %}{% endblock %}
-  </main>
 
   <script>
     let isMenuOpen = false;
