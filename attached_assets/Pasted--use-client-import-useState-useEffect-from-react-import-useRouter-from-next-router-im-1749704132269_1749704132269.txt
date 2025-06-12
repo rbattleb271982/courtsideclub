@@ -1,0 +1,187 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/router"
+import { Button } from "@/components/ui/button"
+import { Menu, X, Crown, ArrowRight } from "lucide-react"
+
+export default function Navigation() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const router = useRouter()
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const navLinks = [
+    { name: "How It Works", href: "/how-it-works" },
+    { name: "Browse Tournaments", href: "/tournaments" },
+    { name: "Free Lanyard", href: "/lanyard" },
+    { name: "FAQs", href: "/faqs" },
+    { name: "About", href: "/about" },
+  ]
+
+  // Prevent background scroll when menu is open
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : ""
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [isMenuOpen])
+
+  // Close menu on route change
+  useEffect(() => {
+    const handleRouteChange = () => setIsMenuOpen(false)
+    router.events.on("routeChangeStart", handleRouteChange)
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange)
+    }
+  }, [router])
+
+  return (
+    <>
+      {/* Navigation Bar */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Brand Logo */}
+            <a href="/" className="flex items-center gap-3 group">
+              <div className="w-8 h-8 bg-gradient-to-br from-lime-400 to-blue-500 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-lime-500/25 transition-all duration-300">
+                <Crown className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-bold text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text tracking-wide">
+                CourtSide Club
+              </span>
+            </a>
+
+            {/* Desktop Navigation Links */}
+            <div className="hidden lg:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide"
+                >
+                  {link.name}
+                </a>
+              ))}
+              <div className="flex items-center gap-4 ml-4">
+                <Button
+                  variant="outline"
+                  className="border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-medium px-6 py-2 rounded-xl transition-all duration-300"
+                >
+                  Member Login
+                </Button>
+                <Button className="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105">
+                  Join Now
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMenu}
+              className="lg:hidden w-12 h-12 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl flex items-center justify-center hover:bg-slate-700/50 transition-all duration-300 shadow-lg"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? <X className="w-6 h-6 text-slate-300" /> : <Menu className="w-6 h-6 text-slate-300" />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-slate-950/95 backdrop-blur-xl" onClick={toggleMenu} />
+
+          {/* Menu Panel */}
+          <div className="relative h-full flex flex-col">
+            <div className="h-20" />
+
+            <div className="flex-1 px-6 py-8 overflow-y-auto">
+              <div className="space-y-8">
+                {/* Navigation Links */}
+                <div className="space-y-6">
+                  {navLinks.map((link, index) => (
+                    <a
+                      key={link.name}
+                      href={link.href}
+                      onClick={toggleMenu}
+                      className="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30"
+                      style={{
+                        animationDelay: `${index * 100}ms`,
+                        animation: "slideInFromRight 0.5s ease-out forwards",
+                      }}
+                    >
+                      {link.name}
+                    </a>
+                  ))}
+                </div>
+
+                {/* CTA Buttons */}
+                <div className="space-y-6 pt-8">
+                  <Button
+                    onClick={toggleMenu}
+                    className="w-full bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold py-6 px-8 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wide"
+                    style={{
+                      animationDelay: "600ms",
+                      animation: "slideInFromRight 0.5s ease-out forwards",
+                    }}
+                  >
+                    JOIN NOW
+                    <ArrowRight className="ml-3 w-6 h-6" />
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    onClick={toggleMenu}
+                    className="w-full border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-bold py-6 px-8 rounded-2xl text-xl backdrop-blur-sm bg-slate-900/50 transition-all duration-300 tracking-wide"
+                    style={{
+                      animationDelay: "700ms",
+                      animation: "slideInFromRight 0.5s ease-out forwards",
+                    }}
+                  >
+                    MEMBER LOGIN
+                  </Button>
+                </div>
+
+                {/* Footer */}
+                <div
+                  className="pt-12 text-center"
+                  style={{
+                    animationDelay: "800ms",
+                    animation: "slideInFromRight 0.5s ease-out forwards",
+                  }}
+                >
+                  <div className="inline-flex items-center gap-3 text-slate-400 mb-4">
+                    <div className="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+                    <Crown className="w-5 h-5 text-lime-400" />
+                    <div className="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+                  </div>
+                  <p className="text-slate-400 font-medium tracking-wide">Tennis is better together.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Animation Styles */}
+      <style jsx>{`
+        @keyframes slideInFromRight {
+          from {
+            opacity: 0;
+            transform: translateX(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
+    </>
+  )
+}

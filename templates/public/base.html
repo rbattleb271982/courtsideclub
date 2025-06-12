@@ -96,34 +96,163 @@
       filter: blur(40px);
     }
     
-    /* Hide the old navigation for the new homepage design */
-    .min-h-screen .top-nav-wrapper {
+    /* Navigation styling */
+    .backdrop-blur-md {
+      backdrop-filter: blur(12px);
+    }
+    
+    /* Mobile menu animations */
+    .mobile-nav-link {
+      opacity: 0;
+      transform: translateX(30px);
+      transition: all 0.5s ease-out;
+    }
+    
+    .mobile-nav-link.animate-in {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    /* Ensure homepage has proper spacing for fixed nav */
+    .min-h-screen {
+      padding-top: 0;
+    }
+    
+    /* Main content spacing adjustment */
+    .main-content {
+      margin-top: 0;
+    }
+    
+    /* Hide flash messages on dark pages */
+    .min-h-screen + .alert {
       display: none;
     }
   </style>
   {% block head %}{% endblock %}
 </head>
 <body>
-  <div class="top-nav-wrapper">
-    <header class="mobile-header">
-      <div class="nav-container">
-        <div class="logo">CourtSide Club</div>
-        <button class="menu-toggle" onclick="toggleMenu(event)">☰</button>
-        <nav id="mobile-menu" class="mobile-menu">
-          <a href="{{ url_for('main.public_home') }}">Home</a>
-          <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
-          <a href="{{ url_for('main.public_tournaments') }}">Browse Tournaments</a>
-          <a href="/blog">Blog</a>
-          <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
-          <a href="{{ url_for('main.faqs') }}">FAQ</a>
-          <a href="{{ url_for('main.about') }}">About</a>
-          {% if request.path not in ['/login', '/signup'] %}
-            <a href="{{ url_for('auth.login') }}">Login</a>
-            <a href="{{ url_for('auth.signup') }}">Sign Up</a>
-          {% endif %}
-        </nav>
+  <!-- Modern Navigation Bar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50" id="main-nav">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <!-- Brand Logo -->
+        <a href="{{ url_for('main.public_home') }}" class="flex items-center gap-3 group">
+          <div class="w-8 h-8 bg-gradient-to-br from-lime-400 to-blue-500 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-lime-500/25 transition-all duration-300">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text tracking-wide">
+            CourtSide Club
+          </span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <div class="hidden lg:flex items-center gap-8">
+          <a href="{{ url_for('main.how_it_works') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
+            How It Works
+          </a>
+          <a href="{{ url_for('main.public_tournaments') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
+            Browse Tournaments
+          </a>
+          <a href="{{ url_for('main.lanyard_info_public') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
+            Free Lanyard
+          </a>
+          <a href="{{ url_for('main.faqs') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
+            FAQs
+          </a>
+          <a href="{{ url_for('main.about') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
+            About
+          </a>
+          <div class="flex items-center gap-4 ml-4">
+            <a href="{{ url_for('auth.login') }}" class="border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-medium px-6 py-2 rounded-xl transition-all duration-300 inline-flex items-center">
+              Member Login
+            </a>
+            <a href="{{ url_for('auth.signup') }}" class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 inline-flex items-center">
+              Join Now
+              <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button
+          onclick="toggleMobileMenu()"
+          class="lg:hidden w-12 h-12 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl flex items-center justify-center hover:bg-slate-700/50 transition-all duration-300 shadow-lg"
+          aria-label="Toggle menu"
+          id="mobile-menu-btn"
+        >
+          <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+          <svg class="w-6 h-6 text-slate-300 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="close-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
       </div>
-    </header>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="fixed inset-0 z-40 lg:hidden hidden" id="mobile-menu-overlay">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-950/95 backdrop-blur-xl" onclick="toggleMobileMenu()"></div>
+
+    <!-- Menu Panel -->
+    <div class="relative h-full flex flex-col">
+      <div class="h-20"></div>
+
+      <div class="flex-1 px-6 py-8 overflow-y-auto">
+        <div class="space-y-8">
+          <!-- Navigation Links -->
+          <div class="space-y-6">
+            <a href="{{ url_for('main.how_it_works') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
+              How It Works
+            </a>
+            <a href="{{ url_for('main.public_tournaments') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
+              Browse Tournaments
+            </a>
+            <a href="{{ url_for('main.lanyard_info_public') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
+              Free Lanyard
+            </a>
+            <a href="{{ url_for('main.faqs') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
+              FAQs
+            </a>
+            <a href="{{ url_for('main.about') }}" onclick="toggleMobileMenu()" class="block text-2xl font-medium text-slate-200 hover:text-lime-400 transition-colors duration-300 tracking-wide py-3 border-b border-slate-800/50 hover:border-lime-500/30 mobile-nav-link">
+              About
+            </a>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="space-y-6 pt-8">
+            <a href="{{ url_for('auth.signup') }}" onclick="toggleMobileMenu()" class="w-full bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold py-6 px-8 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wide inline-flex items-center justify-center mobile-nav-link">
+              JOIN NOW
+              <svg class="ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+              </svg>
+            </a>
+
+            <a href="{{ url_for('auth.login') }}" onclick="toggleMobileMenu()" class="w-full border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-bold py-6 px-8 rounded-2xl text-xl backdrop-blur-sm bg-slate-900/50 transition-all duration-300 tracking-wide inline-flex items-center justify-center mobile-nav-link">
+              MEMBER LOGIN
+            </a>
+          </div>
+
+          <!-- Footer -->
+          <div class="pt-12 text-center mobile-nav-link">
+            <div class="inline-flex items-center gap-3 text-slate-400 mb-4">
+              <div class="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+              <svg class="w-5 h-5 text-lime-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"></path>
+              </svg>
+              <div class="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+            </div>
+            <p class="text-slate-400 font-medium tracking-wide">Tennis is better together.</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -139,38 +268,74 @@
   </main>
 
   <script>
-    function toggleMenu(event) {
-      event.stopPropagation();
-      const menu = document.getElementById('mobile-menu');
-      const toggle = document.querySelector('.menu-toggle');
+    let isMenuOpen = false;
+
+    function toggleMobileMenu() {
+      const overlay = document.getElementById('mobile-menu-overlay');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      const navLinks = document.querySelectorAll('.mobile-nav-link');
       
-      // Toggle between flex and none based on current state
-      if (menu.style.display === 'flex') {
-        menu.style.display = 'none';
-        toggle.innerHTML = '☰';
+      isMenuOpen = !isMenuOpen;
+      
+      if (isMenuOpen) {
+        // Show menu
+        overlay.classList.remove('hidden');
+        menuIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Animate menu items
+        navLinks.forEach((link, index) => {
+          link.style.opacity = '0';
+          link.style.transform = 'translateX(30px)';
+          setTimeout(() => {
+            link.style.transition = 'all 0.5s ease-out';
+            link.style.opacity = '1';
+            link.style.transform = 'translateX(0)';
+          }, index * 100);
+        });
       } else {
-        menu.style.display = 'flex';
-        toggle.innerHTML = '✕';
+        // Hide menu
+        overlay.classList.add('hidden');
+        menuIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+        document.body.style.overflow = '';
+        
+        // Reset animations
+        navLinks.forEach(link => {
+          link.style.transition = '';
+          link.style.opacity = '';
+          link.style.transform = '';
+        });
       }
     }
 
-    document.addEventListener('click', function(event) {
-      const menu = document.getElementById('mobile-menu');
-      const toggle = document.querySelector('.menu-toggle');
-      if (!menu.contains(event.target) && !toggle.contains(event.target)) {
-        menu.style.display = 'none';
-        toggle.innerHTML = '☰';
+    // Close menu on window resize if desktop
+    window.addEventListener('resize', function() {
+      if (window.innerWidth >= 1024 && isMenuOpen) {
+        toggleMobileMenu();
       }
     });
 
-    // Ensure proper initial state
-    document.addEventListener('DOMContentLoaded', function () {
-      const menu = document.getElementById('mobile-menu');
-      const toggle = document.querySelector('.menu-toggle');
-      if (window.innerWidth < 768) {
-        menu.style.display = 'none';
-        toggle.innerHTML = '☰';
+    // Close menu on escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && isMenuOpen) {
+        toggleMobileMenu();
       }
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ensure menu is closed on load
+      const overlay = document.getElementById('mobile-menu-overlay');
+      const menuIcon = document.getElementById('menu-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      overlay.classList.add('hidden');
+      menuIcon.classList.remove('hidden');
+      closeIcon.classList.add('hidden');
+      isMenuOpen = false;
     });
   </script>
 </body>
