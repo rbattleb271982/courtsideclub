@@ -121,52 +121,172 @@
     .min-h-screen + .alert {
       display: none;
     }
+
+    /* Site Header Styles */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: white;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .header-container {
+      display: flex;
+      height: 4rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .header-container {
+        padding: 0 2rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .header-container {
+        padding: 0 3rem;
+      }
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-icon {
+      border-radius: 0.375rem;
+      background: #4a6b4a;
+      padding: 0.375rem;
+    }
+
+    .logo-icon span {
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .logo-text {
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 1.125rem;
+      letter-spacing: -0.025em;
+      color: #171717;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+    }
+
+    .nav-link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #525252;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: #3a5a3a;
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-sign-in {
+      display: none;
+      color: #525252;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    @media (min-width: 768px) {
+      .btn-sign-in {
+        display: inline;
+      }
+    }
+
+    .btn-sign-in:hover {
+      color: #3a5a3a;
+    }
+
+    .btn-join-club {
+      display: inline-flex;
+      align-items: center;
+      background: #4a6b4a;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-join-club:hover {
+      background: #3a5a3a;
+    }
+
+    .mobile-menu-btn {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      border: none;
+      padding: 0.5rem;
+      color: #404040;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
   </style>
   {% block head %}{% endblock %}
 </head>
 <body class="bg-slate-950 min-h-screen">
-  <!-- Modern Navigation Bar -->
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50" id="main-nav">
-    <div class="max-w-7xl mx-auto px-6 py-4">
-      <div class="flex items-center justify-between">
-        <!-- Brand Logo -->
-        <a href="{{ url_for('main.public_home') }}" class="flex items-center gap-3 group">
-          <div class="w-8 h-8 bg-gradient-to-br from-lime-400 to-blue-500 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-lime-500/25 transition-all duration-300">
-            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"></path>
-            </svg>
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo-container">
+        <a href="{{ url_for('main.public_home') }}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+          <div class="logo-icon">
+            <span>C</span>
           </div>
-          <span class="text-xl font-bold text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text tracking-wide">
-            CourtSide Club
-          </span>
+          <span class="logo-text">CourtSide Club</span>
         </a>
-
-        <!-- Desktop Navigation Links -->
-        <div class="hidden lg:flex items-center gap-8">
-          <a href="{{ url_for('main.public_tournaments') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
-            Tournaments
-          </a>
-          <a href="{{ url_for('main.community') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
-            Community
-          </a>
-          <a href="{{ url_for('main.blog') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
-            Stories
-          </a>
-          <a href="{{ url_for('main.about') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
-            About
-          </a>
-          <a href="{{ url_for('main.faqs') }}" class="text-slate-300 hover:text-lime-400 font-medium transition-colors duration-300 tracking-wide">
-            Faqs
-          </a>
-          <div class="flex items-center gap-4 ml-4">
-            <a href="{{ url_for('auth.login') }}" class="border border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-medium px-6 py-2 rounded-xl transition-all duration-300 inline-flex items-center">
-              Login
-            </a>
-            <a href="{{ url_for('auth.signup') }}" class="bg-csc-green hover:bg-csc-blue text-white font-bold px-6 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 inline-flex items-center">
-              Join
-            </a>
-          </div>
-        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="{{ url_for('main.public_tournaments') }}" class="nav-link">Tournaments</a>
+        <a href="{{ url_for('main.community') }}" class="nav-link">Community</a>
+        <a href="{{ url_for('main.blog') }}" class="nav-link">Stories</a>
+        <a href="{{ url_for('main.about') }}" class="nav-link">About</a>
+        <a href="{{ url_for('main.faqs') }}" class="nav-link">Faqs</a>
+      </nav>
+      <div class="header-buttons">
+        <a href="{{ url_for('auth.login') }}" class="btn-sign-in">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-join-club">Join Club</a>
 
         <!-- Mobile Menu Button -->
         <button

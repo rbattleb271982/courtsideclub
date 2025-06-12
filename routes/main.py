@@ -219,10 +219,11 @@ def sitemap():
         # Basic pages
         pages = [
             url_for('main.public_home', _external=True),
-            url_for('main.how_it_works', _external=True),
-            url_for('main.lanyard_info_public', _external=True),
-            url_for('main.faqs', _external=True),
+            url_for('main.public_tournaments', _external=True),
+            url_for('main.community', _external=True),
             url_for('main.blog', _external=True),
+            url_for('main.about', _external=True),
+            url_for('main.faqs', _external=True),
             url_for('main.privacy', _external=True),
             url_for('main.terms', _external=True),
         ]
