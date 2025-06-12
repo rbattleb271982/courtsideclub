@@ -1,0 +1,83 @@
+// Homepage.tsx
+import { Button } from "@/components/ui/button"
+import { ArrowRight, Users, Calendar, Globe, Heart } from "lucide-react"
+
+export default function Homepage() {
+  return (
+    <>
+      {/* Hero Section */}
+      <section className="pt-16 pb-20 lg:pt-24 lg:pb-32 bg-gradient-to-b from-warm-50 to-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-neutral-900 mb-6 leading-tight">
+              Where tennis passion
+              <span className="block text-sage-700">meets community</span>
+            </h1>
+            <p className="text-lg md:text-xl text-neutral-600 mb-8 leading-relaxed max-w-2xl mx-auto">
+              Connect with fellow tennis enthusiasts at tournaments worldwide. From intimate 250s to Grand Slam spectacles, experience the sport through shared moments and lasting friendships.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" className="bg-sage-600 hover:bg-sage-700 text-white px-8 py-3 rounded-full">
+                Start Your Journey
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="px-8 py-3 rounded-full border-sage-300 text-sage-700 hover:bg-sage-50"
+              >
+                Explore Tournaments
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Highlights */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif font-semibold text-neutral-900">
+              The CourtSide Advantage
+            </h2>
+            <p className="mt-4 text-lg text-neutral-600 max-w-xl mx-auto">
+              Experience world-class tennis with a crew that gets it. Join a trusted community, lock in your tournament plans, and show up ready to connect.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {[
+              { icon: Users, title: "Curated Community", desc: "Meet verified tennis lovers who share your energy." },
+              { icon: Calendar, title: "Tournament Planning", desc: "Easily coordinate which sessions you're attending." },
+              { icon: Globe, title: "Global Presence", desc: "From New York to Melbourne, find your tennis crew worldwide." },
+              { icon: Heart, title: "Shared Experiences", desc: "Make the most of every match through IRL connection." },
+            ].map((feature, index) => (
+              <div key={index} className="text-center group">
+                <div className="w-16 h-16 bg-sage-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-sage-200 transition-colors">
+                  <feature.icon className="h-8 w-8 text-sage-600" />
+                </div>
+                <h3 className="text-xl font-medium text-neutral-900 mb-2">{feature.title}</h3>
+                <p className="text-neutral-600 text-sm">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-sage-50 border-t border-sage-100">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-neutral-900 mb-6">
+            Ready to meet your tournament crew?
+          </h2>
+          <p className="text-lg text-neutral-600 mb-8 max-w-2xl mx-auto">
+            Join CourtSide Club, pick your sessions, and order your free lanyard to connect with fellow fans at events worldwide.
+          </p>
+          <Button size="lg" className="bg-sage-600 hover:bg-sage-700 text-white px-8 py-3 rounded-full">
+            Claim Your Free Lanyard
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </section>
+    </>
+  )
+}
