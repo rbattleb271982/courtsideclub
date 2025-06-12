@@ -2608,6 +2608,45 @@ h1.hero-text-shadow span {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
 }
 
+/* Soho-style homepage support */
+.hero-title {
+  font-family: "Georgia", "Times New Roman", serif !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+}
+
+/* Primary green flat color - no gradients */
+.btn-flat-green {
+  background-color: #669127 !important;
+  color: white !important;
+  border: none !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.btn-flat-green:hover {
+  background-color: #557a20 !important;
+  color: white !important;
+}
+
+/* Remove conflicting Tailwind gradients */
+.no-gradients {
+  background-image: none !important;
+}
+
+/* Ensure mobile responsiveness for grid layouts */
+@media (max-width: 768px) {
+  .features {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    padding: 2rem 1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .features {
+    padding: 1.5rem 0.75rem !important;
+  }
+}
+
 /* CourtSide Experience Section */
 .courtside-experience {
   display: flex;

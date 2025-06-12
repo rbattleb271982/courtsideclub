@@ -1,10 +1,11 @@
+<!-- home.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CourtSide Club</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="/static/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Crimson+Text:wght@700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -13,7 +14,7 @@
       background: #fff;
     }
     .hero {
-      background: url('{{ url_for('static', filename='images/hero-tennis.jpg') }}') no-repeat center center / cover;
+      background: url('/static/images/hero-tennis.jpg') no-repeat center center / cover;
       text-align: center;
       color: white;
       padding: 6rem 1.5rem 4rem;
@@ -78,7 +79,7 @@
   <header class="hero">
     <h1>Tennis is <span style="color: #EDB418;">better together</span></h1>
     <p class="subtitle">Join the community built for fans who want more from every tournament day.</p>
-    <a href="{{ url_for('auth.signup') }}" class="btn-primary">Join Now</a>
+    <a href="/signup" class="btn-primary">Join Now</a>
   </header>
 
   <section class="features">
@@ -95,7 +96,7 @@
     <div class="feature">
       <div class="feature-icon">🌍</div>
       <h3>Global Presence</h3>
-      <p>From Grand Slams to 500s — we're where the fans are, worldwide.</p>
+      <p>From Grand Slams to 500s — we’re where the fans are, worldwide.</p>
     </div>
     <div class="feature">
       <div class="feature-icon">🎾</div>
