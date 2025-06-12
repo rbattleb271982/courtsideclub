@@ -1,0 +1,188 @@
+Add the following React page component for /community
+Replace your existing community page with this full component:
+Paste this code into the appropriate file (e.g., pages/community.tsx or equivalent in your project):
+// pages/community.tsx
+
+"use client"
+
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { UserPlus, Calendar, Users, Share, ArrowRight } from "lucide-react"
+
+export default function CommunityPage() {
+  const steps = [
+    {
+      title: "Create Profile",
+      description: "Tell us your tournament plans and what kind of fan you are.",
+      number: "01",
+    },
+    {
+      title: "Choose Sessions",
+      description: "Mark which days/sessions you're attending — from Grand Slams to 500s.",
+      number: "02",
+    },
+    {
+      title: "See Who's Going",
+      description: "Browse fellow members who'll be there and opt in to meet.",
+      number: "03",
+    },
+    {
+      title: "Meet Courtside",
+      description: "Order your lanyard and connect with fans IRL, effortlessly.",
+      number: "04",
+    },
+  ]
+
+  const values = [
+    {
+      title: "Authentic Connections",
+      description: "We believe in genuine relationships built around shared passion for tennis.",
+    },
+    {
+      title: "Inclusive Community",
+      description: "Whether you're a casual fan or tennis obsessive, there’s a place for you here.",
+    },
+    {
+      title: "Memorable Experiences",
+      description: "We create moments that last long after the final point is played.",
+    },
+  ]
+
+  const options = [
+    {
+      icon: UserPlus,
+      title: "Join Now",
+      description: "Become a member and start connecting with tennis fans worldwide.",
+      action: "Get Started",
+    },
+    {
+      icon: Calendar,
+      title: "Browse Events",
+      description: "Explore upcoming tournaments and local meetups in your area.",
+      action: "View Events",
+    },
+    {
+      icon: Users,
+      title: "RSVP",
+      description: "Confirm your attendance and see who else will be there.",
+      action: "RSVP Now",
+    },
+    {
+      icon: Share,
+      title: "Share Your Story",
+      description: "Tell us about your tennis experiences and inspire others.",
+      action: "Share Story",
+    },
+  ]
+
+  return (
+    <main className="pt-16 font-sans text-neutral-900">
+      {/* Hero */}
+      <section className="py-20 bg-white text-center px-6">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold mb-4">
+          The CourtSide Advantage
+        </h1>
+        <p className="text-xl md:text-2xl mb-6 font-light text-neutral-600">
+          Experience world-class tennis with a crew that gets it.
+        </p>
+        <p className="text-neutral-700 text-lg max-w-2xl mx-auto leading-relaxed">
+          Join a trusted community, lock in your tournament plans, and show up ready to connect with fellow tennis
+          enthusiasts who share your passion for the sport.
+        </p>
+      </section>
+
+      {/* Steps */}
+      <section className="py-20 bg-neutral-50">
+        <div className="max-w-4xl mx-auto px-6 space-y-12">
+          <h2 className="text-3xl font-serif font-semibold text-center">How CourtSide Works</h2>
+          {steps.map((step) => (
+            <div key={step.number} className="flex gap-6">
+              <div className="w-16 h-16 bg-[#669127]/10 rounded-xl flex items-center justify-center text-[#669127] font-semibold text-xl">
+                {step.number}
+              </div>
+              <div>
+                <h3 className="text-xl font-serif font-semibold">{step.title}</h3>
+                <p className="text-neutral-600">{step.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto text-center px-6 grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div>
+            <h3 className="text-5xl font-serif font-semibold text-[#669127]">1,200+</h3>
+            <p className="text-neutral-600 mt-2">Active Members</p>
+          </div>
+          <div>
+            <h3 className="text-5xl font-serif font-semibold text-[#669127]">150+</h3>
+            <p className="text-neutral-600 mt-2">Tournaments Covered</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-20 bg-neutral-50 px-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+          {values.map((v, i) => (
+            <div key={i} className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="w-12 h-12 bg-[#669127]/20 text-[#669127] flex items-center justify-center rounded-full mb-4 font-semibold text-xl">
+                {i + 1}
+              </div>
+              <h4 className="text-lg font-serif font-semibold mb-2">{v.title}</h4>
+              <p className="text-neutral-600">{v.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Engagement Options */}
+      <section className="py-20 bg-white px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-serif font-semibold text-center mb-12">Ways to Engage</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {options.map((opt, i) => (
+              <div key={i} className="bg-neutral-50 p-6 rounded-xl flex gap-6 items-start hover:bg-[#F0F4EC] transition-colors">
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                  <opt.icon className="text-[#669127] w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-serif font-semibold mb-1">{opt.title}</h3>
+                  <p className="text-neutral-600 mb-2">{opt.description}</p>
+                  <Button variant="outline" size="sm" className="border-[#669127] text-[#669127] hover:bg-[#F0F4EC] rounded-md">
+                    {opt.action}
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-20 bg-[#464C3F] text-[#FBFAFB] px-6">
+        <div className="max-w-4xl mx-auto text-center space-y-6">
+          <h2 className="text-4xl font-serif font-semibold">Ready to Join the Community?</h2>
+          <p className="text-lg">Connect with tennis fans at your next tournament. Your crew is waiting.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button className="bg-white text-[#464C3F] hover:bg-[#FBFAFB] px-6 py-3 rounded-lg">Join CourtSide</Button>
+            <Button variant="outline" className="border-[#FBFAFB] text-[#FBFAFB] hover:bg-[#5A6353] px-6 py-3 rounded-lg">
+              Browse Community
+            </Button>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
+2. After pasting, apply global font and color rules:
+If not already done in globals.css or Tailwind config, make sure:
+font-serif = "Crimson Text", serif
+font-sans = "Inter", sans-serif
+Add the two fonts via Google Fonts in the <head> or _document.tsx
+Final Reminder for Replit Agent:
+Do not use placeholder images.
+Double check the color codes and fonts match the CourtSide Club style guide.
+Do not finish until you’ve fully tested the layout, typography, spacing, and responsiveness on /community.
