@@ -2,210 +2,44 @@
 
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
 
-{% block head %}
-<style>
-body {
-  background-color: #ffffff !important;
-}
-
-.tournament-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 1rem;
-  padding-top: 1.5rem;
-  background-color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.tournament-container h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin-bottom: 0.75rem;
-  line-height: 1.25;
-}
-
-.tournament-container p {
-  color: #4a5568;
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.tournament-container h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1a202c;
-  margin: 1.5rem 0 0.75rem 0;
-}
-
-.tournament-links {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1.5rem 0;
-}
-
-.tournament-links li {
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.tournament-links a {
-  color: #2c7a7b;
-  text-decoration: none;
-  font-weight: 500;
-  padding: 0.5rem 0;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-  flex: 1;
-}
-
-.tournament-links a:hover {
-  background-color: #e6f5f3;
-  text-decoration: none;
-}
-
-.snapshot-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 1rem;
-  margin-top: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.snapshot-card h3 {
-  margin-top: 0;
-  font-size: 1.1rem;
-  color: #1a202c;
-  font-weight: 600;
-}
-
-.snapshot-card p {
-  font-size: 0.95rem;
-  margin: 0.5rem 0;
-  color: #2d3748;
-  display: block;
-}
-
-.snapshot-card strong {
-  font-weight: 700;
-}
-
-.button-outline {
-  border: 2px solid #00703c;
-  background: transparent;
-  color: #00703c;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 600;
-  margin-right: 0.5rem;
-  display: inline-block;
-  text-decoration: none;
-  margin-top: 0.75rem;
-}
-
-.button-outline:hover {
-  background: #00703c;
-  color: white;
-  text-decoration: none;
-}
-
-.button-primary {
-  background-color: #00703c;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  display: inline-block;
-  text-decoration: none;
-  margin-top: 0.75rem;
-}
-
-.button-primary:hover {
-  background-color: #005a2e;
-  color: white;
-  text-decoration: none;
-}
-
-@media (max-width: 768px) {
-  .tournament-container {
-    padding: 0.75rem;
-    padding-top: 1.5rem;
-  }
-  
-  .snapshot-card {
-    margin: 1rem -0.75rem 0;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .stats {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    font-size: 1.1rem;
-  }
-  
-  .stat-block {
-    margin: 0;
-    padding: 4px 0;
-  }
-  
-  .tournament-container h1 {
-    font-size: 1.5rem;
-  }
-  
-  .tournament-container p {
-    font-size: 0.95rem;
-  }
-  
-  .tournament-container h3 {
-    font-size: 1rem;
-  }
-  
-  .snapshot-card {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-  }
-  
-  .tournament-links {
-    margin-bottom: 12px;
-  }
-  
-  .tournament-container {
-    padding-top: 12px;
-  }
-}
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="tournament-container">
-  <h1>{{ tournament.name }}{% if tournament.alt_name %} ({{ tournament.alt_name }}){% endif %}</h1>
-  <p><span>📍</span>{{ tournament.city }}, {{ tournament.country }}</p>
-  <p><span>📅</span>{{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
+<div class="min-h-screen bg-slate-950 text-white">
+  <div class="max-w-xl mx-auto my-16 px-6">
+    <!-- Tournament Info -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-white mb-4">{{ tournament.name }}{% if tournament.alt_name %} ({{ tournament.alt_name }}){% endif %}</h1>
+      <p class="text-slate-300 mb-2">📍 {{ tournament.city }}, {{ tournament.country }}</p>
+      <p class="text-slate-300">📅 {{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }}</p>
+    </div>
 
-  <ul class="tournament-links">
-    <li><span>🌐</span><a href="https://www.rolandgarros.com/en-us/" target="_blank">Official Tournament Site</a></li>
-  </ul>
+    <!-- Links -->
+    {% if tournament.external_url %}
+    <div class="mb-8 text-center">
+      <a href="{{ tournament.external_url }}" target="_blank" class="text-lime-400 hover:text-lime-300 font-medium transition-colors">
+        🌐 Official Tournament Site
+      </a>
+    </div>
+    {% endif %}
 
-  <div class="snapshot-card">
-    <h3>{{ attending_count }} fans are attending — {{ meeting_count }} are open to meet!</h3>
-    <p><strong>Tennis is better when it's shared.</strong> Make match day at {{ tournament.name }} more social — join CourtSide Club.</p>
+    <!-- Callout Card -->
+    <div class="bg-slate-800/60 rounded-2xl border border-slate-700 shadow-lg shadow-slate-900/20 p-6 text-center">
+      <h3 class="text-xl font-bold text-white mb-4">{{ attending_count }} fans are attending — {{ meeting_count }} are open to meet!</h3>
+      <p class="text-slate-300 mb-6">
+        <strong>Tennis is better together.</strong> Make match day at <span class="font-semibold text-lime-400">{{ tournament.name }}</span> more social — join CourtSide Club.
+      </p>
 
-    <a href="{{ url_for('auth.login') }}" class="button-outline">Log In</a>
-    <a href="{{ url_for('auth.signup') }}" class="button-primary">Sign Up</a>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="{{ url_for('auth.signup') }}" 
+           class="bg-gradient-to-r from-lime-400 to-blue-500 hover:from-lime-500 hover:to-blue-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+          Join Now
+        </a>
+        
+        <a href="{{ url_for('auth.login') }}" 
+           class="border border-white text-white hover:bg-slate-700/50 font-semibold px-8 py-3 rounded-xl transition-all duration-300">
+          Log In
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
