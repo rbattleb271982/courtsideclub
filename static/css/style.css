@@ -2439,6 +2439,50 @@ input:checked + .toggle-slider:before {
   }
 }
 
+/* Browse Tournaments - Tighter Layout */
+.tournament-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  font-family: Inter, sans-serif;
+}
+
+.tournament-title {
+  font-family: 'Crimson Text', serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+
+.tournament-meta {
+  font-size: 15px;
+  color: #5a5a5a;
+  line-height: 1.4;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.details-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 15px;
+  color: #335533;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.details-link:hover {
+  text-decoration: underline;
+}
+
 /* Mobile responsive helpers */
 .desktop-only {
   display: block;

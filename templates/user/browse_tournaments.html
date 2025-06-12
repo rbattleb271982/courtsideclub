@@ -37,83 +37,13 @@
       <div class="tournaments-grid">
         {% for tournament in tournaments %}
           <div class="tournament-card">
-            <div class="tournament-header">
-              <h3 class="tournament-name">
-                <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">{{ tournament.name }}</a>
-              </h3>
-              <div class="tournament-meta">
-                {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d') }} · {{ tournament.city }}, {{ tournament.country }}
-              </div>
+            <h2 class="tournament-title">{{ tournament.name }}</h2>
+            <div class="tournament-meta">
+              <div class="meta-row"><span class="icon">📍</span> {{ tournament.city }}, {{ tournament.country }}</div>
+              <div class="meta-row"><span class="icon">📅</span> {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</div>
+              <div class="meta-row"><span class="icon">👥</span> {{ tournament.attendee_count }} members attending</div>
             </div>
-            
-
-            
-            <div class="tournament-stats">
-              <div class="stat-item">
-                <span class="stat-value">
-                  {{ tournament.attendee_count }}
-                </span> 
-                <span class="stat-label">attending</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-value">
-                  {{ tournament.meetup_count }}
-                </span> 
-                <span class="stat-label">open to meeting</span>
-              </div>
-            </div>
-            
-            <div class="tournament-actions">
-              {% if tournament.attendance_status == 'attending' and tournament.has_sessions %}
-                <!-- User is attending with sessions selected -->
-                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
-                  <input type="hidden" name="attendance_type" value="attending">
-                  <button type="submit" class="btn btn-success w-100">
-                    I'm Attending
-                  </button>
-                </form>
-                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
-                  <input type="hidden" name="attendance_type" value="maybe">
-                  <button type="submit" class="btn btn-outline-success w-100">
-                    Maybe Attending
-                  </button>
-                </form>
-                <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
-                  <button type="submit" class="btn-clear">Not Attending</button>
-                </form>
-              {% elif tournament.attendance_status == 'maybe' %}
-                <!-- User has UserTournament but not fully attending or no sessions -->
-                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
-                  <input type="hidden" name="attendance_type" value="attending">
-                  <button type="submit" class="btn btn-outline-success w-100">
-                    I'm Attending
-                  </button>
-                </form>
-                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
-                  <input type="hidden" name="attendance_type" value="maybe">
-                  <button type="submit" class="btn btn-success w-100">
-                    Maybe Attending
-                  </button>
-                </form>
-                <form action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}" method="post" class="attendance-form">
-                  <button type="submit" class="btn-clear">Not Attending</button>
-                </form>
-              {% else %}
-                <!-- User is not attending this tournament -->
-                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
-                  <input type="hidden" name="attendance_type" value="attending">
-                  <button type="submit" class="btn btn-outline-success w-100">
-                    I'm Attending
-                  </button>
-                </form>
-                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
-                  <input type="hidden" name="attendance_type" value="maybe">
-                  <button type="submit" class="btn btn-outline-success w-100">
-                    Maybe Attending
-                  </button>
-                </form>
-              {% endif %}
-            </div>
+            <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="details-link">View Details →</a>
           </div>
         {% endfor %}
       </div>
