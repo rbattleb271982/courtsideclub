@@ -57,9 +57,8 @@
       left: 0;
       right: 0;
       z-index: 50;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #f5f5f5;
+      background: white;
+      border-bottom: 1px solid var(--warm-100);
     }
 
     .header-container {
@@ -113,7 +112,7 @@
     .nav-links {
       display: none;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1rem;
     }
 
     @media (min-width: 768px) {
@@ -124,14 +123,17 @@
 
     .nav-link {
       font-size: 0.875rem;
-      font-weight: 500;
-      color: #404040;
+      font-weight: 600;
+      color: #171717;
       text-decoration: none;
-      transition: color 0.2s ease;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: var(--sage-100);
+      transition: all 0.2s ease;
     }
 
     .nav-link:hover {
-      color: #7d8a6e;
+      background: var(--sage-200);
     }
 
     .header-buttons {
@@ -143,14 +145,14 @@
     .btn-sign-in {
       display: none;
       align-items: center;
-      background: transparent;
-      color: #404040;
+      background: white;
+      color: var(--sage-600);
       padding: 0.5rem 1rem;
       border-radius: 9999px;
       text-decoration: none;
       font-size: 0.875rem;
       font-weight: 500;
-      border: 1px solid #d4d4d8;
+      border: 1px solid var(--sage-300);
       transition: all 0.2s ease;
     }
 
@@ -161,13 +163,13 @@
     }
 
     .btn-sign-in:hover {
-      background: #f4f4f5;
+      background: var(--sage-50);
     }
 
     .btn-join-club {
       display: inline-flex;
       align-items: center;
-      background: #7d8a6e;
+      background: var(--sage-600);
       color: white;
       padding: 0.5rem 1rem;
       border-radius: 9999px;
@@ -179,7 +181,7 @@
     }
 
     .btn-join-club:hover {
-      background: #6b7861;
+      background: var(--sage-700);
     }
 
     .mobile-menu-btn {
