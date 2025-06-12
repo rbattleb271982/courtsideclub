@@ -513,49 +513,30 @@
       margin-bottom: 1.5rem;
     }
 
-    .tournament-members {
+    .tournament-stats {
       display: flex;
-      align-items: center;
-      gap: 0.75rem;
+      flex-direction: column;
+      gap: 0.5rem;
       margin-bottom: 1.5rem;
     }
 
-    .member-avatars {
-      display: flex;
-      align-items: center;
-    }
-
-    .avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--sage-400), var(--sage-600));
-      border: 2px solid white;
-      margin-left: -8px;
-    }
-
-    .avatar:first-child {
-      margin-left: 0;
-    }
-
-    .avatar-count {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #6b7280;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-left: -8px;
-      border: 2px solid white;
-    }
-
-    .tournament-members span {
+    .member-count {
       color: #6b7280;
       font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .tournament-status {
+      display: inline-block;
+      background: var(--sage-100);
+      color: var(--sage-700);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      width: fit-content;
     }
 
     .tournament-actions {
@@ -739,14 +720,9 @@
             <h3>Wimbledon Championships</h3>
             <p class="tournament-location">London, England</p>
             <p class="tournament-date">July 1–14, 2024</p>
-            <div class="tournament-members">
-              <div class="member-avatars">
-                <div class="avatar"></div>
-                <div class="avatar"></div>
-                <div class="avatar"></div>
-                <div class="avatar-count">+244</div>
-              </div>
-              <span>247 members attending</span>
+            <div class="tournament-stats">
+              <span class="member-count">247 members attending</span>
+              <span class="tournament-status">Registration Open</span>
             </div>
           </div>
           <div class="tournament-actions">
@@ -759,14 +735,9 @@
             <h3>US Open</h3>
             <p class="tournament-location">New York, USA</p>
             <p class="tournament-date">Aug 26 – Sep 8, 2024</p>
-            <div class="tournament-members">
-              <div class="member-avatars">
-                <div class="avatar"></div>
-                <div class="avatar"></div>
-                <div class="avatar"></div>
-                <div class="avatar-count">+309</div>
-              </div>
-              <span>312 members attending</span>
+            <div class="tournament-stats">
+              <span class="member-count">312 members attending</span>
+              <span class="tournament-status">Registration Open</span>
             </div>
           </div>
           <div class="tournament-actions">
@@ -779,14 +750,9 @@
             <h3>French Open</h3>
             <p class="tournament-location">Paris, France</p>
             <p class="tournament-date">May 26 – Jun 9, 2024</p>
-            <div class="tournament-members">
-              <div class="member-avatars">
-                <div class="avatar"></div>
-                <div class="avatar"></div>
-                <div class="avatar"></div>
-                <div class="avatar-count">+189</div>
-              </div>
-              <span>192 members attending</span>
+            <div class="tournament-stats">
+              <span class="member-count">192 members attending</span>
+              <span class="tournament-status">Registration Open</span>
             </div>
           </div>
           <div class="tournament-actions">
