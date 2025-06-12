@@ -50,9 +50,156 @@
       font-family: 'Crimson Text', Georgia, serif;
     }
 
+    /* Site Header */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .header-container {
+      display: flex;
+      height: 4rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .header-container {
+        padding: 0 2rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .header-container {
+        padding: 0 3rem;
+      }
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-icon {
+      border-radius: 0.375rem;
+      background: var(--sage-600);
+      padding: 0.375rem;
+    }
+
+    .logo-icon span {
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .logo-text {
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 1.125rem;
+      letter-spacing: -0.025em;
+      color: #171717;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+    }
+
+    .nav-link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #404040;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: #7d8a6e;
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-sign-in {
+      display: none;
+      align-items: center;
+      background: transparent;
+      color: #404040;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid #d4d4d8;
+      transition: all 0.2s ease;
+    }
+
+    @media (min-width: 768px) {
+      .btn-sign-in {
+        display: inline-flex;
+      }
+    }
+
+    .btn-sign-in:hover {
+      background: #f4f4f5;
+    }
+
+    .btn-join-club {
+      display: inline-flex;
+      align-items: center;
+      background: #7d8a6e;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-join-club:hover {
+      background: #6b7861;
+    }
+
+    .mobile-menu-btn {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      border: none;
+      padding: 0.5rem;
+      color: #404040;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+
     /* Hero Section */
     .hero {
-      padding: 4rem 1rem 5rem;
+      padding: 8rem 1rem 5rem;
       background: linear-gradient(180deg, var(--warm-50) 0%, #ffffff 100%);
       display: flex;
       align-items: center;
@@ -322,6 +469,37 @@
   </style>
 </head>
 <body>
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo-container">
+        <a href="{{ url_for('main.public_home') }}" class="logo-container">
+          <div class="logo-icon">
+            <span>C</span>
+          </div>
+          <span class="logo-text">CourtSide Club</span>
+        </a>
+      </div>
+      <nav class="nav-links">
+        <a href="/tournaments" class="nav-link">Tournaments</a>
+        <a href="/how-it-works" class="nav-link">Community</a>
+        <a href="/blog" class="nav-link">Stories</a>
+        <a href="/about" class="nav-link">About</a>
+      </nav>
+      <div class="header-buttons">
+        <a href="/login" class="btn-sign-in">Sign In</a>
+        <a href="/signup" class="btn-join-club">Join Club</a>
+        <button class="mobile-menu-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-content">
@@ -330,14 +508,14 @@
         Connect with fellow tennis enthusiasts at tournaments worldwide. From intimate 250s to Grand Slam spectacles, experience the sport through shared moments and lasting friendships.
       </p>
       <div class="hero-buttons">
-        <a href="{{ url_for('auth.signup') }}" class="cta-button">
+        <a href="/signup" class="cta-button">
           Start Your Journey
           <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12,5 19,12 12,19"></polyline>
           </svg>
         </a>
-        <a href="{{ url_for('main.public_tournaments') }}" class="cta-button-secondary">Explore Tournaments</a>
+        <a href="/tournaments" class="cta-button-secondary">Explore Tournaments</a>
       </div>
     </div>
   </section>
