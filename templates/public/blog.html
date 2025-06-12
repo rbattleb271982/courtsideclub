@@ -41,6 +41,39 @@
   <!-- Content Section -->
   <section class="py-16 px-6 sm:px-10">
     <div class="max-w-4xl mx-auto">
+      {% if blog_posts %}
+      <!-- Published Blog Posts -->
+      <div class="grid gap-8">
+        {% for post in blog_posts %}
+        <article class="bg-slate-800/50 backdrop-blur-sm rounded-3xl border border-slate-700 p-8 hover:bg-slate-800/70 transition-all duration-300">
+          <div class="flex items-start justify-between mb-6">
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold text-white mb-3 hover:text-lime-400 transition-colors">
+                <a href="{{ url_for('main.blog_post', slug=post.slug) }}">{{ post.title }}</a>
+              </h3>
+              <p class="text-slate-300 text-lg leading-relaxed mb-4">
+                {{ post.summary }}
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between">
+            <div class="text-slate-400 text-sm">
+              <span>{{ post.created_at.strftime('%B %d, %Y') }}</span>
+              {% if post.author %}
+              <span class="mx-2">•</span>
+              <span>By {{ post.author.get_full_name() or post.author.name }}</span>
+              {% endif %}
+            </div>
+            <a href="{{ url_for('main.blog_post', slug=post.slug) }}" class="text-lime-400 hover:text-lime-300 font-medium transition-colors">
+              Read More →
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <!-- Coming Soon Cards -->
       <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         
         <!-- Card 1 -->
@@ -83,6 +116,7 @@
         </div>
 
       </div>
+      {% endif %}
     </div>
   </section>
 
