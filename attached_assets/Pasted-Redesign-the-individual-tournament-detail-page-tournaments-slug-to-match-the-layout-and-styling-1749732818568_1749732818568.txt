@@ -1,0 +1,38 @@
+Redesign the individual tournament detail page (/tournaments/<slug>) to match the layout and styling from the v0 version shown in this screenshot:
+Use the homepage as the design reference for:
+Fonts (serif headlines, sans-serif body)
+Colors (hero section, buttons, cards)
+Nav bar styling and spacing
+🔨 Implementation Instructions
+1. Layout & Styling
+Use a two-column layout:
+Left side: tournament name, location, date, and short intro paragraph
+Right side: CTA card with attending fan count and “Join Club” + “Login” buttons
+Match all font sizes, spacing, and weight to the homepage type scale
+Remove all old background images or gradients — use solid white background throughout
+2. Navigation
+Make sure the top nav matches exactly what’s on the homepage:
+Font, spacing, hover state, Join Club button color
+Use the current nav template — do not leave old navs on this page
+3. CTA Box
+Pull the actual attending numbers from the database (fans attending + open to meet)
+The green “Join Club” button should redirect to signup
+Login button should go to /login
+Match spacing, border radius, and hover states shown in the v0 layout
+🧠 Article Feed Logic
+Below the hero section, implement the blog article list shown in the screenshot:
+4. Filters
+Show a category filter bar with pill-style buttons (e.g., “Travel & Hotels (8)”)
+Add a search input field and a sort dropdown (“Newest First”)
+All filters must be powered by Flask/Jinja, not JavaScript:
+On submit, reload the page and pass filters as query params (e.g., ?category=travel&sort=newest&q=cabo)
+Style these filters to match the v0 layout (padding, rounded, font size)
+5. Articles List
+Display articles in a responsive grid:
+1 column on mobile, 2–3 columns on tablet/desktop
+Pull data from the blog post model (title, excerpt, date, author, read time, category)
+For “Featured” articles, span 2 columns and show a small label
+Each article must link to the full post at /stories/<slug>
+6. Pagination or Load More
+Add a Load More button at the bottom or support pagination links
+If Load More is used, increment results using offset logic (?page=2)
