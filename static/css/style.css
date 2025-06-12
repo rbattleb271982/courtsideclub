@@ -2421,12 +2421,12 @@ input:checked + .toggle-slider:before {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #ffffff;
+  color: #1e293b;
 }
 
 .four-steps .section-subtitle {
   font-size: 1.2rem;
-  color: #b4bed2;
+  color: #475569;
   margin-bottom: 3rem;
   max-width: 600px;
   margin-left: auto;
@@ -2442,12 +2442,13 @@ input:checked + .toggle-slider:before {
 }
 
 .step-card {
-  background: rgba(20, 27, 41, 0.8);
+  background: #ffffff;
   border-radius: 1rem;
   padding: 2rem;
   text-align: center;
   position: relative;
-  border: 1px solid rgba(180, 190, 210, 0.1);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .step-number {
@@ -2471,11 +2472,11 @@ input:checked + .toggle-slider:before {
 .step-card h3 {
   font-size: 1.3rem;
   margin-bottom: 1rem;
-  color: #ffffff;
+  color: #1e293b;
 }
 
 .step-card p {
-  color: #dce3f1;
+  color: #64748b;
   line-height: 1.6;
 }
 
@@ -2505,11 +2506,18 @@ input:checked + .toggle-slider:before {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #ffffff;
+  color: #1e293b;
 }
 
 .experience-left .highlight {
-  color: #a0ff73;
+  background: linear-gradient(90deg, #A4E447, #6DB1F7, #F2CC63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.experience-left p {
+  color: #475569;
 }
 
 .experience-benefits {
@@ -2521,7 +2529,7 @@ input:checked + .toggle-slider:before {
 .experience-benefits li {
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #dce3f1;
+  color: #64748b;
 }
 
 .experience-right {
@@ -2530,11 +2538,12 @@ input:checked + .toggle-slider:before {
 }
 
 .testimonial-card {
-  background: rgba(20, 27, 41, 0.8);
+  background: #ffffff;
   border-radius: 1rem;
   padding: 1.5rem;
-  color: #ffffff;
-  border: 1px solid rgba(180, 190, 210, 0.1);
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .testimonial-header {
@@ -2551,12 +2560,139 @@ input:checked + .toggle-slider:before {
 .testimonial-card blockquote {
   font-style: italic;
   margin: 1rem 0;
-  color: #dce3f1;
+  color: #475569;
 }
 
 .testimonial-card footer {
   font-size: 0.9rem;
-  color: #b4bed2;
+  color: #64748b;
+}
+
+/* Membership Signal Section */
+.membership-signal {
+  padding: 3rem 1rem;
+}
+
+.signal-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.signal-image {
+  flex: 1;
+  max-width: 400px;
+  text-align: center;
+}
+
+.lanyard-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lanyard-card svg {
+  color: #64748b;
+}
+
+.signal-text {
+  flex: 1;
+  max-width: 600px;
+}
+
+.signal-text h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.signal-text .highlight {
+  background: linear-gradient(90deg, #A4E447, #6DB1F7, #F2CC63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.signal-text p {
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+.signal-highlight {
+  color: #a0ff73;
+  font-weight: 600;
+}
+
+.signal-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.signal-benefits li {
+  margin-bottom: 0.5rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Final CTA Section */
+.join-cta {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.cta-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cta-container h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.cta-highlight {
+  background: linear-gradient(90deg, #A4E447, #6DB1F7, #F2CC63);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cta-container p {
+  color: #475569;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #84CC16, #3B82F6);
+  color: #ffffff;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(132, 204, 22, 0.3);
 }
 
 @media (max-width: 768px) {
