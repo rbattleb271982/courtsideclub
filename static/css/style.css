@@ -78,19 +78,21 @@ a:hover {
 /* Consistent hero headline styling */
 .hero-title {
   font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 2.75rem;
+  font-weight: 700;
+  font-size: 2.25rem;
   line-height: 1.2;
   color: #ffffff;
   margin-bottom: 1.5rem;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 3.75rem;
   }
 }
+
+
 
 @media (max-width: 480px) {
   .hero-title {
