@@ -465,17 +465,15 @@ body {
 }
 
 .nav-link {
-  background-color: #e6f2e6;
-  color: #2c5f2d;
+  color: #525252;
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  font-size: 0.95rem;
-  transition: background 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .nav-link:hover {
-  background-color: #cde8cd;
+  color: var(--sage-700);
 }
 
 .admin-link {
