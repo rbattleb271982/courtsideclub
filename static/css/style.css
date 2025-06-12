@@ -2375,6 +2375,70 @@ input:checked + .toggle-slider:before {
   }
 }
 
+/* Tournament List - Redesigned for logged-in users */
+.tournament-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+}
+
+.tournament-row {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.tournament-name {
+  font-family: 'Crimson Text', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+
+.tournament-dates {
+  font-size: 0.95rem;
+  color: #4b4b4b;
+  margin-bottom: 0.5rem;
+}
+
+.tournament-attending {
+  font-size: 0.9rem;
+  display: flex;
+  gap: 0.25rem;
+  align-items: baseline;
+  color: #446c1a;
+}
+
+.attending-count {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.attending-label {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+@media (min-width: 600px) {
+  .tournament-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tournament-name,
+  .tournament-dates,
+  .tournament-attending {
+    margin: 0;
+  }
+}
+
 /* Mobile responsive helpers */
 .desktop-only {
   display: block;
