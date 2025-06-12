@@ -2746,13 +2746,13 @@ h1.hero-text-shadow span {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: clamp(1.875rem, 4vw, 2.25rem);
   font-weight: 600;
-  color: #FBFAFB;
+  color: #FBFAFB !important;
   margin-bottom: 1.5rem;
 }
 
 .final-cta p {
   font-size: 1.125rem;
-  color: #FBFAFB;
+  color: #FBFAFB !important;
   margin-bottom: 2rem;
   max-width: 512px;
   margin-left: auto;
