@@ -153,19 +153,7 @@ def public_tournament_detail(slug):
         related_blog_posts=related_blog_posts
     )
 
-@main_bp.route('/how-it-works')
-def how_it_works():
-    return render_template('public/how_it_works.html',
-                         page_title="How CourtSide Club Works - Tennis Fan Community",
-                         page_description="Learn how CourtSide Club helps tennis fans connect at tournaments. Find other fans, get your lanyard, and join the community.")
 
-@main_bp.route('/public-lanyard')
-def lanyard_info():
-    return render_template('public/lanyard.html')
-    
-@main_bp.route('/lanyard-info')
-def lanyard_info_public():
-    return render_template('public/lanyard_info.html')
 
 @main_bp.route('/faqs')
 def faqs():
@@ -246,10 +234,10 @@ def sitemap():
         # Fallback to basic pages if database is unavailable
         pages = [
             url_for('main.public_home', _external=True),
-            url_for('main.how_it_works', _external=True),
-            url_for('main.lanyard_info_public', _external=True),
+            url_for('main.community', _external=True),
             url_for('main.faqs', _external=True),
             url_for('main.blog', _external=True),
+            url_for('main.about', _external=True),
             url_for('main.privacy', _external=True),
             url_for('main.terms', _external=True),
         ]
