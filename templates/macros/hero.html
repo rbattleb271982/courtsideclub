@@ -3,20 +3,21 @@
   <div class="absolute inset-0 z-0">
     <img src="{{ background_image or url_for('static', filename='images/hero-tennis.jpg') }}" 
          alt="Hero Background" 
-         class="w-full h-full object-cover opacity-50" />
-    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80"></div>
+         class="w-full h-full object-cover object-center object-bottom opacity-80"
+         style="object-position: center bottom;" />
+    <div class="absolute inset-0 bg-gradient-to-b from-white/60 to-white/80"></div>
   </div>
 
   <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-    <h1 class="text-5xl md:text-6xl font-light text-white mb-6">
+    <h1 class="text-5xl md:text-6xl font-light text-[#2F2F2F] mb-6" style="font-family: 'Inter', 'Georgia', serif;">
       {{ top_text }}
-      <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+      <span class="block font-black text-transparent bg-gradient-to-r from-[#4A743D] to-[#003087] bg-clip-text">
         {{ highlight_text }}
       </span>
     </h1>
     
     {% if subtitle %}
-    <p class="text-lg md:text-xl text-slate-300 font-medium leading-relaxed max-w-2xl mx-auto">
+    <p class="text-lg md:text-xl text-[#2F2F2F] font-medium leading-relaxed max-w-2xl mx-auto" style="font-family: 'Inter', 'Georgia', serif;">
       {{ subtitle }}
     </p>
     {% endif %}
