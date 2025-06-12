@@ -1,0 +1,48 @@
+Create a Real Blog Post for Each Tournament with Welcome Message
+Objective:
+For every tournament in the database, create a blog post titled "Welcome to CourtSide Club at [Tournament Name]" that explains what CourtSide Club is, what fans can expect, and links to that tournament page via mentions of the name or slug.
+1. Blog Content Logic (Python Code)
+In a seed_real_blogs() function (in seeds.py or routes/debug_routes.py):
+from models import db, Tournament, BlogPost
+from datetime import datetime
+import textwrap
+
+def seed_real_blogs():
+    tournaments = Tournament.query.all()
+
+    for t in tournaments:
+        title = f"Welcome to CourtSide Club at {t.name}"
+        slug = f"welcome-{t.slug}"
+        content = textwrap.dedent(f"""
+            Welcome to CourtSide Club at {t.name}!
+
+            We’re thrilled you’re thinking about attending {t.name}. CourtSide Club was created to make your tennis experience more social, memorable, and fun — whether you're traveling solo or meeting up with friends.
+
+            By joining, you’ll be able to:
+            - See who else is attending {t.name}
+            - Coordinate sessions and match days
+            - Get a free lanyard that makes in-person connections easy
+            - Stay in the loop on possible meetups or premium seat opportunities
+
+            Our vision is to create a fan-first experience at the biggest tournaments around the world — and {t.name} is no exception.
+
+            Want to be part of it? Just mark your attendance, order your lanyard, and we’ll see you there.
+
+            — The CourtSide Club Team
+        """).strip()
+
+        blog = BlogPost(
+            title=title,
+            slug=slug,
+            content=content,
+            created_at=datetime.utcnow()
+        )
+        db.session.add(blog)
+
+    db.session.commit()
+    return "Real blog posts created for each tournament."
+2. Route to Trigger It
+In routes/debug_routes.py:
+@debug_bp.route('/debug/seed-welcome-blogs')
+def seed_welcome_blogs():
+    return seed_real_blogs()
