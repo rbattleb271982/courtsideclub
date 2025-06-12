@@ -1,0 +1,50 @@
+// Navigation.tsx
+"use client"
+
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Menu } from "lucide-react"
+
+export function Navigation() {
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-neutral-100">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-sage-600 rounded-md flex items-center justify-center">
+              <span className="text-white text-sm font-semibold">C</span>
+            </div>
+            <span className="font-serif text-xl tracking-tight">CourtSide Club</span>
+          </Link>
+
+          <div className="hidden md:flex items-center space-x-8">
+            <Link href="/tournaments" className="text-sm font-medium text-neutral-700 hover:text-sage-700 transition-colors">
+              Tournaments
+            </Link>
+            <Link href="/how-it-works" className="text-sm font-medium text-neutral-700 hover:text-sage-700 transition-colors">
+              Community
+            </Link>
+            <Link href="/blog" className="text-sm font-medium text-neutral-700 hover:text-sage-700 transition-colors">
+              Stories
+            </Link>
+            <Link href="/about" className="text-sm font-medium text-neutral-700 hover:text-sage-700 transition-colors">
+              About
+            </Link>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="sm" className="hidden md:inline-flex">
+              Sign In
+            </Button>
+            <Button size="sm" className="bg-sage-600 hover:bg-sage-700 text-white">
+              Join Club
+            </Button>
+            <Button variant="ghost" size="sm" className="md:hidden">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  )
+}
