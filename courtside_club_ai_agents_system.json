@@ -173,5 +173,20 @@
     "timeout_handling": "120 seconds for AI operations, 60 seconds for email operations",
     "error_reporting": "Flash messages to admin interface",
     "execution_tracking": "Database status flags and admin logs"
+  },
+  
+  "future_vision": {
+    "title": "What's Next for CourtSide Club",
+    "description": "CourtSide Club is evolving into a premium members-club experience for tennis enthusiasts who want more than just tournament attendance. Our vision extends beyond simply connecting fans at events to creating a year-round community that enhances every aspect of the tennis experience.",
+    "member_benefits": [
+      "Priority access to player meet-and-greets",
+      "Personalized tennis travel planning tools", 
+      "Exclusive tournament lounge access",
+      "Curated tennis destination experiences",
+      "Early access to premium seating",
+      "Members-only social events",
+      "Tennis coaching connections"
+    ],
+    "community_message": "When enough of us join, we can make the match-day experience better together."
   }
 }
