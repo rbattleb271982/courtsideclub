@@ -2527,21 +2527,21 @@ input:checked + .toggle-slider:before {
 
 /* Four Simple Steps Section */
 .four-steps {
-  padding: 3rem 1rem;
+  padding: 2rem 1rem;
   text-align: center;
 }
 
 .four-steps .section-title {
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   color: #1e293b;
 }
 
 .four-steps .section-subtitle {
   font-size: 1.2rem;
   color: #475569;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
