@@ -1,0 +1,360 @@
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Users, MapPin, Calendar, Crown, ChevronRight, Shield, Sparkles, Star, ArrowRight } from "lucide-react"
+
+export default function HomePage() {
+  const features = [
+    {
+      icon: Users,
+      title: "Curated Community",
+      description: "Connect with verified tennis enthusiasts who share your passion for the sport.",
+      color: "bg-lime-500",
+      bgColor: "bg-slate-800/50",
+      borderColor: "border-lime-500/30",
+    },
+    {
+      icon: MapPin,
+      title: "Exclusive Access",
+      description: "Premium meetup locations and VIP experiences at the world's finest tournaments.",
+      color: "bg-blue-500",
+      bgColor: "bg-slate-800/50",
+      borderColor: "border-blue-500/30",
+    },
+    {
+      icon: Shield,
+      title: "Private & Secure",
+      description: "Your connections and conversations remain within our trusted member network.",
+      color: "bg-amber-500",
+      bgColor: "bg-slate-800/50",
+      borderColor: "border-amber-500/30",
+    },
+  ]
+
+  const tournaments = [
+    {
+      title: "Wimbledon Championships",
+      startDate: "July 1",
+      type: "Grand Slam",
+      attending: "150+",
+      image: "/placeholder.svg?height=300&width=400",
+      tier: "Platinum",
+      featured: true,
+    },
+    {
+      title: "Roland Garros",
+      startDate: "May 26",
+      type: "Grand Slam",
+      attending: "180+",
+      image: "/placeholder.svg?height=300&width=400",
+      tier: "Platinum",
+      featured: false,
+    },
+    {
+      title: "Indian Wells Masters",
+      startDate: "March 8",
+      type: "Masters 1000",
+      attending: "95+",
+      image: "/placeholder.svg?height=300&width=400",
+      tier: "Gold",
+      featured: false,
+    },
+  ]
+
+  return (
+    <div className="min-h-screen bg-slate-950">
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/placeholder.svg?height=1080&width=1920"
+            alt="Exclusive tennis venue at golden hour"
+            fill
+            className="object-cover opacity-30"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-950/80 via-slate-900/60 to-slate-950/90" />
+        </div>
+
+        {/* Dynamic floating elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-lime-400/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute bottom-32 right-16 w-32 h-32 bg-blue-400/20 rounded-full blur-xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/3 right-1/4 w-2 h-2 bg-amber-500 rounded-full opacity-60 animate-bounce delay-500"></div>
+
+        <div className="relative z-10 text-center px-6 max-w-6xl mx-auto">
+          <div className="mb-12">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-lime-500 to-blue-500 text-white px-6 py-3 rounded-full mb-8 shadow-lg animate-bounce">
+              <Crown className="w-4 h-4" />
+              <span className="text-sm font-bold tracking-wide">EXCLUSIVE MEMBERSHIP</span>
+              <Sparkles className="w-4 h-4" />
+            </div>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-light text-white mb-8 leading-[0.9] tracking-tight">
+            Tennis is
+            <span className="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text animate-pulse">
+              better together.
+            </span>
+          </h1>
+
+          <p className="text-xl md:text-2xl text-slate-300 mb-16 max-w-4xl mx-auto leading-relaxed font-medium">
+            An exclusive community for discerning tennis enthusiasts. From Grand Slams to Masters events,
+            <span className="text-lime-400 font-semibold"> connect with like-minded members</span> and elevate your
+            tournament experience.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-lg mx-auto">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white font-bold py-6 px-12 rounded-2xl text-lg shadow-xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto tracking-wide"
+            >
+              REQUEST INVITATION
+              <ArrowRight className="ml-2 w-5 h-5" />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-bold py-6 px-12 rounded-2xl text-lg backdrop-blur-sm bg-slate-900/50 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto tracking-wide"
+            >
+              MEMBER LOGIN
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Join Section */}
+      <section className="py-32 px-6 bg-gradient-to-b from-slate-950 to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-lime-500/5 via-transparent to-blue-500/5"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-24">
+            <div className="inline-flex items-center gap-3 text-lime-400 mb-8">
+              <div className="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+              <Sparkles className="w-6 h-6" />
+              <div className="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-light text-white mb-8 tracking-tight">
+              The CourtSide
+              <span className="block font-black text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text">
+                Advantage
+              </span>
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto font-medium leading-relaxed">
+              Experience tennis tournaments like never before with our carefully curated community of passionate fans.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-12">
+            {features.map((feature, index) => (
+              <Card
+                key={index}
+                className={`${feature.bgColor} ${feature.borderColor} border-2 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group transform hover:-translate-y-3 backdrop-blur-sm`}
+              >
+                <CardContent className="p-12 text-center relative">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+
+                  <div
+                    className={`w-20 h-20 ${feature.color} rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:rotate-12 transition-transform duration-300 shadow-xl`}
+                  >
+                    <feature.icon className="w-10 h-10 text-white" />
+                  </div>
+
+                  <h3 className="text-2xl font-bold text-white mb-6 tracking-wide">{feature.title}</h3>
+                  <p className="text-slate-300 leading-relaxed font-medium text-lg">{feature.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Tournaments */}
+      <section className="py-32 px-6 bg-slate-900 relative overflow-hidden">
+        <div className="absolute top-10 left-10 w-24 h-24 bg-blue-400/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-lime-400/10 rounded-full blur-2xl"></div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-24">
+            <div className="inline-flex items-center gap-3 text-blue-400 mb-8">
+              <div className="w-12 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
+              <Calendar className="w-6 h-6" />
+              <div className="w-12 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-light text-white mb-8 tracking-tight">
+              Exclusive
+              <span className="block font-black text-transparent bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text">
+                Tournaments
+              </span>
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto font-medium leading-relaxed">
+              Join fellow members at the world's most prestigious tennis events with premium access and experiences.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-12">
+            {tournaments.map((tournament, index) => (
+              <Card
+                key={index}
+                className={`bg-slate-800/50 backdrop-blur-sm border-2 border-slate-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group cursor-pointer transform hover:-translate-y-3 ${
+                  tournament.featured ? "ring-4 ring-lime-400 lg:scale-105 border-lime-400/50" : ""
+                }`}
+              >
+                {tournament.featured && (
+                  <div className="bg-gradient-to-r from-lime-500 to-blue-500 text-white text-center py-3 font-bold text-sm flex items-center justify-center gap-2">
+                    <Star className="w-4 h-4 fill-current" />
+                    FEATURED EVENT
+                    <Star className="w-4 h-4 fill-current" />
+                  </div>
+                )}
+
+                <div className="relative h-56 overflow-hidden">
+                  <Image
+                    src={tournament.image || "/placeholder.svg"}
+                    alt={tournament.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent" />
+
+                  <div className="absolute top-6 left-6">
+                    <span
+                      className={`px-4 py-2 text-xs font-bold tracking-wider rounded-xl shadow-lg ${
+                        tournament.tier === "Platinum"
+                          ? "bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900"
+                          : "bg-gradient-to-r from-slate-600 to-slate-700 text-white"
+                      }`}
+                    >
+                      {tournament.tier.toUpperCase()}
+                    </span>
+                  </div>
+
+                  <div className="absolute top-6 right-6">
+                    <span className="bg-slate-800/90 text-slate-200 px-3 py-2 rounded-xl text-xs font-bold tracking-wider shadow-lg backdrop-blur-sm border border-slate-600">
+                      {tournament.type.toUpperCase()}
+                    </span>
+                  </div>
+
+                  {tournament.featured && (
+                    <div className="absolute bottom-6 left-6">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-5 h-5 text-lime-400 fill-current" />
+                        <Star className="w-5 h-5 text-lime-400 fill-current" />
+                        <Star className="w-5 h-5 text-lime-400 fill-current" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <CardContent className="p-8">
+                  <h3 className="text-2xl font-bold text-white mb-8 tracking-wide">{tournament.title}</h3>
+
+                  <div className="space-y-6 mb-10">
+                    <div className="flex items-center text-slate-300">
+                      <div className="w-12 h-12 bg-blue-500/20 border border-blue-500/30 rounded-2xl flex items-center justify-center mr-4">
+                        <Calendar className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-slate-400 font-medium">Starts</p>
+                        <p className="font-bold text-white text-lg">{tournament.startDate}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center text-slate-300">
+                      <div className="w-12 h-12 bg-lime-500/20 border border-lime-500/30 rounded-2xl flex items-center justify-center mr-4">
+                        <Users className="w-6 h-6 text-lime-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-slate-400 font-medium">Members</p>
+                        <p className="font-bold text-lime-400 text-lg">{tournament.attending}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button className="w-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-lime-500 hover:to-blue-500 text-white font-bold py-4 rounded-2xl text-lg transition-all duration-500 shadow-lg group-hover:shadow-xl border border-slate-600 hover:border-transparent">
+                    VIEW DETAILS
+                    <ChevronRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Lanyard Program Teaser */}
+      <section className="py-32 px-6 bg-gradient-to-br from-slate-950 via-blue-950/50 to-slate-950 relative overflow-hidden">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-lime-400/20 rounded-full blur-2xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
+
+        <div className="max-w-5xl mx-auto relative z-10">
+          <Card className="relative overflow-hidden rounded-3xl shadow-2xl border-0 bg-slate-800/50 backdrop-blur-sm border border-slate-700">
+            <div className="absolute inset-0 opacity-20">
+              <Image
+                src="/placeholder.svg?height=500&width=1000"
+                alt="Exclusive tennis venue"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+            <CardContent className="relative z-10 p-20 text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-lime-400 to-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-12 shadow-2xl animate-pulse">
+                <Crown className="w-12 h-12 text-slate-900" />
+              </div>
+
+              <h2 className="text-4xl md:text-5xl font-light text-white mb-8 tracking-tight">
+                The CourtSide
+                <span className="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+                  Lanyard
+                </span>
+              </h2>
+
+              <p className="text-xl text-slate-300 mb-16 max-w-3xl mx-auto leading-relaxed font-medium">
+                A subtle symbol of membership. Connect discreetly with fellow members at tournaments through our
+                <span className="text-lime-400 font-bold"> exclusive identification system.</span>
+              </p>
+
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold py-6 px-16 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wider"
+              >
+                LEARN MORE
+                <ArrowRight className="ml-3 w-6 h-6" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-24 px-6 bg-slate-950 border-t border-slate-800">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl font-bold text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text mb-4 tracking-wide">
+              CourtSide Club
+            </h3>
+            <p className="text-slate-400 font-medium tracking-wide">Tennis is better together.</p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+            {["Membership", "Tournaments", "Community", "Support"].map((link) => (
+              <a
+                key={link}
+                href="#"
+                className="text-slate-400 hover:text-lime-400 transition-colors duration-300 font-semibold text-lg tracking-wide text-center block transform hover:scale-105"
+              >
+                {link}
+              </a>
+            ))}
+          </div>
+
+          <div className="border-t border-slate-800 pt-12 text-center">
+            <p className="text-slate-500 font-medium text-sm tracking-wider">
+              © 2024 CourtSide Club. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}

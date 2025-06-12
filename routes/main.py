@@ -7,12 +7,29 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def public_home():
-    # Get next upcoming tournament for preview section
-    next_tournament = Tournament.query.filter(
-        Tournament.start_date >= datetime.date.today()
-    ).order_by(Tournament.start_date).first()
+    from sqlalchemy import func
+    from models import UserTournament
     
-    return render_template('public/home.html', next_tournament=next_tournament)
+    # Get upcoming tournaments for the homepage showcase
+    upcoming_tournaments = Tournament.query.filter(
+        Tournament.start_date >= datetime.date.today()
+    ).order_by(Tournament.start_date).limit(3).all()
+    
+    # Get attendance counts for each tournament
+    tournaments_with_data = []
+    for tournament in upcoming_tournaments:
+        count = UserTournament.query.filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.session_label.isnot(None)
+        ).count()
+        
+        tournaments_with_data.append({
+            'tournament': tournament,
+            'attending_count': count
+        })
+    
+    return render_template('public/home.html', tournaments_data=tournaments_with_data)
 
 @main_bp.route('/invite')
 def track_invite_click():

@@ -1,111 +1,465 @@
 {% extends "public/base.html" %}
-{% block title %}CourtSide Club – See You at the Changeover{% endblock %}
+{% block title %}CourtSide Club – Tennis is Better Together{% endblock %}
+
 {% block content %}
+<div class="min-h-screen bg-slate-950">
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+           alt="Exclusive tennis venue at golden hour" 
+           class="w-full h-full object-cover opacity-30">
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-950/80 via-slate-900/60 to-slate-950/90"></div>
+    </div>
 
-<!-- Hero Section -->
-<section class="hero-section">
-  <div class="hero-overlay"></div>
-  <div class="hero-content">
-    <h1 class="hero-heading">Tennis is better together.</h1>
-    <p class="hero-subtext">From Grand Slams to 500s, CourtSide Club helps tennis fans connect in real life and turn match days into unforgettable experiences.</p>
-    <div class="hero-buttons">
-      <a href="{{ url_for('auth.signup') }}" class="cta-button">Join Now</a>
-      <a href="{{ url_for('auth.login') }}" class="cta-button secondary">Log In</a>
-    </div>
-  </div>
-</section>
+    <!-- Dynamic floating elements -->
+    <div class="absolute top-20 left-10 w-20 h-20 bg-lime-400/20 rounded-full blur-xl animate-pulse"></div>
+    <div class="absolute bottom-32 right-16 w-32 h-32 bg-blue-400/20 rounded-full blur-xl animate-pulse delay-1000"></div>
+    <div class="absolute top-1/3 right-1/4 w-2 h-2 bg-amber-500 rounded-full opacity-60 animate-bounce delay-500"></div>
 
-<!-- Why Join CourtSide Club Section -->
-<section class="info-section">
-  <h2 class="section-heading">Why Join CourtSide Club?</h2>
-  <div class="info-cards">
-    <div class="info-card">
-      <h3>See Who's Going</h3>
-      <p>Know which fans are attending the same matches.</p>
-    </div>
-    <div class="info-card">
-      <h3>Meetups Made Simple</h3>
-      <p>Link up at the right place, at the right time.</p>
-    </div>
-    <div class="info-card">
-      <h3>No Group Chats Needed</h3>
-      <p>Skip the chaos — connect with fans directly.</p>
-    </div>
-  </div>
-</section>
-
-<!-- What's Next Section -->
-<section class="info-section future-vision-section">
-  <div class="future-vision-content">
-    <h2 class="section-heading">What's Next for CourtSide Club</h2>
-    
-    <p class="future-intro">CourtSide Club is just getting started.</p>
-    
-    <p class="future-description">In the future, we're building toward a members-club-style experience — like the ones you see at tournaments — but for fans.</p>
-    
-    <div class="future-benefits">
-      <p class="benefits-intro">Think:</p>
-      <ul class="benefits-list">
-        <li>Priority access to meet-ups</li>
-        <li>Easy tools to plan your tournament trips</li>
-        <li>Exclusive lounge-style perks</li>
-      </ul>
-    </div>
-    
-    <p class="community-message">When enough of us join, we can make the match-day experience better together.</p>
-  </div>
-</section>
-
-<!-- Upcoming Tournaments Section -->
-<section class="info-section">
-  <h2 class="section-heading">Upcoming Tournaments</h2>
-  <div class="tournament-cards">
-    <a href="{{ url_for('main.public_tournaments') }}" class="tournament-card">
-      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Grand Showcase">
-      <div class="tournament-info">
-        <h4>The Grand Showcase</h4>
-        <p>Starts: July 15 • Type: Grand Slam • Attending: 250+</p>
+    <div class="relative z-10 text-center px-6 max-w-6xl mx-auto">
+      <div class="mb-12">
+        <div class="inline-flex items-center gap-3 bg-gradient-to-r from-lime-500 to-blue-500 text-white px-6 py-3 rounded-full mb-8 shadow-lg animate-bounce">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-bold tracking-wide">EXCLUSIVE MEMBERSHIP</span>
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+          </svg>
+        </div>
       </div>
-    </a>
-    <a href="{{ url_for('main.public_tournaments') }}" class="tournament-card">
-      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Sunshine Open">
-      <div class="tournament-info">
-        <h4>The Sunshine Open</h4>
-        <p>Starts: August 5 • Type: Masters 1000 • Attending: 180+</p>
-      </div>
-    </a>
-    <a href="{{ url_for('main.public_tournaments') }}" class="tournament-card">
-      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Clay Court Classic">
-      <div class="tournament-info">
-        <h4>The Clay Court Classic</h4>
-        <p>Starts: September 2 • Type: ATP 500 • Attending: 120+</p>
-      </div>
-    </a>
-  </div>
-  <div class="browse-all-link">
-    <a href="{{ url_for('main.public_tournaments') }}">Browse all tournaments →</a>
-  </div>
-  <div class="lanyard-highlight">
-    <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Lanyard" class="lanyard-image">
-    <div class="lanyard-text">
-      <h3>Get Your CourtSide Club Lanyard</h3>
-      <p>Easily spot and connect with other members at tournaments using our official lanyard.</p>
-      <a href="{{ url_for('main.lanyard_info_public') }}" class="cta-button secondary">Learn About the Lanyard</a>
-    </div>
-  </div>
-</section>
 
-<!-- Footer -->
-<footer class="homepage-footer">
-  <nav class="footer-links">
-    <a href="{{ url_for('main.public_home') }}">Home</a>
-    <a href="{{ url_for('main.how_it_works') }}">How it Works</a>
-    <a href="{{ url_for('main.faqs') }}">FAQs</a>
-    <a href="{{ url_for('main.public_tournaments') }}">Browse Tournaments</a>
-    <a href="{{ url_for('main.lanyard_info_public') }}">Free Lanyard</a>
-    <a href="{{ url_for('main.about') }}">About</a>
-  </nav>
-  <p>© {{ current_year }} CourtSide Club. All rights reserved.</p>
-</footer>
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-light text-white mb-8 leading-[0.9] tracking-tight">
+        Tennis is
+        <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text animate-pulse">
+          better together.
+        </span>
+      </h1>
+
+      <p class="text-xl md:text-2xl text-slate-300 mb-16 max-w-4xl mx-auto leading-relaxed font-medium">
+        An exclusive community for discerning tennis enthusiasts. From Grand Slams to Masters events,
+        <span class="text-lime-400 font-semibold"> connect with like-minded members</span> and elevate your
+        tournament experience.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-6 justify-center max-w-lg mx-auto">
+        <a href="{{ url_for('auth.signup') }}" 
+           class="bg-gradient-to-r from-lime-500 to-lime-600 hover:from-lime-600 hover:to-lime-700 text-white font-bold py-6 px-12 rounded-2xl text-lg shadow-xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto tracking-wide inline-flex items-center justify-center">
+          REQUEST INVITATION
+          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+        <a href="{{ url_for('auth.login') }}" 
+           class="border-2 border-slate-600 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-500 font-bold py-6 px-12 rounded-2xl text-lg backdrop-blur-sm bg-slate-900/50 transition-all duration-300 transform hover:scale-105 w-full sm:w-auto tracking-wide inline-flex items-center justify-center">
+          MEMBER LOGIN
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Join Section -->
+  <section class="py-32 px-6 bg-gradient-to-b from-slate-950 to-slate-900 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-r from-lime-500/5 via-transparent to-blue-500/5"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="text-center mb-24">
+        <div class="inline-flex items-center gap-3 text-lime-400 mb-8">
+          <div class="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+          </svg>
+          <div class="w-12 h-px bg-gradient-to-r from-transparent via-lime-400 to-transparent"></div>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-light text-white mb-8 tracking-tight">
+          The CourtSide
+          <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text">
+            Advantage
+          </span>
+        </h2>
+        <p class="text-xl text-slate-300 max-w-3xl mx-auto font-medium leading-relaxed">
+          Experience tennis tournaments like never before with our carefully curated community of passionate fans.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-12">
+        <!-- Feature 1: Curated Community -->
+        <div class="bg-slate-800/50 border-lime-500/30 border-2 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group transform hover:-translate-y-3 backdrop-blur-sm">
+          <div class="p-12 text-center relative">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+            
+            <div class="w-20 h-20 bg-lime-500 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:rotate-12 transition-transform duration-300 shadow-xl">
+              <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+              </svg>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-6 tracking-wide">Curated Community</h3>
+            <p class="text-slate-300 leading-relaxed font-medium text-lg">Connect with verified tennis enthusiasts who share your passion for the sport.</p>
+          </div>
+        </div>
+
+        <!-- Feature 2: Exclusive Access -->
+        <div class="bg-slate-800/50 border-blue-500/30 border-2 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group transform hover:-translate-y-3 backdrop-blur-sm">
+          <div class="p-12 text-center relative">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+            
+            <div class="w-20 h-20 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:rotate-12 transition-transform duration-300 shadow-xl">
+              <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-6 tracking-wide">Exclusive Access</h3>
+            <p class="text-slate-300 leading-relaxed font-medium text-lg">Premium meetup locations and VIP experiences at the world's finest tournaments.</p>
+          </div>
+        </div>
+
+        <!-- Feature 3: Private & Secure -->
+        <div class="bg-slate-800/50 border-amber-500/30 border-2 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group transform hover:-translate-y-3 backdrop-blur-sm">
+          <div class="p-12 text-center relative">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+            
+            <div class="w-20 h-20 bg-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-8 group-hover:rotate-12 transition-transform duration-300 shadow-xl">
+              <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-6 tracking-wide">Private & Secure</h3>
+            <p class="text-slate-300 leading-relaxed font-medium text-lg">Your connections and conversations remain within our trusted member network.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upcoming Tournaments -->
+  <section class="py-32 px-6 bg-slate-900 relative overflow-hidden">
+    <div class="absolute top-10 left-10 w-24 h-24 bg-blue-400/10 rounded-full blur-2xl"></div>
+    <div class="absolute bottom-10 right-10 w-32 h-32 bg-lime-400/10 rounded-full blur-2xl"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="text-center mb-24">
+        <div class="inline-flex items-center gap-3 text-blue-400 mb-8">
+          <div class="w-12 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+          </svg>
+          <div class="w-12 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent"></div>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-light text-white mb-8 tracking-tight">
+          Exclusive
+          <span class="block font-black text-transparent bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text">
+            Tournaments
+          </span>
+        </h2>
+        <p class="text-xl text-slate-300 max-w-3xl mx-auto font-medium leading-relaxed">
+          Join fellow members at the world's most prestigious tennis events with premium access and experiences.
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-12">
+        {% for item in tournaments_data[:3] %}
+          {% set tournament = item.tournament %}
+          {% set is_featured = loop.index == 1 %}
+          <div class="bg-slate-800/50 backdrop-blur-sm border-2 border-slate-700 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group cursor-pointer transform hover:-translate-y-3 {% if is_featured %}ring-4 ring-lime-400 lg:scale-105 border-lime-400/50{% endif %}">
+            {% if is_featured %}
+              <div class="bg-gradient-to-r from-lime-500 to-blue-500 text-white text-center py-3 font-bold text-sm flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+                FEATURED EVENT
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+              </div>
+            {% endif %}
+
+            <div class="relative h-56 overflow-hidden">
+              <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+                   alt="{{ tournament.name }}" 
+                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+
+              <div class="absolute top-6 left-6">
+                <span class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 px-4 py-2 text-xs font-bold tracking-wider rounded-xl shadow-lg">
+                  PLATINUM
+                </span>
+              </div>
+
+              <div class="absolute top-6 right-6">
+                <span class="bg-slate-800/90 text-slate-200 px-3 py-2 rounded-xl text-xs font-bold tracking-wider shadow-lg backdrop-blur-sm border border-slate-600">
+                  {{ tournament.tournament_type|upper if tournament.tournament_type else 'GRAND SLAM' }}
+                </span>
+              </div>
+
+              {% if is_featured %}
+                <div class="absolute bottom-6 left-6">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-5 h-5 text-lime-400 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                    <svg class="w-5 h-5 text-lime-400 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                    <svg class="w-5 h-5 text-lime-400 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="p-8">
+              <h3 class="text-2xl font-bold text-white mb-8 tracking-wide">{{ tournament.name }}</h3>
+
+              <div class="space-y-6 mb-10">
+                <div class="flex items-center text-slate-300">
+                  <div class="w-12 h-12 bg-blue-500/20 border border-blue-500/30 rounded-2xl flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-400 font-medium">Starts</p>
+                    <p class="font-bold text-white text-lg">{{ tournament.start_date.strftime('%B %d') if tournament.start_date else 'TBD' }}</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center text-slate-300">
+                  <div class="w-12 h-12 bg-lime-500/20 border border-lime-500/30 rounded-2xl flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-lime-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-400 font-medium">Members</p>
+                    <p class="font-bold text-lime-400 text-lg">{{ item.attending_count }}+</p>
+                  </div>
+                </div>
+              </div>
+
+              <a href="{{ url_for('main.public_tournaments') }}" 
+                 class="w-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-lime-500 hover:to-blue-500 text-white font-bold py-4 rounded-2xl text-lg transition-all duration-500 shadow-lg group-hover:shadow-xl border border-slate-600 hover:border-transparent inline-flex items-center justify-center">
+                VIEW DETAILS
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        {% else %}
+          <!-- Fallback tournaments if no data -->
+          <div class="bg-slate-800/50 backdrop-blur-sm border-2 border-lime-400/50 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden group cursor-pointer transform hover:-translate-y-3 ring-4 ring-lime-400 lg:scale-105">
+            <div class="bg-gradient-to-r from-lime-500 to-blue-500 text-white text-center py-3 font-bold text-sm flex items-center justify-center gap-2">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+              FEATURED EVENT
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+            </div>
+            <div class="relative h-56 overflow-hidden">
+              <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+                   alt="Upcoming Tournament" 
+                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+              <div class="absolute top-6 left-6">
+                <span class="bg-gradient-to-r from-amber-400 to-amber-500 text-slate-900 px-4 py-2 text-xs font-bold tracking-wider rounded-xl shadow-lg">PLATINUM</span>
+              </div>
+              <div class="absolute top-6 right-6">
+                <span class="bg-slate-800/90 text-slate-200 px-3 py-2 rounded-xl text-xs font-bold tracking-wider shadow-lg backdrop-blur-sm border border-slate-600">GRAND SLAM</span>
+              </div>
+            </div>
+            <div class="p-8">
+              <h3 class="text-2xl font-bold text-white mb-8 tracking-wide">Coming Soon</h3>
+              <div class="space-y-6 mb-10">
+                <div class="flex items-center text-slate-300">
+                  <div class="w-12 h-12 bg-blue-500/20 border border-blue-500/30 rounded-2xl flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-400 font-medium">Starts</p>
+                    <p class="font-bold text-white text-lg">TBD</p>
+                  </div>
+                </div>
+                <div class="flex items-center text-slate-300">
+                  <div class="w-12 h-12 bg-lime-500/20 border border-lime-500/30 rounded-2xl flex items-center justify-center mr-4">
+                    <svg class="w-6 h-6 text-lime-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm text-slate-400 font-medium">Members</p>
+                    <p class="font-bold text-lime-400 text-lg">Join First</p>
+                  </div>
+                </div>
+              </div>
+              <a href="{{ url_for('main.public_tournaments') }}" 
+                 class="w-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-lime-500 hover:to-blue-500 text-white font-bold py-4 rounded-2xl text-lg transition-all duration-500 shadow-lg group-hover:shadow-xl border border-slate-600 hover:border-transparent inline-flex items-center justify-center">
+                VIEW DETAILS
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Lanyard Program Teaser -->
+  <section class="py-32 px-6 bg-gradient-to-br from-slate-950 via-blue-950/50 to-slate-950 relative overflow-hidden">
+    <div class="absolute top-10 left-10 w-32 h-32 bg-lime-400/20 rounded-full blur-2xl animate-pulse"></div>
+    <div class="absolute bottom-10 right-10 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
+
+    <div class="max-w-5xl mx-auto relative z-10">
+      <div class="relative overflow-hidden rounded-3xl shadow-2xl border-0 bg-slate-800/50 backdrop-blur-sm border border-slate-700">
+        <div class="absolute inset-0 opacity-20">
+          <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+               alt="Exclusive tennis venue" 
+               class="w-full h-full object-cover">
+        </div>
+
+        <div class="relative z-10 p-20 text-center">
+          <div class="w-24 h-24 bg-gradient-to-br from-lime-400 to-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-12 shadow-2xl animate-pulse">
+            <svg class="w-12 h-12 text-slate-900" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.934 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732L9.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+
+          <h2 class="text-4xl md:text-5xl font-light text-white mb-8 tracking-tight">
+            The CourtSide
+            <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text">
+              Lanyard
+            </span>
+          </h2>
+
+          <p class="text-xl text-slate-300 mb-16 max-w-3xl mx-auto leading-relaxed font-medium">
+            A subtle symbol of membership. Connect discreetly with fellow members at tournaments through our
+            <span class="text-lime-400 font-bold"> exclusive identification system.</span>
+          </p>
+
+          <a href="{{ url_for('main.lanyard_info_public') }}" 
+             class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-400 hover:to-blue-400 text-white font-bold py-6 px-16 rounded-2xl text-xl shadow-2xl hover:shadow-lime-500/25 transition-all duration-300 transform hover:scale-105 tracking-wider inline-flex items-center">
+            LEARN MORE
+            <svg class="ml-3 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collapsible "What's Next for CourtSide Club" Vision Section -->
+  <section class="py-32 px-6 bg-slate-950 relative overflow-hidden">
+    <div class="max-w-4xl mx-auto relative z-10">
+      <div class="bg-slate-900/50 backdrop-blur-sm border border-slate-700 rounded-3xl shadow-2xl overflow-hidden">
+        <div class="p-12">
+          <button class="w-full text-left" onclick="toggleVisionSection()">
+            <div class="flex items-center justify-between">
+              <h2 class="text-3xl md:text-4xl font-light text-white tracking-tight">
+                What's Next for
+                <span class="block font-black text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text">
+                  CourtSide Club
+                </span>
+              </h2>
+              <svg id="visionChevron" class="w-8 h-8 text-slate-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </button>
+
+          <div id="visionContent" class="hidden mt-12">
+            <p class="text-xl text-slate-300 mb-8 font-medium leading-relaxed">
+              CourtSide Club is just getting started.
+            </p>
+            
+            <p class="text-lg text-slate-300 mb-12 leading-relaxed">
+              In the future, we're building toward a members-club-style experience — like the ones you see at tournaments — but for fans.
+            </p>
+            
+            <div class="mb-12">
+              <p class="text-lg text-slate-300 mb-6 font-semibold">Think:</p>
+              <ul class="space-y-4 text-slate-300">
+                <li class="flex items-center">
+                  <div class="w-2 h-2 bg-lime-400 rounded-full mr-4"></div>
+                  <span class="text-lg">Priority access to meet-ups</span>
+                </li>
+                <li class="flex items-center">
+                  <div class="w-2 h-2 bg-blue-400 rounded-full mr-4"></div>
+                  <span class="text-lg">Easy tools to plan your tournament trips</span>
+                </li>
+                <li class="flex items-center">
+                  <div class="w-2 h-2 bg-amber-400 rounded-full mr-4"></div>
+                  <span class="text-lg">Exclusive lounge-style perks</span>
+                </li>
+              </ul>
+            </div>
+            
+            <p class="text-lg text-slate-300 leading-relaxed font-medium">
+              When enough of us join, we can make the match-day experience better together.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-24 px-6 bg-slate-950 border-t border-slate-800">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h3 class="text-3xl font-bold text-transparent bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text mb-4 tracking-wide">
+          CourtSide Club
+        </h3>
+        <p class="text-slate-400 font-medium tracking-wide">Tennis is better together.</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
+        <a href="{{ url_for('auth.signup') }}" class="text-slate-400 hover:text-lime-400 transition-colors duration-300 font-semibold text-lg tracking-wide text-center block transform hover:scale-105">
+          Membership
+        </a>
+        <a href="{{ url_for('main.public_tournaments') }}" class="text-slate-400 hover:text-lime-400 transition-colors duration-300 font-semibold text-lg tracking-wide text-center block transform hover:scale-105">
+          Tournaments
+        </a>
+        <a href="{{ url_for('main.how_it_works') }}" class="text-slate-400 hover:text-lime-400 transition-colors duration-300 font-semibold text-lg tracking-wide text-center block transform hover:scale-105">
+          Community
+        </a>
+        <a href="{{ url_for('main.faqs') }}" class="text-slate-400 hover:text-lime-400 transition-colors duration-300 font-semibold text-lg tracking-wide text-center block transform hover:scale-105">
+          Support
+        </a>
+      </div>
+
+      <div class="border-t border-slate-800 pt-12 text-center">
+        <p class="text-slate-500 font-medium text-sm tracking-wider">
+          © {{ current_year or '2024' }} CourtSide Club. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+function toggleVisionSection() {
+  const content = document.getElementById('visionContent');
+  const chevron = document.getElementById('visionChevron');
+  
+  if (content.classList.contains('hidden')) {
+    content.classList.remove('hidden');
+    chevron.style.transform = 'rotate(180deg)';
+  } else {
+    content.classList.add('hidden');
+    chevron.style.transform = 'rotate(0deg)';
+  }
+}
+</script>
 
 {% endblock %}
