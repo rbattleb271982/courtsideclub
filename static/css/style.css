@@ -68,6 +68,13 @@ a:hover {
   border-color: #ffffff;
 }
 
+/* CSS Variables for Brand Colors */
+:root {
+  --csc-green: #669127;
+  --csc-gold: #EDB418;
+  --csc-blue: #318BE8;
+}
+
 /* Consistent hero headline styling */
 .hero-title {
   font-family: 'Inter', sans-serif;
@@ -94,9 +101,7 @@ a:hover {
   font-family: 'Inter', sans-serif;
   font-weight: 800;
   font-size: 2.75rem;
-  background: linear-gradient(to right, #F2CC63, #A4E447, #6DB1F7); /* gold → lime → blue */
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--csc-green);
   display: inline-block;
 }
 
@@ -110,6 +115,43 @@ a:hover {
   .hero-gradient {
     font-size: 1.75rem;
   }
+}
+
+/* Brand color utility classes */
+.text-csc-green {
+  color: var(--csc-green);
+}
+
+.text-csc-gold {
+  color: var(--csc-gold);
+}
+
+.text-csc-blue {
+  color: var(--csc-blue);
+}
+
+.bg-csc-green {
+  background-color: var(--csc-green);
+}
+
+.bg-csc-gold {
+  background-color: var(--csc-gold);
+}
+
+.bg-csc-blue {
+  background-color: var(--csc-blue);
+}
+
+.hover\:bg-csc-green:hover {
+  background-color: var(--csc-green);
+}
+
+.hover\:bg-csc-gold:hover {
+  background-color: var(--csc-gold);
+}
+
+.hover\:bg-csc-blue:hover {
+  background-color: var(--csc-blue);
 }
 
 /* Legacy classes for backward compatibility */

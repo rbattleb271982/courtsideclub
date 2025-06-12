@@ -3,9 +3,12 @@
 {% block title %}Login – CourtSide Club{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-50 py-24">
-  <div class="max-w-md mx-auto px-6">
-    <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+<div class="min-h-screen bg-cover bg-center bg-no-repeat py-24 relative" style="background-image: url('{{ url_for('static', filename='images/hero-tennis.jpg') }}');">
+  <!-- Overlay for better readability -->
+  <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+  
+  <div class="max-w-md mx-auto px-6 relative z-10">
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden backdrop-blur-sm bg-opacity-95">
       <!-- Header -->
       <div class="bg-gradient-to-r from-lime-500 to-lime-600 px-8 py-6">
         <h1 class="text-2xl font-bold text-white font-inter">Log In</h1>
