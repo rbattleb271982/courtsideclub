@@ -1,0 +1,105 @@
+In routes/main.py, add a route that returns upcoming tournaments as JSON:
+from flask import Blueprint, jsonify
+from datetime import datetime
+from models import Tournament
+from app import db
+
+main_bp = Blueprint("main", __name__)
+
+@main_bp.route("/api/tournaments/upcoming")
+def get_upcoming_tournaments():
+    today = datetime.utcnow().date()
+    tournaments = Tournament.query.filter(Tournament.start_date >= today).order_by(Tournament.start_date).limit(6).all()
+    return jsonify([
+        {
+            "name": t.name,
+            "location": f"{t.city}, {t.country}",
+            "date": f"{t.start_date.strftime('%B %d')} – {t.end_date.strftime('%B %d, %Y')}",
+            "members": len(t.user_tournaments),
+            "image": t.image_url or "/placeholder.svg"
+        }
+        for t in tournaments
+    ])
+Make sure your Tournament model has:
+name, city, country, start_date, end_date, image_url
+A relationship to UserTournament (to get user_tournaments count)
+✅ Step 2: Frontend React Component
+Replace your current static data in TournamentShowcase.tsx with a live useEffect fetch:
+import { useEffect, useState } from "react"
+import { Calendar, Users, MapPin } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+type Tournament = {
+  name: string
+  location: string
+  date: string
+  members: number
+  image: string
+}
+
+export function TournamentShowcase() {
+  const [tournaments, setTournaments] = useState<Tournament[]>([])
+
+  useEffect(() => {
+    fetch("/api/tournaments/upcoming")
+      .then(res => res.json())
+      .then(data => setTournaments(data))
+  }, [])
+
+  return (
+    <section className="py-20 lg:py-32 bg-warm-50">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-neutral-900 mb-4">Upcoming Tournaments</h2>
+          <p className="text-lg text-neutral-600">
+            Join fellow tennis enthusiasts at the world&apos;s most prestigious tournaments.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {tournaments.map((tournament, index) => (
+            <div
+              key={index}
+              className={`bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow ${
+                index === 0 ? "lg:col-span-2" : ""
+              }`}
+            >
+              <div className={`aspect-video overflow-hidden ${index === 0 ? "lg:aspect-[2/1]" : ""}`}>
+                <img
+                  src={tournament.image}
+                  alt={tournament.name}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-serif font-semibold text-neutral-900 mb-3">{tournament.name}</h3>
+                <div className="space-y-2 mb-6">
+                  <div className="flex items-center text-neutral-600">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    <span className="text-sm">{tournament.location}</span>
+                  </div>
+                  <div className="flex items-center text-neutral-600">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    <span className="text-sm">{tournament.date}</span>
+                  </div>
+                  <div className="flex items-center text-neutral-600">
+                    <Users className="h-4 w-4 mr-2" />
+                    <span className="text-sm">{tournament.members} members attending</span>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full border-sage-300 text-sage-700 hover:bg-sage-50">
+                  View Details
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+✅ Final Reminder for Replit Agent
+Make sure to:
+Mount the main_bp Blueprint in app.py if not already.
+Ensure tournament image URLs (or fallback placeholders) are accessible in /static or from a CDN.
+Restart Flask for the /api/tournaments/upcoming route to become active.

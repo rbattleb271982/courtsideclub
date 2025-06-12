@@ -1,0 +1,88 @@
+Paste this JSX component into your homepage file and ensure it's called in your main layout:
+✅ components/TournamentShowcase.tsx
+import { Button } from "@/components/ui/button"
+import { Calendar, Users, MapPin } from "lucide-react"
+
+export function TournamentShowcase() {
+  const tournaments = [
+    {
+      name: "Wimbledon Championships",
+      location: "London, England",
+      date: "July 1–14, 2024",
+      members: 247,
+      image: "/placeholder.svg?height=300&width=400",
+      featured: true,
+    },
+    {
+      name: "Roland Garros",
+      location: "Paris, France",
+      date: "May 26 – June 9, 2024",
+      members: 189,
+      image: "/placeholder.svg?height=300&width=400",
+    },
+    {
+      name: "US Open",
+      location: "New York, USA",
+      date: "Aug 26 – Sep 8, 2024",
+      members: 312,
+      image: "/placeholder.svg?height=300&width=400",
+    },
+  ]
+
+  return (
+    <section className="py-20 lg:py-32 bg-warm-50">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-neutral-900 mb-4">Upcoming Tournaments</h2>
+          <p className="text-lg text-neutral-600">
+            Join fellow tennis enthusiasts at the world&apos;s most prestigious tournaments.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {tournaments.map((tournament, index) => (
+            <div
+              key={index}
+              className={`bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow ${
+                tournament.featured ? "lg:col-span-2 lg:row-span-1" : ""
+              }`}
+            >
+              <div className={`aspect-video overflow-hidden ${tournament.featured ? "lg:aspect-[2/1]" : ""}`}>
+                <img
+                  src={tournament.image || "/placeholder.svg"}
+                  alt={tournament.name}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-serif font-semibold text-neutral-900 mb-3">{tournament.name}</h3>
+                <div className="space-y-2 mb-6">
+                  <div className="flex items-center text-neutral-600">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    <span className="text-sm">{tournament.location}</span>
+                  </div>
+                  <div className="flex items-center text-neutral-600">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    <span className="text-sm">{tournament.date}</span>
+                  </div>
+                  <div className="flex items-center text-neutral-600">
+                    <Users className="h-4 w-4 mr-2" />
+                    <span className="text-sm">{tournament.members} members attending</span>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full border-sage-300 text-sage-700 hover:bg-sage-50">
+                  View Details
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+✅ Then confirm it’s being rendered in your homepage file:
+import { TournamentShowcase } from "@/components/TournamentShowcase"
+
+// Inside your main <Home> function’s return block:
+<TournamentShowcase />
