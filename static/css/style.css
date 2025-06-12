@@ -43,7 +43,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Highlight/Accent Text */
 .highlight {
-  color: #a0ff73; /* soft neon green accent */
+  color: var(--csc-green); /* brand green accent */
   font-weight: 500;
 }
 
@@ -212,7 +212,7 @@ a:hover {
 }
 
 .cta-secondary-text {
-  color: #a0ff73 !important;
+  color: var(--csc-green) !important;
 }
 
 .feature-label {
