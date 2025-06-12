@@ -445,6 +445,148 @@
       transform: translateY(-1px);
     }
 
+    /* Tournament Showcase Section */
+    .tournament-showcase {
+      padding: 5rem 0;
+      background: #f8faf8;
+    }
+
+    .showcase-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .showcase-header h2 {
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: #171717;
+      margin-bottom: 1rem;
+    }
+
+    .showcase-header p {
+      font-size: 1.125rem;
+      color: #525252;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .tournaments-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tournament-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+    }
+
+    .tournament-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .tournament-info h3 {
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #171717;
+      margin-bottom: 0.5rem;
+    }
+
+    .tournament-location {
+      color: var(--sage-600);
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .tournament-date {
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tournament-members {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .member-avatars {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--sage-400), var(--sage-600));
+      border: 2px solid white;
+      margin-left: -8px;
+    }
+
+    .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .avatar-count {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #6b7280;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: -8px;
+      border: 2px solid white;
+    }
+
+    .tournament-members span {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    .tournament-actions {
+      padding-top: 1rem;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .tournament-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--sage-600);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: color 0.2s ease;
+    }
+
+    .tournament-link:hover {
+      color: var(--sage-700);
+    }
+
+    .tournament-link::after {
+      content: '→';
+      transition: transform 0.2s ease;
+    }
+
+    .tournament-link:hover::after {
+      transform: translateX(2px);
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .hero {
@@ -580,6 +722,77 @@
           </div>
           <h3>Shared Experiences</h3>
           <p>Make the most of every match through IRL connection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tournament Showcase Section -->
+  <section class="tournament-showcase">
+    <div class="container">
+      <div class="showcase-header">
+        <h2>Featured Tournaments</h2>
+        <p>Join tennis fans at the world's most prestigious tournaments</p>
+      </div>
+      <div class="tournaments-grid">
+        <div class="tournament-card">
+          <div class="tournament-info">
+            <h3>Wimbledon Championships</h3>
+            <p class="tournament-location">London, England</p>
+            <p class="tournament-date">July 1–14, 2024</p>
+            <div class="tournament-members">
+              <div class="member-avatars">
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar-count">+244</div>
+              </div>
+              <span>247 members attending</span>
+            </div>
+          </div>
+          <div class="tournament-actions">
+            <a href="/tournaments/wimbledon" class="tournament-link">View Details</a>
+          </div>
+        </div>
+        
+        <div class="tournament-card">
+          <div class="tournament-info">
+            <h3>US Open</h3>
+            <p class="tournament-location">New York, USA</p>
+            <p class="tournament-date">Aug 26 – Sep 8, 2024</p>
+            <div class="tournament-members">
+              <div class="member-avatars">
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar-count">+309</div>
+              </div>
+              <span>312 members attending</span>
+            </div>
+          </div>
+          <div class="tournament-actions">
+            <a href="/tournaments/us-open" class="tournament-link">View Details</a>
+          </div>
+        </div>
+        
+        <div class="tournament-card">
+          <div class="tournament-info">
+            <h3>French Open</h3>
+            <p class="tournament-location">Paris, France</p>
+            <p class="tournament-date">May 26 – Jun 9, 2024</p>
+            <div class="tournament-members">
+              <div class="member-avatars">
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar-count">+189</div>
+              </div>
+              <span>192 members attending</span>
+            </div>
+          </div>
+          <div class="tournament-actions">
+            <a href="/tournaments/french-open" class="tournament-link">View Details</a>
+          </div>
         </div>
       </div>
     </div>
