@@ -47,91 +47,111 @@
     line-height: 1.7;
   }
 
-  /* Steps Section */
-  .steps-section {
+  /* Steps and Stats Combined Section */
+  .steps-stats-section {
     background: #f8f9fa;
     padding: 5rem 1.5rem;
   }
 
-  .steps-container {
-    max-width: 64rem;
+  .steps-stats-container {
+    max-width: 120rem;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: flex-start;
+  }
+
+  .steps-column {
+    background: #FFFFFF;
+    padding: 3rem;
+    border-radius: 1rem;
+  }
+
+  .stats-column {
+    background: rgba(102, 145, 39, 0.05);
+    padding: 3rem;
+    border-radius: 1rem;
   }
 
   .steps-title {
     font-family: 'Crimson Text', serif;
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
-    text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
+    color: #171717;
+  }
+
+  .stats-title {
+    font-family: 'Crimson Text', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
     color: #171717;
   }
 
   .steps-grid {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 2rem;
   }
 
   .step {
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: flex-start;
   }
 
   .step-number {
-    width: 4rem;
-    height: 4rem;
+    width: 3rem;
+    height: 3rem;
     background: rgba(102, 145, 39, 0.1);
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #669127;
     font-weight: 600;
-    font-size: 1.25rem;
+    font-size: 1rem;
     flex-shrink: 0;
   }
 
   .step-content h3 {
     font-family: 'Crimson Text', serif;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
     color: #171717;
   }
 
   .step-content p {
     color: #6b7280;
-    line-height: 1.6;
+    line-height: 1.5;
+    font-size: 0.9rem;
   }
 
-  /* Stats Section */
-  .stats-section {
-    background: #FFFFFF;
-    padding: 5rem 1.5rem;
+  .stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .stat-item {
     text-align: center;
   }
 
-  .stats-grid {
-    max-width: 80rem;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2.5rem;
-  }
-
-  .stat h3 {
+  .stat-item h3 {
     font-family: 'Crimson Text', serif;
-    font-size: 5rem;
+    font-size: 4rem;
     font-weight: 700;
     color: #669127;
     margin-bottom: 0.5rem;
   }
 
-  .stat p {
+  .stat-item p {
     color: #6b7280;
     font-size: 1rem;
+    font-weight: 500;
   }
 
   /* Values Section */
@@ -342,16 +362,28 @@
     }
   }
 
+  @media (max-width: 1024px) {
+    .steps-stats-container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .steps-column,
+    .stats-column {
+      padding: 2rem;
+    }
+
+    .stat-item h3 {
+      font-size: 3rem;
+    }
+  }
+
   @media (max-width: 768px) {
     .hero {
       padding: 3rem 1rem;
     }
 
-    .steps-section {
-      padding: 3rem 1rem;
-    }
-
-    .stats-section {
+    .steps-stats-section {
       padding: 3rem 1rem;
     }
 
@@ -367,8 +399,9 @@
       padding: 3rem 1rem;
     }
 
-    .steps-title {
-      font-size: 2.5rem;
+    .steps-title,
+    .stats-title {
+      font-size: 1.75rem;
     }
 
     .engagement-title {
@@ -377,6 +410,15 @@
 
     .final-cta h2 {
       font-size: 3rem;
+    }
+
+    .steps-column,
+    .stats-column {
+      padding: 1.5rem;
+    }
+
+    .stat-item h3 {
+      font-size: 2.5rem;
     }
   }
 </style>
@@ -394,53 +436,55 @@
     </p>
   </section>
 
-  <!-- Steps Section -->
-  <section class="steps-section">
-    <div class="steps-container">
-      <h2 class="steps-title">How CourtSide Works</h2>
-      <div class="steps-grid">
-        <div class="step">
-          <div class="step-number">01</div>
-          <div class="step-content">
-            <h3>Create Profile</h3>
-            <p>Tell us your tournament plans and what kind of fan you are.</p>
+  <!-- Steps and Stats Combined Section -->
+  <section class="steps-stats-section">
+    <div class="steps-stats-container">
+      <div class="steps-column">
+        <h2 class="steps-title">How CourtSide Works</h2>
+        <div class="steps-grid">
+          <div class="step">
+            <div class="step-number">01</div>
+            <div class="step-content">
+              <h3>Create Profile</h3>
+              <p>Tell us your tournament plans and what kind of fan you are.</p>
+            </div>
           </div>
-        </div>
-        <div class="step">
-          <div class="step-number">02</div>
-          <div class="step-content">
-            <h3>Choose Sessions</h3>
-            <p>Mark which days/sessions you're attending — from Grand Slams to 500s.</p>
+          <div class="step">
+            <div class="step-number">02</div>
+            <div class="step-content">
+              <h3>Choose Sessions</h3>
+              <p>Mark which days/sessions you're attending — from Grand Slams to 500s.</p>
+            </div>
           </div>
-        </div>
-        <div class="step">
-          <div class="step-number">03</div>
-          <div class="step-content">
-            <h3>See Who's Going</h3>
-            <p>Browse fellow members who'll be there and opt in to meet.</p>
+          <div class="step">
+            <div class="step-number">03</div>
+            <div class="step-content">
+              <h3>See Who's Going</h3>
+              <p>Browse fellow members who'll be there and opt in to meet.</p>
+            </div>
           </div>
-        </div>
-        <div class="step">
-          <div class="step-number">04</div>
-          <div class="step-content">
-            <h3>Meet Courtside</h3>
-            <p>Order your lanyard and connect with fans IRL, effortlessly.</p>
+          <div class="step">
+            <div class="step-number">04</div>
+            <div class="step-content">
+              <h3>Meet Courtside</h3>
+              <p>Order your lanyard and connect with fans IRL, effortlessly.</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Stats Section -->
-  <section class="stats-section">
-    <div class="stats-grid">
-      <div class="stat">
-        <h3>1,200+</h3>
-        <p>Active Members</p>
-      </div>
-      <div class="stat">
-        <h3>150+</h3>
-        <p>Tournaments Covered</p>
+      
+      <div class="stats-column">
+        <h2 class="stats-title">Community at a Glance</h2>
+        <div class="stats-list">
+          <div class="stat-item">
+            <h3>1,200+</h3>
+            <p>Active Members</p>
+          </div>
+          <div class="stat-item">
+            <h3>150+</h3>
+            <p>Tournaments Covered</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
