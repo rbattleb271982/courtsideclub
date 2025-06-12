@@ -11,13 +11,21 @@
   </div>
 
   <!-- Hero Section -->
-  <section class="relative px-4 pt-20 pb-16 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-lime-400 to-amber-400 bg-clip-text text-transparent leading-tight">
+  <section class="relative py-32 text-center text-white overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+           alt="Tennis stadium at sunset" 
+           class="w-full h-full object-cover opacity-50" />
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950/90"></div>
+    </div>
+
+    <div class="relative z-10 px-6 max-w-4xl mx-auto">
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-light leading-tight tracking-tight mb-6">
         Frequently Asked Questions
       </h1>
-      <p class="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-        Everything you need to know about CourtSide Club
+
+      <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10">
+        Everything you need to know about CourtSide Club.
       </p>
     </div>
   </section>

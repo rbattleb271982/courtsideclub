@@ -11,26 +11,29 @@
   </div>
 
   <!-- Hero Section -->
-  <section class="relative px-4 pt-20 pb-12 sm:px-6 lg:px-8 text-center">
-    <div class="max-w-3xl mx-auto">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-lime-400 to-blue-400 rounded-full mb-6">
-        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clip-rule="evenodd"></path>
-          <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z"></path>
-        </svg>
-      </div>
-      <h1 class="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-lime-400 via-blue-400 to-amber-400 bg-clip-text text-transparent leading-tight">
+  <section class="relative py-32 text-center text-white overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+           alt="Tennis stadium at sunset" 
+           class="w-full h-full object-cover opacity-50" />
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950/90"></div>
+    </div>
+
+    <div class="relative z-10 px-6 max-w-4xl mx-auto">
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-light leading-tight tracking-tight mb-6">
         Get Your Free Lanyard
       </h1>
-      <p class="text-xl text-gray-300 mb-8">
+
+      <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10">
         Make it easier to meet other fans. Wear your lanyard. Start a conversation.
       </p>
-      <a href="{{ url_for('auth.signup') }}" class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-600 hover:to-blue-600 text-white font-semibold px-10 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 inline-flex items-center">
-        Order Yours Free
-        <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-        </svg>
-      </a>
+
+      <div class="flex justify-center">
+        <a href="{{ url_for('auth.signup') }}" 
+           class="bg-lime-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:bg-lime-600 transition-colors duration-300 inline-flex items-center justify-center">
+          Order Yours Free
+        </a>
+      </div>
     </div>
   </section>
 

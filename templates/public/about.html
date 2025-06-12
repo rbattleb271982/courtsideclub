@@ -11,21 +11,22 @@
   </div>
 
   <!-- Hero Section -->
-  <section class="relative px-4 pt-20 pb-16 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto text-center">
-      <div class="relative">
-        <div class="absolute inset-0 bg-gradient-to-r from-amber-400 via-lime-500 to-blue-400 blur-3xl opacity-30 animate-pulse"></div>
-        <h1 class="relative text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-lime-400 to-blue-400 bg-clip-text text-transparent leading-tight">
-          Why CourtSide Club Was Started
-        </h1>
-      </div>
-      <p class="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+  <section class="relative py-32 text-center text-white overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" 
+           alt="Tennis stadium at sunset" 
+           class="w-full h-full object-cover opacity-50" />
+      <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 to-slate-950/90"></div>
+    </div>
+
+    <div class="relative z-10 px-6 max-w-4xl mx-auto">
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-light leading-tight tracking-tight mb-6">
+        Why CourtSide Club Was Started
+      </h1>
+
+      <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10">
         We created CourtSide Club to make the tennis experience more social, inclusive, and unforgettable.
       </p>
-    </div>
-    <div class="absolute inset-0 -z-10">
-      <div class="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-orange-900/10 to-red-900/20"></div>
-      <img src="{{ url_for('static', filename='images/hero-tennis.jpg') }}" alt="Tennis crowd lounge atmosphere" class="w-full h-full object-cover opacity-10">
     </div>
   </section>
 
