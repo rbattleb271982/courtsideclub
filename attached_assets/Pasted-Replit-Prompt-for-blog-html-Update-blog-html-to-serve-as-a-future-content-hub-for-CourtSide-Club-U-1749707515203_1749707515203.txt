@@ -1,0 +1,86 @@
+Replit Prompt for blog.html:
+Update blog.html to serve as a future content hub for CourtSide Club. Use a friendly, anticipatory tone and don’t show placeholder lorem ipsum.
+
+---
+
+📄 blog.html
+
+Page Title: "Blog – CourtSide Club"
+
+Hero Section:
+- Heading: "The Lounge Log"
+- Subheading: "Stories, updates, and match-day memories from CourtSide Club members."
+
+Content Section:
+- Card 1 (coming soon layout):
+  - Title: "Our First Wimbledon Meet-Up"
+  - Tag: "Coming Soon"
+  - Subtext: "A behind-the-scenes recap of our favorite connections from SW19."
+- Card 2:
+  - Title: "How to Spot Fellow Members"
+  - Tag: "Coming Soon"
+  - Subtext: "Tips for making in-person meetups easier with our lanyard system."
+- Card 3:
+  - Title: "Tennis Travel Tips"
+  - Tag: "Coming Soon"
+  - Subtext: "Packing lists, fan insights, and tricks for tournament trips."
+
+CTA:
+- Heading: "Want to share your story?"
+- CTA Button: "Contact Us"
+
+---
+
+🧪 Replit Agent Instructions:
+- Make sure cards are well-styled and mobile-friendly.
+- Don’t use lorem ipsum. Just display “Coming Soon” where needed.
+- Keep layout clean and editorial.
+- Do not finish until layout has been tested for responsiveness.
+✅ Replit Prompt for privacy.html:
+Replace placeholder content in privacy.html with a simple, trust-focused privacy message that aligns with CourtSide Club’s values. Do not add legal boilerplate yet — this is an interim page.
+
+---
+
+📄 privacy.html
+
+Page Title: "Privacy Policy – CourtSide Club"
+
+Hero Section:
+- Heading: "Privacy Policy"
+- Subheading: "We respect your privacy and protect your information."
+
+Main Content:
+- Paragraph 1: "CourtSide Club only collects the information necessary to help you connect with other fans — like your email, tournament attendance, and meetup preferences."
+- Paragraph 2: "We never share your personal details without consent. You control what information is visible to others."
+- Paragraph 3: "This page will be updated with a full legal policy soon. If you have any questions in the meantime, please contact us directly."
+
+---
+
+🧪 Replit Agent Instructions:
+- Use styling consistent with the rest of the site.
+- This is a friendly, plain-English placeholder. No legalese needed yet.
+- Ensure it's accessible and clean on mobile.
+✅ Replit Prompt for terms.html:
+Update terms.html with a friendly placeholder that sets expectations without legal text. This is a pre-launch page for CourtSide Club’s terms of use.
+
+---
+
+📄 terms.html
+
+Page Title: "Terms of Service – CourtSide Club"
+
+Hero Section:
+- Heading: "Terms of Service"
+- Subheading: "A quick note before we get formal."
+
+Main Content:
+- Paragraph 1: "CourtSide Club is a platform for tennis fans to connect and enhance their tournament experience."
+- Paragraph 2: "While we work on our full terms and conditions, know that we expect all members to respect each other, show up as fans, and keep things safe and positive."
+- Paragraph 3: "By using the site, you agree to those basic principles. Full legal terms will be published here soon."
+
+---
+
+🧪 Replit Agent Instructions:
+- Keep tone warm and clear — no AI-sounding filler.
+- Layout should match FAQs and About styling.
+- Confirm display works on mobile and desktop.

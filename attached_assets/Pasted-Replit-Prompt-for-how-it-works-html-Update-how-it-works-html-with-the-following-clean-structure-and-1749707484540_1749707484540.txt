@@ -1,0 +1,77 @@
+Replit Prompt for how_it_works.html:
+Update how_it_works.html with the following clean structure and member-first language. Make sure the tone is clear, social, and emphasizes real-world tournament meetups. Do not add filler copy.
+
+---
+
+📄 how_it_works.html
+
+Hero Section:
+- Heading: "How It Works"
+- Subheading: "It's not a group chat. It's a match-day meet-up tool."
+- CTA: "Get Started"
+
+Steps Section (4 steps, evenly spaced or grid format on desktop):
+1. Join CourtSide Club  
+   "Sign up with your email. It's fast, free, and takes 30 seconds."
+
+2. Pick Your Tournaments  
+   "Tell us which sessions you're going to — day, night, or both."
+
+3. Get Your Lanyard  
+   "We’ll ship you a free lanyard so other members can spot you instantly."
+
+4. Meet Up IRL  
+   "Your lanyard signals you're open to connecting. Say hey, grab a drink, or just share the vibes."
+
+Final CTA:
+- Heading: "Ready to get started?"
+- CTA Button: "Get Started"
+
+---
+
+🧪 Replit Agent Instructions:
+- Remove any AI-generated intro text or repeated boilerplate from earlier versions.
+- Use the copy exactly as above.
+- Ensure it looks clean and mobile-friendly.
+- Do not finish until you've tested it live on mobile and desktop.
+✅ Replit Prompt for tournaments.html:
+Update tournaments.html to reflect the original tone of CourtSide Club. This is the main calendar page and should feel premium, helpful, and social — not like a travel agency.
+
+---
+
+📄 tournaments.html
+
+Hero Section:
+- Remove: "Find Your Tournament Crew"
+- Replace with:
+  - Badge: "TOURNAMENT CALENDAR"
+  - Heading: "Browse Upcoming Tournaments"
+  - Subheading: "Explore ATP and WTA events. Mark your spot, connect with other fans, and make the most of your match-day experience."
+
+Filters:
+- Heading: "Filters"
+- Filter Options:
+  - Month: All, January–December
+  - Category: All Categories, Grand Slam, Masters 1000, ATP 500, WTA 1000, WTA 500, ATP 250, WTA 250
+
+Tournament Cards:
+- Labels: "FEATURED", "GRAND SLAM", "ATP 500", etc.
+- Buttons: "View Details", "Learn More"
+- Include room for small editorial notes (optional): e.g., “Meetup interest growing”, “Seats filling up”, etc.
+
+No Results:
+- Heading: "No tournaments found"
+- Subtext: "Try adjusting your filters to see more results."
+
+Final CTA Section:
+- Heading: "Ready to Connect?"
+- Description: "Join CourtSide Club and start connecting with tennis fans at your favorite tournaments."
+- CTA Button: "JOIN COURTSIDE CLUB"
+
+---
+
+🧪 Replit Agent Instructions:
+- Ensure no filler phrases like “Find Your Crew” are used.
+- Prioritize clarity and alignment with the CourtSide Club tone.
+- Make sure filters work on mobile.
+- Do not finish until you’ve fully tested functionality and layout across screen sizes.

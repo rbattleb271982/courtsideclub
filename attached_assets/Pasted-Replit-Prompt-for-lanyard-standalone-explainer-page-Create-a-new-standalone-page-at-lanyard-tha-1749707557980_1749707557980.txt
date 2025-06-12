@@ -1,0 +1,87 @@
+Replit Prompt for /lanyard (standalone explainer page):
+Create a new standalone page at /lanyard that explains how the CourtSide Club lanyard works. This should complement the lanyard ordering flow and emphasize how it helps fans connect.
+
+---
+
+📄 lanyard.html
+
+Page Title: "CourtSide Club Lanyard – How It Works"
+
+Hero Section:
+- Heading: "The CourtSide Club Lanyard"
+- Subheading: "A low-key way to meet other fans, on your terms."
+
+Section: What It Is
+- Heading: "What It Is"
+- Paragraph: "The lanyard is our way of saying 'you’re in the club.' It’s subtle, stylish, and designed to help you find other members at tournaments."
+
+Section: Why It Works
+- Heading: "Why It Works"
+- Paragraph: "No name tags. No pressure. Just a discreet QR code that lets fans connect and say hello. It’s conversation made easy."
+
+Section: How to Get One
+- Heading: "How to Get One"
+- Bullets:
+  - Sign up and select the tournaments you’re attending
+  - Verify your attendance
+  - Get your free lanyard in the mail — shipping’s on us
+  - Wear it to your next tournament and start meeting people
+
+Visual Callout:
+- Caption: "Free for all verified attendees"
+- Subtext: "Designed with premium woven fabric and a unique QR code just for you."
+
+Final CTA:
+- Heading: "Ready to Get Yours?"
+- Primary CTA: "Order Free Lanyard"
+- Secondary CTA: "See How It Works"
+
+---
+
+🧪 Replit Agent Instructions:
+- Match style with the homepage and How It Works page.
+- Use layout blocks: hero, features, callout, CTA.
+- Confirm mobile view is readable and spacing is clean.
+✅ Replit Prompt for /partners (future press or sponsor credibility page):
+Create a new public page at /partners to support future press, sponsors, and event collaborators. This is a lightweight, brand-aligned explainer page.
+
+---
+
+📄 partners.html
+
+Page Title: "Partner with CourtSide Club"
+
+Hero Section:
+- Heading: "Let’s Work Together"
+- Subheading: "Whether you’re a tournament, brand, or content partner — we’re open to collaboration."
+
+Section: Why Partner with Us
+- Heading: "Why Partner with Us"
+- Points:
+  - Audience of passionate tennis fans, attending real events
+  - High engagement through in-person activations
+  - Community-driven ethos with premium positioning
+
+Section: Ideal Partnerships
+- Heading: "Who We’re Looking For"
+- Bullets:
+  - Tournament organizers and venue hosts
+  - Hospitality groups and fan experience companies
+  - Content creators and tennis media
+  - Brands interested in unique fan activations
+
+Section: Press Inquiries
+- Heading: "Press & Media"
+- Paragraph: "Covering CourtSide Club? We’d love to chat. Contact us for interviews, assets, or access."
+
+Final CTA:
+- Heading: "Get in Touch"
+- Primary CTA: "Contact Us"
+- Secondary CTA: "Learn More About Us"
+
+---
+
+🧪 Replit Agent Instructions:
+- Design with same spacing, fonts, and style as About page.
+- Use sections with clear separation, not long blocks of text.
+- Do not finish until mobile formatting is checked.

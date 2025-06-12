@@ -1,9 +1,94 @@
-
 {% extends "public/base.html" %}
-{% block title %}Blog - CourtSide Club{% endblock %}
-{% block description %}Latest news and updates from the tennis community{% endblock %}
+{% block title %}Blog – CourtSide Club{% endblock %}
 
 {% block content %}
-  <h1>Blog</h1>
-  <p>Coming soon! Check back for tennis news, tournament coverage, and community stories.</p>
+<div class="min-h-screen bg-slate-950 text-white">
+  <!-- Hero Section -->
+  <section class="relative py-32 flex items-center justify-center overflow-hidden pt-32">
+    <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 bg-gradient-to-br from-lime-500/20 via-blue-500/20 to-purple-500/20 animate-pulse"></div>
+      <div class="absolute top-20 left-20 w-32 h-32 bg-lime-400/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div class="absolute bottom-20 right-20 w-40 h-40 bg-blue-400/30 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      <div class="absolute top-1/2 left-1/2 w-24 h-24 bg-purple-400/30 rounded-full blur-2xl animate-pulse delay-500"></div>
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-950/90 via-slate-900/80 to-slate-950/90"></div>
+    </div>
+
+    <div class="relative z-10 text-center px-6 max-w-3xl mx-auto">
+      <h1 class="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text text-transparent">
+        The Lounge Log
+      </h1>
+      <p className="text-slate-400 text-lg sm:text-xl">
+        Stories, updates, and match-day memories from CourtSide Club members.
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="py-16 px-6 sm:px-10">
+    <div class="max-w-4xl mx-auto">
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        
+        <!-- Card 1 -->
+        <div class="bg-slate-900/60 border border-slate-700 rounded-2xl p-8 shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
+          <div class="mb-4">
+            <span class="inline-block bg-gradient-to-r from-lime-500 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+              Coming Soon
+            </span>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-3">Our First Wimbledon Meet-Up</h3>
+          <p class="text-slate-400">
+            A behind-the-scenes recap of our favorite connections from SW19.
+          </p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-slate-900/60 border border-slate-700 rounded-2xl p-8 shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
+          <div class="mb-4">
+            <span class="inline-block bg-gradient-to-r from-lime-500 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+              Coming Soon
+            </span>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-3">How to Spot Fellow Members</h3>
+          <p class="text-slate-400">
+            Tips for making in-person meetups easier with our lanyard system.
+          </p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-slate-900/60 border border-slate-700 rounded-2xl p-8 shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
+          <div class="mb-4">
+            <span class="inline-block bg-gradient-to-r from-lime-500 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+              Coming Soon
+            </span>
+          </div>
+          <h3 class="text-xl font-semibold text-white mb-3">Tennis Travel Tips</h3>
+          <p class="text-slate-400">
+            Packing lists, fan insights, and tricks for tournament trips.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-20 px-6 sm:px-10">
+    <div class="max-w-2xl mx-auto text-center">
+      <div class="bg-slate-900/50 border border-slate-800 backdrop-blur-sm rounded-3xl shadow-xl p-12">
+        <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text text-transparent">
+          Want to share your story?
+        </h2>
+        <p class="text-slate-400 mb-8 text-lg">
+          Have a great tournament experience or connection story? We'd love to feature it.
+        </p>
+        <a href="mailto:hello@courtsideclub.app" class="bg-gradient-to-r from-lime-500 to-blue-500 hover:from-lime-600 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 inline-flex items-center">
+          Contact Us
+          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
 {% endblock %}

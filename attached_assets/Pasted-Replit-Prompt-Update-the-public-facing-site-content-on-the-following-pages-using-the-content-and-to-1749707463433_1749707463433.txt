@@ -1,0 +1,116 @@
+Replit Prompt:
+Update the public-facing site content on the following pages using the content and tone below. Replace any existing placeholder or AI-generated phrasing.
+
+---
+
+📄 home.html
+
+- Remove: “EXCLUSIVE MEMBERSHIP” badge.
+- Hero Section:
+  Heading: "Tennis is better together."
+  Subheading: "An exclusive community for discerning tennis enthusiasts. From Grand Slams to Masters events, connect with like-minded members and elevate your tournament experience."
+  CTA 1: "REQUEST INVITATION"
+  CTA 2: "MEMBER LOGIN"
+
+- The CourtSide Advantage:
+  Subtitle: "Experience tennis tournaments like never before with our carefully curated community of passionate fans."
+  Cards:
+    - Curated Community: "Connect with verified tennis enthusiasts who share your passion for the sport."
+    - Exclusive Access: "Premium meetup locations and VIP experiences at the world's finest tournaments."
+    - Private & Secure: "Your connections and conversations remain within our trusted member network."
+
+- Tournaments Section:
+  Heading: "Exclusive Tournaments"
+  Subheading: "Join fellow members at the world's most prestigious tennis events with premium access and experiences."
+  Labels: "FEATURED EVENT", "PLATINUM", "GRAND SLAM"
+
+- ✅ Add this new section at the bottom of the homepage:
+
+```jsx
+<section className="whats-happening py-16 px-6 bg-slate-950 text-white">
+  <div className="max-w-4xl mx-auto text-center">
+    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gradient bg-gradient-to-r from-lime-400 to-blue-500 bg-clip-text text-transparent">
+      What’s Happening on CourtSide Club
+    </h2>
+    <p className="text-slate-400 max-w-2xl mx-auto mb-10">
+      We’re more than just match-day vibes. Here's where we’re exploring in-person meetups, seating sections, and special experiences — all powered by fans like you.
+    </p>
+
+    <div className="grid gap-8 md:grid-cols-2">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
+        <h3 className="text-xl font-semibold text-white mb-2">US Open 2025</h3>
+        <p className="text-slate-400 mb-4">
+          Considering a dedicated seating section and daily meetups near the Grandstand.
+        </p>
+        <a href="/join" className="text-lime-400 font-medium hover:underline">
+          Get Updates →
+        </a>
+      </div>
+
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
+        <h3 className="text-xl font-semibold text-white mb-2">Indian Wells 2025</h3>
+        <p className="text-slate-400 mb-4">
+          Exploring meetups at the Village, early entry tips, and shared food recs nearby.
+        </p>
+        <a href="/join" className="text-lime-400 font-medium hover:underline">
+          Get Updates →
+        </a>
+      </div>
+
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
+        <h3 className="text-xl font-semibold text-white mb-2">Miami Open 2025</h3>
+        <p className="text-slate-400 mb-4">
+          Looking into a night session happy hour and optional group ticketing block.
+        </p>
+        <a href="/join" className="text-lime-400 font-medium hover:underline">
+          Get Updates →
+        </a>
+      </div>
+
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-left shadow-lg hover:shadow-lime-500/10 transition-all duration-300">
+        <h3 className="text-xl font-semibold text-white mb-2">Madrid Open 2025</h3>
+        <p className="text-slate-400 mb-4">
+          Potential for international meetup coordination and shared travel tips.
+        </p>
+        <a href="/join" className="text-lime-400 font-medium hover:underline">
+          Get Updates →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+📄 about.html
+Hero:
+Heading: "Why CourtSide Club Was Started"
+Subheading: "We created CourtSide Club to make the tennis experience more social, inclusive, and unforgettable."
+Our Vision (Card List):
+Members-Club Experience
+Trip Planning Tools
+Exclusive Benefits
+Real Connections
+Our Principles:
+Community-First
+Fan-Led
+Privacy-Respecting
+Match-Day Magic
+📄 lanyard.html
+Hero:
+Heading: "Get Your Free Lanyard"
+Subheading: "Make it easier to meet other fans. Wear your lanyard. Start a conversation."
+CTA: "Order Yours Free"
+What's Included:
+Premium woven lanyard
+QR code for easy connection
+No name tags, no awkward intros
+Free for verified attendees
+How It Works:
+Sign Up & Verify
+Receive Your Lanyard
+Connect at Tournaments
+Final CTA:
+Heading: "Ready to Connect?"
+Buttons: "Get Your Free Lanyard", "Learn More"
+📄 faqs.html
+Use the structured question/answer format provided.
+Do not mention exclusivity or cost (other than affirming it's free).
+Make sure the tone remains helpful and privacy-respecting, not salesy.
