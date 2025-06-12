@@ -1,0 +1,131 @@
+Please replace or create the following three public pages in the Replit project. These pages must match the visual style of the homepage (dark mode, gradient-rich, animated background, mobile-first).
+Create these files:
+pages/about.tsx
+pages/faqs.tsx
+pages/lanyard.tsx
+✅ 1. pages/about.tsx
+"use client"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Heart, Shield, Users, Zap } from "lucide-react"
+import Image from "next/image"
+
+export default function AboutPage() {
+  return (
+    <div className="min-h-screen bg-black text-white overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-lime-500/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -bottom-40 right-1/4 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      </div>
+
+      <section className="relative px-4 pt-20 pb-16 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-lime-500 to-blue-400 blur-3xl opacity-30 animate-pulse"></div>
+            <h1 className="relative text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-lime-400 to-blue-400 bg-clip-text text-transparent leading-tight">
+              Why CourtSide Club Was Started
+            </h1>
+          </div>
+          <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+            We created CourtSide Club to make the tennis experience more social, inclusive, and unforgettable.
+          </p>
+        </div>
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 via-orange-900/10 to-red-900/20"></div>
+          <Image src="/placeholder.svg?height=800&width=1200" alt="Tennis crowd lounge atmosphere" fill className="object-cover opacity-10" />
+        </div>
+      </section>
+
+      <section className="px-4 py-16 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+            <CardContent className="p-8 sm:p-12">
+              <h2 className="text-3xl sm:text-4xl font-bold mb-8 bg-gradient-to-r from-lime-400 to-amber-400 bg-clip-text text-transparent">
+                Our Story
+              </h2>
+              <div className="prose prose-lg prose-invert max-w-none">
+                <p className="text-gray-300 leading-relaxed mb-6">
+                  It started at Wimbledon 2023. I was sitting alone during a rain delay, watching hundreds of tennis fans around me doing the same thing — scrolling their phones, waiting for play to resume. Everyone seemed to share the same passion, but no one was talking.
+                </p>
+                <p className="text-gray-300 leading-relaxed mb-6">
+                  That's when it hit me: we had created this incredible global community of tennis lovers, but we had no way to actually connect with each other when it mattered most — at the tournaments themselves.
+                </p>
+                <p className="text-gray-300 leading-relaxed">
+                  CourtSide Club was born from that moment of realization. We wanted to bridge the gap between online tennis fandom and real-world connections, creating a space where the magic of shared passion could flourish naturally.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section className="px-4 py-16 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-lime-400 bg-clip-text text-transparent">
+            Our Vision
+          </h2>
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Cards */}
+            {[
+              {
+                title: "Members-Club Experience",
+                icon: <Users className="w-6 h-6 text-lime-400" />,
+                desc: "Exclusive perks and experiences that make being a tennis fan feel special, from priority access to unique events and insider content.",
+              },
+              {
+                title: "Trip Planning Tools",
+                icon: <Zap className="w-6 h-6 text-blue-400" />,
+                desc: "Comprehensive tools for coordinating tournament trips, from group bookings to local recommendations from fellow fans.",
+              },
+              {
+                title: "Exclusive Benefits",
+                icon: <Heart className="w-6 h-6 text-amber-400" />,
+                desc: "As our community grows, unlock special benefits like group discounts, early access to tickets, and VIP experiences.",
+              },
+              {
+                title: "Real Connections",
+                icon: <Shield className="w-6 h-6 text-lime-400" />,
+                desc: "Focus on meaningful in-person connections at tournaments, not just another social media platform with endless scrolling.",
+              },
+            ].map((card, idx) => (
+              <Card key={idx} className="bg-gray-900/50 border-gray-800 backdrop-blur-sm hover:bg-gray-900/70 transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="inline-flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-white/5">{card.icon}</div>
+                  <h3 className="text-xl font-semibold mb-3 text-white">{card.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{card.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 py-16 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-amber-400 to-blue-400 bg-clip-text text-transparent">
+            Our Principles
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {[
+              { title: "Community-First", description: "Every decision we make prioritizes the community's needs and experiences over profit." },
+              { title: "Fan-Led", description: "Our roadmap is shaped by what tennis fans actually want, not what we think they need." },
+              { title: "Privacy-Respecting", description: "Your personal information stays personal. We believe in connections, not data collection." },
+              { title: "Match-Day Magic", description: "We focus on enhancing real tournament experiences over creating more online noise." },
+            ].map((item, idx) => (
+              <div key={idx} className="text-center p-6 rounded-lg bg-gray-900/30 backdrop-blur-sm border border-gray-800 hover:bg-gray-900/50 transition-all duration-300">
+                <h3 className="text-lg font-semibold mb-3 text-white">{item.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
+✅ 2. pages/faqs.tsx
+Paste your full finalized FAQsPage JSX here. If you need me to regenerate it, just say the word.
+✅ 3. pages/lanyard.tsx
+Paste your finalized LanyardPage JSX here. If you want a fresh version, I can supply it.

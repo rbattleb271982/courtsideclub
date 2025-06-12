@@ -149,10 +149,7 @@ def faqs():
 def about():
     return render_template('public/about.html')
 
-# About page content has been moved to the homepage
-# @main_bp.route('/about')
-# def about():
-#     return render_template('public/about.html')
+
 
 @main_bp.route('/blog')
 def blog():
@@ -220,3 +217,4 @@ def sitemap():
     
     xml += '</urlset>'
     return Response(xml, mimetype='application/xml')
+

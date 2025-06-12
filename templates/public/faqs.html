@@ -1,124 +1,240 @@
 {% extends "public/base.html" %}
-{% block title %}FAQs – CourtSide Club{% endblock %}
-{% block description %}Answers to your questions about how CourtSide Club works, lanyards, meetups, and more.{% endblock %}
-
-{% block head %}
-<style>
-/* FAQ Expandable Groups Styling */
-details {
-  margin-bottom: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fff;
-}
-
-details summary {
-  padding: 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-  color: #004d26;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-details summary:hover {
-  background-color: #f8f9fa;
-}
-
-details[open] summary {
-  border-bottom: 1px solid #e0e0e0;
-  border-radius: 8px 8px 0 0;
-}
-
-/* Nested question details */
-details details {
-  margin: 0.5rem 0;
-  border: none;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-}
-
-details details summary {
-  padding: 0.75rem;
-  font-size: 0.95rem;
-  color: #333;
-  font-weight: 500;
-}
-
-details details summary:hover {
-  background-color: #e9ecef;
-}
-
-details details[open] summary {
-  border-bottom: 1px solid #dee2e6;
-  border-radius: 6px 6px 0 0;
-}
-
-details details p {
-  padding: 0.75rem;
-  margin: 0;
-  color: #555;
-  line-height: 1.5;
-  background-color: #fff;
-  border-radius: 0 0 6px 6px;
-}
-
-/* Group content padding */
-details > details {
-  margin: 0.75rem;
-}
-
-@media (max-width: 768px) {
-  details summary {
-    padding: 0.75rem;
-    font-size: 0.9rem;
-  }
-  
-  details details summary {
-    padding: 0.6rem;
-    font-size: 0.85rem;
-  }
-  
-  details details p {
-    padding: 0.6rem;
-    font-size: 0.9rem;
-  }
-}
-</style>
-{% endblock %}
+{% block title %}FAQs - CourtSide Club{% endblock %}
 
 {% block content %}
-<div style="max-width: 800px; margin: 0 auto; padding: 2rem 1rem;">
-  <h2>Frequently Asked Questions</h2>
+<div class="min-h-screen bg-black text-white overflow-hidden">
+  <!-- Animated background elements -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -left-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-lime-500/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div class="absolute -bottom-40 left-1/4 w-72 h-72 bg-amber-500/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+  </div>
 
-  <details>
-    <summary><strong>🎟️ Signing Up & Getting Started</strong></summary>
-    <details><summary>Do I have to pay for a lanyard?</summary><p>Nope! It's totally free if you've signed up and selected at least one tournament session.</p></details>
-    <details><summary>How do I sign up?</summary><p>Just click "Join Now" on the homepage. You'll create a quick profile and select which tournaments and sessions you're attending.</p></details>
-    <details><summary>What happens after I sign up?</summary><p>You'll be able to see who else is going to tournaments, opt in to meetups, and order your free lanyard.</p></details>
-    <details><summary>Can I invite a friend?</summary><p>Yes! Once you sign up, you'll be able to refer friends and unlock perks.</p></details>
-  </details>
+  <!-- Hero Section -->
+  <section class="relative px-4 pt-20 pb-16 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-lime-400 to-amber-400 bg-clip-text text-transparent leading-tight">
+        Frequently Asked Questions
+      </h1>
+      <p class="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+        Everything you need to know about CourtSide Club
+      </p>
+    </div>
+  </section>
 
-  <details>
-    <summary><strong>🧑‍🤝‍🧑 Meeting Up with Members</strong></summary>
-    <details><summary>Can I see who else is attending a tournament?</summary><p>Yes — once logged in, just visit any tournament page to see who's going and who's open to meeting up.</p></details>
-    <details><summary>What's the point of the lanyard?</summary><p>It's a visual signal that you're part of CourtSide Club and open to connecting with others at the event.</p></details>
-    <details><summary>How do I opt in to meet up?</summary><p>On each tournament page, you can toggle whether you're open to meeting. You'll also choose which sessions you're attending.</p></details>
-    <details><summary>Is there an official meet-up spot?</summary><p>Some events will have suggested meeting spots or times — we'll include those in your reminder emails if available.</p></details>
-  </details>
+  <!-- FAQ Sections -->
+  <section class="px-4 py-16 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto space-y-16">
+      
+      <!-- Getting Started -->
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-8 bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text text-transparent">
+          Getting Started
+        </h2>
+        <div class="space-y-6">
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq1')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">What is CourtSide Club?</h3>
+                <svg id="faq1-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq1-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                CourtSide Club is an exclusive community for tennis fans who want to connect with like-minded enthusiasts at tournaments. We help you find and meet other passionate fans, making your tournament experience more social and memorable.
+              </p>
+            </div>
+          </div>
 
-  <details>
-    <summary><strong>🧳 Attending Tournaments</strong></summary>
-    <details><summary>Can I attend more than one tournament?</summary><p>Absolutely — just add them to your profile and select which sessions you're going to.</p></details>
-    <details><summary>What if my plans change?</summary><p>You can update your attendance or session selections at any time from your dashboard.</p></details>
-    <details><summary>Do I have to attend with friends?</summary><p>Not at all. CourtSide Club is built for solo fans, friend groups, and everyone in between.</p></details>
-  </details>
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq2')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">How do I join?</h3>
+                <svg id="faq2-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq2-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                Simply click "Join Now" and create your account. Once you're verified, you'll have access to our tournament community features and can start connecting with other fans at upcoming events.
+              </p>
+            </div>
+          </div>
 
-  <details>
-    <summary><strong>📦 Lanyard & Perks</strong></summary>
-    <details><summary>When will my lanyard arrive?</summary><p>Once you order it, we'll ship it to you in advance of your selected tournament(s). You'll get a tracking number too.</p></details>
-    <details><summary>Do I get a new lanyard for each tournament?</summary><p>No — it's a one-time lanyard you can use across multiple events.</p></details>
-    <details><summary>Are there other perks?</summary><p>Yes! We're working on exclusive offers and extras for active members — stay tuned.</p></details>
-  </details>
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq3')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">Is membership free?</h3>
+                <svg id="faq3-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq3-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                Yes, CourtSide Club membership is completely free. We believe great tennis connections shouldn't cost anything. Our goal is to enhance your tournament experience, not add to your expenses.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tournaments & Events -->
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-8 bg-gradient-to-r from-blue-400 to-amber-400 bg-clip-text text-transparent">
+          Tournaments & Events
+        </h2>
+        <div class="space-y-6">
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq4')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">Which tournaments are covered?</h3>
+                <svg id="faq4-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq4-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                We cover major ATP and WTA tournaments including Grand Slams, Masters 1000/WTA 1000 events, and select ATP 500/WTA 500 tournaments. We're constantly expanding our coverage based on member interest and attendance.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq5')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">How do I find other fans at tournaments?</h3>
+                <svg id="faq5-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq5-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                Select the tournaments you're attending and the sessions you plan to watch. You'll see other members attending the same matches, and can connect through our platform or look for CourtSide Club lanyards at the venue.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq6')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">Can I attend tournaments I'm not originally planning to go to?</h3>
+                <svg id="faq6-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq6-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                Absolutely! You can update your tournament attendance anytime. Many members discover new tournaments through our community and decide to attend based on who else is going.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lanyard Program -->
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-8 bg-gradient-to-r from-amber-400 to-lime-400 bg-clip-text text-transparent">
+          Lanyard Program
+        </h2>
+        <div class="space-y-6">
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq7')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">What is the CourtSide Club lanyard?</h3>
+                <svg id="faq7-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq7-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                Our lanyard is a subtle way to identify fellow CourtSide Club members at tournaments. It features a QR code that other members can scan to connect with you, making it easier to start conversations and meet new people.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq8')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">Is the lanyard really free?</h3>
+                <svg id="faq8-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq8-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                Yes, completely free including shipping. We want to remove any barriers to connecting with fellow tennis fans. Just verify your tournament attendance and we'll send you a lanyard at no cost.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy & Safety -->
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-bold mb-8 bg-gradient-to-r from-lime-400 to-blue-400 bg-clip-text text-transparent">
+          Privacy & Safety
+        </h2>
+        <div class="space-y-6">
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq9')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">How do you protect my privacy?</h3>
+                <svg id="faq9-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq9-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                We only collect information necessary for connecting you with other fans. Your personal details are never shared without permission, and you control what information other members can see about you.
+              </p>
+            </div>
+          </div>
+
+          <div class="bg-gray-900/50 border border-gray-800 backdrop-blur-sm rounded-2xl shadow-xl">
+            <button class="w-full text-left p-6 focus:outline-none" onclick="toggleFAQ('faq10')">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-white">Is it safe to meet people through CourtSide Club?</h3>
+                <svg id="faq10-icon" class="w-5 h-5 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </button>
+            <div id="faq10-content" class="hidden px-6 pb-6">
+              <p class="text-gray-300 leading-relaxed">
+                We verify all members and meetings happen in public tournament venues. However, as with any social interaction, use your best judgment. We provide guidelines for safe meetups and encourage meeting in groups when possible.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
 </div>
+
+<script>
+function toggleFAQ(faqId) {
+  const content = document.getElementById(faqId + '-content');
+  const icon = document.getElementById(faqId + '-icon');
+  
+  if (content.classList.contains('hidden')) {
+    content.classList.remove('hidden');
+    icon.style.transform = 'rotate(180deg)';
+  } else {
+    content.classList.add('hidden');
+    icon.style.transform = 'rotate(0deg)';
+  }
+}
+</script>
+
 {% endblock %}
