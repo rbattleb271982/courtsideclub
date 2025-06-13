@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from models import db, User, Tournament, UserTournament
-from services.email import send_email
-from utils.email_templates import load_email_template, render_template
+from services.pre_tournament_email import send_pre_tournament_reminder_email
 import logging
 
 logger = logging.getLogger(__name__)
@@ -71,50 +70,30 @@ def run_email_reminder(preview=False):
                     logger.info(f"Email Reminder Agent: Skipped {user.email} (opted out)")
                     continue
 
-                # Load email template and prepare content
-                template = load_email_template('pre_tournament_reminder')
-                
-                # Use first name if available, otherwise email prefix
-                first_name = user.first_name if hasattr(user, 'first_name') and user.first_name else user.email.split('@')[0]
-                
-                # Render template with variables
-                subject = render_template(template['subject'], 
-                                        user={'first_name': first_name}, 
-                                        tournament_name=tournament.name)
-                
-                body = render_template(template['body'], 
-                                     user={'first_name': first_name}, 
-                                     tournament_name=tournament.name)
-
                 if preview:
                     # Preview mode: just log the email content without sending
                     total_sent += 1
-                    logger.info(f"Email Reminder Agent (PREVIEW): Would send to {user.email} for {tournament.name}")
-                    logger.info(f"Email Reminder Agent (PREVIEW): Subject: {subject}")
-                    logger.info(f"Email Reminder Agent (PREVIEW): Body preview: {body[:200]}...")
+                    logger.info(f"Email Reminder Agent (PREVIEW): Would send rich email to {user.email} for {tournament.name}")
                 else:
-                    # Send actual email with basic error handling
-                    # For debug/testing, redirect all emails to admin address
+                    # Send rich HTML pre-tournament reminder email
                     debug_email = "richardbattlebaxter@gmail.com"
-                    debug_subject = f"[DEBUG] {subject} (for {user.email})"
-                    debug_body = f"""
-                    <p><strong>DEBUG EMAIL:</strong> This email was intended for {user.email}</p>
-                    <hr>
-                    {body}
-                    """
                     
                     try:
-                        response_code = send_email(to_email=debug_email, subject=debug_subject, content_html=debug_body)
+                        success = send_pre_tournament_reminder_email(
+                            user_id=user.id,
+                            tournament_id=tournament.id,
+                            debug_email_override=debug_email
+                        )
                         
-                        if response_code and response_code == 202:  # SendGrid success status
+                        if success:
                             total_sent += 1
-                            logger.info(f"Email Reminder Agent: Sent debug email to {debug_email} for {user.email} ({tournament.name})")
+                            logger.info(f"Email Reminder Agent: Sent rich email to {debug_email} for {user.email} ({tournament.name})")
                         else:
                             total_skipped += 1
-                            logger.error(f"Email Reminder Agent: Failed to send debug email (status: {response_code})")
+                            logger.error(f"Email Reminder Agent: Failed to send rich email")
                     except Exception as e:
                         total_skipped += 1
-                        logger.error(f"Email Reminder Agent: Error sending debug email: {str(e)}")
+                        logger.error(f"Email Reminder Agent: Error sending rich email: {str(e)}")
                         # Continue with next user instead of failing completely
 
         message = f"Sent {total_sent} reminder emails, skipped {total_skipped} users"

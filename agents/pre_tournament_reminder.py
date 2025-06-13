@@ -1,17 +1,15 @@
 """
 Pre-Tournament Reminder Agent
 
-This agent automatically sends reminder emails to users 1-2 days before their
+This agent automatically sends rich HTML reminder emails to users 1-2 days before their
 earliest selected tournament session begins.
 """
 
 import os
 import logging
-import json
 from datetime import datetime, timedelta
 from models import db, Tournament, User, UserTournament
-from services.sendgrid_service import send_email
-from utils.email_templates import load_email_template, render_template
+from services.pre_tournament_email import send_pre_tournament_reminder_email
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -74,45 +72,26 @@ def run_pre_tournament_reminder_agent():
                 if days_until_session not in [1, 2]:
                     continue  # Not in the 1-2 day window
                 
-                # Load email template and prepare content
-                template = load_email_template('pre_tournament_reminder')
-                
-                # Use first name if available, otherwise email prefix
-                first_name = user.first_name if hasattr(user, 'first_name') and user.first_name else user.email.split('@')[0]
-                
-                # Render template with variables
-                subject = render_template(template['subject'], 
-                                        user={'first_name': first_name}, 
-                                        tournament_name=tournament.name)
-                
-                body_html = f"""
-                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                    {render_template(template['body'], 
-                                   user={'first_name': first_name}, 
-                                   tournament_name=tournament.name)}
-                </div>
-                """
-                
-                # Send email (all debug emails go to admin)
+                # Send rich HTML pre-tournament reminder email
                 admin_email = os.environ.get('ADMIN_EMAIL', 'richardbattlebaxter@gmail.com')
                 
                 try:
-                    success = send_email(
-                        to_email=admin_email,  # Debug: send to admin instead of user
-                        subject=f"[DEBUG for {user.email}] {subject}",
-                        content_html=body_html
+                    success = send_pre_tournament_reminder_email(
+                        user_id=user.id,
+                        tournament_id=tournament.id,
+                        debug_email_override=admin_email  # Debug: send to admin instead of user
                     )
                     
                     if success:
                         emails_sent += 1
-                        logger.info(f"Pre-Tournament Reminder Agent: Email sent to {user.email} for {tournament.name} (earliest session: {earliest_session_date})")
+                        logger.info(f"Pre-Tournament Reminder Agent: Rich email sent to {user.email} for {tournament.name} (earliest session: {earliest_session_date})")
                     else:
                         emails_skipped += 1
-                        logger.error(f"Pre-Tournament Reminder Agent: Failed to send email to {user.email}")
+                        logger.error(f"Pre-Tournament Reminder Agent: Failed to send rich email to {user.email}")
                         
                 except Exception as e:
                     emails_skipped += 1
-                    logger.error(f"Pre-Tournament Reminder Agent: Error sending email to {user.email}: {str(e)}")
+                    logger.error(f"Pre-Tournament Reminder Agent: Error sending rich email to {user.email}: {str(e)}")
                     
             except Exception as e:
                 emails_skipped += 1
