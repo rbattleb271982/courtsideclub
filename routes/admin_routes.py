@@ -187,8 +187,7 @@ def view_tournament(tournament_slug):
                     'name': user.get_full_name(),
                     'email': user.email,
                     'sessions': sessions,
-                    'wants_to_meet': wants_to_meet,
-                    'lanyard': "Ordered" if user.lanyard_ordered else "No"
+                    'wants_to_meet': wants_to_meet
                 })
         
         # Sort attendees by name
@@ -256,8 +255,7 @@ def view_attendees(tournament_slug):
                 'name': user.get_full_name(),
                 'email': user.email,
                 'sessions': sessions,
-                'wants_to_meet': wants_to_meet,
-                'lanyard': "Ordered" if user.lanyard_ordered else "No"
+                'wants_to_meet': wants_to_meet
             })
         
         return render_template(
