@@ -529,8 +529,7 @@ def save_sessions(tournament_slug):
                     all_tournament_sessions.append(f"Day {i} - Day")
                     all_tournament_sessions.append(f"Day {i} - Night")
 
-    print(f"DEBUG: All possible sessions for {tournament.id}: {all_tournament_sessions}")
-    print(f"DEBUG: User selected sessions: {selected_sessions}")
+
     
     # Store a clean comma-separated list of selected sessions
     # COMPLETE REWRITE OF SESSION HANDLING:
@@ -545,24 +544,21 @@ def save_sessions(tournament_slug):
         old_sessions = [s.strip() for s in user_tournament.session_label.split(',') if s.strip()]
     
     # 2. For debugging, log what we had before
-    print(f"DEBUG: Previously selected: {old_sessions}")
+
     
     # 3. Convert current selections to a clean list with no duplicates
     unique_sessions = list(set(selected_sessions)) if selected_sessions else []
     
     # 4. More detailed logging showing comparison
-    print(f"DEBUG: Old sessions: {old_sessions}")
-    print(f"DEBUG: New sessions to save: {unique_sessions}")
+
     
     # 5. Completely replace the old session_label with only what's currently checked
     user_tournament.session_label = ','.join(unique_sessions) if unique_sessions else ''
     
     # 6. Verify final result after save
-    print(f"DEBUG: FINAL saved value: {user_tournament.session_label}")
+
     
-    # Debug the session label being saved
-    print(f"DEBUG: Saving sessions for user {current_user.id}, Tournament: {tournament.id}")
-    print(f"DEBUG: Final session_label: {user_tournament.session_label}")
+
     
     # Log the event for tracking
     event_data = {
