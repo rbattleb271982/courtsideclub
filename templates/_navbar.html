@@ -7,9 +7,10 @@
     <nav class="nav-links">
       {% if current_user.is_authenticated %}
         <a href="{{ url_for('user.my_tournaments') }}" class="nav-link">My Tournaments</a>
-        <a href="{{ url_for('user.browse_tournaments') }}" class="nav-link">Browse</a>
+        <a href="{{ url_for('user.browse_tournaments') }}" class="nav-link">Browse Tournaments</a>
         <a href="{{ url_for('main.blog') }}" class="nav-link">Stories</a>
         <a href="{{ url_for('main.faqs') }}" class="nav-link">Faqs</a>
+        <a href="{{ url_for('user.profile') }}" class="nav-link">Profile</a>
         {% if current_user.is_admin %}
           <a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a>
         {% endif %}
@@ -23,7 +24,6 @@
     </nav>
     <div class="header-buttons">
       {% if current_user.is_authenticated %}
-        <a href="{{ url_for('user.profile') }}" class="btn-sign-in">Profile</a>
         <a href="{{ url_for('auth.logout') }}" class="btn-join-club">Log Out</a>
       {% else %}
         <a href="{{ url_for('auth.login') }}" class="btn-sign-in">Sign In</a>
