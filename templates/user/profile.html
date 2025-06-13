@@ -381,32 +381,31 @@ body {
       </div>
       <div class="card-body">
         <p class="text-muted mb-4" style="font-family: 'Inter', sans-serif; font-size: 0.875rem;">Check off the tournaments you want to attend!</p>
-          <!-- Search input -->
-          <div class="d-flex gap-2 mb-3">
-            <input type="text" id="wishlist-search" class="form-control" placeholder="Search tournaments..." aria-label="Search wishlist tournaments">
-            <button class="btn btn-outline-secondary" type="button" id="clear-wishlist-search">Clear</button>
-          </div>
-          
-          <!-- Tournament search results -->
-          <div id="wishlist-results" class="search-results"></div>
-          
-          <!-- Selected tournaments display -->
-          <div class="selected-tournaments">
-            <h6>Selected Tournaments:</h6>
-            <div id="selected-wishlist">
-              {% if wishlist_ids %}
-                {% for tournament in past_tournaments %}
-                  {% if tournament.id in wishlist_ids %}
-                    <div class="selected-tournament tournament-tag" data-id="{{ tournament.id }}">
-                      <span class="tournament-name">{{ tournament.name }}</span>
-                      <button type="button" class="remove-icon remove-wishlist">×</button>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-              {% else %}
-                <p id="no-wishlist-selected" class="text-muted">No tournaments selected</p>
-              {% endif %}
-            </div>
+        <!-- Search input -->
+        <div class="d-flex gap-2 mb-3">
+          <input type="text" id="wishlist-search" class="form-control" placeholder="Search tournaments..." aria-label="Search wishlist tournaments">
+          <button class="btn btn-outline-secondary" type="button" id="clear-wishlist-search">Clear</button>
+        </div>
+        
+        <!-- Tournament search results -->
+        <div id="wishlist-results" class="search-results"></div>
+        
+        <!-- Selected tournaments display -->
+        <div class="selected-tournaments">
+          <h6>Selected Tournaments:</h6>
+          <div id="selected-wishlist">
+            {% if wishlist_ids %}
+              {% for tournament in past_tournaments %}
+                {% if tournament.id in wishlist_ids %}
+                  <div class="selected-tournament tournament-tag" data-id="{{ tournament.id }}">
+                    <span class="tournament-name">{{ tournament.name }}</span>
+                    <button type="button" class="remove-icon remove-wishlist">×</button>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <p id="no-wishlist-selected" class="text-muted">No tournaments selected</p>
+            {% endif %}
           </div>
         </div>
       </div>
