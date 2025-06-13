@@ -1,264 +1,403 @@
 {% extends "layout.html" %}
 
-{% block title %}Browse Tournaments - CourtSide Club{% endblock %}
+{% block title %}Tournaments - CourtSide Club{% endblock %}
 
 {% block head %}
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
 <style>
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #FBFAFB;
+    font-family: 'Inter', sans-serif !important;
+    color: #171717 !important;
+    background: #FFFFFF !important;
   }
 
-  .font-serif {
-    font-family: 'Crimson Text', Georgia, serif;
+  /* Hero Section */
+  .hero {
+    background: #F9FAF8;
+    text-align: center;
+    padding: 4rem 1.5rem;
   }
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem;
-  }
-
-  .page-title {
-    font-family: 'Crimson Text', Georgia, serif;
-    font-size: 2rem;
-    color: #464C3F;
-    margin-bottom: 1.5rem;
+  .hero h1 {
+    font-family: 'Crimson Text', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
     font-weight: 600;
-  }
-
-  .page-intro {
     margin-bottom: 2rem;
-    padding: 1rem;
-    background: #F9FAF7;
-    border-radius: 8px;
-    border-left: 4px solid #669127;
-  }
-
-  .page-intro p {
-    margin: 0;
-    color: #464C3F;
-    font-weight: 500;
-  }
-
-  /* Month sections */
-  .month-section {
-    margin-bottom: 3rem;
-  }
-
-  .month-title {
-    font-family: 'Crimson Text', Georgia, serif;
-    font-size: 1.5rem;
-    color: #464C3F;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    border-bottom: 2px solid #e5e7eb;
-    padding-bottom: 0.5rem;
-  }
-
-  /* Table styles */
-  .tournaments-table {
-    width: 100%;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border-collapse: collapse;
-  }
-
-  .table-header {
-    background: #F1F5E7;
-    text-align: left;
-    font-size: 0.875rem;
-    color: #464C3F;
-    font-weight: 600;
-  }
-
-  .table-header th {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #e5e7eb;
-  }
-
-  .table-body {
-    font-size: 0.875rem;
-    color: #374151;
-  }
-
-  .table-body tr {
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .table-body tr:hover {
-    background: #f9fafb;
-  }
-
-  .table-body td {
-    padding: 0.75rem 1rem;
-    vertical-align: middle;
-  }
-
-  .tournament-name {
-    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
     color: #171717;
   }
 
-  .tournament-name a {
-    color: inherit;
-    text-decoration: none;
+  .hero .accent {
+    color: #669127;
+    display: block;
   }
 
-  .tournament-name a:hover {
+  .hero .description {
+    font-size: 1.25rem;
+    max-width: 48rem;
+    margin: 2rem auto 0;
+    color: #4B5563;
+    line-height: 1.6;
+  }
+
+  /* Tournaments Section */
+  .tournaments-section {
+    background: #FFFFFF;
+    padding: 2.5rem 1.5rem;
+  }
+
+  .tournaments-container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
+  .tournaments-title {
+    font-family: 'Crimson Text', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  /* Controls Section */
+  .tournaments-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0;
+    background: transparent;
+  }
+
+  @media (min-width: 768px) {
+    .tournaments-controls {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .controls-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .controls-left {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .search-input {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #669127;
+    box-shadow: 0 0 0 3px rgba(102, 145, 39, 0.1);
+  }
+
+  .filter-select {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    background: white;
+    cursor: pointer;
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: #669127;
+    box-shadow: 0 0 0 3px rgba(102, 145, 39, 0.1);
+  }
+
+  /* Month Groups */
+  .month-group {
+    margin-bottom: 2rem;
+  }
+
+  .month-header {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #669127;
+  }
+
+  /* Table Layout */
+  .tournaments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+  }
+
+  .tournaments-table thead {
+    background: transparent;
+  }
+
+  .tournaments-table th {
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .tournaments-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+  }
+
+  .tournaments-table tbody tr:hover {
+    background: transparent;
+  }
+
+  .tournament-name-cell {
+    font-family: 'Crimson Text', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .tournament-name-link {
+    color: #669127;
     text-decoration: underline;
-    color: #669127;
+    text-decoration-color: #669127;
+    text-underline-offset: 2px;
+    transition: all 0.2s ease;
   }
 
-  .attending-count {
+  .tournament-name-link:hover {
+    color: #4a5b29;
+    text-decoration-color: #4a5b29;
+  }
+
+  .tournament-location-cell {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .tournament-date-cell {
     color: #669127;
     font-weight: 600;
+    font-size: 0.875rem;
+    white-space: nowrap;
   }
 
-  .meeting-count {
-    color: #EDB418;
-    font-weight: 600;
-  }
-
-  .action-link {
-    color: #669127;
-    text-decoration: none;
+  .tournament-stats-cell {
+    color: #6b7280;
+    font-size: 0.875rem;
     font-weight: 500;
   }
 
-  .action-link:hover {
-    text-decoration: underline;
-  }
-
-  .text-right {
-    text-align: right;
-  }
-
-  /* Mobile responsive */
-  @media (max-width: 768px) {
-    .container {
-      padding: 0.5rem;
+  /* Mobile Responsive */
+  @media (max-width: 767px) {
+    .hero {
+      padding: 2rem 1rem;
     }
-    
-    .page-title {
-      font-size: 1.75rem;
+
+    .tournaments-section {
+      padding: 1.5rem 1rem;
     }
-    
+
     .tournaments-table {
-      font-size: 0.75rem;
+      font-size: 0.875rem;
     }
-    
-    .table-header th,
-    .table-body td {
+
+    .tournaments-table th,
+    .tournaments-table td {
       padding: 0.5rem;
     }
-    
-    /* Hide some columns on mobile */
+
+    .tournament-name-cell {
+      font-size: 1rem;
+    }
+
     .hide-mobile {
       display: none;
     }
   }
 
-  @media (max-width: 480px) {
-    .tournaments-table {
-      font-size: 0.7rem;
-    }
-    
-    .table-header th,
-    .table-body td {
-      padding: 0.375rem;
-    }
-  }
-
-  /* Empty state */
-  .empty-state {
+  /* No Results */
+  .no-results {
     text-align: center;
     padding: 3rem 1rem;
     color: #6b7280;
-    background: white;
-    border-radius: 8px;
-    margin-top: 1rem;
+    font-size: 1.125rem;
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1 class="page-title">Browse Tournaments</h1>
-  
-  <div class="page-intro">
-    <p><strong>Explore upcoming tournaments and decide where you might want to go. You can mark your interest or lock in your plans — it all starts here.</strong></p>
-  </div>
+<!-- Hero Section -->
+<section class="hero">
+  <h1>
+    Browse <span class="accent">Tournaments</span>
+  </h1>
+  <p class="description">
+    <strong>Explore upcoming tournaments and decide where you might want to go. You can mark your interest or lock in your plans — it all starts here.</strong>
+  </p>
+</section>
 
-  {% for month, tournaments in sorted_months %}
-    <div class="month-section">
-      <h2 class="month-title">{{ month }}</h2>
-      
-      <table class="tournaments-table">
-        <thead class="table-header">
-          <tr>
-            <th>Tournament</th>
-            <th>Dates</th>
-            <th class="hide-mobile">Location</th>
-            <th>Attending</th>
-            <th class="hide-mobile">Open to Meeting</th>
-            <th class="text-right">Action</th>
-          </tr>
-        </thead>
-        <tbody class="table-body">
-          {% for tournament in tournaments %}
-          <tr>
-            <td class="tournament-name">
-              <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
-                {{ tournament.name }}
-              </a>
-              <div class="show-mobile" style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
-                {{ tournament.city }}, {{ tournament.country }}
-              </div>
-            </td>
-            <td>{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</td>
-            <td class="hide-mobile">{{ tournament.city }}, {{ tournament.country }}</td>
-            <td class="attending-count">
-              {% if tournament.attendee_count %}
-                {{ tournament.attendee_count }}
-              {% else %}
-                0
-              {% endif %}
-            </td>
-            <td class="meeting-count hide-mobile">
-              {% if tournament.meeting_count %}
-                {{ tournament.meeting_count }}
-              {% else %}
-                0
-              {% endif %}
-            </td>
-            <td class="text-right">
-              <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="action-link">View Details →</a>
-            </td>
-          </tr>
+<!-- Tournaments Section -->
+<section class="tournaments-section">
+  <div class="tournaments-container">
+    
+    <!-- Controls -->
+    <div class="tournaments-controls">
+      <div class="controls-left">
+        <input 
+          type="text" 
+          id="searchInput" 
+          class="search-input" 
+          placeholder="Search tournaments..."
+          onkeyup="filterTournaments()"
+        >
+        <select id="monthFilter" class="filter-select" onchange="filterByMonth()">
+          <option value="">All Months</option>
+          {% for month, _ in sorted_months %}
+            <option value="{{ month }}">{{ month }}</option>
           {% endfor %}
-        </tbody>
-      </table>
+        </select>
+      </div>
     </div>
-  {% else %}
-    <div class="empty-state">
-      <p>No upcoming tournaments found.</p>
+
+    <!-- Tournament Groups -->
+    <div id="tournamentGroups">
+      {% for month, tournaments in sorted_months %}
+        <div class="month-group" data-month="{{ month }}">
+          <h2 class="month-header">{{ month }}</h2>
+          
+          <table class="tournaments-table">
+            <thead>
+              <tr>
+                <th>Tournament</th>
+                <th>Dates</th>
+                <th class="hide-mobile">Location</th>
+                <th>Attending</th>
+                <th class="hide-mobile">Open to Meeting</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for tournament in tournaments %}
+              <tr class="tournament-row" data-name="{{ tournament.name|lower }}" data-location="{{ tournament.city|lower }}, {{ tournament.country|lower }}">
+                <td class="tournament-name-cell">
+                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
+                    {{ tournament.name }}
+                  </a>
+                  <div class="tournament-location-cell show-mobile">
+                    {{ tournament.city }}, {{ tournament.country }}
+                  </div>
+                </td>
+                <td class="tournament-date-cell">
+                  {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}
+                </td>
+                <td class="hide-mobile">
+                  {{ tournament.city }}, {{ tournament.country }}
+                </td>
+                <td class="tournament-stats-cell">
+                  {% if tournament.attendee_count %}{{ tournament.attendee_count }}{% else %}0{% endif %}
+                </td>
+                <td class="tournament-stats-cell hide-mobile">
+                  {% if tournament.meeting_count %}{{ tournament.meeting_count }}{% else %}0{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endfor %}
+      
+      <!-- No Results Message -->
+      <div id="noResults" class="no-results" style="display: none;">
+        <p>No tournaments found.</p>
+      </div>
     </div>
-  {% endfor %}
-</div>
+  </div>
+</section>
+
+<script>
+function filterTournaments() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const monthFilter = document.getElementById('monthFilter').value;
+  const tournamentGroups = document.querySelectorAll('.month-group');
+  let hasVisibleResults = false;
+
+  tournamentGroups.forEach(group => {
+    const month = group.dataset.month;
+    const rows = group.querySelectorAll('.tournament-row');
+    let hasVisibleRows = false;
+
+    // Check if month matches filter
+    const monthMatches = !monthFilter || month === monthFilter;
+
+    if (monthMatches) {
+      rows.forEach(row => {
+        const name = row.dataset.name;
+        const location = row.dataset.location;
+        const matchesSearch = !searchTerm || name.includes(searchTerm) || location.includes(searchTerm);
+
+        if (matchesSearch) {
+          row.style.display = '';
+          hasVisibleRows = true;
+          hasVisibleResults = true;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      group.style.display = hasVisibleRows ? '' : 'none';
+    } else {
+      group.style.display = 'none';
+    }
+  });
+
+  // Show/hide no results message
+  document.getElementById('noResults').style.display = hasVisibleResults ? 'none' : 'block';
+}
+
+function filterByMonth() {
+  filterTournaments();
+}
+
+// Mobile responsive adjustments
+document.addEventListener('DOMContentLoaded', function() {
+  // Show location on mobile
+  const showMobileElements = document.querySelectorAll('.show-mobile');
+  showMobileElements.forEach(el => {
+    if (window.innerWidth <= 767) {
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+    }
+  });
+});
+</script>
 
 <style>
-/* Mobile-specific adjustments */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .show-mobile {
     display: block !important;
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .show-mobile {
     display: none !important;
   }
