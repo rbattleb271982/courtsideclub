@@ -1,0 +1,59 @@
+Replace browse_tournaments.html with Table-Style Layout
+📍 Goal:
+Update the logged-in Browse Tournaments page at /browse-tournaments to use a responsive table layout that matches the design and structure of the public tournaments page. This replaces the current card-grid layout with a mobile-friendly, more compact table structure.
+✅ Affected File:
+templates/user/browse_tournaments.html
+✅ Required Changes:
+1. Remove Card Grid
+Delete or comment out the current:
+<div class="tournaments-grid">
+  {% for tournament in tournaments %}
+    <div class="tournament-card">...</div>
+  {% endfor %}
+</div>
+2. Replace with Responsive Table
+Use the Jinja template code below:
+{% extends "base_user.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+  <h1 class="font-serif text-2xl text-[#464C3F] mb-4">Browse Tournaments</h1>
+
+  <table class="w-full table-auto border-collapse bg-white shadow-sm rounded-md overflow-hidden">
+    <thead class="bg-[#F1F1F1] text-left text-sm text-[#464C3F]">
+      <tr>
+        <th class="px-4 py-3">Tournament</th>
+        <th class="px-4 py-3">Dates</th>
+        <th class="px-4 py-3">Location</th>
+        <th class="px-4 py-3 text-green-700">Attending</th>
+        <th class="px-4 py-3 text-yellow-700">Open to Meeting</th>
+        <th class="px-4 py-3 text-right">Action</th>
+      </tr>
+    </thead>
+    <tbody class="text-sm text-gray-800 divide-y divide-gray-200">
+      {% for tournament in tournaments %}
+      <tr>
+        <td class="px-4 py-3 font-medium text-[#171717]">
+          <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="hover:underline">
+            {{ tournament.name }}
+          </a>
+        </td>
+        <td class="px-4 py-3">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</td>
+        <td class="px-4 py-3">{{ tournament.city }}, {{ tournament.country }}</td>
+        <td class="px-4 py-3 text-green-700 font-semibold">{{ tournament.attendee_count }}</td>
+        <td class="px-4 py-3 text-yellow-700 font-semibold">{{ tournament.meeting_count }}</td>
+        <td class="px-4 py-3 text-right">
+          <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="text-sm text-[#669127] hover:underline">View Details →</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+🧪 Final Test Checklist:
+Page loads with proper table formatting and headers
+Each tournament row shows name, date, city, attending count, and meeting count
+“View Details →” links route correctly to tournament detail pages
+Layout collapses gracefully on mobile (stack cells or enable scroll)
+Fonts, spacing, and colors match brand standards
+Do not finish until the table renders fully and replaces the grid. 

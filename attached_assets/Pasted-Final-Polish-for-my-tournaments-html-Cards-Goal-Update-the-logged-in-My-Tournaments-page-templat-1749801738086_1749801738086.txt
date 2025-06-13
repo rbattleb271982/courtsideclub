@@ -1,0 +1,41 @@
+Final Polish for my_tournaments.html Cards
+📍Goal:
+Update the logged-in My Tournaments page (templates/user/my_tournaments.html) to apply final UX and visual refinements to the tournament cards. This builds on the existing design and layout from the most recent update.
+✅ Required Changes:
+1. Improve Contrast on Session Summary Text
+Change session text like:
+Attending: Day 2 – Night Session, Day 3 – All Day
+to use a darker text color:
+class="text-[#171717] text-sm font-medium"
+2. Fix “Open to Meeting” Badge Placement
+Move the badge to immediately follow attendance stats at the top of the card
+Example:
+🟢 88 attending  
+🟡 32 open to meeting
+Use color classes:
+text-green-700 and bg-[#F0F5E8]
+text-yellow-700 and bg-[#FDF8E8]
+3. Enhance “Want to meet other fans?” Text
+Add a clickable link after the question:
+<span class="text-sm text-muted-foreground">Want to meet other fans? <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}#open_to_meeting" class="text-[#669127] underline">Update preferences</a></span>
+4. Ensure “View Details” Button Is Bottom-Aligned
+Add a flex flex-col justify-between h-full wrapper around each card content
+Ensure button stays bottom-aligned even if some cards show lanyard reminders or blog links
+5. Blog Link Handling
+If multiple blog posts are linked to a tournament:
+Show only one:
+<a href="/blog/tips-for-wimbledon" class="text-sm text-muted-foreground hover:underline">📝 Tips for Wimbledon</a>
+Or if more than one:
+<a href="/blog?tournament=wimbledon" class="text-sm text-muted-foreground hover:underline">📝 View 2 articles →</a>
+6. Mobile Layout Spacing
+On mobile, cards should stack cleanly
+Reduce any excess margin below blog or lanyard sections
+Use consistent vertical spacing (space-y-3) between sections inside each card
+🧪 Final Testing Checklist:
+Cards are readable and consistent on both desktop and mobile
+“View Details” button aligns across all cards
+Badge colors and blog link text match brand palette
+Lanyard reminder CTA is styled clearly
+“Want to meet other fans?” has working link
+Countdown badge (“Starts in X days”) still visible at top
+Do not finish until all polish items are implemented and visually confirmed working.

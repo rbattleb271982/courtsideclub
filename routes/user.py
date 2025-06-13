@@ -1108,14 +1108,11 @@ def browse_tournaments():
                 # Count current user manually if they're attending with sessions
                 tournament.attendee_count = stats['attending']
                 # For meetup count, include current user if they want to meet
-                if tournament.wants_to_meet:
-                    tournament.meetup_count = stats['meetup']
-                else:
-                    tournament.meetup_count = stats['meetup']
+                tournament.meeting_count = stats['meetup']
             else:
                 # Standard counting for tournaments user isn't attending
                 tournament.attendee_count = stats['attending']
-                tournament.meetup_count = stats['meetup']
+                tournament.meeting_count = stats['meetup']
     
     # Get list of months for filter bar (in correct chronological order)
     months = [month for month, _ in sorted_months]

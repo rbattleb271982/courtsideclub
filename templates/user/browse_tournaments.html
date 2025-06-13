@@ -2,51 +2,246 @@
 
 {% block title %}Browse Tournaments - CourtSide Club{% endblock %}
 
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #FBFAFB;
+  }
+
+  .font-serif {
+    font-family: 'Crimson Text', Georgia, serif;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 2rem;
+    color: #464C3F;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .page-intro {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #F9FAF7;
+    border-radius: 8px;
+    border-left: 4px solid #669127;
+  }
+
+  .page-intro p {
+    margin: 0;
+    color: #464C3F;
+    font-weight: 500;
+  }
+
+  /* Month sections */
+  .month-section {
+    margin-bottom: 3rem;
+  }
+
+  .month-title {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 1.5rem;
+    color: #464C3F;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Table styles */
+  .tournaments-table {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-collapse: collapse;
+  }
+
+  .table-header {
+    background: #F1F5E7;
+    text-align: left;
+    font-size: 0.875rem;
+    color: #464C3F;
+    font-weight: 600;
+  }
+
+  .table-header th {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .table-body {
+    font-size: 0.875rem;
+    color: #374151;
+  }
+
+  .table-body tr {
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .table-body tr:hover {
+    background: #f9fafb;
+  }
+
+  .table-body td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+  }
+
+  .tournament-name {
+    font-weight: 600;
+    color: #171717;
+  }
+
+  .tournament-name a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .tournament-name a:hover {
+    text-decoration: underline;
+    color: #669127;
+  }
+
+  .attending-count {
+    color: #669127;
+    font-weight: 600;
+  }
+
+  .meeting-count {
+    color: #EDB418;
+    font-weight: 600;
+  }
+
+  .action-link {
+    color: #669127;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .action-link:hover {
+    text-decoration: underline;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .container {
+      padding: 0.5rem;
+    }
+    
+    .page-title {
+      font-size: 1.75rem;
+    }
+    
+    .tournaments-table {
+      font-size: 0.75rem;
+    }
+    
+    .table-header th,
+    .table-body td {
+      padding: 0.5rem;
+    }
+    
+    /* Hide some columns on mobile */
+    .hide-mobile {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .tournaments-table {
+      font-size: 0.7rem;
+    }
+    
+    .table-header th,
+    .table-body td {
+      padding: 0.375rem;
+    }
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+    background: white;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="page-content browse-tournaments" id="tournaments-content">
-  <h1 class="main-heading">Browse Tournaments</h1>
+<div class="container">
+  <h1 class="page-title">Browse Tournaments</h1>
   
-  <div class="page-intro-message">
+  <div class="page-intro">
     <p><strong>Explore upcoming tournaments and decide where you might want to go. You can mark your interest or lock in your plans — it all starts here.</strong></p>
   </div>
-  
-  <!-- Month Filter Bar - Desktop -->
-  <div class="month-filter-container desktop-filter">
-    <div class="month-filter-scroll">
-      {% for month in grouped_tournaments.keys() %}
-        <a href="#month-{{ month|replace(' ', '-') }}" class="month-filter-link">{{ month }}</a>
-      {% endfor %}
-    </div>
-  </div>
-  
-  <!-- Month Filter Dropdown - Mobile -->
-  <div class="month-filter-container mobile-filter">
-    <select id="month-selector" class="month-selector">
-      <option value="">Select Month</option>
-      {% for month in months %}
-        <option value="#month-{{ month|replace(' ', '-') }}">{{ month }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  
-  <!-- Tournaments Grouped by Month (in chronological order) -->
+
   {% for month, tournaments in sorted_months %}
-    <div id="month-{{ month|replace(' ', '-') }}" class="month-section">
-      <h2 class="month-heading">{{ month }}</h2>
+    <div class="month-section">
+      <h2 class="month-title">{{ month }}</h2>
       
-      <div class="tournaments-grid">
-        {% for tournament in tournaments %}
-          <div class="tournament-card">
-            <h2 class="tournament-title">{{ tournament.name }}</h2>
-            <div class="tournament-meta">
-              <div class="meta-row"><span class="icon">📍</span> {{ tournament.city }}, {{ tournament.country }}</div>
-              <div class="meta-row"><span class="icon">📅</span> {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</div>
-              <div class="meta-row"><span class="icon">👥</span> {{ tournament.attendee_count }} members attending</div>
-            </div>
-            <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="details-link">View Details →</a>
-          </div>
-        {% endfor %}
-      </div>
+      <table class="tournaments-table">
+        <thead class="table-header">
+          <tr>
+            <th>Tournament</th>
+            <th>Dates</th>
+            <th class="hide-mobile">Location</th>
+            <th>Attending</th>
+            <th class="hide-mobile">Open to Meeting</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="table-body">
+          {% for tournament in tournaments %}
+          <tr>
+            <td class="tournament-name">
+              <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}">
+                {{ tournament.name }}
+              </a>
+              <div class="show-mobile" style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+                {{ tournament.city }}, {{ tournament.country }}
+              </div>
+            </td>
+            <td>{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</td>
+            <td class="hide-mobile">{{ tournament.city }}, {{ tournament.country }}</td>
+            <td class="attending-count">
+              {% if tournament.attendee_count %}
+                {{ tournament.attendee_count }}
+              {% else %}
+                0
+              {% endif %}
+            </td>
+            <td class="meeting-count hide-mobile">
+              {% if tournament.meeting_count %}
+                {{ tournament.meeting_count }}
+              {% else %}
+                0
+              {% endif %}
+            </td>
+            <td class="text-right">
+              <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="action-link">View Details →</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   {% else %}
     <div class="empty-state">
@@ -56,447 +251,17 @@
 </div>
 
 <style>
-  /* Page Layout */
-  .page-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .show-mobile {
+    display: block !important;
   }
-  
-  .main-heading {
-    margin-bottom: 1.5rem;
-    color: #004d26;
-    font-size: 1.8rem;
-  }
-  
-  /* Month Filter Navigation */
-  .month-filter-container {
-    margin-bottom: 20px;
-    background-color: #f4f9f4;
-    border-radius: 8px;
-    padding: 12px 8px;
-    position: sticky;
-    top: 0; 
-    z-index: 10;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    width: 100%;
-  }
-  
-  /* Responsive filter display */
-  .desktop-filter {
-    display: block;
-  }
-  
-  .mobile-filter {
-    display: none;
-  }
-  
-  /* Mobile filter styles */
-  @media (max-width: 767px) {
-    .desktop-filter {
-      display: none;
-    }
-    
-    .mobile-filter {
-      display: block;
-    }
-    
-    .month-filter-container {
-      margin-left: -15px;
-      margin-right: -15px;
-      width: calc(100% + 30px);
-      border-radius: 0;
-      padding: 10px 15px;
-    }
-    
-    .page-content {
-      padding: 0 15px;
-    }
-  }
-  
-  /* Month selector dropdown */
-  .month-selector {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #fff;
-    font-size: 14px;
-    color: #004d26;
-    font-weight: 500;
-    appearance: none;
-    -webkit-appearance: none;
-    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23004d26%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 10px;
-  }
-  
-  .month-selector:focus {
-    outline: none;
-    border-color: #004d26;
-    box-shadow: 0 0 0 2px rgba(0, 77, 38, 0.2);
-  }
-  
-  /* Desktop horizontal scroll styles */
-  .month-filter-scroll {
-    display: flex;
-    overflow-x: auto;
-    padding-bottom: 5px;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    gap: 8px;
-    /* Hide scrollbar but keep functionality */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-  }
-  
-  /* Hide scrollbar for Chrome/Safari/Opera */
-  .month-filter-scroll::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .month-filter-link {
-    padding: 10px 16px;
-    white-space: nowrap;
-    color: #004d26;
-    text-decoration: none;
-    border-radius: 20px;
-    font-weight: 500;
-    transition: all 0.2s;
-    font-size: 15px;
-  }
-  
-  .month-filter-link:hover, .month-filter-link:active {
-    background-color: #e0f2eb;
-    color: #002b16;
-  }
-  
-  /* Month Sections */
-  .month-section {
-    margin-bottom: 40px;
-    scroll-margin-top: 80px;
-  }
-  
-  .month-heading {
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 8px;
-    margin-bottom: 16px;
-    color: #333;
-    font-size: 1.3rem;
-    font-weight: 600;
-  }
-  
-  @media (max-width: 480px) {
-    .month-heading {
-      font-size: 1.2rem;
-      padding-bottom: 6px;
-      margin-bottom: 14px;
-    }
-  }
-  
-  /* Tournament Grid & Cards */
-  .tournaments-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  @media (min-width: 640px) {
-    .tournaments-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .tournaments-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  
-  .tournament-card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s, box-shadow 0.2s;
-    min-height: 210px;
-  }
-  
-  /* Mobile-specific card adjustments */
-  @media (max-width: 639px) {
-    .tournament-card {
-      padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      min-height: 180px;
-    }
-    
-    .tournament-header {
-      margin-bottom: 6px;
-    }
-    
-    .tournaments-grid {
-      margin: 0 -5px; /* Reduce margins on smaller screens */
-      gap: 10px;
-    }
-    
-    .month-section {
-      margin-bottom: 20px;
-    }
-    
-    .main-heading {
-      font-size: 1.5rem;
-      margin-bottom: 1.2rem;
-    }
-  }
-  
-  .tournament-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
-  
-  /* Tournament Content Styling */
-  .tournament-header {
-    margin-bottom: 10px;
-  }
-  
-  .tournament-name {
-    margin: 0 0 3px 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #004d26;
-    line-height: 1.25;
-  }
-  
-  .tournament-meta {
-    color: #555;
-    font-size: 13.5px;
-    margin-bottom: 5px;
-    line-height: 1.3;
-  }
-  
-  .tournament-stats {
-    display: flex;
-    margin-bottom: 6px;
-    gap: 16px;
-  }
-  
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .stat-value {
-    font-weight: 600;
-    font-size: 16px;
-    color: #004d26;
-    line-height: 1;
-  }
-  
-  .stat-label {
-    font-size: 12px;
-    color: #666;
-    margin-top: 2px;
-  }
-  
-  /* Tournament Actions */
-  .tournament-actions {
-    margin-top: 2px;
-    width: 100%;
-  }
-  
-  .attendance-status {
-    font-weight: 500;
-    text-align: center;
-    margin-bottom: 12px;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 16px;
-  }
-  
-  .attendance-status.attending {
-    background-color: #e0f2eb;
-    color: #004d26;
-  }
-  
-  .attendance-status.maybe {
-    background-color: #f5f5f5;
-    color: #666;
-  }
-  
-  .attendance-buttons {
-    display: flex;
-    gap: 8px;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  /* Always stack buttons on mobile for better tap targets */
-  @media (min-width: 640px) {
-    .attendance-buttons {
-      flex-direction: row;
-    }
-  }
-  
-  .btn {
-    padding: 12px 18px;
-    border-radius: 6px;
-    font-weight: 500;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    border: none;
-    font-size: 16px;
-    display: inline-block;
-    width: 100%;
-    transition: all 0.2s;
-  }
-  
-  /* Mobile-specific button adjustments for better tap targets */
-  @media (max-width: 639px) {
-    .btn {
-      padding: 14px 16px; /* Taller buttons on mobile for easier tapping */
-      font-size: 15px;
-      min-height: 48px; /* Ensure minimum touch target size */
-    }
-  }
-  
-  /* Button status styles */
-  .btn-success {
-    margin-bottom: 5px;
-    font-weight: 500;
-    min-height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-  }
-  
-  .btn-outline-success {
-    margin-bottom: 5px;
-    font-weight: 500;
-    min-height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-  }
-  
-  .btn-outline-success:hover, 
-  .btn-outline-success:active {
-    background-color: #f4f9f4;
-  }
-  
-  .btn-clear {
-    background: none;
-    border: none;
-    color: #666;
-    text-decoration: underline;
-    font-size: 13px;
-    cursor: pointer;
-    padding: 6px;
-    width: 100%;
-    text-align: center;
-    transition: color 0.2s;
-    margin-top: 0;
-  }
-  
-  .btn-clear:hover {
-    color: #333;
-  }
-  
-  .status-icon {
-    margin-right: 4px;
-  }
-  
-  .attendance-form {
-    width: 100%;
-    margin-top: 2px;
-  }
-  
-  /* Mobile stats and spacing adjustments */
-  @media (max-width: 639px) {
-    .tournament-stats {
-      justify-content: center;
-      margin-bottom: 6px;
-    }
-    
-    .stat-item {
-      min-width: 80px; /* Ensure stats have enough tap area */
-    }
-    
-    .tournament-actions {
-      margin-top: 0;
-    }
-    
-    .tournament-card {
-      margin-bottom: 16px;
-      padding: 14px;
-    }
-    
-    .btn-clear {
-      padding: 6px;
-      margin-top: 2px;
-    }
-  }
-  
-  /* Empty State */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: #666;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    margin-top: 20px;
-  }
-  
-  /* Button style overrides for consistent colors */
-  .browse-tournaments .btn-success {
-    background-color: #28a745 !important;
-    color: white !important;
-    border: 1px solid #28a745 !important;
-  }
-  
-  .browse-tournaments .btn-outline-success {
-    background-color: white !important;
-    color: #28a745 !important;
-    border: 1px solid #28a745 !important;
-  }
-</style>
+}
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // Get the month selector dropdown
-    const monthSelector = document.getElementById('month-selector');
-    
-    // Add change event listener to scroll to selected month
-    if (monthSelector) {
-      monthSelector.addEventListener('change', function() {
-        const selectedValue = this.value;
-        if (selectedValue) {
-          // Get the target section element
-          const targetElement = document.querySelector(selectedValue);
-          
-          if (targetElement) {
-            // Calculate scroll position with offset for the sticky header
-            const headerOffset = 80;
-            const elementPosition = targetElement.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-            
-            // Scroll to the section
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
-          }
-        }
-      });
-    }
-  });
-</script>
+@media (min-width: 769px) {
+  .show-mobile {
+    display: none !important;
+  }
+}
+</style>
 {% endblock %}
