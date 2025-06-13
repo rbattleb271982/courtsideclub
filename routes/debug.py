@@ -250,8 +250,8 @@ def send_reminder(user_id, tournament_slug):
     if not user or not tournament:
         return "Invalid user or tournament slug", 404
 
-    # Check if the user has a lanyard ordered
-    has_lanyard = user.lanyard_ordered if hasattr(user, 'lanyard_ordered') else False
+    # Lanyard functionality has been discontinued
+    has_lanyard = False
 
     # Get sessions user selected and meeting status
     meetup_msg = ""
