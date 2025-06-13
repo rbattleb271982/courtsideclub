@@ -220,6 +220,46 @@
     .tournaments-section {
       padding: 1.5rem 1rem;
     }
+
+    .tournaments-table, .tournaments-table thead, .tournaments-table tbody,
+    .tournaments-table th, .tournaments-table td, .tournaments-table tr {
+      display: block;
+    }
+
+    .tournaments-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .tournaments-table tr {
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: white;
+    }
+
+    .tournaments-table td {
+      border: none;
+      padding: 0.5rem 0;
+      position: relative;
+    }
+
+    .tournaments-table td:before {
+      content: attr(data-label) ": ";
+      font-weight: 600;
+      color: #374151;
+      margin-right: 0.5rem;
+    }
+
+    .tournament-name-cell:before {
+      content: "";
+    }
+
+    .tournament-attending-cell {
+      text-align: left;
+    }
   }
 
   /* No Results */
@@ -288,7 +328,7 @@
             <tbody>
               {% for tournament in tournaments %}
               <tr class="tournament-row" data-name="{{ tournament.name|lower }}" data-surface="{{ tournament.surface|lower if tournament.surface else '' }}" data-attendance="{{ tournament.attendee_count or 0 }}">
-                <td class="tournament-name-cell">
+                <td data-label="Tournament" class="tournament-name-cell">
                   <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
                     {{ tournament.name }}
                   </a>
@@ -299,10 +339,10 @@
                     <div class="tournament-surface-cell">{{ tournament.surface }}</div>
                   {% endif %}
                 </td>
-                <td class="tournament-date-cell">
+                <td data-label="Date Range" class="tournament-date-cell">
                   {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d') }}
                 </td>
-                <td class="tournament-attending-cell">
+                <td data-label="Attending" class="tournament-attending-cell">
                   {% if tournament.attendee_count %}{{ tournament.attendee_count }}{% else %}0{% endif %}
                 </td>
               </tr>
