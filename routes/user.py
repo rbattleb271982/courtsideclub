@@ -616,7 +616,8 @@ def profile():
     # Pre-populate form with current user data
     form.first_name.data = current_user.first_name
     form.last_name.data = current_user.last_name
-    form.notifications.data = current_user.notifications
+    # Default notifications to True if user hasn't set a preference yet
+    form.notifications.data = current_user.notifications if current_user.notifications is not None else True
 
     past_ids = [t.tournament_id for t in current_user.past_tournaments]
     wishlist_ids = [w.tournament_id for w in current_user.wishlist]
@@ -976,7 +977,7 @@ def my_tournaments():
     # Check if user needs profile reminder (no past tournaments AND no wishlist)
     show_profile_reminder = (
         len(current_user.past_tournaments) == 0 and
-        len(current_user.wishlist_tournaments) == 0
+        len(current_user.wishlist) == 0
     )
 
     return render_template(
