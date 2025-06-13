@@ -236,7 +236,7 @@ def tournament_detail(tournament_slug):
         UserTournament.attending == True,
         UserTournament.session_label.isnot(None),
         UserTournament.session_label != ''
-    ).join(User).filter_by(lanyard_ordered=True).count()
+    ).join(User).count()
     
     print(f"DEBUG: Final stats: {stats}")
     
