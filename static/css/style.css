@@ -122,6 +122,20 @@ a:hover {
   .gap-mobile-md { gap: 1rem !important; }
   
   /* Section-Specific Utilities */
+  .hero-clear-nav {
+    padding-top: 6rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-clear-nav {
+      padding-top: 7rem; /* Force generous top space on mobile */
+    }
+  }
+
+  .hero-inner {
+    padding-top: 1rem; /* Prevents margin collapse */
+  }
+
   .hero-mobile-compact {
     padding-top: clamp(4rem, 6vw, 6rem) !important; /* 4rem minimum to clear header */
     padding-bottom: clamp(2rem, 5vw, 4rem) !important;
