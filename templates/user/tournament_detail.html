@@ -148,7 +148,7 @@
         {% set is_thinking = user_tournament and user_tournament.attendance_type == 'maybe' %}
         {% set is_not_going = not user_tournament or user_tournament.attending == False %}
 
-        <div class="card mb-4" id="session-selection-card" {% if is_not_going %}style="display: none;"{% endif %}>
+        <div class="card mb-4" id="session-selection-card">
             <div class="card-header">
                 <h3 class="card-title text-xl mb-0">Which Days Are You Going?</h3>
             </div>
