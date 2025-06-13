@@ -1,0 +1,104 @@
+REPLIT TASK: Replace Tournament Detail Page with Updated v0 Layout
+Do not use checkpoints unless absolutely necessary. Fully test everything visually and functionally before finishing.
+✅ OVERVIEW:
+Redesign the tournament_detail.html template to match the polished v0 version previously implemented in React. This is a full replacement of the existing Flask/Jinja template for the tournament detail page at /tournaments/<slug>.
+✅ ROUTE REQUIREMENTS:
+Make sure the /tournaments/<slug> route in routes/tournaments.py provides these context variables:
+tournament: Tournament object
+user_tournament: current user's UserTournament object
+attending_count: number of users attending
+meeting_count: number open to meeting
+selected_sessions: list of selected session IDs
+sample_members: list of up to 8 dicts with:
+initials, display_name, session_count, open_to_meet
+fan_history: top 3–5 other tournaments that these users have attended (excluding this one)
+✅ REQUIRED BEHAVIOR:
+Show accurate attendance toggle (pre-select state)
+Enable/disable session selection based on attendance status
+Sticky footer with:
+checkbox for “I'm open to meeting”
+“Save My Selections” button
+Display sample member avatars (no usernames or links)
+Show “Fan History” as a short list of tournament names
+Fully mobile responsive
+Use the correct CourtSide Club font and color styles
+✅ DROP THIS IN AS templates/tournament_detail.html:
+{% extends "base_user.html" %}
+{% block content %}
+<div class="min-h-screen bg-[#FBFAFB] font-sans">
+  <div class="max-w-5xl mx-auto px-5 py-6">
+    <!-- Tournament Header -->
+    <div class="mb-6">
+      <h1 class="font-serif text-2xl text-[#464C3F]">{{ tournament.name }}</h1>
+      <p class="text-sm text-muted-foreground">{{ tournament.dates }} — {{ tournament.location }}</p>
+      <div class="flex flex-wrap gap-2 mt-2">
+        <span class="bg-[#F1F5E7] text-[#669127] text-xs px-3 py-1 rounded-full">{{ attending_count }} fans attending</span>
+        <span class="bg-[#F8F5EA] text-[#EDB418] text-xs px-3 py-1 rounded-full">{{ meeting_count }} open to meeting</span>
+        {% if tournament.official_url %}
+        <a href="{{ tournament.official_url }}" target="_blank" class="text-sm text-blue-600 underline ml-auto">Official Site</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Attendance Selector -->
+      <div class="lg:col-span-4">
+        {% include "_attendance_selector.html" %}
+      </div>
+
+      <!-- Session Selector -->
+      <div class="lg:col-span-8">
+        {% include "_session_selector.html" %}
+      </div>
+    </div>
+
+    <!-- Sticky Save Bar -->
+    <div class="mt-8 sticky bottom-0 lg:relative">
+      <div class="bg-white/95 backdrop-blur-sm shadow-md rounded-md p-4 md:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-start gap-2">
+          <input type="checkbox" name="open_to_meet" id="open_to_meet" {% if user_tournament.open_to_meet %}checked{% endif %}>
+          <label for="open_to_meet" class="text-sm font-medium">I'm open to meeting other fans</label>
+        </div>
+        <div class="flex flex-col md:flex-row items-center gap-4">
+          {% if selected_sessions %}
+            <span class="text-sm font-medium">You've selected {{ selected_sessions|length }} session{{ selected_sessions|length != 1 and 's' or '' }}</span>
+          {% endif %}
+          <button class="bg-[#669127] hover:bg-[#557a20] text-[#FBFAFB] px-5 py-2 rounded-md text-sm transition-all">Save My Selections</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members Attending -->
+    <div class="mt-12">
+      <h2 class="font-serif text-xl text-[#464C3F] mb-4">Members Attending</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for member in sample_members %}
+        <div class="bg-white shadow-sm rounded-md p-4 text-center">
+          <div class="w-16 h-16 mx-auto rounded-full bg-[#EDB418] flex items-center justify-center text-[#171717] font-bold text-xl mb-3">
+            {{ member.initials }}
+          </div>
+          <h4 class="font-medium text-sm mb-1">{{ member.display_name }}</h4>
+          <p class="text-xs text-muted-foreground mb-2">Attending {{ member.session_count }} sessions</p>
+          {% if member.open_to_meet %}
+            <span class="inline-block text-xs bg-[#f8f8fa] px-2 py-1 rounded-full">Open to meeting</span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Fan History -->
+    <div class="mt-12">
+      <h2 class="font-serif text-xl text-[#464C3F] mb-2">Fan History</h2>
+      <p class="text-sm text-muted-foreground mb-2">Fans attending this tournament have also been to:</p>
+      <ul class="list-disc list-inside text-sm">
+        {% for t in fan_history %}
+          <li>{{ t.name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+Let me know when you're ready for the _attendance_selector.html and _session_selector.html partials too — or if you want to auto-generate sample_members and fan_history logic for the route.

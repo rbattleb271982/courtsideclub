@@ -1,0 +1,74 @@
+<div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem;" data-sessions-container>
+  <h3 style="font-family: 'Crimson Text', Georgia, serif; font-size: 1.125rem; font-weight: 600; color: #464C3F; margin-bottom: 1rem;">Select Sessions</h3>
+  
+  {% if tournament_days %}
+    {% for day in tournament_days %}
+    <div style="margin-bottom: 1.5rem;">
+      <h4 style="font-family: 'Crimson Text', Georgia, serif; font-size: 1rem; font-weight: 600; color: #171717; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb;">
+        {{ day.day_label }}
+      </h4>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
+        {% for session in day.sessions %}
+        <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; background: white;" 
+               class="session-option" 
+               onclick="toggleSession(this)"
+               {% if session in selected_sessions %}data-selected="true"{% endif %}>
+          <input type="checkbox" name="sessions" value="{{ session }}" style="width: 1rem; height: 1rem; accent-color: #669127;" 
+                 {% if session in selected_sessions %}checked{% endif %}>
+          <div style="flex: 1;">
+            <div style="font-weight: 500; color: #374151; font-size: 0.875rem;">{{ session }}</div>
+            <div style="color: #6b7280; font-size: 0.75rem; margin-top: 0.25rem;">
+              {% if session_counts and session_counts[session] %}
+                {{ session_counts[session] }} attending
+              {% else %}
+                0 attending
+              {% endif %}
+            </div>
+          </div>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p style="color: #6b7280;">No sessions available for this tournament.</p>
+  {% endif %}
+</div>
+
+<script>
+function toggleSession(element) {
+  const checkbox = element.querySelector('input[type="checkbox"]');
+  const isDisabled = element.closest('[data-sessions-container]').style.pointerEvents === 'none';
+  
+  if (!isDisabled && checkbox) {
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+      element.style.borderColor = '#669127';
+      element.style.background = '#f0f9ff';
+      element.setAttribute('data-selected', 'true');
+    } else {
+      element.style.borderColor = '#d1d5db';
+      element.style.background = 'white';
+      element.removeAttribute('data-selected');
+    }
+    
+    updateSelectionCount();
+  }
+}
+
+// Initialize selected sessions on page load
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.session-option[data-selected="true"]').forEach(option => {
+    option.style.borderColor = '#669127';
+    option.style.background = '#f0f9ff';
+  });
+  
+  // Add event listeners to session checkboxes
+  document.querySelectorAll('input[name="sessions"]').forEach(checkbox => {
+    checkbox.addEventListener('change', updateSelectionCount);
+  });
+  
+  updateSelectionCount();
+});
+</script>

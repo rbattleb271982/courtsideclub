@@ -6,590 +6,384 @@
 <style>
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #1f2937;
-    background: #FFFFFF;
+    background: #FBFAFB;
   }
 
   .font-serif {
     font-family: 'Crimson Text', Georgia, serif;
   }
 
-  /* Container Layout */
-  .container {
-    max-width: 1280px;
+  .muted-foreground {
+    color: #6b7280;
+  }
+
+  /* Tournament Container */
+  .tournament-container {
+    max-width: 5rem * 20; /* 80rem = 1280px */
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 1.5rem;
   }
 
-  @media (min-width: 768px) {
-    .container {
-      padding: 0 2rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .container {
-      padding: 0 3rem;
-    }
-  }
-
-  /* Hero Section */
-  .tournament-hero {
-    background: #F9FAF7;
-    padding: 3rem 0;
-    margin-bottom: 3rem;
+  /* Tournament Header */
+  .tournament-header {
+    margin-bottom: 1.5rem;
   }
 
   .tournament-title {
     font-family: 'Crimson Text', Georgia, serif;
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 600;
-    color: #171717;
-    margin-bottom: 1rem;
-    line-height: 1.1;
+    font-size: 2rem;
+    color: #464C3F;
+    margin-bottom: 0.5rem;
   }
 
   .tournament-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    font-size: 0.875rem;
     color: #6b7280;
-    font-size: 1rem;
+    margin-bottom: 0.75rem;
   }
 
-  @media (min-width: 768px) {
-    .tournament-meta {
-      flex-direction: row;
-      gap: 2rem;
+  .tournament-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 500;
+  }
+
+  .badge-attending {
+    background: #F1F5E7;
+    color: #669127;
+  }
+
+  .badge-meeting {
+    background: #F8F5EA;
+    color: #EDB418;
+  }
+
+  .official-link {
+    font-size: 0.875rem;
+    color: #2563eb;
+    text-decoration: underline;
+    margin-left: auto;
+  }
+
+  /* Main Layout */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .main-layout {
+      grid-template-columns: repeat(12, 1fr);
     }
   }
 
-  /* Section Layout */
-  .section {
-    margin-bottom: 3rem;
+  .attendance-col {
+    grid-column: span 1;
+  }
+
+  @media (min-width: 1024px) {
+    .attendance-col {
+      grid-column: span 4;
+    }
+  }
+
+  .sessions-col {
+    grid-column: span 1;
+  }
+
+  @media (min-width: 1024px) {
+    .sessions-col {
+      grid-column: span 8;
+    }
+  }
+
+  /* Sticky Save Bar */
+  .save-bar {
+    margin-top: 2rem;
+    position: sticky;
+    bottom: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .save-bar {
+      position: relative;
+    }
+  }
+
+  .save-bar-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: 0.375rem;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .save-bar-content {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .meetup-checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .meetup-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .save-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .save-actions {
+      flex-direction: row;
+    }
+  }
+
+  .selection-count {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .save-button {
+    background: #669127;
+    color: #FBFAFB;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .save-button:hover {
+    background: #557a20;
+  }
+
+  /* Members Section */
+  .members-section {
+    margin-top: 3rem;
   }
 
   .section-title {
     font-family: 'Crimson Text', Georgia, serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #171717;
-    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    color: #464C3F;
+    margin-bottom: 1rem;
   }
 
-  .two-column {
+  .members-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   @media (min-width: 768px) {
-    .two-column {
-      grid-template-columns: 2fr 1fr;
+    .members-grid {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  /* Info Box */
-  .info-box {
-    background: #F9FAF7;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .info-box h3 {
-    font-family: 'Crimson Text', Georgia, serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #171717;
-    margin-bottom: 1rem;
-  }
-
-  .info-box p {
-    color: #4b5563;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-
-  .info-box:last-child p {
-    margin-bottom: 0;
-  }
-
-  /* Links */
-  .external-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  @media (min-width: 768px) {
-    .external-links {
-      flex-direction: row;
+  @media (min-width: 1024px) {
+    .members-grid {
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 
-  .external-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid #4a6b4a;
-    border-radius: 9999px;
-    color: #4a6b4a;
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-
-  .external-link:hover {
-    background: #f8faf8;
-    color: #4a6b4a;
-    text-decoration: none;
-  }
-
-  /* Attendance Section */
-  .attendance-form {
-    background: #FFFFFF;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 2rem;
-  }
-
-  /* Buttons */
-  .cta-button {
-    display: inline-block;
-    background: #4a6b4a;
-    color: #FFFFFF;
-    padding: 0.75rem 1.5rem;
-    border-radius: 9999px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.875rem;
-    transition: background-color 0.2s ease;
-    border: none;
-    cursor: pointer;
-  }
-
-  .cta-button:hover {
-    background: #3a5a3a;
-    color: #FFFFFF;
-    text-decoration: none;
-  }
-
-  .cta-button.danger {
-    background: #dc2626;
-  }
-
-  .cta-button.danger:hover {
-    background: #b91c1c;
-  }
-
-  .cta-button-secondary {
-    display: inline-block;
-    background: #FFFFFF;
-    color: #4a6b4a;
-    padding: 0.75rem 1.5rem;
-    border: 1px solid #4a6b4a;
-    border-radius: 9999px;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
-  }
-
-  .cta-button-secondary:hover {
-    background: #f8faf8;
-    color: #4a6b4a;
-    text-decoration: none;
-  }
-
-  /* Stats Alert */
-  .stats-alert {
-    background: #e0f2fe;
-    border: 1px solid #0284c7;
-    border-radius: 8px;
+  .member-card {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 0.375rem;
     padding: 1rem;
-    margin: 1.5rem 0;
-    color: #0c4a6e;
-    font-size: 0.875rem;
+    text-align: center;
   }
 
-  /* Session Selection */
-  .session-group {
-    margin-bottom: 2rem;
-  }
-
-  .session-group h4 {
-    font-family: 'Crimson Text', Georgia, serif;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #171717;
-    margin-bottom: 1rem;
-  }
-
-  .session-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .session-item {
+  .member-avatar {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 0.75rem;
+    border-radius: 50%;
+    background: #EDB418;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
+    justify-content: center;
+    color: #171717;
+    font-weight: bold;
+    font-size: 1.25rem;
   }
 
-  .session-item:hover {
-    background: #f9fafb;
-  }
-
-  .session-item input[type="checkbox"] {
-    width: 1rem;
-    height: 1rem;
-    accent-color: #4a6b4a;
-  }
-
-  .session-label {
-    flex: 1;
+  .member-name {
     font-weight: 500;
-  }
-
-  .session-count {
-    background: #4a6b4a;
-    color: white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  /* Meeting Preference */
-  .meeting-preference {
-    background: #f8faf8;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin: 2rem 0;
-  }
-
-  .meeting-preference label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-weight: 500;
-    cursor: pointer;
-  }
-
-  .meeting-preference input[type="checkbox"] {
-    width: 1.25rem;
-    height: 1.25rem;
-    accent-color: #4a6b4a;
-  }
-
-  /* Stats Sidebar */
-  .stats-box {
-    background: #FFFFFF;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .stats-box h3 {
-    font-family: 'Crimson Text', Georgia, serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #171717;
-    margin-bottom: 1rem;
-  }
-
-  .stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .stat-item:last-child {
-    border-bottom: none;
-  }
-
-  .stat-label {
-    color: #6b7280;
     font-size: 0.875rem;
-  }
-
-  .stat-value {
-    font-weight: 600;
-    color: #4a6b4a;
-    font-size: 1.25rem;
-  }
-
-  /* Meeting List */
-  .meeting-list {
-    background: #FFFFFF;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .meeting-list h3 {
-    font-family: 'Crimson Text', Georgia, serif;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #171717;
-    padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
-    margin: 0;
-  }
-
-  .meeting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #f3f4f6;
-  }
-
-  .meeting-item:last-child {
-    border-bottom: none;
-  }
-
-  .meeting-person {
-    flex: 1;
-  }
-
-  .meeting-name {
-    font-weight: 600;
-    color: #171717;
     margin-bottom: 0.25rem;
   }
 
-  .meeting-session {
+  .member-sessions {
+    font-size: 0.75rem;
     color: #6b7280;
-    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
   }
 
-  .contact-button {
-    padding: 0.375rem 0.75rem;
-    border: 1px solid #4a6b4a;
-    border-radius: 6px;
-    color: #4a6b4a;
-    text-decoration: none;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+  .member-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    background: #f8f8fa;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
   }
 
-  .contact-button:hover {
-    background: #f8faf8;
-    color: #4a6b4a;
-    text-decoration: none;
+  /* Fan History Section */
+  .fan-history-section {
+    margin-top: 3rem;
+  }
+
+  .fan-history-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+
+  .fan-history-list {
+    list-style: disc;
+    list-style-position: inside;
+    font-size: 0.875rem;
   }
 
   /* Mobile Responsiveness */
   @media (max-width: 768px) {
-    .tournament-hero {
-      padding: 2rem 0;
+    .tournament-container {
+      padding: 1rem;
     }
 
     .tournament-title {
       font-size: 1.75rem;
     }
 
-    .attendance-form {
-      padding: 1.5rem;
+    .official-link {
+      margin-left: 0;
+      margin-top: 0.5rem;
     }
 
-    .stats-box {
-      padding: 1rem;
-    }
-
-    .meeting-item {
+    .tournament-badges {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.75rem;
-    }
-
-    .contact-button {
-      align-self: stretch;
-      text-align: center;
     }
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Tournament Hero -->
-<section class="tournament-hero">
-  <div class="container">
+<div class="tournament-container">
+  <!-- Tournament Header -->
+  <div class="tournament-header">
     <h1 class="tournament-title">{{ tournament.name }}</h1>
-    <div class="tournament-meta">
-      <span>{{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}</span>
-      <span>{{ tournament.city }}, {{ tournament.country }}</span>
-      <span>{{ tournament.event_type }} ({{ tournament.tour_type }})</span>
+    <p class="tournament-meta">{{ tournament.start_date.strftime('%B %d') }} – {{ tournament.end_date.strftime('%B %d, %Y') }} — {{ tournament.city }}, {{ tournament.country }}</p>
+    <div class="tournament-badges">
+      <span class="badge badge-attending">{{ attending_count }} fans attending</span>
+      <span class="badge badge-meeting">{{ meeting_count }} open to meeting</span>
+      {% if tournament.external_url %}
+      <a href="{{ tournament.external_url }}" target="_blank" class="official-link">Official Site</a>
+      {% endif %}
     </div>
   </div>
-</section>
 
-<div class="container">
-  <!-- Tournament Information -->
-  {% if tournament.about or tournament.draw_url or tournament.schedule_url %}
-  <section class="section">
-    <div class="info-box">
-      <h3>Tournament Information
-        {% if current_user.is_admin %}
-        <a href="{{ url_for('admin.edit_tournament', tournament_id=tournament.id) }}" class="cta-button-secondary" style="float: right; font-size: 0.75rem; padding: 0.375rem 0.75rem;">Edit Info</a>
-        {% endif %}
-      </h3>
-      
-      {% if tournament.about %}
-      <p>{{ tournament.about }}</p>
-      {% endif %}
+  <!-- Main Layout -->
+  <form method="POST" id="tournament-form">
+    <div class="main-layout">
+      <!-- Attendance Selector -->
+      <div class="attendance-col">
+        {% include "_attendance_selector.html" %}
+      </div>
 
-      {% if tournament.draw_url or tournament.schedule_url %}
-      <div class="external-links">
-        {% if tournament.draw_url %}
-        <a href="{{ tournament.draw_url }}" target="_blank" class="external-link">
-          🔗 View Tournament Draw
-        </a>
-        {% endif %}
-        {% if tournament.schedule_url %}
-        <a href="{{ tournament.schedule_url }}" target="_blank" class="external-link">
-          📅 View Tournament Schedule
-        </a>
+      <!-- Session Selector -->
+      <div class="sessions-col">
+        {% include "_session_selector.html" %}
+      </div>
+    </div>
+
+    <!-- Sticky Save Bar -->
+    <div class="save-bar">
+      <div class="save-bar-content">
+        <div class="meetup-checkbox-container">
+          <input type="checkbox" name="open_to_meet" id="open_to_meet" {% if user_tournament and user_tournament.wants_to_meet %}checked{% endif %}>
+          <label for="open_to_meet" class="meetup-label">I'm open to meeting other fans</label>
+        </div>
+        <div class="save-actions">
+          {% if selected_sessions %}
+            <span class="selection-count">You've selected {{ selected_sessions|length }} session{{ 's' if selected_sessions|length != 1 else '' }}</span>
+          {% endif %}
+          <button type="submit" class="save-button">Save My Selections</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Members Attending -->
+  <div class="members-section">
+    <h2 class="section-title">Members Attending</h2>
+    <div class="members-grid">
+      {% for member in sample_members %}
+      <div class="member-card">
+        <div class="member-avatar">
+          {{ member.initials }}
+        </div>
+        <h4 class="member-name">{{ member.display_name }}</h4>
+        <p class="member-sessions">Attending {{ member.session_count }} sessions</p>
+        {% if member.open_to_meet %}
+          <span class="member-badge">Open to meeting</span>
         {% endif %}
       </div>
-      {% endif %}
+      {% endfor %}
     </div>
-  </section>
+  </div>
+
+  <!-- Fan History -->
+  {% if fan_history %}
+  <div class="fan-history-section">
+    <h2 class="section-title">Fan History</h2>
+    <p class="fan-history-description">Fans attending this tournament have also been to:</p>
+    <ul class="fan-history-list">
+      {% for tournament_item in fan_history %}
+        <li>{{ tournament_item.name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
   {% endif %}
-
-  <!-- Lanyard Success Message -->
-  {% if current_user.lanyard_ordered %}
-  <div class="info-box" style="background: #f0f9ff; border-color: #0284c7;">
-    <p style="color: #0c4a6e; margin: 0;">📦 Your lanyard is on its way!</p>
-  </div>
-  {% endif %}
-
-  <!-- Main Content Grid -->
-  <div class="two-column">
-    <!-- Left Column: Attendance -->
-    <div>
-      <section class="section">
-        <h2 class="section-title">Your Tournament Attendance</h2>
-        
-        <div class="attendance-form">
-          {% if user_attending %}
-          <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.id) }}">
-            <button type="submit" class="cta-button danger">
-              ❌ I'm no longer attending
-            </button>
-          </form>
-          {% else %}
-          <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.id) }}">
-            <button type="submit" class="cta-button">
-              ✅ I'm attending this tournament
-            </button>
-          </form>
-          {% endif %}
-
-          <div class="stats-alert">
-            <strong>{{ attending_count }}</strong> fan{% if attending_count != 1 %}s{% endif %} attending this tournament.
-            <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
-          </div>
-
-          {% if user_attending %}
-          <!-- Sessions Selection Form -->
-          <form method="POST" action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.slug) }}">
-            <div class="session-group">
-              <h4>Select the days and sessions you're attending:</h4>
-              
-              <div class="session-list">
-                {% for session in tournament.sessions %}
-                <div class="session-item">
-                  <input type="checkbox" name="sessions" id="session-{{ loop.index }}" 
-                         value="{{ session }}" {% if session in selected_sessions %}checked{% endif %}>
-                  <label for="session-{{ loop.index }}" class="session-label">
-                    {{ session }}
-                  </label>
-                  {% if session in session_stats %}
-                  <span class="session-count">
-                    {{ session_stats[session].attendees }} fan{% if session_stats[session].attendees != 1 %}s{% endif %}
-                  </span>
-                  {% endif %}
-                </div>
-                {% endfor %}
-              </div>
-            </div>
-
-            <div class="meeting-preference">
-              <label>
-                <input type="checkbox" name="wants_to_meet" id="wants-to-meet" 
-                       {% if wants_to_meet %}checked{% endif %}>
-                👋 I'm open to meeting up with other fans
-              </label>
-            </div>
-
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-              <button type="submit" class="cta-button">
-                Save Preferences
-              </button>
-              {% if not current_user.lanyard_ordered %}
-              <a href="{{ url_for('user.order_lanyard') }}" class="cta-button-secondary">
-                Order Free Lanyard
-              </a>
-              {% endif %}
-            </div>
-          </form>
-          {% endif %}
-        </div>
-      </section>
-    </div>
-
-    <!-- Right Column: Stats & Meeting List -->
-    <div>
-      <!-- Stats -->
-      <div class="stats-box">
-        <h3>Tournament Stats</h3>
-        <div class="stat-item">
-          <div class="stat-label">Total Fans Attending</div>
-          <div class="stat-value">{{ attending_count }}</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-label">Fans Open to Meeting</div>
-          <div class="stat-value">{{ meeting_count }}</div>
-        </div>
-      </div>
-
-      <!-- Who's Open to Meeting -->
-      {% if user_open_to_meet and raised_hands %}
-      <div class="meeting-list">
-        <h3>Who's Open to Meeting</h3>
-        {% for person in raised_hands %}
-          {% if person.user_id != current_user.id %}
-          <div class="meeting-item">
-            <div class="meeting-person">
-              <div class="meeting-name">{{ person.name }}</div>
-              <div class="meeting-session">{{ person.session }}</div>
-            </div>
-            <a href="mailto:{{ person.email }}" class="contact-button">
-              Contact
-            </a>
-          </div>
-          {% endif %}
-        {% endfor %}
-      </div>
-      {% endif %}
-    </div>
-  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('tournament-form');
+
+  // Form submission
+  form.addEventListener('submit', function(e) {
+    const saveButton = document.querySelector('.save-button');
+    saveButton.textContent = 'Saving...';
+    saveButton.disabled = true;
+  });
+});
+</script>
 {% endblock %}

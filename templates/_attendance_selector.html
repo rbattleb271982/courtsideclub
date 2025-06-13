@@ -1,0 +1,100 @@
+<div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem;">
+  <h3 style="font-family: 'Crimson Text', Georgia, serif; font-size: 1.125rem; font-weight: 600; color: #464C3F; margin-bottom: 1rem;">Your Attendance</h3>
+  
+  <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" 
+           class="attendance-option" 
+           onclick="selectAttendance(this, 'attending')"
+           {% if user_tournament and user_tournament.attending %}data-selected="true"{% endif %}>
+      <input type="radio" name="attendance" value="attending" style="width: 1.25rem; height: 1.25rem; accent-color: #669127;" 
+             {% if user_tournament and user_tournament.attending %}checked{% endif %}>
+      <span style="font-weight: 500; color: #374151;">I'm Attending</span>
+    </label>
+    
+    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" 
+           class="attendance-option" 
+           onclick="selectAttendance(this, 'maybe')"
+           {% if user_tournament and user_tournament.attendance_type == 'maybe' %}data-selected="true"{% endif %}>
+      <input type="radio" name="attendance" value="maybe" style="width: 1.25rem; height: 1.25rem; accent-color: #669127;" 
+             {% if user_tournament and user_tournament.attendance_type == 'maybe' %}checked{% endif %}>
+      <span style="font-weight: 500; color: #374151;">Maybe Attending</span>
+    </label>
+    
+    <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;" 
+           class="attendance-option" 
+           onclick="selectAttendance(this, 'not_attending')"
+           {% if user_tournament and not user_tournament.attending and user_tournament.attendance_type != 'maybe' %}data-selected="true"{% endif %}>
+      <input type="radio" name="attendance" value="not_attending" style="width: 1.25rem; height: 1.25rem; accent-color: #669127;" 
+             {% if user_tournament and not user_tournament.attending and user_tournament.attendance_type != 'maybe' %}checked{% endif %}>
+      <span style="font-weight: 500; color: #374151;">Not Attending</span>
+    </label>
+  </div>
+</div>
+
+<script>
+function selectAttendance(element, value) {
+  // Remove selected state from all options
+  document.querySelectorAll('.attendance-option').forEach(option => {
+    option.style.borderColor = '#e5e7eb';
+    option.style.background = 'white';
+    option.removeAttribute('data-selected');
+  });
+  
+  // Add selected state to clicked option
+  element.style.borderColor = '#669127';
+  element.style.background = '#f0f9ff';
+  element.setAttribute('data-selected', 'true');
+  
+  // Update sessions availability
+  updateSessionsAvailability(value);
+}
+
+function updateSessionsAvailability(attendanceValue) {
+  const sessionsContainer = document.querySelector('[data-sessions-container]');
+  const sessionInputs = document.querySelectorAll('input[name="sessions"]');
+  
+  if (sessionsContainer) {
+    if (attendanceValue === 'not_attending') {
+      sessionsContainer.style.opacity = '0.6';
+      sessionsContainer.style.pointerEvents = 'none';
+      // Uncheck all sessions
+      sessionInputs.forEach(input => {
+        input.checked = false;
+        const option = input.closest('.session-option');
+        if (option) {
+          option.style.borderColor = '#d1d5db';
+          option.style.background = 'white';
+        }
+      });
+      updateSelectionCount();
+    } else {
+      sessionsContainer.style.opacity = '1';
+      sessionsContainer.style.pointerEvents = 'auto';
+    }
+  }
+}
+
+function updateSelectionCount() {
+  const checkedSessions = document.querySelectorAll('input[name="sessions"]:checked');
+  const selectionCount = document.querySelector('.selection-count');
+  
+  if (selectionCount) {
+    if (checkedSessions.length === 0) {
+      selectionCount.textContent = '';
+    } else {
+      selectionCount.textContent = `You've selected ${checkedSessions.length} session${checkedSessions.length !== 1 ? 's' : ''}`;
+    }
+  }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const selectedOption = document.querySelector('.attendance-option[data-selected="true"]');
+  if (selectedOption) {
+    const input = selectedOption.querySelector('input[type="radio"]');
+    if (input) {
+      updateSessionsAvailability(input.value);
+    }
+  }
+});
+</script>

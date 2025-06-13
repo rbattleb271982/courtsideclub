@@ -415,7 +415,52 @@ def tournament_detail(tournament_slug):
     print(f"DEBUG: sorted_shared_tournaments = {sorted_shared_tournaments}")
     print(f"DEBUG: len(sorted_shared_tournaments) = {len(sorted_shared_tournaments)}")
     
-    return render_template('user/tournament_detail.html',
+    # Generate sample members data for v0 layout
+    sample_members = []
+    attending_users = UserTournament.query.filter_by(
+        tournament_id=tournament.id, 
+        attending=True
+    ).join(User).limit(8).all()
+    
+    for ut in attending_users:
+        user = ut.user
+        if user and not user.test_user:  # Exclude test users from display
+            # Count sessions for this user
+            session_count = len(ut.session_label.split(',')) if ut.session_label else 0
+            
+            # Generate initials
+            first_initial = user.first_name[0].upper() if user.first_name else 'U'
+            last_initial = user.last_name[0].upper() if user.last_name else 'U'
+            initials = first_initial + last_initial
+            
+            # Create display name (first name + last initial)
+            display_name = f"{user.first_name} {last_initial}." if user.first_name and user.last_name else f"User {user.id}"
+            
+            sample_members.append({
+                'initials': initials,
+                'display_name': display_name,
+                'session_count': session_count,
+                'open_to_meet': bool(ut.wants_to_meet)
+            })
+    
+    # Generate fan history data (top 3-5 tournaments these users have attended)
+    fan_history = []
+    if attending_users:
+        # Get other tournaments that these users have attended
+        user_ids = [ut.user_id for ut in attending_users]
+        other_tournaments = db.session.query(Tournament.name, db.func.count(UserTournament.user_id).label('count')).join(
+            UserTournament
+        ).filter(
+            UserTournament.user_id.in_(user_ids),
+            UserTournament.attending == True,
+            Tournament.id != tournament.id
+        ).group_by(Tournament.name).order_by(
+            db.func.count(UserTournament.user_id).desc()
+        ).limit(5).all()
+        
+        fan_history = [{'name': name} for name, count in other_tournaments]
+    
+    return render_template('tournament_detail.html',
                          tournament=tournament,
                          tournament_days=tournament_days,
                          user_tournament=user_tournament,
@@ -430,7 +475,9 @@ def tournament_detail(tournament_slug):
                          days_until=days_until,
                          session_saved=session_saved,
                          shared_past_tournaments=shared_past_tournaments,
-                         sorted_shared_tournaments=sorted_shared_tournaments)
+                         sorted_shared_tournaments=sorted_shared_tournaments,
+                         sample_members=sample_members,
+                         fan_history=fan_history)
 
 # Updated profile route to show user profile with past tournaments selection
 @user_bp.route('/add_wishlist', methods=['POST'])
