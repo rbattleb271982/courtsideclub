@@ -83,8 +83,8 @@ class User(UserMixin, db.Model):
                                    cascade="all, delete-orphan")
     
     location = db.Column(db.String(100))
-    lanyard_ordered = db.Column(db.Boolean, default=False)
-    lanyard_sent = db.Column(db.Boolean, default=False)
+    # lanyard_ordered = db.Column(db.Boolean, default=False)  # Removed - functionality discontinued
+    # lanyard_sent = db.Column(db.Boolean, default=False)  # Removed - functionality discontinued
     lanyard_sent_date = db.Column(db.DateTime, nullable=True)
     lanyard_exported = db.Column(db.Boolean, default=False)
     notifications = db.Column(db.Boolean, default=True)

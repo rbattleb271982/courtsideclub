@@ -166,7 +166,6 @@ def generate_pre_tournament_email_html(user_id, tournament_id):
         tournament_name = tournament.name
         location = f"{tournament.city}, {tournament.country}" if tournament.city and tournament.country else "Tournament Location"
         schedule_url = getattr(tournament, 'schedule_url', '#') or '#'
-        lanyard_ordered = getattr(user, 'lanyard_ordered', False)
         
         # Base URL for links
         base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
@@ -177,7 +176,6 @@ def generate_pre_tournament_email_html(user_id, tournament_id):
             tournament_name=tournament_name,
             sessions=sessions,
             meetup_count=meetup_count,
-            lanyard_ordered=lanyard_ordered,
             schedule_url=schedule_url,
             location=location,
             base_url=base_url
@@ -189,7 +187,7 @@ def generate_pre_tournament_email_html(user_id, tournament_id):
         logger.error(f"Error generating pre-tournament email HTML: {str(e)}", exc_info=True)
         return None
 
-def generate_email_html_template(user_first_name, tournament_name, sessions, meetup_count, lanyard_ordered, schedule_url, location, base_url):
+def generate_email_html_template(user_first_name, tournament_name, sessions, meetup_count, schedule_url, location, base_url):
     """Generate the actual HTML email template"""
     
     # Generate sessions HTML
@@ -206,17 +204,10 @@ def generate_email_html_template(user_first_name, tournament_name, sessions, mee
         </div>
         """
     
-    # Generate lanyard message
-    if lanyard_ordered:
-        lanyard_html = """
-        Your lanyard is on the way! Don't forget to bring it to make meeting other members easier.
-        """
-    else:
-        lanyard_html = f"""
-        Haven't ordered your free CourtSide Club lanyard yet? 
-        <a href="{base_url}/lanyard/order" style="color: #669127; text-decoration: underline;">Order now</a>
-        to stand out and connect at the tournament.
-        """
+    # Tournament preparation message (replaces lanyard messaging)
+    prep_html = """
+    Don't forget to bring sunscreen, a water bottle, and comfortable shoes. The tournament atmosphere is incredible when you're prepared!
+    """
     
     # Complete HTML template
     html = f"""
@@ -264,9 +255,9 @@ def generate_email_html_template(user_first_name, tournament_name, sessions, mee
                 {meetup_count} fan{'s' if meetup_count != 1 else ''} attending are open to meeting up — a great way to connect!
             </p>
 
-            <!-- Lanyard Status -->
+            <!-- Tournament Preparation -->
             <p style="margin-bottom: 30px;">
-                {lanyard_html}
+                {prep_html}
             </p>
 
             <!-- Tournament Logistics -->
