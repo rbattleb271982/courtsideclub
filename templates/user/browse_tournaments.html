@@ -138,6 +138,79 @@
     border-bottom: 2px solid #669127;
   }
 
+  /* Table Layout */
+  .tournaments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+  }
+
+  .tournaments-table th {
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .tournaments-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+  }
+
+  .tournaments-table tbody tr:hover {
+    background: #f9fafb;
+  }
+
+  .tournament-name-cell {
+    font-family: 'Crimson Text', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .tournament-name-link {
+    color: #669127;
+    text-decoration: underline;
+    text-decoration-color: #669127;
+    text-underline-offset: 2px;
+    transition: all 0.2s ease;
+  }
+
+  .tournament-name-link:hover {
+    color: #4a5b29;
+    text-decoration-color: #4a5b29;
+  }
+
+  .tournament-location-cell {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .tournament-date-cell {
+    color: #669127;
+    font-weight: 600;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .tournament-surface-cell {
+    color: #4b5563;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-top: 0.25rem;
+  }
+
+  .tournament-attending-cell {
+    text-align: center;
+    font-weight: 600;
+    color: #669127;
+  }
+
   /* Mobile Responsive */
   @media (max-width: 767px) {
     .hero {
@@ -166,7 +239,7 @@
     Browse <span class="accent">Tournaments</span>
   </h1>
   <p class="description">
-    <strong>Explore upcoming tournaments and decide where you might want to go. You can mark your interest or lock in your plans — it all starts here.</strong>
+    Discover and connect with fellow tennis fans at tournaments worldwide. From intimate 250s to Grand Slam spectacles.
   </p>
 </section>
 
@@ -184,11 +257,16 @@
           placeholder="Search tournaments..."
           onkeyup="filterTournaments()"
         >
-        <select id="monthFilter" class="filter-select" onchange="filterByMonth()">
-          <option value="">All Months</option>
-          {% for month, _ in sorted_months %}
-            <option value="{{ month }}">{{ month }}</option>
-          {% endfor %}
+        <select id="surfaceFilter" class="filter-select" onchange="filterBySurface()">
+          <option value="">All Types</option>
+          <option value="HARD">Hard</option>
+          <option value="CLAY">Clay</option>
+          <option value="GRASS">Grass</option>
+        </select>
+        <select id="sortSelect" class="filter-select" onchange="sortTournaments()">
+          <option value="date">Sort by Date</option>
+          <option value="name">Sort by Name</option>
+          <option value="attendance">Sort by Attendance</option>
         </select>
       </div>
     </div>
@@ -199,40 +277,33 @@
         <div class="month-group" data-month="{{ month }}">
           <h2 class="month-header">{{ month }}</h2>
           
-          <table class="min-w-full border-collapse">
-            <thead class="bg-gray-50">
+          <table class="tournaments-table">
+            <thead>
               <tr>
-                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/5">Tournament</th>
-                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">Dates</th>
-                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5 hidden md:table-cell">Location</th>
-                <th class="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/10">Attending</th>
-                <th class="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/10 hidden md:table-cell">Open to Meeting</th>
+                <th>Tournament</th>
+                <th>Date Range</th>
+                <th>Attending</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody>
               {% for tournament in tournaments %}
-              <tr class="tournament-row hover:bg-gray-50" data-name="{{ tournament.name|lower }}" data-location="{{ tournament.city|lower }}, {{ tournament.country|lower }}">
-                <td class="py-4 px-4">
-                  <div class="font-serif font-semibold text-lg text-green-700">
-                    <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="hover:text-green-800 underline">
-                      {{ tournament.name }}
-                    </a>
-                  </div>
-                  <div class="text-sm text-gray-500 mt-1 md:hidden">
+              <tr class="tournament-row" data-name="{{ tournament.name|lower }}" data-surface="{{ tournament.surface|lower if tournament.surface else '' }}" data-attendance="{{ tournament.attendee_count or 0 }}">
+                <td class="tournament-name-cell">
+                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
+                    {{ tournament.name }}
+                  </a>
+                  <div class="tournament-location-cell">
                     {{ tournament.city }}, {{ tournament.country }}
                   </div>
+                  {% if tournament.surface %}
+                    <div class="tournament-surface-cell">{{ tournament.surface }}</div>
+                  {% endif %}
                 </td>
-                <td class="py-4 px-4 text-sm text-green-600 font-medium whitespace-nowrap">
-                  {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}
+                <td class="tournament-date-cell">
+                  {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d') }}
                 </td>
-                <td class="py-4 px-4 text-sm text-gray-900 hidden md:table-cell">
-                  {{ tournament.city }}, {{ tournament.country }}
-                </td>
-                <td class="py-4 px-4 text-sm text-gray-500 text-center font-medium">
+                <td class="tournament-attending-cell">
                   {% if tournament.attendee_count %}{{ tournament.attendee_count }}{% else %}0{% endif %}
-                </td>
-                <td class="py-4 px-4 text-sm text-gray-500 text-center font-medium hidden md:table-cell">
-                  {% if tournament.meeting_count %}{{ tournament.meeting_count }}{% else %}0{% endif %}
                 </td>
               </tr>
               {% endfor %}
@@ -252,50 +323,72 @@
 <script>
 function filterTournaments() {
   const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-  const monthFilter = document.getElementById('monthFilter').value;
+  const surfaceFilter = document.getElementById('surfaceFilter').value.toLowerCase();
+  const sortValue = document.getElementById('sortSelect').value;
   const tournamentGroups = document.querySelectorAll('.month-group');
   let hasVisibleResults = false;
 
   tournamentGroups.forEach(group => {
-    const month = group.dataset.month;
     const rows = group.querySelectorAll('.tournament-row');
     let hasVisibleRows = false;
 
-    // Check if month matches filter
-    const monthMatches = !monthFilter || month === monthFilter;
+    rows.forEach(row => {
+      const name = row.dataset.name;
+      const surface = row.dataset.surface;
+      const matchesSearch = !searchTerm || name.includes(searchTerm);
+      const matchesSurface = !surfaceFilter || surface === surfaceFilter;
 
-    if (monthMatches) {
-      rows.forEach(row => {
-        const name = row.dataset.name;
-        const location = row.dataset.location;
-        const matchesSearch = !searchTerm || name.includes(searchTerm) || location.includes(searchTerm);
+      if (matchesSearch && matchesSurface) {
+        row.style.display = '';
+        hasVisibleRows = true;
+        hasVisibleResults = true;
+      } else {
+        row.style.display = 'none';
+      }
+    });
 
-        if (matchesSearch) {
-          row.style.display = '';
-          hasVisibleRows = true;
-          hasVisibleResults = true;
-        } else {
-          row.style.display = 'none';
-        }
-      });
-
-      group.style.display = hasVisibleRows ? '' : 'none';
-    } else {
-      group.style.display = 'none';
-    }
+    group.style.display = hasVisibleRows ? '' : 'none';
   });
 
   // Show/hide no results message
   document.getElementById('noResults').style.display = hasVisibleResults ? 'none' : 'block';
+
+  // Apply sorting
+  if (sortValue !== 'date') {
+    sortTournaments();
+  }
 }
 
-function filterByMonth() {
+function filterBySurface() {
   filterTournaments();
 }
 
-// Mobile responsive adjustments
+function sortTournaments() {
+  const sortValue = document.getElementById('sortSelect').value;
+  const tournamentGroups = document.querySelectorAll('.month-group');
+
+  tournamentGroups.forEach(group => {
+    const tbody = group.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('.tournament-row'));
+
+    rows.sort((a, b) => {
+      switch (sortValue) {
+        case 'name':
+          return a.dataset.name.localeCompare(b.dataset.name);
+        case 'attendance':
+          return parseInt(b.dataset.attendance) - parseInt(a.dataset.attendance);
+        default: // 'date'
+          return 0; // Keep original order for date
+      }
+    });
+
+    // Re-append sorted rows
+    rows.forEach(row => tbody.appendChild(row));
+  });
+}
+
+// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-  // Tailwind handles responsive visibility with md:hidden and md:table-cell classes
   console.log('Browse tournaments page loaded');
 });
 </script>
