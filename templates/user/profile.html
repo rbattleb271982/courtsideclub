@@ -292,18 +292,18 @@ body {
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-  <h1 class="mb-4" style="font-family: 'Crimson Text', Georgia, serif; color: #1f2937; font-size: 2rem; font-weight: bold;">Your Profile</h1>
+<div class="container py-mobile-lg">
+  <h1 class="mb-mobile-md" style="font-family: 'Crimson Text', Georgia, serif; color: #1f2937; font-size: 2rem; font-weight: bold;">Your Profile</h1>
   
   <form method="POST">
     {{ form.hidden_tag() }}
 
     <!-- Account Info -->
-    <div class="card mb-4">
-      <div class="card-header">
+    <div class="card card-mobile-compact">
+      <div class="card-header card-header-mobile-compact">
         <h2 style="font-family: 'Crimson Text', Georgia, serif;">Account Information</h2>
       </div>
-      <div class="card-body">
+      <div class="card-body card-body-mobile-compact">
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="first_name" class="form-label">First Name</label>

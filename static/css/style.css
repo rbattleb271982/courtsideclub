@@ -123,12 +123,12 @@ a:hover {
   
   /* Section-Specific Utilities */
   .hero-mobile-compact {
-    padding: 2.5rem 1rem 2rem !important;
+    padding: clamp(2rem, 4vw, 2.5rem) 1rem clamp(1.5rem, 3vw, 2rem) !important;
     min-height: auto !important;
   }
   
   .section-mobile-compact {
-    padding: 2rem 1rem !important;
+    padding: clamp(1.5rem, 3vw, 2rem) 1rem !important;
   }
   
   .card-mobile-compact {
