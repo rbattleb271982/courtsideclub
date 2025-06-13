@@ -2,16 +2,24 @@ import os
 import secrets
 import string
 import logging
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from models import db, User
 from services.sendgrid_service import send_email
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 
 # Initialize blueprint
 auth_bp = Blueprint('auth', __name__)
+
+# Initialize rate limiter (will be configured in app initialization)
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["1000 per day", "100 per hour"]
+)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -194,89 +202,126 @@ def logout():
     flash("You've been logged out.", "info")
     return redirect(url_for('main.public_home'))
 
-@auth_bp.route('/reset_password', methods=['GET', 'POST'])
+@auth_bp.route('/reset_password/request', methods=['GET', 'POST'])
+@limiter.limit("5 per hour")
 def reset_password_request():
+    """
+    Secure password reset request route with rate limiting.
+    Generates secure token and sends branded reset email.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('user.my_tournaments'))
 
     if request.method == 'POST':
-        email = request.form.get('email', '').lower()
+        email = request.form.get('email', '').strip().lower()
+        
+        if not email:
+            flash('Please enter your email address.', 'danger')
+            return render_template('reset_password_request.html')
 
         # Look up the user by email
         user = User.query.filter_by(email=email).first()
 
         if user:
             try:
-                # Generate a secure token
-                reset_token = secrets.token_urlsafe(32)
-
-                # In a real app, we would send an email with a reset link
-                # For this app, we'll show a link directly in the UI
-
-                flash('Password reset instructions have been sent to your email. Please check your inbox.', 'info')
-
-                # Instead of actually sending an email, we'll just redirect to a page where they can set a new password
-                # In a real application, this would be sent via email with a secure token
-
-                # For this demo, we'll directly go to the reset page
-                return render_template('reset_password.html', email=email, token=reset_token)
-
+                # Generate secure token using itsdangerous
+                serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+                token = serializer.dumps(user.email, salt='password-reset-salt')
+                
+                # Generate reset URL
+                reset_url = url_for('auth.reset_password_confirm', token=token, _external=True)
+                
+                # Send password reset email
+                from services.email import send_password_reset_email
+                send_password_reset_email(user.email, user.first_name or 'Tennis Fan', reset_url)
+                
+                logging.info(f"Password reset email sent to: {email}")
+                
             except Exception as e:
-                logging.error(f"Error initiating password reset: {str(e)}")
-                flash('An error occurred while processing your request. Please try again.', 'danger')
+                logging.error(f"Error sending password reset email: {str(e)}")
+                # Still show success message for security
         else:
-            # We don't want to reveal that the email doesn't exist
-            flash('If your email is registered, you will receive password reset instructions. Please check your email.', 'info')
-
-            # But we log it for debugging
+            # Log attempt but don't reveal email doesn't exist
             logging.info(f"Password reset requested for non-existent email: {email}")
+
+        # Always show same message regardless of email existence (security best practice)
+        flash('If your email is registered, you will receive a password reset link shortly.', 'info')
+        return redirect(url_for('auth.login'))
 
     return render_template('reset_password_request.html')
 
-@auth_bp.route('/reset_password/confirm', methods=['POST'])
-def reset_password_confirm():
-    email = request.form.get('email')
-    token = request.form.get('token')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
+@auth_bp.route('/reset_password/confirm/<token>', methods=['GET', 'POST'])
+def reset_password_confirm(token):
+    """
+    Secure password reset confirmation route with token validation.
+    Validates token expiration and updates user password.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('user.my_tournaments'))
 
-    # Validate inputs
-    if not all([email, token, password, confirm_password]):
-        flash('Invalid request. Please try again.', 'danger')
+    # Validate token and extract email
+    try:
+        serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)  # 1 hour expiry
+    except SignatureExpired:
+        flash('Your password reset link has expired. Please request a new one.', 'danger')
         return redirect(url_for('auth.reset_password_request'))
-
-    # Check if passwords match
-    if password != confirm_password:
-        flash('Passwords do not match. Please try again.', 'danger')
-        return render_template('reset_password.html', email=email, token=token)
-
-    # Validate password requirements
-    if len(password) < 8:
-        flash('Password must be at least 8 characters long.', 'danger')
-        return render_template('reset_password.html', email=email, token=token)
+    except BadSignature:
+        flash('Invalid password reset link. Please request a new one.', 'danger')
+        return redirect(url_for('auth.reset_password_request'))
 
     # Find the user
     user = User.query.filter_by(email=email).first()
     if not user:
-        flash('Invalid request. Please try again.', 'danger')
+        flash('Invalid password reset link. Please request a new one.', 'danger')
         return redirect(url_for('auth.reset_password_request'))
 
-    try:
-        # Update the user's password
-        user.password_hash = generate_password_hash(password)
-        db.session.commit()
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
 
-        # Show success message
-        flash('Your password has been updated successfully. You can now log in with your new password.', 'success')
+        # Validate inputs
+        if not password or not confirm_password:
+            flash('Please fill in all fields.', 'danger')
+            return render_template('reset_password.html', token=token)
 
-        # Redirect to login page
-        return redirect(url_for('auth.login'))
+        # Check if passwords match
+        if password != confirm_password:
+            flash('Passwords do not match. Please try again.', 'danger')
+            return render_template('reset_password.html', token=token)
 
-    except Exception as e:
-        logging.error(f"Error updating password: {str(e)}")
-        db.session.rollback()
-        flash('An error occurred while updating your password. Please try again.', 'danger')
-        return render_template('reset_password.html', email=email, token=token)
+        # Validate password requirements
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long.', 'danger')
+            return render_template('reset_password.html', token=token)
+
+        try:
+            # Update the user's password
+            user.password_hash = generate_password_hash(password)
+            db.session.commit()
+
+            # Log the password reset event
+            from services.event_logger import log_event
+            try:
+                log_event(user.id, 'password_reset', data={
+                    'ip': request.remote_addr,
+                    'user_agent': str(request.user_agent) if request.user_agent else None
+                })
+            except Exception as log_e:
+                logging.warning(f"Failed to log password reset event: {str(log_e)}")
+
+            logging.info(f"Password successfully reset for user: {email}")
+            flash('Your password has been updated successfully. You can now log in with your new password.', 'success')
+            return redirect(url_for('auth.login'))
+
+        except Exception as e:
+            logging.error(f"Error updating password for {email}: {str(e)}")
+            db.session.rollback()
+            flash('An error occurred while updating your password. Please try again.', 'danger')
+            return render_template('reset_password.html', token=token)
+
+    # GET request - show the reset form
+    return render_template('reset_password.html', token=token)
 
 @auth_bp.route('/login-success')
 def login_success():

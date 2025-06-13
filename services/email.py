@@ -700,6 +700,141 @@ def send_post_tournament_followup_email(user_id, tournament_id):
         logger.error(f"Error sending post-tournament follow-up to user {user_id}: {str(e)}", exc_info=True)
         return False
 
+def send_password_reset_email(to_email, first_name, reset_url):
+    """
+    Send password reset email with premium CourtSide Club branding
+    
+    Args:
+        to_email: Recipient email address
+        first_name: User's first name
+        reset_url: Secure password reset URL with token
+    """
+    try:
+        # Get base URL from config
+        base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
+        
+        password_reset_html = f"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Reset Your CourtSide Club Password</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+          </style>
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #FBFAFB; font-family: 'Inter', Arial, sans-serif; color: #464C3F;">
+          <!-- Preview Text -->
+          <div style="display: none; max-height: 0px; overflow: hidden;">
+            Reset your CourtSide Club password securely
+          </div>
+          
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 0 auto;">
+            <tr>
+              <td style="padding: 40px 30px 30px 30px; text-align: center;">
+                <!-- Header -->
+                <h1 style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-size: 36px; font-weight: 600; color: #464C3F;">CourtSide Club</h1>
+                <div style="height: 2px; background-color: #EDB418; width: 80px; margin: 15px auto 30px;"></div>
+                
+                <!-- Main Content -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                  <tr>
+                    <td style="padding: 0 0 20px 0; text-align: left;">
+                      <h2 style="margin: 0 0 20px 0; font-family: 'Crimson Text', Georgia, serif; font-size: 24px; font-weight: 700; color: #464C3F;">Reset Your Password</h2>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0; text-align: left;">
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-weight: 500; font-size: 18px; color: #464C3F;">Hey {first_name},</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 20px 0; text-align: left;">
+                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">We received a request to reset your CourtSide Club password. Click the button below to create a new password:</p>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Reset Button -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0;">
+                  <tr>
+                    <td align="center">
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                          <td style="border-radius: 50px; background-color: #669127;">
+                            <a href="{reset_url}" target="_blank" style="font-family: 'Inter', Arial, sans-serif; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 50px; padding: 16px 32px; border: 1px solid #669127; display: inline-block;">Reset My Password</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Security Info -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0; background-color: #ffffff; border-radius: 8px; padding: 20px;">
+                  <tr>
+                    <td style="text-align: left;">
+                      <h3 style="margin: 0 0 15px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; font-weight: 600; color: #464C3F;">Security Information</h3>
+                      <ul style="margin: 0; padding-left: 20px; font-family: 'Inter', Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #464C3F;">
+                        <li style="margin-bottom: 8px;">This link will expire in 1 hour for your security</li>
+                        <li style="margin-bottom: 8px;">If you didn't request this reset, you can safely ignore this email</li>
+                        <li style="margin-bottom: 0;">Your current password remains unchanged until you create a new one</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Alternative Link -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0;">
+                  <tr>
+                    <td style="text-align: left;">
+                      <p style="margin: 0 0 10px 0; font-family: 'Inter', Arial, sans-serif; font-size: 14px; color: #464C3F;">If the button doesn't work, copy and paste this link into your browser:</p>
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 14px; word-break: break-all; color: #669127;">
+                        <a href="{reset_url}" style="color: #669127; text-decoration: none;">{reset_url}</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Footer -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 40px; border-top: 1px solid rgba(70, 76, 63, 0.2); padding-top: 20px;">
+                  <tr>
+                    <td style="text-align: center; padding-bottom: 15px;">
+                      <p style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-style: italic; font-size: 18px; color: #464C3F;">Tennis is better together.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: center; padding-bottom: 20px;">
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 14px; color: rgba(70, 76, 63, 0.8);">
+                        <a href="{base_url}/privacy" target="_blank" style="color: rgba(70, 76, 63, 0.8); text-decoration: none; margin: 0 10px;">Privacy Policy</a> | 
+                        <a href="{base_url}/contact" target="_blank" style="color: rgba(70, 76, 63, 0.8); text-decoration: none; margin: 0 10px;">Contact Support</a>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: center;">
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 12px; color: rgba(70, 76, 63, 0.8);">© 2025 CourtSide Club</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+        """
+        
+        return send_email(
+            to_email="richardbattlebaxter@gmail.com",  # Override for testing
+            subject="Reset your CourtSide Club password",
+            content_html=password_reset_html
+        )
+        
+    except Exception as e:
+        logger.error(f"Error sending password reset email to {to_email}: {str(e)}", exc_info=True)
+        return False
+
 # Lanyard order confirmation email function removed - functionality discontinued
 
 # Lanyard delivery reminder email function removed - functionality discontinued
