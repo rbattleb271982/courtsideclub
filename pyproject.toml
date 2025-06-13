@@ -22,4 +22,5 @@ dependencies = [
     "openai>=1.86.0",
     "itsdangerous>=2.2.0",
     "flask-limiter>=3.12",
+    "wtforms>=3.2.1",
 ]

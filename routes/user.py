@@ -588,72 +588,47 @@ def update_wishlist():
 @user_bp.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    # If POST request, handle form submission
-    if request.method == 'POST':
-        # Handle profile updates
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        notifications = 'notifications' in request.form
-        
-        # Get the past tournaments the user has selected
-        selected_tournament_ids = request.form.getlist('past_tournaments')
-        
-        # Update user in database
-        user = User.query.get(current_user.id)
-        if first_name:
-            user.first_name = first_name
-        if last_name:
-            user.last_name = last_name
-        
-        # Also update the name field for backward compatibility
-        if first_name and last_name:
-            user.name = f"{first_name} {last_name}"
-        
-        user.notifications = notifications
-        
-        # Clear existing past tournaments
-        UserPastTournament.query.filter_by(user_id=current_user.id).delete()
-        
-        # Add newly selected past tournaments
-        for tournament_id in selected_tournament_ids:
-            past_tournament = UserPastTournament(
-                user_id=current_user.id,
-                tournament_id=tournament_id
-            )
-            db.session.add(past_tournament)
-        
-        db.session.commit()
-        
-        # Log the profile update event
-        from services.event_logger import log_event
-        event_data = {
-            'profile_updated': True
-        }
-        log_event(current_user.id, 'profile_updated', event_data)
-        
-        # Handle AJAX requests
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return jsonify({'success': True, 'message': 'Profile updated successfully!'})
-        
-        flash('Profile updated successfully!', 'success')
-        return redirect(url_for('user.profile'))
+    from forms import ProfileForm
     
-    # GET request - show the profile form
-    # Get all tournaments for selection, including future ones
+    form = ProfileForm()
     all_tournaments = Tournament.query.order_by(Tournament.name).all()
-    
-    # Get the user's past tournament IDs for pre-checking the checkboxes
-    user_past_tournament_ids = [pt.tournament_id for pt in current_user.past_tournaments]
-    
-    # Get the user's wishlist (bucket list) tournaments
-    user_wishlist = UserWishlistTournament.query.filter_by(user_id=current_user.id).all()
-    
-    return render_template('user/profile.html', 
-                          user=current_user,
-                          past_tournaments=all_tournaments,
-                          user_past_tournament_ids=user_past_tournament_ids,
-                          all_tournaments=all_tournaments,
-                          wishlist=user_wishlist)
+
+    if form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.notifications = form.notifications.data
+
+        attended_ids = request.form.getlist('attended_tournaments[]')
+        wishlist_ids = request.form.getlist('wishlist_tournaments[]')
+
+        db.session.query(UserPastTournament).filter_by(user_id=current_user.id).delete()
+        db.session.query(UserWishlistTournament).filter_by(user_id=current_user.id).delete()
+
+        for tid in attended_ids:
+            db.session.add(UserPastTournament(user_id=current_user.id, tournament_id=int(tid)))
+        for tid in wishlist_ids:
+            db.session.add(UserWishlistTournament(user_id=current_user.id, tournament_id=int(tid)))
+
+        db.session.commit()
+        flash("Your profile has been updated.", "success")
+        return redirect(url_for('user.profile'))
+
+    # Pre-populate form with current user data
+    form.first_name.data = current_user.first_name
+    form.last_name.data = current_user.last_name
+    form.notifications.data = current_user.notifications
+
+    past_ids = [t.tournament_id for t in current_user.past_tournaments]
+    wishlist_ids = [w.tournament_id for w in current_user.wishlist]
+
+    return render_template(
+        'user/profile.html',
+        user=current_user,
+        form=form,
+        past_tournaments=all_tournaments,
+        attended_ids=past_ids,
+        wishlist_ids=wishlist_ids,
+    )
 
 @user_bp.route('/profile/update', methods=['POST'])
 @login_required

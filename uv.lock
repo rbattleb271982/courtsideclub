@@ -1208,6 +1208,7 @@ dependencies = [
     { name = "sendgrid" },
     { name = "sqlalchemy" },
     { name = "werkzeug" },
+    { name = "wtforms" },
 ]
 
 [package.metadata]
@@ -1230,6 +1231,7 @@ requires-dist = [
     { name = "sendgrid", specifier = ">=6.11.0" },
     { name = "sqlalchemy", specifier = ">=2.0.40" },
     { name = "werkzeug", specifier = ">=3.1.3" },
+    { name = "wtforms", specifier = ">=3.2.1" },
 ]
 
 [[package]]

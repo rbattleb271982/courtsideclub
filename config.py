@@ -4,6 +4,9 @@ class Config:
     # Flask configuration
     SECRET_KEY = os.environ.get('SESSION_SECRET', 'dev_secret_key')
     
+    # Flask-WTF CSRF protection
+    WTF_CSRF_ENABLED = True
+    
     # Session configuration for proper login persistence in Replit
     SESSION_COOKIE_SAMESITE = 'None'       # Required for iframe compatibility
     SESSION_COOKIE_SECURE = True           # MUST be True over HTTPS

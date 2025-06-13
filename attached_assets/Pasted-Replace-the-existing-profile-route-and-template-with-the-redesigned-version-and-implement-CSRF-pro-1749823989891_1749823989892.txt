@@ -1,0 +1,78 @@
+Replace the existing /profile route and template with the redesigned version, and implement CSRF protection using Flask-WTF.
+✅ 1. Set Up Flask-WTF
+Install Flask-WTF if not already installed:
+pip install flask-wtf
+Add these lines to the Flask app config:
+app.config['SECRET_KEY'] = 'your-secret-key'
+app.config['WTF_CSRF_ENABLED'] = True
+✅ 2. Create a Profile Form
+Add this to forms.py:
+from flask_wtf import FlaskForm
+from wtforms import StringField, BooleanField
+from wtforms.validators import DataRequired
+
+class ProfileForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    notifications = BooleanField('Email Notifications')
+✅ 3. Update the Route in routes/user.py
+Replace the /profile route with:
+from forms import ProfileForm
+
+@user_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    form = ProfileForm()
+    all_tournaments = Tournament.query.order_by(Tournament.name).all()
+
+    if form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.notifications = form.notifications.data
+
+        attended_ids = request.form.getlist('attended_tournaments[]')
+        wishlist_ids = request.form.getlist('wishlist_tournaments[]')
+
+        db.session.query(UserPastTournament).filter_by(user_id=current_user.id).delete()
+        db.session.query(UserWishlistTournament).filter_by(user_id=current_user.id).delete()
+
+        for tid in attended_ids:
+            db.session.add(UserPastTournament(user_id=current_user.id, tournament_id=int(tid)))
+        for tid in wishlist_ids:
+            db.session.add(UserWishlistTournament(user_id=current_user.id, tournament_id=int(tid)))
+
+        db.session.commit()
+        flash("Your profile has been updated.", "success")
+        return redirect(url_for('user.profile'))
+
+    form.first_name.data = current_user.first_name
+    form.last_name.data = current_user.last_name
+    form.notifications.data = current_user.notifications
+
+    past_ids = [t.tournament_id for t in current_user.past_tournaments]
+    wishlist_ids = [w.tournament_id for w in current_user.wishlist]
+
+    return render_template(
+        'user/profile.html',
+        user=current_user,
+        form=form,
+        past_tournaments=all_tournaments,
+        attended_ids=past_ids,
+        wishlist_ids=wishlist_ids,
+    )
+✅ 4. Replace templates/user/profile.html
+Use the redesigned version, but include {{ form.hidden_tag() }} near the top of the form:
+<form method="POST" class="...">
+  {{ form.hidden_tag() }}
+  ...
+</form>
+Also update:
+/invite link → change to /
+/reset link → change to /reset_password/request
+✅ 5. Tailwind Compatibility
+Do not add Tailwind — convert classes to match existing Bootstrap/custom styles.
+✅ Do not finish until:
+CSRF works and blocks invalid posts
+Form saves and reloads correctly
+Layout works on mobile + desktop
+Checkboxes reflect state accurately
