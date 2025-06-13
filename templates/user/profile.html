@@ -67,20 +67,14 @@ body {
   flex: 1;
 }
 
-.search-btn, .btn-primary {
-  padding: 0.75rem 1rem;
-  background: #2c5e2e;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-weight: 600;
+.btn-primary {
+  background: #2c5e2e !important;
+  border-color: #2c5e2e !important;
 }
 
-.search-btn:hover, .btn-primary:hover {
-  background: #224823;
+.btn-primary:hover {
+  background: #224823 !important;
+  border-color: #224823 !important;
 }
 
 .search-results {
@@ -342,15 +336,13 @@ body {
     <div class="card mb-4">
       <div class="card-header">
         <h2 style="font-family: 'Crimson Text', Georgia, serif;">Events I've Been To</h2>
+        <p style="color: #6b7280; margin: 0.75rem 0 1rem 0; font-family: 'Inter', sans-serif;">Your match-day resume — mark all the tournaments you've already experienced.</p>
       </div>
       <div class="card-body">
-        <div class="tournament-search-container">
-          <h4>Search and Add Tournaments</h4>
-          
           <!-- Search input -->
-          <div class="search-input-group">
+          <div class="d-flex gap-2 mb-3">
             <input type="text" id="tournament-search" class="form-control" placeholder="Search tournaments..." aria-label="Search tournaments">
-            <button class="search-btn" type="button" id="clear-search">Clear</button>
+            <button class="btn btn-outline-secondary" type="button" id="clear-search">Clear</button>
           </div>
           
           <!-- Tournament search results -->
@@ -382,15 +374,13 @@ body {
     <div class="card mb-4">
       <div class="card-header">
         <h2 style="font-family: 'Crimson Text', Georgia, serif;">Bucket List Tournaments</h2>
+        <p style="color: #6b7280; margin: 0.75rem 0 1rem 0; font-family: 'Inter', sans-serif;">Check off the tournaments you want to attend!</p>
       </div>
       <div class="card-body">
-        <div class="tournament-search-container">
-          <h4>Search and Add Tournaments</h4>
-          
           <!-- Search input -->
-          <div class="search-input-group">
+          <div class="d-flex gap-2 mb-3">
             <input type="text" id="wishlist-search" class="form-control" placeholder="Search tournaments..." aria-label="Search wishlist tournaments">
-            <button class="search-btn" type="button" id="clear-wishlist-search">Clear</button>
+            <button class="btn btn-outline-secondary" type="button" id="clear-wishlist-search">Clear</button>
           </div>
           
           <!-- Tournament search results -->
@@ -425,7 +415,7 @@ body {
           <h3 style="font-family: 'Crimson Text', Georgia, serif;" class="mb-1">Invite a Friend</h3>
           <p class="text-muted mb-0">Share your love for tennis with friends</p>
         </div>
-        <a href="/" class="btn btn-success">Invite via Text</a>
+        <a href="/" class="btn btn-primary">Invite via Text</a>
       </div>
     </div>
 
