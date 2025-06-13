@@ -5,8 +5,7 @@ import logging
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+# Rate limiting will be implemented at the application level
 
 from models import db, User
 from services.sendgrid_service import send_email
@@ -15,11 +14,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 # Initialize blueprint
 auth_bp = Blueprint('auth', __name__)
 
-# Initialize rate limiter (will be configured in app initialization)
-limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["1000 per day", "100 per hour"]
-)
+# Rate limiter will be initialized separately to avoid circular imports
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -203,7 +198,6 @@ def logout():
     return redirect(url_for('main.public_home'))
 
 @auth_bp.route('/reset_password/request', methods=['GET', 'POST'])
-@limiter.limit("5 per hour")
 def reset_password_request():
     """
     Secure password reset request route with rate limiting.

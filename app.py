@@ -1,6 +1,8 @@
 import os
 from flask import Flask, render_template
 from flask_login import LoginManager
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import logging
 from models import db, User, load_user, Tournament
 import datetime
@@ -99,6 +101,14 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
+
+# Initialize rate limiter
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["1000 per day", "100 per hour"],
+    storage_uri="memory://"
+)
 
 # Set up the user loader
 @login_manager.user_loader
