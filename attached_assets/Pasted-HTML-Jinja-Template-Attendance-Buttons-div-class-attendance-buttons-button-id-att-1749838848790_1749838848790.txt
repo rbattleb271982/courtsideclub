@@ -1,0 +1,62 @@
+HTML (Jinja Template)
+<!-- Attendance Buttons -->
+<div class="attendance-buttons">
+  <button id="attending-btn" class="cta-button">I'm Attending</button>
+  <button id="maybe-btn" class="cta-button-secondary">Maybe Attending</button>
+</div>
+
+<!-- Session Selection UI (initially hidden) -->
+<form method="POST" action="{{ url_for('user.save_tournament_preferences', slug=tournament.slug) }}">
+  <div id="session-selection" style="display: none;">
+    <h3>Select Sessions</h3>
+    {% for day, sessions in days.items() %}
+      <div class="day-block">
+        <strong>{{ day }}</strong>
+        <div class="session-options">
+          {% for session in sessions %}
+            {% set session_id = day + '_' + session %}
+            <label class="session-label">
+              <input
+                type="checkbox"
+                name="sessions"
+                value="{{ session }}"
+                {% if session in selected_sessions %}checked{% endif %}
+              >
+              {{ session }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <input type="hidden" name="status" id="attendance-status" value="">
+  <button type="submit" class="cta-button">Save Preferences</button>
+</form>
+✅ JavaScript
+<script>
+  const attendingBtn = document.getElementById('attending-btn');
+  const maybeBtn = document.getElementById('maybe-btn');
+  const sessionUI = document.getElementById('session-selection');
+  const statusInput = document.getElementById('attendance-status');
+
+  function showSessionUI(status) {
+    sessionUI.style.display = 'block';
+    statusInput.value = status;
+    attendingBtn.classList.remove('selected');
+    maybeBtn.classList.remove('selected');
+
+    if (status === 'attending') attendingBtn.classList.add('selected');
+    if (status === 'maybe') maybeBtn.classList.add('selected');
+  }
+
+  attendingBtn?.addEventListener('click', () => showSessionUI('attending'));
+  maybeBtn?.addEventListener('click', () => showSessionUI('maybe'));
+</script>
+✅ CSS for Selected Sessions
+.session-label input[type="checkbox"]:checked + span,
+.session-label input[type="checkbox"]:checked {
+  background-color: #E6F4D8; /* light green */
+  border-color: #A3C375;
+}
+If needed, add this to your style.css file or inline <style> block.

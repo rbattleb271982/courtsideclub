@@ -112,30 +112,17 @@
                             {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
                             {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
 
-                            <!-- Simplified Attendance UI with reduced spacing -->
+                            <!-- New Attendance Buttons for Session Selection -->
                             <div class="attendance-buttons">
-                              <div class="attendance-button-group">
-                                <!-- I'm Attending -->
-                                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
-                                  <button type="submit" class="btn py-1 {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending" id="btn-going">
-                                    <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
-                                  </button>
-                                </form>
-
-                                <!-- Maybe Attending -->
-                                <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}" class="mb-1">
-                                  <input type="hidden" name="attendance_type" value="maybe">
-                                  <button type="submit" class="btn py-1 {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe" id="btn-thinking">
-                                    <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
-                                  </button>
-                                </form>
-                              </div>
-
-                              <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
-                                <button type="submit" class="btn-clear text-danger small-text">Not Attending</button>
-                              </form>
-
-
+                              <button id="attending-btn" class="btn py-1 {% if is_attending %}btn-success selected{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending">
+                                <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
+                              </button>
+                              <button id="maybe-btn" class="btn py-1 {% if is_maybe %}btn-success selected{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe">
+                                <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
+                              </button>
+                              <button id="not-attending-btn" class="btn-clear text-danger small-text" {% if is_not_going %}style="display: block;"{% else %}style="display: none;"{% endif %}>
+                                Not Attending
+                              </button>
                             </div>
                         </div>
                     </div>
@@ -166,10 +153,11 @@
                 <h3 class="card-title text-xl mb-0">Which Days Are You Going?</h3>
             </div>
             <div class="card-body">
-                <!-- Session Selection UI - Visible for both "I'm Attending" and "Maybe Attending" users -->
-                <div class="session-selection-ui" id="session-selection-ui"{% if not user_attending %} style="display: none;"{% endif %}>
+                <!-- Session Selection UI (initially hidden) -->
+                <div class="session-selection-ui" id="session-selection-ui" style="display: none;">
                     <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" id="session-form">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="status" id="attendance-status" value="">
                         <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
                         <div id="hiddenSessionInputs">
                             <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
@@ -384,6 +372,25 @@
         margin-bottom: 14px;
     }
 
+    /* Selected session styling */
+    .session-checkbox-input:checked + .session-name {
+        background-color: #E6F4D8;
+        color: #1d632f;
+        border-color: #A3C375;
+    }
+
+    .session-checkbox-input:checked {
+        background-color: #E6F4D8;
+        border-color: #A3C375;
+    }
+
+    /* Button styling for selected state */
+    .btn.selected {
+        background-color: #4a6b4a !important;
+        border-color: #4a6b4a !important;
+        color: white !important;
+    }
+
     /* Badge styling for session counts */
     .session-badge {
         font-size: 12px;
@@ -562,5 +569,43 @@
       toggle.innerHTML = '🔄 Fan History <span id="chevron">▲</span>';
     }
   }
+
+  // Session selection control
+  const attendingBtn = document.getElementById('attending-btn');
+  const maybeBtn = document.getElementById('maybe-btn');
+  const sessionUI = document.getElementById('session-selection-ui');
+  const statusInput = document.getElementById('attendance-status');
+
+  function showSessionUI(status) {
+    sessionUI.style.display = 'block';
+    statusInput.value = status;
+    attendingBtn.classList.remove('selected');
+    maybeBtn.classList.remove('selected');
+
+    if (status === 'attending') {
+      attendingBtn.classList.add('selected');
+      attendingBtn.classList.remove('btn-outline-success');
+      attendingBtn.classList.add('btn-success');
+    }
+    if (status === 'maybe') {
+      maybeBtn.classList.add('selected');
+      maybeBtn.classList.remove('btn-outline-success');
+      maybeBtn.classList.add('btn-success');
+    }
+  }
+
+  // Show session UI if user already has attendance status
+  {% if is_attending or is_maybe %}
+  document.addEventListener('DOMContentLoaded', function() {
+    {% if is_attending %}
+    showSessionUI('attending');
+    {% elif is_maybe %}
+    showSessionUI('maybe');
+    {% endif %}
+  });
+  {% endif %}
+
+  attendingBtn?.addEventListener('click', () => showSessionUI('attending'));
+  maybeBtn?.addEventListener('click', () => showSessionUI('maybe'));
 </script>
 {% endblock %}
