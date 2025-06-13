@@ -167,7 +167,6 @@
                         <!-- Create session day groups with all tournament days -->
                         <div class="session-groups">
                             {% for day in tournament_days %}
-                            {% set day_num = loop.index %}
                             <div class="session-day-group">
                                 <div class="day-title">
                                     {{ day.formatted }} (Day {{ day.day_num }})
@@ -570,77 +569,63 @@
     }
   }
 
-  // Session selection control with debug logging
-  console.log('Session selection script loading...');
-  
-  const attendingBtn = document.getElementById('attending-btn');
-  const maybeBtn = document.getElementById('maybe-btn');
-  const sessionUI = document.getElementById('session-selection-ui');
-  const statusInput = document.getElementById('attendance-status');
-
-  console.log('Elements found:', {
-    attendingBtn: !!attendingBtn,
-    maybeBtn: !!maybeBtn, 
-    sessionUI: !!sessionUI,
-    statusInput: !!statusInput
-  });
-
-  function showSessionUI(status) {
-    console.log('showSessionUI called with:', status);
-    if (sessionUI) {
-      sessionUI.style.display = 'block';
-      console.log('Session UI shown');
-    } else {
-      console.error('sessionUI element not found');
-    }
-    
-    if (statusInput) {
-      statusInput.value = status;
-    }
-    
-    if (attendingBtn) {
-      attendingBtn.classList.remove('selected');
-      attendingBtn.classList.remove('btn-outline-success');
-    }
-    if (maybeBtn) {
-      maybeBtn.classList.remove('selected'); 
-      maybeBtn.classList.remove('btn-outline-success');
-    }
-
-    if (status === 'attending' && attendingBtn) {
-      attendingBtn.classList.add('selected');
-      attendingBtn.classList.add('btn-success');
-    }
-    if (status === 'maybe' && maybeBtn) {
-      maybeBtn.classList.add('selected');
-      maybeBtn.classList.add('btn-success');
-    }
-  }
-
-  // Show session UI if user already has attendance status
-  {% if is_attending or is_maybe %}
+  // Session selection control - ALL wrapped in DOMContentLoaded
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('Auto-showing sessions for existing user');
-    {% if is_attending %}
-    showSessionUI('attending');
-    {% elif is_maybe %}
-    showSessionUI('maybe');
-    {% endif %}
-  });
-  {% endif %}
+    console.log('Session selection script loading...');
+    
+    const attendingBtn = document.getElementById('attending-btn');
+    const maybeBtn = document.getElementById('maybe-btn');
+    const sessionUI = document.getElementById('session-selection-ui');
+    const statusInput = document.getElementById('attendance-status');
 
-  if (attendingBtn) {
-    attendingBtn.addEventListener('click', function() {
+    console.log('Elements found:', {
+      attendingBtn: !!attendingBtn,
+      maybeBtn: !!maybeBtn, 
+      sessionUI: !!sessionUI,
+      statusInput: !!statusInput
+    });
+
+    function showSessionUI(status) {
+      console.log('showSessionUI called with:', status);
+      if (!sessionUI || !statusInput) {
+        console.error('Required elements not found');
+        return;
+      }
+      
+      sessionUI.style.display = 'block';
+      statusInput.value = status;
+      console.log('Session UI shown');
+      
+      // Update button styling
+      attendingBtn?.classList.remove('selected', 'btn-outline-success');
+      maybeBtn?.classList.remove('selected', 'btn-outline-success');
+
+      if (status === 'attending') {
+        attendingBtn?.classList.add('selected', 'btn-success');
+      } else if (status === 'maybe') {
+        maybeBtn?.classList.add('selected', 'btn-success');
+      }
+    }
+
+    // Add click event listeners
+    attendingBtn?.addEventListener('click', function() {
       console.log('Attending button clicked');
       showSessionUI('attending');
     });
-  }
-  
-  if (maybeBtn) {
-    maybeBtn.addEventListener('click', function() {
+    
+    maybeBtn?.addEventListener('click', function() {
       console.log('Maybe button clicked');
       showSessionUI('maybe');
     });
-  }
+
+    // Auto-show session UI if user already has attendance status
+    {% if is_attending %}
+    console.log('Auto-showing sessions for attending user');
+    showSessionUI('attending');
+    {% elif is_maybe %}
+    console.log('Auto-showing sessions for maybe user');
+    showSessionUI('maybe');
+    {% endif %}
+  });
 </script>
 {% endblock %}
