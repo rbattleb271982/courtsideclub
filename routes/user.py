@@ -291,20 +291,24 @@ def tournament_detail(tournament_slug):
     today = datetime.now().date()
     days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
     
-    # Ensure tournament sessions data exists
+    # Ensure tournament sessions data exists - create comprehensive day/night structure
     if not tournament.sessions or len(tournament.sessions) == 0:
-        # Add test sessions data if none exists
-        default_sessions = [
-            'Day 1 - Day', 
-            'Day 1 - Night', 
-            'Day 2 - Day', 
-            'Day 2 - Night',
-            'Day 3 - Day'
-        ]
+        # Calculate tournament duration from start and end dates
+        import datetime as dt
+        tournament_duration = (tournament.end_date - tournament.start_date).days + 1
+        
+        # Create sessions for all days of the tournament
+        default_sessions = []
+        for day in range(1, tournament_duration + 1):
+            default_sessions.extend([
+                f'Day {day} - Day',
+                f'Day {day} - Night'
+            ])
+        
         # Update the database with these sessions
         tournament.sessions = default_sessions
         db.session.commit()
-        print(f"DEBUG: Added default sessions to tournament {tournament.name}: {tournament.sessions}")
+        print(f"DEBUG: Added {tournament_duration}-day sessions to tournament {tournament.name}: {tournament.sessions}")
     else:
         print(f"DEBUG: Tournament sessions from DB: {tournament.sessions}")
     
@@ -342,6 +346,9 @@ def tournament_detail(tournament_slug):
                 'date': day_date,
                 'formatted': day_date.strftime('%b %d')
             })
+        
+        print(f"DEBUG: Created tournament_days structure with {len(tournament_days)} days")
+        print(f"DEBUG: tournament_days = {tournament_days}")
     
     # Check if sessions were just saved (from query param)
     session_saved = request.args.get('session_saved', '0') == '1'
