@@ -140,10 +140,10 @@ def tournament_detail(tournament_slug):
         selected_sessions = request.form.getlist('sessions')
         print(f"DEBUG: Selected sessions from form: {selected_sessions}")
         
-        # Get wants_to_meet preference using standardized field name
-        wants_to_meet_value = request.form.get('wants_to_meet')
-        wants_to_meet = wants_to_meet_value == 'on' if wants_to_meet_value else False
-        print(f"DEBUG: wants_to_meet checkbox value: {wants_to_meet_value}, processed: {wants_to_meet}")
+        # Get wants_to_meet preference using v0 layout field name
+        open_to_meet_value = request.form.get('open_to_meet')
+        wants_to_meet = open_to_meet_value == 'on' if open_to_meet_value else False
+        print(f"DEBUG: open_to_meet checkbox value: {open_to_meet_value}, processed: {wants_to_meet}")
         
         # Get or create user tournament registration
         user_tournament = UserTournament.query.filter_by(
