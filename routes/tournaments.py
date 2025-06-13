@@ -109,7 +109,7 @@ def list_tournaments():
             user_tournament.attending = True
             # No default session - user must explicitly select
             user_tournament.session_label = None
-            print(f"DEBUG: User {current_user.id} marked as attending but must select sessions")
+
         elif attendance_param == 'maybe':
             user_tournament.attending = True
             user_tournament.session_label = None
@@ -302,9 +302,7 @@ def list_tournaments():
     # Convert to sorted list of tuples for template rendering - alphabetically by tournament name (case-insensitive)
     sorted_shared_tournaments = sorted(shared_past_tournaments.items(), key=lambda x: x[0].lower())
     
-    print(f"DEBUG: shared_past_tournaments = {shared_past_tournaments}")
-    print(f"DEBUG: sorted_shared_tournaments = {sorted_shared_tournaments}")
-    print(f"DEBUG: len(sorted_shared_tournaments) = {len(sorted_shared_tournaments)}")
+
     
     # Pass session_saved flag to show lanyard button conditionally
     return render_template('user/tournament_detail.html',
@@ -341,7 +339,7 @@ def attend_tournament(tournament_slug):
             'Day 4 - Day', 'Day 4 - Night'
         ]
         db.session.flush()  # Save tournament sessions first
-        print(f"DEBUG: Added default sessions to tournament {tournament.name}: {tournament.sessions}")
+
 
     user_tourney = UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
     if not user_tourney:
@@ -354,7 +352,7 @@ def attend_tournament(tournament_slug):
     # No longer auto-select a default session
     # User must explicitly choose their sessions
     user_tourney.session_label = None
-    print(f"DEBUG: User {current_user.id} set as attending but must select sessions")
+
     
     # Log the event
     event_data = {
@@ -498,9 +496,9 @@ def save_sessions(tournament_slug):
     
     # Log the session selection count
     if selected_sessions:
-        print(f"DEBUG: User {current_user.id} saved {len(selected_sessions)} sessions with type {user_tournament.attendance_type}")
+        pass
     else:
-        print(f"DEBUG: User {current_user.id} saved with no specific sessions with type {user_tournament.attendance_type}")
+        pass
     
     user_tournament.wants_to_meet = wants_to_meet
     
@@ -525,8 +523,7 @@ def save_sessions(tournament_slug):
                         all_tournament_sessions.append(day_key)
                         all_tournament_sessions.append(night_key)
             except Exception as e:
-                print(f"DEBUG: Error processing tournament sessions: {e}")
-                print(f"DEBUG: Session data type: {type(tournament.sessions)}")
+
                 # Fallback - use basic days 1-7 if we can't process the sessions
                 for i in range(1, 8):
                     all_tournament_sessions.append(f"Day {i} - Day")
