@@ -1,0 +1,37 @@
+Please perform a full cleanup of the lanyard email system and related logic in the CourtSide Club project, **keeping the `lanyard_exported` field and admin tracking intact**. Specifically:
+
+1. **Pre-Tournament Emails**  
+   - Remove all references to `lanyard_ordered` or lanyard status from all pre-tournament email templates and email-sending logic.  
+   - Replace any lanyard-specific messages with neutral or generic tournament prep text.
+
+2. **Database Migration**  
+   - Create a migration script to drop the `lanyard_ordered` and `lanyard_sent` columns from the User table, preserving `lanyard_exported`.  
+   - Provide both upgrade and downgrade methods for safe migration rollback.
+
+3. **Agent Removal**  
+   - Delete the entire `agents/lanyard_reminder.py` file if it contains only lanyard reminder logic.  
+   - Remove all imports and invocations of `run_lanyard_reminder_agent` from `routes/admin_agents.py`, scheduler configs (e.g., `app.py`), or elsewhere.
+
+4. **Route and Debug Cleanup**  
+   - Remove or comment out all calls to `send_lanyard_order_confirmation_email` and `send_lanyard_delivery_reminder_email` in `routes/user.py`, `routes/debug.py`, or any other route files.
+
+5. **Email Templates Cleanup**  
+   - Remove lanyard-related templates from `config/email_templates.json` and other config files.
+
+6. **Admin Dashboard and UI**  
+   - Remove or update all UI elements, admin panels, and pages that display or depend on `lanyard_ordered` or `lanyard_sent`.  
+   - Retain and ensure proper display of `lanyard_exported` data only.  
+   - Update any labels or descriptions in the admin dashboard to clarify that stats only cover exported lanyards.
+
+7. **Test Data Cleanup**  
+   - Remove test user seed scripts or data entries populating `lanyard_ordered` and `lanyard_sent` fields.
+
+---
+
+Please output the files modified, code snippets or diffs for each change, and confirm that no broken references remain.
+
+Prioritize safe removal, using comments before deletion if unsure.
+
+---
+
+This task is to simplify the codebase by removing all lanyard ordering and email communication features while preserving admin tracking of exported lanyards.
