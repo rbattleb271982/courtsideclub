@@ -143,6 +143,7 @@
     width: 100%;
     border-collapse: collapse;
     background: white;
+    table-layout: fixed;
   }
 
   .tournaments-table thead {
@@ -150,18 +151,63 @@
   }
 
   .tournaments-table th {
-    padding: 0.75rem;
-    text-align: left;
+    padding: 1rem;
     font-weight: 600;
     color: #374151;
     font-size: 0.875rem;
     border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+  }
+
+  .tournaments-table th:first-child {
+    width: 35%;
+    text-align: left;
+  }
+
+  .tournaments-table th:nth-child(2) {
+    width: 15%;
+    text-align: left;
+  }
+
+  .tournaments-table th:nth-child(3) {
+    width: 25%;
+    text-align: left;
+  }
+
+  .tournaments-table th:nth-child(4) {
+    width: 12.5%;
+    text-align: center;
+  }
+
+  .tournaments-table th:nth-child(5) {
+    width: 12.5%;
+    text-align: center;
   }
 
   .tournaments-table td {
-    padding: 0.75rem;
+    padding: 1rem;
     border-bottom: 1px solid #f3f4f6;
     vertical-align: top;
+  }
+
+  .tournaments-table td:first-child {
+    text-align: left;
+  }
+
+  .tournaments-table td:nth-child(2) {
+    text-align: left;
+  }
+
+  .tournaments-table td:nth-child(3) {
+    text-align: left;
+  }
+
+  .tournaments-table td:nth-child(4) {
+    text-align: center;
+  }
+
+  .tournaments-table td:nth-child(5) {
+    text-align: center;
   }
 
   .tournaments-table tbody tr:hover {
@@ -222,7 +268,19 @@
 
     .tournaments-table th,
     .tournaments-table td {
-      padding: 0.5rem;
+      padding: 0.75rem;
+    }
+
+    .tournaments-table th:first-child {
+      width: 60%;
+    }
+
+    .tournaments-table th:nth-child(2) {
+      width: 20%;
+    }
+
+    .tournaments-table th:nth-child(4) {
+      width: 20%;
     }
 
     .tournament-name-cell {
