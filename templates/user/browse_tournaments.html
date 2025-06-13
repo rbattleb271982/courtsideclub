@@ -138,133 +138,6 @@
     border-bottom: 2px solid #669127;
   }
 
-  /* Table Layout */
-  .tournaments-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: white;
-    table-layout: fixed;
-  }
-
-  .tournaments-table thead {
-    background: transparent;
-  }
-
-  .tournaments-table th {
-    font-weight: 600;
-    color: #374151;
-    font-size: 0.875rem;
-    border-bottom: 1px solid #e5e7eb;
-    vertical-align: middle;
-    box-sizing: border-box;
-    height: 50px;
-  }
-
-  .tournaments-table th:first-child {
-    width: 35%;
-    text-align: left;
-    padding: 0.75rem 1rem;
-  }
-
-  .tournaments-table th:nth-child(2) {
-    width: 20%;
-    text-align: left;
-    padding: 0.75rem 1rem;
-  }
-
-  .tournaments-table th:nth-child(3) {
-    width: 25%;
-    text-align: left;
-    padding: 0.75rem 1rem;
-  }
-
-  .tournaments-table th:nth-child(4) {
-    width: 10%;
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-  }
-
-  .tournaments-table th:nth-child(5) {
-    width: 10%;
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-  }
-
-  .tournaments-table td {
-    border-bottom: 1px solid #f3f4f6;
-    vertical-align: middle;
-    box-sizing: border-box;
-    height: 60px;
-  }
-
-  .tournaments-table td:first-child {
-    text-align: left;
-    padding: 0.75rem 1rem;
-  }
-
-  .tournaments-table td:nth-child(2) {
-    text-align: left;
-    padding: 0.75rem 1rem;
-  }
-
-  .tournaments-table td:nth-child(3) {
-    text-align: left;
-    padding: 0.75rem 1rem;
-  }
-
-  .tournaments-table td:nth-child(4) {
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-  }
-
-  .tournaments-table td:nth-child(5) {
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-  }
-
-  .tournaments-table tbody tr:hover {
-    background: transparent;
-  }
-
-  .tournament-name-cell {
-    font-family: 'Crimson Text', serif;
-    font-weight: 600;
-    font-size: 1.1rem;
-  }
-
-  .tournament-name-link {
-    color: #669127;
-    text-decoration: underline;
-    text-decoration-color: #669127;
-    text-underline-offset: 2px;
-    transition: all 0.2s ease;
-  }
-
-  .tournament-name-link:hover {
-    color: #4a5b29;
-    text-decoration-color: #4a5b29;
-  }
-
-  .tournament-location-cell {
-    color: #6b7280;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-  }
-
-  .tournament-date-cell {
-    color: #669127;
-    font-weight: 600;
-    font-size: 0.875rem;
-    white-space: nowrap;
-  }
-
-  .tournament-stats-cell {
-    color: #6b7280;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-
   /* Mobile Responsive */
   @media (max-width: 767px) {
     .hero {
@@ -273,41 +146,6 @@
 
     .tournaments-section {
       padding: 1.5rem 1rem;
-    }
-
-    .tournaments-table {
-      font-size: 0.875rem;
-    }
-
-    .tournaments-table th,
-    .tournaments-table td {
-      padding: 0.5rem;
-    }
-
-    .tournaments-table th:first-child,
-    .tournaments-table td:first-child {
-      width: 60%;
-      padding-left: 0.5rem;
-    }
-
-    .tournaments-table th:nth-child(2),
-    .tournaments-table td:nth-child(2) {
-      width: 20%;
-      padding-left: 0.5rem;
-    }
-
-    .tournaments-table th:nth-child(4),
-    .tournaments-table td:nth-child(4) {
-      width: 20%;
-      padding: 0.5rem 0.25rem;
-    }
-
-    .tournament-name-cell {
-      font-size: 1rem;
-    }
-
-    .hide-mobile {
-      display: none;
     }
   }
 
@@ -361,37 +199,39 @@
         <div class="month-group" data-month="{{ month }}">
           <h2 class="month-header">{{ month }}</h2>
           
-          <table class="tournaments-table">
-            <thead>
+          <table class="min-w-full border-collapse">
+            <thead class="bg-gray-50">
               <tr>
-                <th>Tournament</th>
-                <th>Dates</th>
-                <th class="hide-mobile">Location</th>
-                <th>Attending</th>
-                <th class="hide-mobile">Open to Meeting</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/5">Tournament</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">Dates</th>
+                <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5 hidden md:table-cell">Location</th>
+                <th class="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/10">Attending</th>
+                <th class="py-3 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/10 hidden md:table-cell">Open to Meeting</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="bg-white divide-y divide-gray-200">
               {% for tournament in tournaments %}
-              <tr class="tournament-row" data-name="{{ tournament.name|lower }}" data-location="{{ tournament.city|lower }}, {{ tournament.country|lower }}">
-                <td class="tournament-name-cell">
-                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
-                    {{ tournament.name }}
-                  </a>
-                  <div class="tournament-location-cell show-mobile">
+              <tr class="tournament-row hover:bg-gray-50" data-name="{{ tournament.name|lower }}" data-location="{{ tournament.city|lower }}, {{ tournament.country|lower }}">
+                <td class="py-4 px-4">
+                  <div class="font-serif font-semibold text-lg text-green-700">
+                    <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="hover:text-green-800 underline">
+                      {{ tournament.name }}
+                    </a>
+                  </div>
+                  <div class="text-sm text-gray-500 mt-1 md:hidden">
                     {{ tournament.city }}, {{ tournament.country }}
                   </div>
                 </td>
-                <td class="tournament-date-cell">
+                <td class="py-4 px-4 text-sm text-green-600 font-medium whitespace-nowrap">
                   {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}
                 </td>
-                <td class="hide-mobile">
+                <td class="py-4 px-4 text-sm text-gray-900 hidden md:table-cell">
                   {{ tournament.city }}, {{ tournament.country }}
                 </td>
-                <td class="tournament-stats-cell">
+                <td class="py-4 px-4 text-sm text-gray-500 text-center font-medium">
                   {% if tournament.attendee_count %}{{ tournament.attendee_count }}{% else %}0{% endif %}
                 </td>
-                <td class="tournament-stats-cell hide-mobile">
+                <td class="py-4 px-4 text-sm text-gray-500 text-center font-medium hidden md:table-cell">
                   {% if tournament.meeting_count %}{{ tournament.meeting_count }}{% else %}0{% endif %}
                 </td>
               </tr>
@@ -455,29 +295,10 @@ function filterByMonth() {
 
 // Mobile responsive adjustments
 document.addEventListener('DOMContentLoaded', function() {
-  // Show location on mobile
-  const showMobileElements = document.querySelectorAll('.show-mobile');
-  showMobileElements.forEach(el => {
-    if (window.innerWidth <= 767) {
-      el.style.display = 'block';
-    } else {
-      el.style.display = 'none';
-    }
-  });
+  // Tailwind handles responsive visibility with md:hidden and md:table-cell classes
+  console.log('Browse tournaments page loaded');
 });
 </script>
 
-<style>
-@media (max-width: 767px) {
-  .show-mobile {
-    display: block !important;
-  }
-}
 
-@media (min-width: 768px) {
-  .show-mobile {
-    display: none !important;
-  }
-}
-</style>
 {% endblock %}
