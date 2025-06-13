@@ -1,0 +1,170 @@
+export default function PreTournamentReminderEmail({ user, tournament }: { user: { first_name: string; email: string }, tournament: { name: string } }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Your CourtSide Club Tournament Starts Soon</title>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+          body {
+            background-color: #FBFAFB; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', Arial, sans-serif;
+            -webkit-text-size-adjust: 100%; 
+            -ms-text-size-adjust: 100%;
+            color: #464C3F;
+          }
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 45px 25px;
+            background-color: #FBFAFB;
+          }
+          h1, h2 {
+            font-family: 'Crimson Text', Georgia, serif;
+            color: #464C3F;
+            margin: 0 0 24px 0;
+            font-weight: 600;
+          }
+          h1 {
+            font-size: 32px;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            text-align: center;
+          }
+          p {
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 0 22px 0;
+            font-weight: 400;
+          }
+          .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+          }
+          .checklist-number {
+            background-color: #669127;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-family: 'Inter', Arial, sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 38px;
+            text-align: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+          }
+          .checklist-text {
+            background-color: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            color: #464C3F;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 1.5;
+          }
+          .cta-button {
+            display: inline-block;
+            background-color: #669127;
+            color: white;
+            border-radius: 10px;
+            font-family: 'Inter', Arial, sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 1.5;
+            padding: 14px 32px;
+            text-decoration: none;
+            letter-spacing: 0.3px;
+          }
+          .cta-button:hover {
+            background-color: #557a20;
+          }
+          .secondary-link {
+            color: #669127;
+            font-family: 'Inter', Arial, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 1.5;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 45px;
+          }
+          .secondary-link:hover {
+            text-decoration: underline;
+          }
+          .footer {
+            border-top: 1px solid #EDB418;
+            padding: 35px 0 20px 0;
+            text-align: center;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-style: italic;
+            font-size: 19px;
+            letter-spacing: 0.3px;
+            margin-top: 20px;
+            color: #464C3F;
+          }
+          .footer-links {
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 14px;
+            color: #464C3F;
+            font-weight: 400;
+            margin-top: 12px;
+            margin-bottom: 0;
+          }
+          .footer-links a {
+            color: #464C3F;
+            text-decoration: none;
+            margin: 0 6px;
+          }
+          .footer-links a:hover {
+            text-decoration: underline;
+          }
+        `}</style>
+      </head>
+      <body>
+        <div className="container">
+          <h1>CourtSide Club</h1>
+          <h2>Almost time — your CourtSide Club tournament starts soon</h2>
+          <p>Hi {user.first_name},</p>
+          <p>Your visit to <strong>{tournament.name}</strong> is just around the corner. We're excited to help you connect with fellow tennis enthusiasts and make the most of your match day.</p>
+          
+          {/* Checklist */}
+          <div className="checklist-item">
+            <div className="checklist-number">1</div>
+            <div className="checklist-text">Confirm your session selections — review and finalize your planned matches and events.</div>
+          </div>
+          <div className="checklist-item">
+            <div className="checklist-number">2</div>
+            <div className="checklist-text">Invite a friend — share the experience and meet other fans.</div>
+          </div>
+          <div className="checklist-item">
+            <div className="checklist-number">3</div>
+            <div className="checklist-text">Get ready for match day — enjoy every moment courtside.</div>
+          </div>
+          
+          {/* Call to actions */}
+          <a href="https://courtsideclub.com/my-tournaments" target="_blank" className="cta-button" rel="noopener noreferrer">View My Tournaments</a>
+          <a href="https://courtsideclub.com/blog" target="_blank" className="secondary-link" rel="noopener noreferrer">Visit the Blog →</a>
+          
+          {/* Footer */}
+          <div className="footer">
+            Tennis is better together.
+            <div className="footer-links">
+              <a href="https://courtsideclub.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> | <a href="https://courtsideclub.com/unsubscribe?email={user.email}" target="_blank" rel="noopener noreferrer">Unsubscribe</a>
+            </div>
+            <div>© 2024 CourtSide Club. All rights reserved.</div>
+          </div>
+        </div>
+      </body>
+    </html>
+  )
+}

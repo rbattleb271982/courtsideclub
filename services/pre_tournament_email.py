@@ -188,112 +188,176 @@ def generate_pre_tournament_email_html(user_id, tournament_id):
         return None
 
 def generate_email_html_template(user_first_name, tournament_name, sessions, meetup_count, schedule_url, location, base_url):
-    """Generate the actual HTML email template"""
+    """Generate the actual HTML email template using React-style component structure"""
     
-    # Generate sessions HTML
-    sessions_html = ""
-    for idx, session in enumerate(sessions):
-        border_style = 'border-bottom: 1px solid #e6f0d9; padding-bottom: 15px;' if idx < len(sessions) - 1 else ''
-        
-        sessions_html += f"""
-        <div style="{border_style}">
-            <p style="font-weight: 600; margin-bottom: 5px;">{session['label']}</p>
-            <p style="margin: 0; font-size: 14px; color: #555;">
-                {session['date']} • {session['time']} — {session['attendees']} fan{'s' if session['attendees'] != 1 else ''} attending
-            </p>
-        </div>
-        """
-    
-    # Tournament preparation message (replaces lanyard messaging)
-    prep_html = """
-    Don't forget to bring sunscreen, a water bottle, and comfortable shoes. The tournament atmosphere is incredible when you're prepared!
-    """
-    
-    # Complete HTML template
+    # Complete HTML template with React component styling
     html = f"""
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tournament Reminder - CourtSide Club</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Your CourtSide Club Tournament Starts Soon</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+          body {{
+            background-color: #FBFAFB; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', Arial, sans-serif;
+            -webkit-text-size-adjust: 100%; 
+            -ms-text-size-adjust: 100%;
+            color: #464C3F;
+          }}
+          .container {{
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 45px 25px;
+            background-color: #FBFAFB;
+          }}
+          h1, h2 {{
+            font-family: 'Crimson Text', Georgia, serif;
+            color: #464C3F;
+            margin: 0 0 24px 0;
+            font-weight: 600;
+          }}
+          h1 {{
+            font-size: 32px;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            text-align: center;
+          }}
+          p {{
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 0 22px 0;
+            font-weight: 400;
+          }}
+          .checklist-item {{
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+          }}
+          .checklist-number {{
+            background-color: #669127;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-family: 'Inter', Arial, sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 38px;
+            text-align: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+          }}
+          .checklist-text {{
+            background-color: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            color: #464C3F;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 1.5;
+          }}
+          .cta-button {{
+            display: inline-block;
+            background-color: #669127;
+            color: white;
+            border-radius: 10px;
+            font-family: 'Inter', Arial, sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 1.5;
+            padding: 14px 32px;
+            text-decoration: none;
+            letter-spacing: 0.3px;
+          }}
+          .cta-button:hover {{
+            background-color: #557a20;
+          }}
+          .secondary-link {{
+            color: #669127;
+            font-family: 'Inter', Arial, sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 1.5;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 45px;
+          }}
+          .secondary-link:hover {{
+            text-decoration: underline;
+          }}
+          .footer {{
+            border-top: 1px solid #EDB418;
+            padding: 35px 0 20px 0;
+            text-align: center;
+            font-family: 'Crimson Text', Georgia, serif;
+            font-style: italic;
+            font-size: 19px;
+            letter-spacing: 0.3px;
+            margin-top: 20px;
+            color: #464C3F;
+          }}
+          .footer-links {{
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 14px;
+            color: #464C3F;
+            font-weight: 400;
+            margin-top: 12px;
+            margin-bottom: 0;
+          }}
+          .footer-links a {{
+            color: #464C3F;
+            text-decoration: none;
+            margin: 0 6px;
+          }}
+          .footer-links a:hover {{
+            text-decoration: underline;
+          }}
+        </style>
     </head>
-    <body style="margin: 0; padding: 0; background-color: #f5f5f5;">
-        <div style="max-width: 600px; margin: 0 auto; background-color: #FBFAFB; color: #464C3F; font-family: Inter, Arial, sans-serif; padding: 40px 30px;">
-            
-            <!-- Header -->
-            <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="font-family: 'Crimson Text', Georgia, serif; font-size: 24px; margin: 0; color: #464C3F;">CourtSide Club</h1>
+    <body>
+        <div class="container">
+          <h1>CourtSide Club</h1>
+          <h2>Almost time — your CourtSide Club tournament starts soon</h2>
+          <p>Hi {user_first_name},</p>
+          <p>Your visit to <strong>{tournament_name}</strong> is just around the corner. We're excited to help you connect with fellow tennis enthusiasts and make the most of your match day.</p>
+          
+          <!-- Checklist -->
+          <div class="checklist-item">
+            <div class="checklist-number">1</div>
+            <div class="checklist-text">Confirm your session selections — review and finalize your planned matches and events.</div>
+          </div>
+          <div class="checklist-item">
+            <div class="checklist-number">2</div>
+            <div class="checklist-text">Invite a friend — share the experience and meet other fans.</div>
+          </div>
+          <div class="checklist-item">
+            <div class="checklist-number">3</div>
+            <div class="checklist-text">Get ready for match day — enjoy every moment courtside.</div>
+          </div>
+          
+          <!-- Call to actions -->
+          <div style="text-align: center; margin-bottom: 20px;">
+            <a href="{base_url}/my-tournaments" class="cta-button">View My Tournaments</a>
+          </div>
+          <a href="{base_url}/blog" class="secondary-link">Visit the Blog →</a>
+          
+          <!-- Footer -->
+          <div class="footer">
+            Tennis is better together.
+            <div class="footer-links">
+              <a href="{base_url}/privacy">Privacy Policy</a> | <a href="{base_url}/unsubscribe">Unsubscribe</a>
             </div>
-
-            <!-- Title -->
-            <h1 style="font-family: 'Crimson Text', Georgia, serif; font-weight: 600; font-size: 28px; margin-bottom: 20px; line-height: 1.3; text-align: center;">
-                Almost time — your CourtSide Club tournament starts soon
-            </h1>
-
-            <!-- Greeting -->
-            <p style="font-size: 18px; font-weight: 500; margin-bottom: 20px;">
-                Hi {user_first_name},
-            </p>
-
-            <!-- Intro -->
-            <p style="margin-bottom: 30px;">
-                Your visit to <strong>{tournament_name}</strong> is just around the corner. We're excited to enhance your
-                tournament experience and help you connect with fellow tennis enthusiasts.
-            </p>
-
-            <!-- Sessions & Attendees -->
-            <div style="background-color: #fff; border-radius: 12px; border: 1px solid rgba(102, 145, 39, 0.3); padding: 20px; margin-bottom: 30px;">
-                <h2 style="font-family: 'Crimson Text', Georgia, serif; font-size: 20px; font-weight: 600; margin-bottom: 20px;">
-                    Your Selected Sessions
-                </h2>
-                {sessions_html}
-            </div>
-
-            <!-- Meetup Info -->
-            <p style="margin-bottom: 30px; font-weight: 600;">
-                {meetup_count} fan{'s' if meetup_count != 1 else ''} attending are open to meeting up — a great way to connect!
-            </p>
-
-            <!-- Tournament Preparation -->
-            <p style="margin-bottom: 30px;">
-                {prep_html}
-            </p>
-
-            <!-- Tournament Logistics -->
-            <div style="background-color: #fff; border-radius: 12px; border: 1px solid rgba(102, 145, 39, 0.3); padding: 20px; margin-bottom: 30px;">
-                <h2 style="font-family: 'Crimson Text', Georgia, serif; font-size: 20px; font-weight: 600; margin-bottom: 20px;">
-                    Tournament Details
-                </h2>
-                <p>Location: <strong>{location}</strong></p>
-                <p>
-                    Official schedule: 
-                    <a href="{schedule_url}" style="color: #669127; text-decoration: underline;">View here</a>
-                </p>
-                <p>
-                    Travel tips: 
-                    <a href="{base_url}/blog" style="color: #669127; text-decoration: underline;">Learn more</a>
-                </p>
-            </div>
-
-            <!-- CTA -->
-            <div style="text-align: center; margin-bottom: 40px;">
-                <a href="{base_url}/my-tournaments" style="display: inline-block; background-color: #669127; color: #fff; text-decoration: none; padding: 16px 32px; border-radius: 50px; font-weight: 600; font-size: 16px;">
-                    View My Tournaments
-                </a>
-            </div>
-
-            <!-- Footer -->
-            <div style="text-align: center; border-top: 1px solid rgba(70, 76, 63, 0.2); padding-top: 30px; margin-top: 40px; font-family: 'Crimson Text', Georgia, serif; font-size: 18px; font-style: italic; color: #464C3F;">
-                Tennis is better together.
-                <div style="font-size: 14px; color: #666; margin-top: 20px;">
-                    <p>© 2025 CourtSide Club. All rights reserved.</p>
-                    <p>
-                        <a href="{base_url}/privacy" style="color: #669127; text-decoration: none; margin-right: 15px;">Privacy Policy</a>
-                        <a href="{base_url}/unsubscribe" style="color: #669127; text-decoration: none;">Unsubscribe</a>
-                    </p>
-                </div>
-            </div>
+            <div style="font-size: 12px; margin-top: 8px;">© 2025 CourtSide Club. All rights reserved.</div>
+          </div>
         </div>
     </body>
     </html>
