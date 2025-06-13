@@ -53,7 +53,7 @@
             <a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin Dashboard</a>
             <a href="{{ url_for('admin_agents.agents_dashboard') }}" class="mobile-nav-link">AI Agents</a>
             <a href="{{ url_for('admin.list_tournaments') }}" class="mobile-nav-link">Manage Tournaments</a>
-            <a href="{{ url_for('admin.lanyard_fulfillment') }}" class="mobile-nav-link">Lanyards</a>
+            <a href="{{ url_for('admin.list_tournaments') }}" class="mobile-nav-link">Tournament Admin</a>
           {% endif %}
         {% else %}
           <a href="{{ url_for('main.public_tournaments') }}" class="mobile-nav-link">Tournaments</a>

@@ -82,6 +82,11 @@ class User(UserMixin, db.Model):
                                    back_populates='user',
                                    cascade="all, delete-orphan")
     
+    # Relationship for wishlist tournaments
+    wishlist = relationship('UserWishlistTournament',
+                           back_populates='user',
+                           cascade="all, delete-orphan")
+    
     location = db.Column(db.String(100))
     # lanyard_ordered = db.Column(db.Boolean, default=False)  # Removed - functionality discontinued
     # lanyard_sent = db.Column(db.Boolean, default=False)  # Removed - functionality discontinued
@@ -222,7 +227,7 @@ class UserWishlistTournament(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
-    user = relationship('User', backref=backref('wishlist_tournaments', cascade="all, delete-orphan"))
+    user = relationship('User', back_populates='wishlist')
     tournament = relationship('Tournament')
     
     def __repr__(self):
