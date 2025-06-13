@@ -292,12 +292,23 @@ def tournament_detail(tournament_slug):
     days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
     
     # Ensure tournament sessions data exists - create comprehensive day/night structure
-    if not tournament.sessions or len(tournament.sessions) == 0:
-        # Calculate tournament duration from start and end dates
-        import datetime as dt
-        tournament_duration = (tournament.end_date - tournament.start_date).days + 1
+    # Force regeneration if sessions are missing, incomplete, or not properly paired
+    tournament_duration = (tournament.end_date - tournament.start_date).days + 1
+    expected_session_count = tournament_duration * 2  # Day + Night for each day
+    
+    should_regenerate = (
+        not tournament.sessions or 
+        len(tournament.sessions) == 0 or
+        len(tournament.sessions) % 2 != 0 or  # Odd number = incomplete pairs
+        len(tournament.sessions) != expected_session_count  # Wrong total count
+    )
+    
+    if should_regenerate:
+        print(f"DEBUG: Regenerating sessions for {tournament.name}")
+        print(f"DEBUG: Current sessions: {tournament.sessions}")
+        print(f"DEBUG: Expected {expected_session_count} sessions for {tournament_duration} days")
         
-        # Create sessions for all days of the tournament
+        # Create complete Day/Night sessions for all tournament days
         default_sessions = []
         for day in range(1, tournament_duration + 1):
             default_sessions.extend([
@@ -305,12 +316,12 @@ def tournament_detail(tournament_slug):
                 f'Day {day} - Night'
             ])
         
-        # Update the database with these sessions
+        # Update the database with complete session structure
         tournament.sessions = default_sessions
         db.session.commit()
-        print(f"DEBUG: Added {tournament_duration}-day sessions to tournament {tournament.name}: {tournament.sessions}")
+        print(f"DEBUG: Regenerated {len(default_sessions)} sessions: {tournament.sessions}")
     else:
-        print(f"DEBUG: Tournament sessions from DB: {tournament.sessions}")
+        print(f"DEBUG: Tournament sessions from DB are complete: {tournament.sessions}")
     
     # Ensure session stats exist for all sessions
     for session in tournament.sessions:
