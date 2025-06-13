@@ -225,6 +225,22 @@ def tournament_detail(tournament_slug):
         if user_tournament.session_label:
             selected_sessions = user_tournament.session_label.split(',')
             print(f"DEBUG: selected_sessions = {selected_sessions}")
+    else:
+        # CRITICAL FIX: Check if user just clicked "I'm Attending" button
+        # Look for attendance_type in query parameters
+        attendance_action = request.args.get('action')
+        if attendance_action in ['attending', 'maybe']:
+            print(f"DEBUG: Creating UserTournament record for {attendance_action} action")
+            user_tournament = UserTournament()
+            user_tournament.user_id = current_user.id
+            user_tournament.tournament_id = tournament.id
+            user_tournament.attending = (attendance_action == 'attending')
+            user_tournament.wants_to_meet = True  # Default to True
+            db.session.add(user_tournament)
+            db.session.commit()
+            
+            user_attending = user_tournament.attending
+            print(f"DEBUG: Created new UserTournament - user_attending = {user_attending}")
     
     # Get tournament stats using the shared helper function
     # Include current user to show accurate counts including themselves
