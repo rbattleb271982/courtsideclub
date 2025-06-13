@@ -499,22 +499,195 @@ def send_post_tournament_followup_email(user_id, tournament_id):
             UserTournament.open_to_meet == True
         ).count()
         
+        # Get upcoming Grand Slam and Masters 1000 tournaments
+        upcoming_tournaments = Tournament.query.filter(
+            Tournament.start_date >= datetime.date.today(),
+            Tournament.event_type.in_(['Grand Slam', 'Masters 1000'])
+        ).order_by(Tournament.start_date).limit(3).all()
+        
+        # Generate upcoming tournaments HTML
+        upcoming_tournaments_html = ""
+        for tournament_item in upcoming_tournaments:
+            # Format date range
+            if tournament_item.start_date and tournament_item.end_date:
+                if tournament_item.start_date.month == tournament_item.end_date.month:
+                    date_range = f"{tournament_item.start_date.strftime('%B %d')}-{tournament_item.end_date.strftime('%d, %Y')}"
+                else:
+                    date_range = f"{tournament_item.start_date.strftime('%B %d')} - {tournament_item.end_date.strftime('%B %d, %Y')}"
+            else:
+                date_range = tournament_item.start_date.strftime('%B %d, %Y') if tournament_item.start_date else "TBD"
+            
+            # Determine event tag and color
+            event_tag = "GRAND SLAM" if tournament_item.event_type == 'Grand Slam' else "MASTERS 1000"
+            
+            # Location formatting
+            location = f"{tournament_item.city}, {tournament_item.country}" if tournament_item.city and tournament_item.country else tournament_item.location or "Location TBD"
+            
+            upcoming_tournaments_html += f"""
+            <tr>
+              <td style="padding: 15px; background-color: #FFFFFF; border-radius: 8px; margin-bottom: 15px; display: block;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                  <tr>
+                    <td>
+                      <span style="display: inline-block; background-color: #EDB418; color: #000000; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-bottom: 8px;">{event_tag}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p style="margin: 0 0 5px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; font-weight: 600; color: #464C3F;">{tournament_item.name}</p>
+                      <p style="margin: 0 0 5px 0; font-family: 'Inter', Arial, sans-serif; font-size: 14px; color: #464C3F;">{date_range}</p>
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 14px; color: rgba(70, 76, 63, 0.8);">{location}</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            """ + ("" if tournament_item == upcoming_tournaments[-1] else """
+            <tr>
+              <td style="height: 15px;"></td>
+            </tr>""")
+        
+        # Get base URL from config
+        base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
+        
+        # Get user's first name with fallback
+        user_first_name = getattr(user, 'first_name', 'Tennis Fan')
+        
         followup_html = f"""
-        <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
-
-        <p>What a tournament! We hope you had an incredible time at <strong>{tournament.name}</strong>.</p>
-
-        <p><strong>🎾 Your Sessions:</strong> {user_tournament.session_label}</p>
-
-        <p><strong>👥 The Numbers:</strong> {total_attendees} CourtSide Club members attended, with {meetup_attendees} open to meeting up. Pretty amazing community, right?</p>
-
-        <p>📸 <strong>Share Your Experience:</strong> Did you snap any great courtside moments or meet fellow members? Tag us <strong>@courtsideclub</strong> on Instagram — we love seeing the community in action!</p>
-
-        <p>🎾 <strong>What's Next:</strong> Keep an eye out for upcoming tournaments. The tennis calendar never stops, and neither does the CourtSide Club community.</p>
-
-        <p>Thanks for being part of something special. Until the next tournament!</p>
-
-        <p style="color:#666;">– The CourtSide Club Team</p>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>CourtSide Club - Post-Tournament Follow-Up</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
+          </style>
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #FBFAFB; font-family: 'Inter', Arial, sans-serif; color: #464C3F;">
+          <!-- Preview Text -->
+          <div style="display: none; max-height: 0px; overflow: hidden;">
+            Thanks for attending {tournament.name}! See what's coming up next at CourtSide Club.
+          </div>
+          
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 0 auto;">
+            <tr>
+              <td style="padding: 40px 30px 30px 30px; text-align: center;">
+                <!-- Header -->
+                <h1 style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-size: 36px; font-weight: 600; color: #464C3F;">CourtSide Club</h1>
+                <div style="height: 2px; background-color: #EDB418; width: 80px; margin: 15px auto 30px;"></div>
+                
+                <!-- Greeting & Main Message -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                  <tr>
+                    <td style="padding: 0 0 20px 0; text-align: left;">
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-weight: 500; font-size: 18px; color: #464C3F;">Hey {user_first_name},</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 0; text-align: left;">
+                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">Thank you for being part of CourtSide Club at {tournament.name}. We hope you had an unforgettable experience connecting with fellow tennis enthusiasts.</p>
+                      
+                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">You weren't the only one — over <strong>{total_attendees} CourtSide Club members</strong> went too!</p>
+                      
+                      <p style="margin: 0 0 30px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">Already thinking about your next event? We'd love to have you back.</p>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Upcoming Tournaments Section -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 30px;">
+                  <tr>
+                    <td style="padding: 0; text-align: left;">
+                      <h2 style="margin: 0 0 20px 0; font-family: 'Crimson Text', Georgia, serif; font-size: 24px; font-weight: 700; color: #464C3F;">Upcoming Tournaments</h2>
+                    </td>
+                  </tr>
+                  
+                  {upcoming_tournaments_html}
+                  
+                </table>
+                
+                <!-- CTA Button -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0;">
+                  <tr>
+                    <td align="center">
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                          <td style="border-radius: 50px; background-color: #669127;">
+                            <a href="{base_url}/blog" target="_blank" style="font-family: 'Inter', Arial, sans-serif; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 50px; padding: 14px 28px; border: 1px solid #669127; display: inline-block;">Visit the Blog →</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Social Media Section -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0;">
+                  <tr>
+                    <td style="text-align: center; padding-bottom: 20px;">
+                      <p style="margin: 0 0 15px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; color: #464C3F;">Stay connected! Follow CourtSide Club for exclusive content and live updates.</p>
+                      
+                      <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
+                        <tr>
+                          <!-- Instagram Icon -->
+                          <td style="padding: 0 10px;">
+                            <a href="https://instagram.com/courtsideclub" target="_blank" style="text-decoration: none;">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2.163C15.204 2.163 15.584 2.175 16.85 2.233C20.102 2.381 21.621 3.924 21.769 7.152C21.827 8.417 21.838 8.797 21.838 12.001C21.838 15.206 21.826 15.585 21.769 16.85C21.62 20.075 20.105 21.621 16.85 21.769C15.584 21.827 15.206 21.839 12 21.839C8.796 21.839 8.416 21.827 7.151 21.769C3.891 21.62 2.38 20.07 2.232 16.849C2.174 15.584 2.162 15.205 2.162 12C2.162 8.796 2.175 8.417 2.232 7.151C2.381 3.924 3.896 2.38 7.151 2.232C8.417 2.175 8.796 2.163 12 2.163ZM12 5.838C8.597 5.838 5.838 8.597 5.838 12S8.597 18.163 12 18.163S18.162 15.404 18.162 12S15.403 5.838 12 5.838ZM19.846 5.595C19.846 4.761 19.173 4.088 18.339 4.088C17.505 4.088 16.832 4.761 16.832 5.595C16.832 6.429 17.505 7.102 18.339 7.102C19.173 7.102 19.846 6.429 19.846 5.595ZM12 7.379C13.97 7.379 15.621 9.03 15.621 11C15.621 12.97 13.97 14.621 12 14.621C10.03 14.621 8.379 12.97 8.379 11C8.379 9.03 10.03 7.379 12 7.379Z" fill="#669127"/>
+                              </svg>
+                            </a>
+                          </td>
+                          
+                          <!-- Twitter/X Icon -->
+                          <td style="padding: 0 10px;">
+                            <a href="https://x.com/courtsideclub" target="_blank" style="text-decoration: none;">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18.901 1.153H22.581L14.541 10.301L24 22.846H16.594L10.794 15.264L4.156 22.846H0.474L9.074 13.059L0 1.153H7.594L12.837 8.026L18.901 1.153ZM17.61 20.644H19.649L6.486 3.239H4.298L17.61 20.644Z" fill="#669127"/>
+                              </svg>
+                            </a>
+                          </td>
+                          
+                          <!-- Facebook Icon -->
+                          <td style="padding: 0 10px;">
+                            <a href="https://facebook.com/courtsideclub" target="_blank" style="text-decoration: none;">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 17.9895 4.3882 22.954 10.125 23.8542V15.4688H7.07812V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9701 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.34 7.875 13.875 8.80008 13.875 9.75V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6118 22.954 24 17.9895 24 12Z" fill="#669127"/>
+                              </svg>
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Footer -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-top: 20px; border-top: 1px solid rgba(70, 76, 63, 0.2); padding-top: 20px;">
+                  <tr>
+                    <td style="text-align: center; padding-bottom: 15px;">
+                      <p style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-style: italic; font-size: 18px; color: #464C3F;">Tennis is better together.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: center; padding-bottom: 20px;">
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 14px; color: rgba(70, 76, 63, 0.8);">
+                        <a href="{base_url}/privacy" target="_blank" style="color: rgba(70, 76, 63, 0.8); text-decoration: none; margin: 0 10px;">Privacy Policy</a> | 
+                        <a href="{base_url}/unsubscribe" target="_blank" style="color: rgba(70, 76, 63, 0.8); text-decoration: none; margin: 0 10px;">Unsubscribe</a>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: center;">
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 12px; color: rgba(70, 76, 63, 0.8);">© 2025 CourtSide Club</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
         """
         
         return send_email(

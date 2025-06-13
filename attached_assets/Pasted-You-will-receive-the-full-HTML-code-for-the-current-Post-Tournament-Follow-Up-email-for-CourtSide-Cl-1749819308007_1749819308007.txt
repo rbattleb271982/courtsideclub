@@ -1,0 +1,47 @@
+You will receive the full HTML code for the current Post-Tournament Follow-Up email for CourtSide Club. Your task is to enhance and redesign this email according to the following brand and design guidelines, ensuring it matches the premium, mobile-first style of the CourtSide Club brand. 
+
+Do NOT rewrite from scratch; instead, update and improve the existing code.
+
+Design & Content Requirements:
+
+- Use the CourtSide Club color palette:
+  - Background: #FBFAFB (light cream)
+  - Primary text: #464C3F (dark green)
+  - Accent gold: #EDB418 (used sparingly for dividers, highlights, and tags)
+  - Button background: #669127 (accent green), white text, with subtle hover effect
+
+- Typography:
+  - Headings: Crimson Text, serif
+  - Body text: Inter, sans-serif
+  - Maintain proper font sizes and hierarchy consistent with premium branding
+
+- Layout:
+  - Max width 600px, centered, mobile responsive
+  - Use generous whitespace and clean sections
+  - Cards or boxes for “Upcoming Tournaments” with subtle rounded corners and gold accent tags
+  - Include social media icons (Instagram, X/Twitter, Facebook) as clean SVG or inline elements matching the accent green (#669127)
+
+- Content Structure:
+  - Header with “CourtSide Club” heading and gold accent underline
+  - Personalized greeting: “Hey {{ user.first_name }},”
+  - Thank you message for attending {{ tournament_name }}
+  - Social proof: “over {{ total_attending }} CourtSide Club members went too!”
+  - Invitation for next event
+  - “Upcoming Tournaments” section with 3 events including tournament name, date, location, and event tag (“Grand Slam” or “Masters 1000”)
+  - Call to action button: “Visit the Blog →” linking to https://courtsideclub.com/blog
+  - Social media follow section with text: “Stay connected! Follow CourtSide Club for exclusive content and live updates.”
+  - Footer with italic tagline: “Tennis is better together.”
+  - Privacy Policy and Unsubscribe links
+
+- Technical:
+  - Keep inline CSS for best email client support
+  - Keep the existing structure but refactor for clarity and style
+  - Make sure the email is accessible and mobile-friendly
+
+Provide the full updated HTML code with all these improvements applied.
+
+Here is the existing HTML code:
+
+[PASTE THE FULL CURRENT EMAIL HTML HERE]
+
+Update the code accordingly.
