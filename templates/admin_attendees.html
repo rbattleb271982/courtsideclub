@@ -16,10 +16,7 @@
         <h5>Open to Meet</h5>
         <div class="h3">{{ user_tourneys|selectattr('wants_to_meet')|list|length }}</div>
       </div>
-      <div class="col-md-4 text-center">
-        <h5>Lanyards Ordered</h5>
-        <div class="h3">{{ user_tourneys|selectattr('user.lanyard_ordered')|list|length }}</div>
-      </div>
+
     </div>
   </div>
 
@@ -84,9 +81,7 @@
                 {% if ut.wants_to_meet %}
                   <span class="badge bg-success">👋 Open to Meet</span>
                 {% endif %}
-                {% if ut.user.lanyard_ordered %}
-                  <span class="badge bg-info">🏷️ Lanyard Ordered</span>
-                {% endif %}
+
               </div>
             </div>
           </div>

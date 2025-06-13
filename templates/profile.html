@@ -46,11 +46,8 @@
 <h3>🎾 Your Activity</h3>
 <p><a href="{{ url_for('user.my_tournaments') }}">View My Tournaments</a></p>
 
-{% if user.lanyard_ordered %}
-  <p>🎁 You've already ordered your free lanyard.</p>
-{% else %}
-  <p>🧢 Haven't claimed your lanyard yet? <a href="{{ url_for('user.order_lanyard') }}">Order now</a></p>
-{% endif %}
+
+
 
 <hr>
 
