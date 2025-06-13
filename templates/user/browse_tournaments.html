@@ -108,7 +108,7 @@
     box-shadow: 0 0 0 3px rgba(102, 145, 39, 0.1);
   }
 
-  .filter-select {
+  .filter-select, .sort-select {
     padding: 0.75rem 1rem;
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
@@ -117,7 +117,7 @@
     cursor: pointer;
   }
 
-  .filter-select:focus {
+  .filter-select:focus, .sort-select:focus {
     outline: none;
     border-color: #669127;
     box-shadow: 0 0 0 3px rgba(102, 145, 39, 0.1);
@@ -213,6 +213,27 @@
     text-align: center;
     font-weight: 600;
     color: #669127;
+    position: relative;
+  }
+
+  /* User attendance badges */
+  .user-status-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+    margin-left: 0.5rem;
+    font-weight: 500;
+  }
+
+  .user-attending {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  .user-maybe {
+    background: #fef3c7;
+    color: #92400e;
   }
 
   /* Mobile Responsive */
@@ -273,6 +294,16 @@
     color: #6b7280;
     font-size: 1.125rem;
   }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 3rem 1rem;
+    }
+
+    .tournaments-section {
+      padding: 3rem 1rem;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -291,32 +322,26 @@
 <section class="tournaments-section">
   <div class="tournaments-container">
     
-    <!-- Controls -->
-    <div class="tournaments-controls">
-      <div class="controls-left">
-        <input 
-          type="text" 
-          id="searchInput" 
-          class="search-input" 
-          placeholder="Search tournaments..."
-          onkeyup="filterTournaments()"
-        >
-        <select id="surfaceFilter" class="filter-select" onchange="filterBySurface()">
-          <option value="">All Types</option>
-          <option value="HARD">Hard</option>
-          <option value="CLAY">Clay</option>
-          <option value="GRASS">Grass</option>
-        </select>
-        <select id="sortSelect" class="filter-select" onchange="sortTournaments()">
-          <option value="date">Sort by Date</option>
-          <option value="name">Sort by Name</option>
-          <option value="attendance">Sort by Attendance</option>
-        </select>
+    {% if grouped_tournaments and grouped_tournaments|length > 0 %}
+      <!-- Controls -->
+      <div class="tournaments-controls">
+        <div class="controls-left">
+          <input type="text" id="searchInput" class="search-input" placeholder="Search tournaments...">
+          <select id="filterSelect" class="filter-select">
+            <option value="">All Types</option>
+            <option value="ATP">ATP</option>
+            <option value="WTA">WTA</option>
+            <option value="Grand Slam">Grand Slam</option>
+          </select>
+          <select id="sortSelect" class="sort-select">
+            <option value="date">Sort by Date</option>
+            <option value="name">Sort by Name</option>
+            <option value="attendance">Sort by Attendance</option>
+          </select>
+        </div>
       </div>
-    </div>
 
-    <!-- Tournament Groups -->
-    <div id="tournamentGroups">
+      <!-- Render month groups -->
       {% for month, tournaments in sorted_months %}
         <div class="month-group" data-month="{{ month }}">
           <h2 class="month-header">{{ month }}</h2>
@@ -331,111 +356,127 @@
             </thead>
             <tbody>
               {% for tournament in tournaments %}
-              <tr class="tournament-row" data-tournament-name="{{ tournament.name|lower }}" data-tournament-type="{{ tournament.tour_type or '' }}" data-attendance="{{ tournament.attendee_count or 0 }}">
-                <td data-label="Tournament" class="tournament-name-cell">
-                  <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
-                    {{ tournament.name }}
-                  </a>
-                  <div class="tournament-location-cell">
-                    {{ tournament.location }}
-                  </div>
-                  {% if tournament.surface %}
-                    <div class="tournament-surface-cell">{{ tournament.surface }}</div>
-                  {% endif %}
-                </td>
-                <td data-label="Date Range" class="tournament-date-cell">
-                  {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d') }}
-                </td>
-                <td data-label="Attending" class="tournament-attending-cell">
-                  {% if tournament.attendee_count %}{{ tournament.attendee_count }}{% else %}0{% endif %}
-                </td>
-              </tr>
+                <tr data-tournament-name="{{ tournament.name.lower() }}" 
+                    data-tournament-type="{{ tournament.tour_type or '' }}"
+                    data-attendance="{{ tournament.attendee_count or 0 }}">
+                  <td data-label="Tournament" class="tournament-name-cell">
+                    <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
+                      {{ tournament.name }}
+                    </a>
+                    <div class="tournament-location-cell">
+                      {{ tournament.location }}
+                    </div>
+                    {% if tournament.surface %}
+                      <div class="tournament-surface-cell">{{ tournament.surface }}</div>
+                    {% endif %}
+                  </td>
+                  <td data-label="Date Range" class="tournament-date-cell">
+                    {{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d') }}
+                  </td>
+                  <td data-label="Attending" class="tournament-attending-cell">
+                    {{ tournament.attendee_count or 0 }}
+                    {% if tournament.attendance_status == 'attending' %}
+                      <span class="user-status-badge user-attending">You're attending</span>
+                    {% elif tournament.attendance_status == 'maybe' %}
+                      <span class="user-status-badge user-maybe">Maybe</span>
+                    {% endif %}
+                  </td>
+                </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
       {% endfor %}
-      
-      <!-- No Results Message -->
-      <div id="noResults" class="no-results" style="display: none;">
-        <p>No tournaments found.</p>
+    {% else %}
+      <div class="no-results">
+        <h3 style="font-family: 'Crimson Text', serif; font-size: 1.5rem; color: #6b7280; margin-bottom: 1rem;">
+          No Upcoming Tournaments
+        </h3>
+        <p style="color: #9ca3af;">
+          Check back soon for new tournament announcements.
+        </p>
       </div>
-    </div>
+    {% endif %}
   </div>
 </section>
 
 <script>
-function filterTournaments() {
-  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-  const surfaceFilter = document.getElementById('surfaceFilter').value.toLowerCase();
-  const sortValue = document.getElementById('sortSelect').value;
-  const tournamentGroups = document.querySelectorAll('.month-group');
-  let hasVisibleResults = false;
-
-  tournamentGroups.forEach(group => {
-    const rows = group.querySelectorAll('.tournament-row');
-    let hasVisibleRows = false;
-
-    rows.forEach(row => {
-      const name = row.dataset.tournamentName;
-      const type = row.dataset.tournamentType;
-      const matchesSearch = !searchTerm || name.includes(searchTerm);
-      const matchesSurface = !surfaceFilter || type.toLowerCase() === surfaceFilter;
-
-      if (matchesSearch && matchesSurface) {
-        row.style.display = '';
-        hasVisibleRows = true;
-        hasVisibleResults = true;
-      } else {
-        row.style.display = 'none';
-      }
-    });
-
-    group.style.display = hasVisibleRows ? '' : 'none';
-  });
-
-  // Show/hide no results message
-  document.getElementById('noResults').style.display = hasVisibleResults ? 'none' : 'block';
-
-  // Apply sorting
-  if (sortValue !== 'date') {
-    sortTournaments();
-  }
-}
-
-function filterBySurface() {
-  filterTournaments();
-}
-
-function sortTournaments() {
-  const sortValue = document.getElementById('sortSelect').value;
-  const tournamentGroups = document.querySelectorAll('.month-group');
-
-  tournamentGroups.forEach(group => {
-    const tbody = group.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('.tournament-row'));
-
-    rows.sort((a, b) => {
-      switch (sortValue) {
-        case 'name':
-          return a.dataset.tournamentName.localeCompare(b.dataset.tournamentName);
-        case 'attendance':
-          return parseInt(b.dataset.attendance) - parseInt(a.dataset.attendance);
-        default: // 'date'
-          return 0; // Keep original order for date
-      }
-    });
-
-    // Re-append sorted rows
-    rows.forEach(row => tbody.appendChild(row));
-  });
-}
-
-// Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('Browse tournaments page loaded');
+  const searchInput = document.getElementById('searchInput');
+  const filterSelect = document.getElementById('filterSelect');
+  const sortSelect = document.getElementById('sortSelect');
+  const monthGroups = document.querySelectorAll('.month-group');
+
+  // Search functionality
+  searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    
+    monthGroups.forEach(group => {
+      const rows = group.querySelectorAll('tbody tr');
+      let visibleRows = 0;
+      
+      rows.forEach(row => {
+        const tournamentName = row.dataset.tournamentName;
+        if (tournamentName.includes(searchTerm)) {
+          row.style.display = '';
+          visibleRows++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      
+      // Hide month group if no visible rows
+      group.style.display = visibleRows > 0 ? '' : 'none';
+    });
+  });
+
+  // Filter functionality
+  filterSelect.addEventListener('change', function() {
+    const filterType = this.value.toLowerCase();
+    
+    monthGroups.forEach(group => {
+      const rows = group.querySelectorAll('tbody tr');
+      let visibleRows = 0;
+      
+      rows.forEach(row => {
+        const tournamentType = row.dataset.tournamentType.toLowerCase();
+        if (!filterType || tournamentType.includes(filterType)) {
+          row.style.display = '';
+          visibleRows++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      
+      // Hide month group if no visible rows
+      group.style.display = visibleRows > 0 ? '' : 'none';
+    });
+  });
+
+  // Sort functionality
+  sortSelect.addEventListener('change', function() {
+    const sortBy = this.value;
+    
+    monthGroups.forEach(group => {
+      const tbody = group.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      
+      rows.sort((a, b) => {
+        switch(sortBy) {
+          case 'name':
+            return a.dataset.tournamentName.localeCompare(b.dataset.tournamentName);
+          case 'attendance':
+            return parseInt(b.dataset.attendance) - parseInt(a.dataset.attendance);
+          default: // date
+            return 0; // Keep original order (already sorted by date)
+        }
+      });
+      
+      // Reorder rows
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
 });
 </script>
-
 
 {% endblock %}
