@@ -1,0 +1,300 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session, jsonify
+from flask_login import login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from models import db, User, Tournament, UserTournament, UserPastTournament, ShippingAddress, UserWishlistTournament
+from services.sendgrid_service import send_email
+from services.event_logger import log_event
+import json
+import logging
+from datetime import datetime
+
+# Initialize blueprint
+user_bp = Blueprint('user', __name__)
+
+# Shared helper function for consistent attendance and meetup counts
+def get_tournament_attendance_stats(tournament_id, include_current_user=True):
+    """
+    Get consistent attendance statistics for a tournament
+    
+    Args:
+        tournament_id: The ID of the tournament to get stats for
+        include_current_user: Whether to include the current user in the counts
+        
+    Returns:
+        Dict with keys 'attending' and 'meetup' containing the counts
+    """
+    from flask_login import current_user
+    
+    # Base query to get valid attendance records
+    query = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament_id,
+        UserTournament.attending == True,
+        UserTournament.session_label.isnot(None),  # Only count users who have selected sessions
+        UserTournament.session_label != ''  # Make sure it's not an empty string
+    )
+    
+    # Optionally exclude current user
+    if not include_current_user and current_user.is_authenticated:
+        query = query.filter(UserTournament.user_id != current_user.id)
+    
+    # Get all matching records
+    attendances = query.all()
+    
+    # Calculate stats
+    stats = {
+        'attending': len(attendances),
+        'meetup': sum(1 for a in attendances if a.wants_to_meet)
+    }
+    
+    return stats
+
+# Home route removed - users now go directly to my_tournaments
+@user_bp.route('/home')
+@login_required
+def home():
+    return redirect(url_for('user.my_tournaments'))
+    try:
+        # Verify user is authenticated
+        if not current_user.is_authenticated:
+            flash("Please log in to view your profile", "warning")
+            return redirect(url_for('auth.login'))
+
+        # Get user data with error handling
+        user = User.query.get(current_user.id)
+        if not user:
+            flash("User profile not found", "error")
+            return redirect(url_for('auth.login'))
+
+        # Get future tournaments (after today's date)
+        today = datetime.now().date()
+
+        # Get all attending tournaments using the UserTournament model
+        user_tournaments = UserTournament.query.filter_by(user_id=user.id).all()
+        attending_ids = [ut.tournament_id for ut in user_tournaments]
+
+        # Get all attending tournaments
+        all_attending = Tournament.query.filter(Tournament.id.in_(attending_ids)).all() if attending_ids else []
+
+        # Get user's past tournaments
+        # Query the past_tournaments table directly
+        past_tournaments_query = db.session.query(Tournament).join(
+            past_tournaments,
+            Tournament.id == past_tournaments.c.tournament_id
+        ).filter(
+            past_tournaments.c.user_id == user.id
+        ).all()
+        past_tournaments_attended = past_tournaments_query
+
+        # Get current tournament list (not past)
+        current_tournaments = [t for t in all_attending if t.end_date >= today]
+
+        # Calculate attendance counts for each tournament using new model
+        attendance_counts = {}
+        for tournament in current_tournaments:
+            # Count users attending this tournament - only count those marked with attending=True
+            attending_count = UserTournament.query.filter_by(
+                tournament_id=tournament.id,
+                attending=True
+            ).count()
+
+            # Count users open to meeting at this tournament - only those attending and open to meet
+            meeting_count = UserTournament.query.filter_by(
+                tournament_id=tournament.id,
+                attending=True,
+                open_to_meet=True
+            ).count()
+
+            attendance_counts[tournament.id] = {
+                'attending': attending_count,
+                'meeting': meeting_count
+            }
+
+        return render_template('profile.html', 
+                            user=user, 
+                            upcoming_tournaments=current_tournaments,
+                            past_tournaments=past_tournaments_attended,
+                            attendance_counts=attendance_counts)
+
+    except Exception as e:
+        # Add error handling to capture any other issues
+        logging.error(f"Error in home route: {str(e)}")
+        flash("An error occurred while loading your profile", "danger")
+        return redirect(url_for('auth.login'))
+
+# Tournament detail view specifically for logged-in users
+@user_bp.route('/tournament/<tournament_slug>', methods=['GET', 'POST'])
+@login_required
+def tournament_detail(tournament_slug):
+    print("="*50)
+    print(f"TOURNAMENT DETAIL ROUTE ACCESSED: {tournament_slug}")
+    print("="*50)
+    # Get the tournament by slug
+    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+    
+    # Process form submission for session selection
+    if request.method == 'POST':
+        print(f"DEBUG: POST request received for tournament {tournament_slug}")
+        print(f"DEBUG: Form data: {dict(request.form)}")
+        
+        # Get selected sessions
+        selected_sessions = request.form.getlist('sessions')
+        print(f"DEBUG: Selected sessions from form: {selected_sessions}")
+        
+        # Get wants_to_meet preference using v0 layout field name
+        open_to_meet_value = request.form.get('open_to_meet')
+        wants_to_meet = open_to_meet_value == 'on' if open_to_meet_value else False
+        print(f"DEBUG: open_to_meet checkbox value: {open_to_meet_value}, processed: {wants_to_meet}")
+        
+        # Get or create user tournament registration
+        user_tournament = UserTournament.query.filter_by(
+            user_id=current_user.id, 
+            tournament_id=tournament.id
+        ).first()
+        
+        if not user_tournament:
+            # Create a new UserTournament record
+            user_tournament = UserTournament()
+            user_tournament.user_id = current_user.id
+            user_tournament.tournament_id = tournament.id
+            db.session.add(user_tournament)
+        
+        # Only mark as attending if they selected at least one session
+        if selected_sessions:
+            user_tournament.attending = True
+        else:
+            # If no sessions selected but form submitted, keep current attending status
+            # This allows users to update wants_to_meet without losing attendance status
+            if user_tournament.attending is None:
+                user_tournament.attending = False
+            
+        user_tournament.wants_to_meet = wants_to_meet
+        user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
+        
+        print(f"DEBUG: About to save - session_label: '{user_tournament.session_label}'")
+        print(f"DEBUG: About to save - attending: {user_tournament.attending}")
+        print(f"DEBUG: About to save - wants_to_meet: {user_tournament.wants_to_meet}")
+        
+        # Log the event for tracking
+        event_data = {
+            'tournament_id': tournament.id,
+            'tournament_name': tournament.name,
+            'selected_sessions': selected_sessions,
+            'wants_to_meet': wants_to_meet,
+            'attending': user_tournament.attending,
+            'session_label_saved': user_tournament.session_label
+        }
+        log_event(current_user.id, 'tournament_session_update', event_data)
+        
+        db.session.commit()
+        
+        # Verify the save worked
+        verification = UserTournament.query.filter_by(
+            user_id=current_user.id,
+            tournament_id=tournament.id
+        ).first()
+        print(f"DEBUG: After commit verification - session_label: '{verification.session_label if verification else 'NOT FOUND'}'")
+        print(f"DEBUG: After commit verification - attending: {verification.attending if verification else 'NOT FOUND'}")
+        
+        flash('Your tournament sessions have been saved.', 'success')
+        return redirect(url_for('user.my_tournaments'))
+    
+    # Get current user's tournament registration
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament.id
+    ).first()
+    
+    # Get selected sessions for current user
+    selected_sessions = []
+    wants_to_meet = True  # Default to True - always pre-checked
+    user_attending = False
+    
+    print(f"DEBUG: user_tournament = {user_tournament}")
+    if user_tournament:
+        # Ensure attendance is properly set (might be None in some cases)
+        if user_tournament.attending is None:
+            user_tournament.attending = True
+            db.session.commit()
+            print("DEBUG: Fixed null attending value to True")
+        
+        user_attending = user_tournament.attending
+        wants_to_meet = user_tournament.wants_to_meet if user_tournament.wants_to_meet is not None else False
+        print(f"DEBUG: user_attending = {user_attending}, wants_to_meet = {wants_to_meet}")
+        print(f"DEBUG: tournament.sessions = {tournament.sessions}")
+        print(f"DEBUG: Will show session UI = {user_attending}")
+        if user_tournament.session_label:
+            selected_sessions = user_tournament.session_label.split(',')
+            print(f"DEBUG: selected_sessions = {selected_sessions}")
+    
+    # Get tournament stats using the shared helper function
+    # Include current user to show accurate counts including themselves
+    stats = get_tournament_attendance_stats(tournament.id, include_current_user=True)
+    
+    # Add lanyard count - only count users with session selections and lanyard ordered
+    stats['lanyards'] = UserTournament.query.filter(
+        UserTournament.tournament_id == tournament.id,
+        UserTournament.attending == True,
+        UserTournament.session_label.isnot(None),
+        UserTournament.session_label != ''
+    ).join(User).count()
+    
+    print(f"DEBUG: Final stats: {stats}")
+    
+    # Count how many users are attending each session using Counter
+    from collections import Counter
+    
+    # Get all user sessions for this tournament
+    user_sessions = (
+        db.session.query(UserTournament.session_label)
+        .filter_by(tournament_id=tournament.id)
+        .filter(UserTournament.attending == True)
+        .filter(UserTournament.session_label.isnot(None))
+        .filter(UserTournament.session_label != '')
+        .all()
+    )
+    
+    # Collect all individual session labels
+    all_labels = []
+    for ut in user_sessions:
+        if ut.session_label:
+            labels = [label.strip() for label in ut.session_label.split(',') if label.strip()]
+            all_labels.extend(labels)
+    
+    # Count occurrences of each session
+    session_counts = Counter(all_labels)
+    
+    # Make sure to count the current user's selections
+    if user_tournament and user_tournament.attending and user_tournament.session_label:
+        current_user_sessions = [s.strip() for s in user_tournament.session_label.split(',') if s.strip()]
+        for session in current_user_sessions:
+            session_counts[session] += 1
+    
+    # Add debugging to see what session_counts contains
+    print(f"DEBUG: session_counts = {dict(session_counts)}")
+    
+    # Sort sessions alphabetically (case-insensitive) for better UX
+    sorted_sessions = sorted(tournament.sessions, key=str.lower) if tournament.sessions else []
+    
+    # Create session stats dictionary with actual counts
+    session_stats = {}
+    if sorted_sessions:
+        for session in sorted_sessions:
+            # Get the count directly from our Counter (already includes current user)
+            attendee_count = session_counts.get(session, 0)
+            
+            # Store the count
+            session_stats[session] = {
+                'attendees': attendee_count
+            }
+    
+    # Calculate days until tournament
+    today = datetime.now().date()
+    days_until = (tournament.start_date - today).days if tournament.start_date > today else 0
+    
+    # Ensure tournament sessions data exists - create comprehensive day/night structure
+    # Force regeneration if sessions are missing, incomplete, or not properly paired
+    tournament_duration = (tournament.end_date - tournament.start_date).days + 1
+    expected_session_count = tournament_duration * 2  # Day + Night for each day
+    
+    should_regenerate = (
+        not tournament.sessions or 

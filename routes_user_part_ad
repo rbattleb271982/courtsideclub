@@ -1,0 +1,291 @@
+        tournament = ut.tournament
+        # Use shared helper function to get consistent counts
+        tournament_stats = get_tournament_attendance_stats(tournament.id, include_current_user=True)
+        stats[tournament.id] = tournament_stats
+        
+        # Generate session stats by day
+        # Get all session labels for this tournament
+        user_sessions = (
+            db.session.query(UserTournament.session_label)
+            .filter(
+                UserTournament.tournament_id == tournament.id,
+                UserTournament.attending == True,
+                UserTournament.session_label.isnot(None),
+                UserTournament.session_label != ''
+            )
+            .all()
+        )
+        
+        # Extract and count all session labels
+        all_sessions = []
+        for registration in user_sessions:
+            if registration.session_label:
+                sessions = [session.strip() for session in registration.session_label.split(',') if session.strip()]
+                all_sessions.extend(sessions)
+        
+        # Count occurrences of each session
+        session_counts = Counter(all_sessions)
+        
+        # Generate all days between tournament start and end dates
+        tournament_days = []
+        current_date = tournament.start_date
+        day_num = 1
+        
+        while current_date <= tournament.end_date:
+            day_key = f"Day {day_num}"
+            day_session = f"{day_key} - Day"
+            night_session = f"{day_key} - Night"
+            
+            tournament_days.append({
+                'date': current_date,
+                'day_num': day_num,
+                'formatted': current_date.strftime('%A, %b %d'),
+                'day_session': day_session,
+                'night_session': night_session,
+                'day_count': session_counts.get(day_session, 0),
+                'night_count': session_counts.get(night_session, 0)
+            })
+            
+            current_date += timedelta(days=1)
+            day_num += 1
+        
+        # Store the days data for this tournament
+        session_stats[tournament.id] = tournament_days
+
+    # Group tournaments by month chronologically
+    from collections import defaultdict
+    from calendar import month_name
+
+    grouped = defaultdict(list)
+    month_keys = []
+
+    for ut in user_tournaments:
+        year_month = (ut.tournament.start_date.year, ut.tournament.start_date.month)
+        grouped[year_month].append(ut)
+        if year_month not in month_keys:
+            month_keys.append(year_month)
+
+    month_keys.sort()  # Sort chronologically by year and month
+
+    # Create final grouped dictionary with formatted month names
+    grouped_tournaments = {
+        f"{month_name[month]} {year}": grouped[(year, month)]
+        for (year, month) in month_keys
+    }
+    
+    # Calculate lanyard reminder data
+    show_lanyard_reminder = False
+    days_away = None
+    soonest_tournament = None
+    
+    # Only show lanyard reminder if user is attending tournaments but hasn't selected sessions properly
+    if not getattr(current_user, 'lanyard_ordered', False):
+        # Check for users attending tournaments but missing proper session selections
+        incomplete_tournaments = []
+        for ut in user_tournaments:
+            if ut.attending and (not ut.session_label or ut.session_label.strip() == ''):
+                incomplete_tournaments.append(ut)
+        
+        if incomplete_tournaments:
+            show_lanyard_reminder = True
+            # Find soonest upcoming tournament for days_away calculation
+            soonest_tournament = min(incomplete_tournaments, key=lambda ut: ut.tournament.start_date)
+            days_away = (soonest_tournament.tournament.start_date - today).days
+
+    # Check if user needs profile reminder (no past tournaments AND no wishlist)
+    show_profile_reminder = (
+        len(current_user.past_tournaments) == 0 and
+        len(current_user.wishlist) == 0
+    )
+
+    return render_template(
+        "my_tournaments.html",
+        grouped_tournaments=grouped_tournaments,
+        stats=stats,
+        session_stats=session_stats,
+        show_lanyard_reminder=show_lanyard_reminder,
+        days_away=days_away,
+        soonest_tournament=soonest_tournament.tournament if soonest_tournament else None,
+        show_welcome=show_welcome,
+        show_profile_reminder=show_profile_reminder
+    )
+
+@user_bp.route('/add-tournaments')
+@login_required
+def add_tournaments():
+    """
+    Redirect users to browse tournaments page where they can add tournaments to their schedule.
+    This route exists for onboarding flow clarity.
+    """
+    return redirect(url_for('user.browse_tournaments'))
+
+@user_bp.route('/browse-tournaments')
+@login_required
+def browse_tournaments():
+    """
+    Display upcoming tournaments grouped by month with attendance status for the current user.
+    Allow users to mark themselves as attending or maybe attending.
+    """
+    # Get today's date for filtering
+    today = datetime.now().date()
+    
+    # Get all upcoming tournaments, sorted by start date
+    upcoming_tournaments = Tournament.query.filter(
+        Tournament.end_date >= today
+    ).order_by(Tournament.start_date).all()
+    
+    # Get current user's tournament registrations
+    user_registrations = {
+        ut.tournament_id: ut for ut in UserTournament.query.filter_by(
+            user_id=current_user.id
+        ).all()
+    }
+    
+    # Group tournaments by month
+    def get_month_key(tournament):
+        return tournament.start_date.strftime('%B %Y')
+    
+    grouped_tournaments = {}
+    sorted_tournaments = sorted(upcoming_tournaments, key=get_month_key)
+    
+    from itertools import groupby
+    for month, group in groupby(sorted_tournaments, key=get_month_key):
+        grouped_tournaments[month] = list(group)
+    
+    # Sort months chronologically using month_order
+    month_order = {
+        'January': 1, 'February': 2, 'March': 3, 'April': 4,
+        'May': 5, 'June': 6, 'July': 7, 'August': 8,
+        'September': 9, 'October': 10, 'November': 11, 'December': 12
+    }
+    
+    # Sort by year first, then by month
+    sorted_months = sorted(grouped_tournaments.items(), key=lambda x: (
+        int(x[0].split()[1]),  # Year (e.g., 2025)
+        month_order[x[0].split()[0]]  # Month (e.g., August = 8)
+    ))
+    
+    # Add attendance status to each tournament
+    for month, month_group in sorted_months:
+        for tournament in month_group:
+            # Default status
+            tournament.attendance_status = 'not_attending'
+            tournament.has_sessions = False
+            
+            # If user has a registration, check the status
+            if tournament.id in user_registrations:
+                ut = user_registrations[tournament.id]
+                if ut.attending and ut.attendance_type == 'attending':
+                    tournament.attendance_status = 'attending'
+                    tournament.has_sessions = bool(ut.session_label)  # Track if they have sessions
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
+                elif ut.attending and ut.attendance_type == 'maybe':
+                    tournament.attendance_status = 'maybe'
+                    tournament.has_sessions = bool(ut.session_label)  # They might have sessions
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
+                # Fall back to legacy logic for any records without attendance_type
+                elif ut.attending and ut.session_label:
+                    tournament.attendance_status = 'attending'
+                    tournament.has_sessions = True
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
+                elif ut.attending and not ut.session_label:
+                    tournament.attendance_status = 'maybe'
+                    tournament.wants_to_meet = ut.wants_to_meet  # Pass wants_to_meet to template
+            
+            # Add stats to each tournament - need to count all attendees, including current user
+            # We need to handle the case where the current user is attending but their attendance
+            # isn't yet reflected in the database stats
+            stats = get_tournament_attendance_stats(tournament.id, include_current_user=True)
+            
+            # If user is marked as attending this tournament in the UI but not counted in stats yet
+            if tournament.attendance_status == 'attending' and tournament.has_sessions:
+                # Count current user manually if they're attending with sessions
+                tournament.attendee_count = stats['attending']
+                # For meetup count, include current user if they want to meet
+                tournament.meeting_count = stats['meetup']
+            else:
+                # Standard counting for tournaments user isn't attending
+                tournament.attendee_count = stats['attending']
+                tournament.meeting_count = stats['meetup']
+    
+    # Get list of months for filter bar (in correct chronological order)
+    months = [month for month, _ in sorted_months]
+    
+    return render_template(
+        "user/browse_tournaments.html",
+        grouped_tournaments=dict(sorted_months),
+        months=months,
+        sorted_months=sorted_months
+    )
+
+@user_bp.route('/lanyard', methods=['GET', 'POST'])
+@login_required
+def lanyard():
+
+    # List of U.S. state abbreviations
+    STATE_ABBRS = [
+        "AK", "AL", "AR", "AZ", "CA", "CO", "CT", "DC", "DE", "FL", "GA", "HI", "IA", "ID", "IL", "IN",
+        "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH", "NJ",
+        "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VA", "VT", "WA",
+        "WI", "WV", "WY"
+    ]
+
+    # Debug: Print user sessions info
+    user_sessions = UserTournament.query.filter_by(user_id=current_user.id).all()
+    print(f"User {current_user.id} sessions:")
+    for session in user_sessions:
+        print(f"Tournament: {session.tournament_id}, Attending: {session.attending}, Label: {session.session_label}")
+
+    # Allow admins to bypass session check
+    if not current_user.is_admin:
+        # Check if user has valid sessions using proper database query
+        has_valid_sessions = (
+            db.session.query(UserTournament)
+            .filter(
+                UserTournament.user_id == current_user.id,
+                UserTournament.attending == True,
+                UserTournament.session_label.isnot(None),
+                UserTournament.session_label != ""
+            )
+            .count() > 0
+        )
+
+        if not has_valid_sessions:
+            flash("You must select at least one tournament session before ordering a lanyard.", "warning")
+            return redirect(url_for('user.my_tournaments'))
+
+    if request.method == 'POST':
+        # Handle lanyard form submission
+        address = ShippingAddress(
+            user_id=current_user.id,
+            name=request.form['name'],
+            address1=request.form['address1'],
+            address2=request.form.get('address2', ''),
+            city=request.form['city'],
+            state=request.form['state'],
+            zip_code=request.form['zip'],
+            country=request.form['country']
+        )
+
+        # Lanyard ordering functionality discontinued - no need to update user status
+
+        # Save to database
+        db.session.add(address)
+        db.session.commit()
+
+        # Lanyard order confirmation email removed - functionality discontinued
+
+        # Log the lanyard order event - temporarily disabled due to event name issue
+        print(f"DEBUG: Lanyard order placed for user {current_user.id}, name: {request.form['name']}, country: {request.form['country']}")
+        
+        # Flash success message and redirect to My Tournaments
+        flash("You're all set! See you at the tournament.", "success")
+        return redirect(url_for('user.my_tournaments'))
+
+    # Check if user has an existing shipping address (indicates previous lanyard order)
+    existing_address = ShippingAddress.query.filter_by(user_id=current_user.id).first()
+    lanyard_ordered = existing_address is not None
+    
+    return render_template('order_lanyard.html', 
+                         states=sorted(STATE_ABBRS),
+                         lanyard_ordered=lanyard_ordered)

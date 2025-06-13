@@ -1,0 +1,300 @@
+        len(tournament.sessions) == 0 or
+        len(tournament.sessions) % 2 != 0 or  # Odd number = incomplete pairs
+        len(tournament.sessions) != expected_session_count  # Wrong total count
+    )
+    
+    if should_regenerate:
+        print(f"DEBUG: Regenerating sessions for {tournament.name}")
+        print(f"DEBUG: Current sessions: {tournament.sessions}")
+        print(f"DEBUG: Expected {expected_session_count} sessions for {tournament_duration} days")
+        
+        # Create complete Day/Night sessions for all tournament days
+        default_sessions = []
+        for day in range(1, tournament_duration + 1):
+            default_sessions.extend([
+                f'Day {day} - Day',
+                f'Day {day} - Night'
+            ])
+        
+        # Update the database with complete session structure
+        tournament.sessions = default_sessions
+        db.session.commit()
+        print(f"DEBUG: Regenerated {len(default_sessions)} sessions: {tournament.sessions}")
+    else:
+        print(f"DEBUG: Tournament sessions from DB are complete: {tournament.sessions}")
+    
+    # Ensure session stats exist for all sessions
+    for session in tournament.sessions:
+        if session not in session_stats:
+            session_stats[session] = {
+                'attendees': 0  # Default count if no data
+            }
+    
+    # Calculate dates for each tournament day
+    # Generate tournament days based on actual sessions from database
+    import datetime as dt
+    tournament_days = []
+    
+    # Extract unique days from tournament sessions
+    if tournament.sessions:
+        unique_days = set()
+        for session in tournament.sessions:
+            # Extract day number from session string like "Day 1 - Day" or "Day 1 - Night"
+            if session.startswith('Day '):
+                try:
+                    day_part = session.split(' - ')[0]  # Gets "Day 1"
+                    day_num = int(day_part.replace('Day ', ''))  # Gets 1
+                    unique_days.add(day_num)
+                except (ValueError, IndexError):
+                    continue
+        
+        # Create tournament_days list from unique days
+        start_date = tournament.start_date
+        for day_num in sorted(unique_days):
+            day_date = start_date + dt.timedelta(days=day_num - 1)
+            tournament_days.append({
+                'day_num': str(day_num),
+                'date': day_date,
+                'formatted': day_date.strftime('%b %d')
+            })
+        
+        print(f"DEBUG: Created tournament_days structure with {len(tournament_days)} days")
+        print(f"DEBUG: tournament_days = {tournament_days}")
+    
+    # Check if sessions were just saved (from query param)
+    session_saved = request.args.get('session_saved', '0') == '1'
+    
+    # CRITICAL DEBUG - CHECK TEMPLATE CONDITIONALS
+    print("="*80)
+    print("TEMPLATE CONDITIONAL DEBUG:")
+    print(f"user_attending = {user_attending} (type: {type(user_attending)})")
+    print(f"user_attending evaluates to: {bool(user_attending)}")
+    print(f"tournament.sessions = {tournament.sessions}")
+    print(f"tournament_days length = {len(tournament_days) if tournament_days else 0}")
+    print(f"session_counts = {session_counts}")
+    print(f"Template will show session UI: {bool(user_attending)}")
+    if user_tournament:
+        print(f"UserTournament exists: attending={user_tournament.attending}")
+    else:
+        print("No UserTournament record found")
+    print("="*80)
+    
+    # Get past tournaments for users attending this tournament (shared-history logic)
+    shared_past_tournaments = {}
+    
+    # If user is authenticated, show them past tournaments whether other attendees exist or not
+    if current_user.is_authenticated and current_user.id:
+        # Get current user's past tournaments (excluding current tournament)
+        user_past_tournaments = db.session.query(
+            Tournament.name
+        ).join(
+            UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+        ).filter(
+            UserPastTournament.user_id == current_user.id,
+            Tournament.id != tournament.id  # Exclude current tournament
+        ).all()
+        
+        # Format the results as a dictionary with count=1 for each tournament
+        shared_past_tournaments = {name: 1 for name, in user_past_tournaments}
+        
+        # Now get additional attendees' past tournaments (if any)
+        other_attendees = db.session.query(UserTournament.user_id).filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.user_id != current_user.id  # Exclude current user
+        ).all()
+        
+        other_attendee_ids = [user.user_id for user in other_attendees]
+        
+        if other_attendee_ids:
+            # Get past tournaments for other attendees
+            other_past_tournament_counts = db.session.query(
+                Tournament.name, db.func.count(UserPastTournament.user_id).label('count')
+            ).join(
+                UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+            ).filter(
+                UserPastTournament.user_id.in_(other_attendee_ids),
+                Tournament.id != tournament.id  # Exclude current tournament
+            ).group_by(
+                Tournament.name
+            ).all()
+            
+            # Update counts in the shared dictionary
+            for name, count in other_past_tournament_counts:
+                if name in shared_past_tournaments:
+                    shared_past_tournaments[name] += count
+                else:
+                    shared_past_tournaments[name] = count
+    
+    # Convert to sorted list of tuples for template rendering - alphabetically by tournament name (case-insensitive)
+    sorted_shared_tournaments = sorted(shared_past_tournaments.items(), key=lambda x: x[0].lower())
+    
+    print(f"DEBUG: shared_past_tournaments = {shared_past_tournaments}")
+    print(f"DEBUG: sorted_shared_tournaments = {sorted_shared_tournaments}")
+    print(f"DEBUG: len(sorted_shared_tournaments) = {len(sorted_shared_tournaments)}")
+    
+    # Generate sample members data for v0 layout
+    sample_members = []
+    attending_users = UserTournament.query.filter_by(
+        tournament_id=tournament.id, 
+        attending=True
+    ).join(User).limit(8).all()
+    
+    for ut in attending_users:
+        user = ut.user
+        if user and not user.test_user:  # Exclude test users from display
+            # Count sessions for this user
+            session_count = len(ut.session_label.split(',')) if ut.session_label else 0
+            
+            # Generate initials
+            first_initial = user.first_name[0].upper() if user.first_name else 'U'
+            last_initial = user.last_name[0].upper() if user.last_name else 'U'
+            initials = first_initial + last_initial
+            
+            # Create display name (first name + last initial)
+            display_name = f"{user.first_name} {last_initial}." if user.first_name and user.last_name else f"User {user.id}"
+            
+            sample_members.append({
+                'initials': initials,
+                'display_name': display_name,
+                'session_count': session_count,
+                'open_to_meet': bool(ut.wants_to_meet)
+            })
+    
+    # Generate fan history data (top 3-5 tournaments these users have attended)
+    fan_history = []
+    if attending_users:
+        # Get other tournaments that these users have attended
+        user_ids = [ut.user_id for ut in attending_users]
+        other_tournaments = db.session.query(Tournament.name, db.func.count(UserTournament.user_id).label('count')).join(
+            UserTournament
+        ).filter(
+            UserTournament.user_id.in_(user_ids),
+            UserTournament.attending == True,
+            Tournament.id != tournament.id
+        ).group_by(Tournament.name).order_by(
+            db.func.count(UserTournament.user_id).desc()
+        ).limit(5).all()
+        
+        fan_history = [{'name': name} for name, count in other_tournaments]
+    
+    return render_template('tournament_detail.html',
+                         tournament=tournament,
+                         tournament_days=tournament_days,
+                         user_tournament=user_tournament,
+                         stats=stats,
+                         attending_count=stats['attending'],
+                         meeting_count=stats['meetup'],
+                         selected_sessions=selected_sessions,
+                         session_stats=session_stats,
+                         session_counts=session_counts,
+                         wants_to_meet=wants_to_meet,
+                         user_attending=user_attending,
+                         days_until=days_until,
+                         session_saved=session_saved,
+                         shared_past_tournaments=shared_past_tournaments,
+                         sorted_shared_tournaments=sorted_shared_tournaments,
+                         sample_members=sample_members,
+                         fan_history=fan_history)
+
+# Updated profile route to show user profile with past tournaments selection
+@user_bp.route('/add_wishlist', methods=['POST'])
+@login_required
+def add_wishlist():
+    """Add a tournament to user's bucket list (wishlist)"""
+    tournament_id = request.form.get('tournament_id')
+    if not tournament_id:
+        flash('Tournament selection required', 'warning')
+        return redirect(url_for('user.profile'))
+        
+    # Check if already in wishlist
+    existing = UserWishlistTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament_id
+    ).first()
+    
+    if not existing:
+        # Add to wishlist
+        entry = UserWishlistTournament(
+            user_id=current_user.id,
+            tournament_id=tournament_id
+        )
+        db.session.add(entry)
+        db.session.commit()
+        
+        # Log the event
+        log_event(current_user.id, 'wishlist_tournament_added', {
+            'tournament_id': tournament_id
+        })
+        
+        # Get tournament name for the flash message
+        tournament = Tournament.query.get(tournament_id)
+        if tournament:
+            flash(f'Added {tournament.name} to your bucket list!', 'success')
+        else:
+            flash('Tournament added to your bucket list!', 'success')
+    else:
+        flash('Tournament is already in your bucket list', 'info')
+        
+    return redirect(url_for('user.profile'))
+    
+@user_bp.route('/remove_wishlist/<int:wishlist_id>', methods=['POST'])
+@login_required
+def remove_wishlist(wishlist_id):
+    """Remove a tournament from user's bucket list (wishlist)"""
+    entry = UserWishlistTournament.query.filter_by(
+        id=wishlist_id,
+        user_id=current_user.id
+    ).first()
+    
+    if entry:
+        tournament_id = entry.tournament_id
+        
+        # Get tournament name for the flash message
+        tournament = Tournament.query.get(tournament_id)
+        tournament_name = tournament.name if tournament else "Tournament"
+        
+        # Remove from database
+        db.session.delete(entry)
+        db.session.commit()
+        
+        # Log the event
+        log_event(current_user.id, 'wishlist_tournament_removed', {
+            'tournament_id': tournament_id
+        })
+        
+        flash(f'Removed {tournament_name} from your bucket list', 'success')
+    else:
+        flash('Tournament not found in your bucket list', 'warning')
+        
+    return redirect(url_for('user.profile'))
+
+@user_bp.route('/update_wishlist', methods=['POST'])
+@login_required
+def update_wishlist():
+    """Update the user's bucket list of tournaments"""
+    # Get the list of tournament IDs from the form
+    tournament_ids = request.form.getlist('wishlist_tournaments')
+    
+    # First, remove all existing wishlist entries for this user
+    UserWishlistTournament.query.filter_by(user_id=current_user.id).delete()
+    
+    # Now add the new selections
+    for tournament_id in tournament_ids:
+        wishlist_entry = UserWishlistTournament(
+            user_id=current_user.id,
+            tournament_id=tournament_id
+        )
+        db.session.add(wishlist_entry)
+    
+    # Save changes
+    db.session.commit()
+    
+    # Log the event
+    log_event(current_user.id, 'wishlist_updated', {
+        'count': len(tournament_ids),
+        'tournament_ids': tournament_ids
+    })
+    
+    # Handle AJAX requests
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

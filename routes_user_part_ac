@@ -1,0 +1,300 @@
+        return jsonify({'success': True, 'message': 'Bucket list updated!'})
+    
+    flash('Your bucket list has been updated!', 'success')
+    return redirect(url_for('user.profile'))
+
+@user_bp.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    from forms import ProfileForm
+    
+    form = ProfileForm()
+    all_tournaments = Tournament.query.order_by(Tournament.name).all()
+
+    if form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.notifications = form.notifications.data
+
+        attended_ids = request.form.getlist('attended_tournaments[]')
+        wishlist_ids = request.form.getlist('wishlist_tournaments[]')
+
+        db.session.query(UserPastTournament).filter_by(user_id=current_user.id).delete()
+        db.session.query(UserWishlistTournament).filter_by(user_id=current_user.id).delete()
+
+        for tid in attended_ids:
+            db.session.add(UserPastTournament(user_id=current_user.id, tournament_id=int(tid)))
+        for tid in wishlist_ids:
+            db.session.add(UserWishlistTournament(user_id=current_user.id, tournament_id=int(tid)))
+
+        db.session.commit()
+        flash("Your profile has been updated.", "success")
+        return redirect(url_for('user.profile'))
+
+    # Pre-populate form with current user data
+    form.first_name.data = current_user.first_name
+    form.last_name.data = current_user.last_name
+    # Default notifications to True if user hasn't set a preference yet
+    form.notifications.data = current_user.notifications if current_user.notifications is not None else True
+
+    past_ids = [t.tournament_id for t in current_user.past_tournaments]
+    wishlist_ids = [w.tournament_id for w in current_user.wishlist]
+
+    return render_template(
+        'user/profile.html',
+        user=current_user,
+        form=form,
+        past_tournaments=all_tournaments,
+        attended_ids=past_ids,
+        wishlist_ids=wishlist_ids,
+    )
+
+@user_bp.route('/profile/update', methods=['POST'])
+@login_required
+def update_profile():
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    location = request.form.get('location')
+    notifications = 'notifications' in request.form
+
+    # Update user in database
+    user = User.query.get(current_user.id)
+    if first_name:
+        user.first_name = first_name
+    if last_name:
+        user.last_name = last_name
+
+    # Track if location was updated
+    location_changed = False
+    if location is not None and location != user.location:
+        user.location = location
+        location_changed = True
+
+    # Also update the name field for backward compatibility
+    if first_name and last_name:
+        user.name = f"{first_name} {last_name}"
+
+    user.notifications = notifications
+    db.session.commit()
+
+    # Log the profile update event
+    from services.event_logger import log_event
+    event_data = {}
+    
+    # Track location updates
+    if location_changed:
+        event_data['location_updated'] = True
+        event_data['new_location'] = location
+    
+    # Track notification preference changes
+    if 'notifications' in request.form:
+        # Check if the notification setting actually changed
+        if notifications != getattr(user, 'notifications', None):
+            event_data['notification_preference_changed'] = True
+            event_data['notifications_enabled'] = notifications
+            
+            # Log a specific notification preference event for better analytics
+            notification_event = 'user_opt_in_email' if notifications else 'user_opt_out_email'
+            log_event(current_user.id, notification_event, data={
+                'email': current_user.email,
+                'timestamp': datetime.utcnow().isoformat()
+            })
+            
+    log_event(current_user.id, 'profile_updated', data=event_data)
+
+    # Clear temporary password after profile update (if exists)
+    if 'temp_password' in session:
+        del session['temp_password']
+
+    flash('Profile updated successfully!', 'success')
+    return redirect(url_for('user.profile'))
+
+@user_bp.route('/profile/attending', methods=['POST'])
+@login_required
+def update_attending():
+    # Get the tournaments the user wants to attend
+    attending_ids = request.form.getlist('attending')
+
+    # Update user in database
+    user = User.query.get(current_user.id)
+
+    # Get current UserTournament registrations
+    current_registrations = UserTournament.query.filter_by(user_id=user.id).all()
+    current_tournament_ids = [reg.tournament_id for reg in current_registrations]
+
+    # Identify tournaments to remove and add
+    to_remove = [t_id for t_id in current_tournament_ids if t_id not in attending_ids]
+    to_add = [t_id for t_id in attending_ids if t_id not in current_tournament_ids]
+
+    # Remove tournaments no longer selected
+    for t_id in to_remove:
+        # Find the UserTournament record and delete it
+        registration = UserTournament.query.filter_by(
+            user_id=user.id,
+            tournament_id=t_id
+        ).first()
+        if registration:
+            db.session.delete(registration)
+
+    # Add newly selected tournaments with default settings
+    for t_id in to_add:
+        # Create a new UserTournament record
+        new_registration = UserTournament(
+            user_id=user.id,
+            tournament_id=t_id,
+            # Using only session_label instead of dates and sessions arrays
+            session_label=None,
+            open_to_meet=True,  # Default to being open to meeting
+            wants_to_meet=True  # Also set wants_to_meet to True by default
+        )
+        db.session.add(new_registration)
+
+    # Commit all changes
+    db.session.commit()
+
+    flash('Tournament preferences updated!', 'success')
+    return redirect(url_for('user.home'))
+
+
+
+@user_bp.route('/notifications/toggle', methods=['POST'])
+@login_required
+def toggle_notifications():
+    current_user.notifications = not current_user.notifications
+    db.session.commit()
+    status = "enabled" if current_user.notifications else "disabled"
+    flash(f'Notifications {status}!', 'success')
+    return redirect(url_for('user.profile'))
+
+@user_bp.route('/cancel_attendance/<tournament_id>', methods=['POST'])
+@login_required
+def cancel_attendance(tournament_id):
+    try:
+        # Simple approach: just mark as not attending instead of deleting
+        # This prevents any potential session conflicts from database deletions
+        user_tournament = UserTournament.query.filter_by(
+            user_id=current_user.id, 
+            tournament_id=tournament_id
+        ).first()
+
+        if not user_tournament:
+            flash("Could not find your attendance record.", "warning")
+        else:
+            # Instead of deleting, just mark as not attending
+            user_tournament.attending = False
+            user_tournament.session_label = None
+            user_tournament.wants_to_meet = False
+            db.session.commit()
+            flash("Your attendance has been cancelled.", "success")
+        
+    except Exception as e:
+        print(f"Cancel attendance error: {e}")
+        db.session.rollback()
+        flash("Unable to cancel attendance. Please try again.", "danger")
+
+    return redirect(url_for('user.my_tournaments'))
+
+@user_bp.route('/change_password', methods=['POST','GET'])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        current_password = request.form.get('current_password')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        # Check if new password and confirmation match
+        if new_password != confirm_password:
+            flash('New passwords do not match.', 'danger')
+            return redirect(url_for('user.change_password'))
+
+        # Get the current user
+        user = User.query.get(current_user.id)
+
+        # If a current password was provided, verify it
+        if current_password and user.password_hash:
+            if not check_password_hash(user.password_hash, current_password):
+                flash('Current password is incorrect.', 'danger')
+                return redirect(url_for('user.change_password'))
+
+        # Update the password hash
+        try:
+            user.password_hash = generate_password_hash(new_password, method='pbkdf2:sha256')
+            db.session.commit()
+
+            # Clear temporary password after successful password change (if exists)
+            if 'temp_password' in session:
+                del session['temp_password']
+
+            flash('Password updated successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error updating password: {str(e)}")
+            flash('An error occurred while updating your password.', 'danger')
+
+        return redirect(url_for('user.profile'))
+    return render_template("change_password.html")
+
+@user_bp.route('/my-tournaments')
+@login_required
+def my_tournaments():
+    from models import Tournament, UserTournament
+    from datetime import datetime, timedelta
+    import logging
+
+    # Debug session persistence
+    logging.info(f"=== MY_TOURNAMENTS ROUTE ACCESS ===")
+    logging.info(f"current_user.is_authenticated: {current_user.is_authenticated}")
+    logging.info(f"current_user object: {current_user}")
+    logging.info(f"Session contents: {dict(session)}")
+    logging.info(f"Request cookies: {dict(request.cookies)}")
+    
+    if not current_user.is_authenticated:
+        logging.info(f"User not authenticated, redirecting to login")
+        return redirect(url_for('auth.login'))
+
+    # Check for welcome message flag in session
+    show_welcome = session.pop('show_welcome', False)
+    
+    today = datetime.now().date()
+    
+    # Get all future tournaments the user is attending (regardless of session selection)
+    # Log queries to debug tournament display issues
+    logging.debug(f"Finding tournaments for user {current_user.id}")
+    
+    # First, check all user tournaments directly from database
+    all_user_tournaments = UserTournament.query.filter_by(user_id=current_user.id).all()
+    for ut in all_user_tournaments:
+        logging.debug(f"Database record: Tournament: {ut.tournament_id}, Attending: {ut.attending}, Label: {ut.session_label}")
+    
+    # Query all tournaments to check dates
+    all_tournaments = Tournament.query.all()
+    for t in all_tournaments:
+        if t.id == 'rome_masters' or t.id == 'geneva_open':
+            logging.debug(f"Tournament dates check: {t.id}, Start: {t.start_date}, End: {t.end_date}, Days left: {(t.end_date - today).days}")
+    
+    # Now perform the filtered query for the page
+    user_tournaments = (
+        db.session.query(UserTournament)
+        .filter(
+            UserTournament.user_id == current_user.id,
+            UserTournament.attending == True  # Keep only those marked as attending
+        )
+        .join(Tournament)
+        .filter(Tournament.end_date >= today)  # Show tournaments ending today or in the future
+        .order_by(Tournament.start_date)
+        .all()
+    )
+    
+    # Log more detailed information about what we found
+    for ut in user_tournaments:
+        logging.debug(f"Found for display: {ut.tournament.name}, session_label: {ut.session_label}")
+    
+    logging.debug(f"Found {len(user_tournaments)} tournaments to display")
+
+    # Get stats for each tournament using shared helper function
+    stats = {}
+    session_stats = {}
+    from collections import Counter
+    from datetime import timedelta
+    
+    for ut in user_tournaments:
