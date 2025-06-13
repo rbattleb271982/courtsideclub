@@ -1,0 +1,328 @@
+{% extends "layout.html" %}
+
+{% block title %}Tournament QR Code{% endblock %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1f2937;
+    background: #FFFFFF;
+  }
+
+  .font-serif {
+    font-family: 'Crimson Text', Georgia, serif;
+  }
+
+  /* Container */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding: 0 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding: 0 3rem;
+    }
+  }
+
+  /* QR Code Section */
+  .qr-section {
+    text-align: center;
+    padding: 4rem 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .qr-title {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+  }
+
+  .qr-description {
+    color: #4b5563;
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .qr-container {
+    background: #FFFFFF;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .qr-code {
+    margin: 0 auto 1.5rem;
+    display: block;
+  }
+
+  .qr-info {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Buttons */
+  .cta-button {
+    display: inline-block;
+    background: #4a6b4a;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+    border: none;
+    cursor: pointer;
+    margin: 0.5rem;
+  }
+
+  .cta-button:hover {
+    background: #3a5a3a;
+    color: #FFFFFF;
+    text-decoration: none;
+  }
+
+  .cta-button-secondary {
+    display: inline-block;
+    background: #FFFFFF;
+    color: #4a6b4a;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #4a6b4a;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    margin: 0.5rem;
+  }
+
+  .cta-button-secondary:hover {
+    background: #f8faf8;
+    color: #4a6b4a;
+    text-decoration: none;
+  }
+
+  /* Instructions */
+  .instructions {
+    background: #F9FAF7;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: left;
+  }
+
+  .instructions h3 {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1rem;
+  }
+
+  .instructions ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .instructions li {
+    padding: 0.5rem 0;
+    color: #4b5563;
+    line-height: 1.5;
+  }
+
+  .instructions li:before {
+    content: "•";
+    color: #4a6b4a;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .qr-section {
+      padding: 2rem 1rem;
+    }
+
+    .qr-title {
+      font-size: 2rem;
+    }
+
+    .qr-container {
+      padding: 1.5rem;
+    }
+
+    .instructions {
+      padding: 1rem;
+    }
+
+    .cta-button,
+    .cta-button-secondary {
+      width: 100%;
+      max-width: 280px;
+      margin: 0.5rem 0;
+    }
+  }
+
+  /* Success/Error Messages */
+  .message {
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    font-size: 0.875rem;
+  }
+
+  .message.success {
+    background: #f0f9ff;
+    border: 1px solid #10b981;
+    color: #065f46;
+  }
+
+  .message.error {
+    background: #fef2f2;
+    border: 1px solid #dc2626;
+    color: #991b1b;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="qr-section">
+    <h1 class="qr-title">Show this QR at the tournament</h1>
+    <p class="qr-description">
+      Show this code to other CourtSide Club members to instantly connect and share contact information.
+    </p>
+
+    {% if qr_code_data %}
+    <div class="qr-container">
+      <img src="data:image/png;base64,{{ qr_code_data }}" alt="QR Code" class="qr-code" width="200" height="200">
+      <p class="qr-info">
+        This QR code contains your CourtSide Club profile link
+      </p>
+      
+      <div>
+        <button onclick="shareQR()" class="cta-button">Share QR Code</button>
+        <button onclick="copyLink()" class="cta-button-secondary">Copy Link</button>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h3>How to use your QR code:</h3>
+      <ul>
+        <li>Show this screen to other tennis fans at tournaments</li>
+        <li>They can scan it with their phone camera to view your profile</li>
+        <li>Exchange contact info quickly and stay connected</li>
+        <li>Save this page to your phone for offline access</li>
+      </ul>
+    </div>
+
+    {% else %}
+    <div class="qr-container">
+      <p style="color: #6b7280;">QR code could not be generated at this time.</p>
+      <a href="{{ url_for('user.my_tournaments') }}" class="cta-button-secondary">Back to My Tournaments</a>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 2rem;">
+      <a href="{{ url_for('user.my_tournaments') }}" class="cta-button-secondary">Back to My Tournaments</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function shareQR() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'My CourtSide Club Profile',
+      text: 'Connect with me on CourtSide Club!',
+      url: '{{ profile_url if profile_url else url_for("user.profile", _external=True) }}'
+    }).catch(console.error);
+  } else {
+    // Fallback for browsers that don't support Web Share API
+    copyLink();
+  }
+}
+
+function copyLink() {
+  const url = '{{ profile_url if profile_url else url_for("user.profile", _external=True) }}';
+  
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      showMessage('Link copied to clipboard!', 'success');
+    }).catch(() => {
+      fallbackCopyText(url);
+    });
+  } else {
+    fallbackCopyText(url);
+  }
+}
+
+function fallbackCopyText(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    showMessage('Link copied to clipboard!', 'success');
+  } catch (err) {
+    showMessage('Could not copy link. Please copy manually: ' + text, 'error');
+  }
+  
+  document.body.removeChild(textArea);
+}
+
+function showMessage(text, type) {
+  // Remove any existing messages
+  const existingMessage = document.querySelector('.message');
+  if (existingMessage) {
+    existingMessage.remove();
+  }
+  
+  // Create new message
+  const message = document.createElement('div');
+  message.className = `message ${type}`;
+  message.textContent = text;
+  
+  // Insert after QR container
+  const qrContainer = document.querySelector('.qr-container');
+  if (qrContainer) {
+    qrContainer.after(message);
+  }
+  
+  // Auto-remove after 3 seconds
+  setTimeout(() => {
+    if (message.parentNode) {
+      message.remove();
+    }
+  }, 3000);
+}
+</script>
+{% endblock %}

@@ -2,221 +2,594 @@
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
 
 {% block head %}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Event",
-  "name": "{{ tournament.name | e }}",
-  "startDate": "{{ tournament.start_date.isoformat() }}",
-  "endDate": "{{ tournament.end_date.isoformat() }}",
-  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-  "eventStatus": "https://schema.org/EventScheduled",
-  "location": {
-    "@type": "Place",
-    "name": "{{ tournament.city | e }}, {{ tournament.country | e }}",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "{{ tournament.city | e }}",
-      "addressCountry": "{{ tournament.country | e }}"
-    }
-  },
-  "image": "{{ url_for('static', filename='images/og-preview.jpg', _external=True) }}",
-  "description": "Join tennis fans at {{ tournament.name | e }} through CourtSide Club to connect, attend sessions, and meet up in person.",
-  "organizer": {
-    "@type": "Organization",
-    "name": "CourtSide Club", 
-    "url": "https://courtside.repl.co"
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1f2937;
+    background: #FFFFFF;
   }
-}
-</script>
+
+  .font-serif {
+    font-family: 'Crimson Text', Georgia, serif;
+  }
+
+  /* Container Layout */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding: 0 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding: 0 3rem;
+    }
+  }
+
+  /* Hero Section */
+  .tournament-hero {
+    background: #F9FAF7;
+    padding: 3rem 0;
+    margin-bottom: 3rem;
+  }
+
+  .tournament-title {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+  }
+
+  .tournament-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: #6b7280;
+    font-size: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .tournament-meta {
+      flex-direction: row;
+      gap: 2rem;
+    }
+  }
+
+  /* Section Layout */
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1.5rem;
+  }
+
+  .two-column {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .two-column {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+
+  /* Info Box */
+  .info-box {
+    background: #F9FAF7;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .info-box h3 {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1rem;
+  }
+
+  .info-box p {
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .info-box:last-child p {
+    margin-bottom: 0;
+  }
+
+  /* Links */
+  .external-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .external-links {
+      flex-direction: row;
+    }
+  }
+
+  .external-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #4a6b4a;
+    border-radius: 9999px;
+    color: #4a6b4a;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .external-link:hover {
+    background: #f8faf8;
+    color: #4a6b4a;
+    text-decoration: none;
+  }
+
+  /* Attendance Section */
+  .attendance-form {
+    background: #FFFFFF;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 2rem;
+  }
+
+  /* Buttons */
+  .cta-button {
+    display: inline-block;
+    background: #4a6b4a;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-button:hover {
+    background: #3a5a3a;
+    color: #FFFFFF;
+    text-decoration: none;
+  }
+
+  .cta-button.danger {
+    background: #dc2626;
+  }
+
+  .cta-button.danger:hover {
+    background: #b91c1c;
+  }
+
+  .cta-button-secondary {
+    display: inline-block;
+    background: #FFFFFF;
+    color: #4a6b4a;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #4a6b4a;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+
+  .cta-button-secondary:hover {
+    background: #f8faf8;
+    color: #4a6b4a;
+    text-decoration: none;
+  }
+
+  /* Stats Alert */
+  .stats-alert {
+    background: #e0f2fe;
+    border: 1px solid #0284c7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    color: #0c4a6e;
+    font-size: 0.875rem;
+  }
+
+  /* Session Selection */
+  .session-group {
+    margin-bottom: 2rem;
+  }
+
+  .session-group h4 {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1rem;
+  }
+
+  .session-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .session-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .session-item:hover {
+    background: #f9fafb;
+  }
+
+  .session-item input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: #4a6b4a;
+  }
+
+  .session-label {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .session-count {
+    background: #4a6b4a;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Meeting Preference */
+  .meeting-preference {
+    background: #f8faf8;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .meeting-preference label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .meeting-preference input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: #4a6b4a;
+  }
+
+  /* Stats Sidebar */
+  .stats-box {
+    background: #FFFFFF;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stats-box h3 {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1rem;
+  }
+
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .stat-item:last-child {
+    border-bottom: none;
+  }
+
+  .stat-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .stat-value {
+    font-weight: 600;
+    color: #4a6b4a;
+    font-size: 1.25rem;
+  }
+
+  /* Meeting List */
+  .meeting-list {
+    background: #FFFFFF;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .meeting-list h3 {
+    font-family: 'Crimson Text', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #171717;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    margin: 0;
+  }
+
+  .meeting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .meeting-item:last-child {
+    border-bottom: none;
+  }
+
+  .meeting-person {
+    flex: 1;
+  }
+
+  .meeting-name {
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.25rem;
+  }
+
+  .meeting-session {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .contact-button {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #4a6b4a;
+    border-radius: 6px;
+    color: #4a6b4a;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .contact-button:hover {
+    background: #f8faf8;
+    color: #4a6b4a;
+    text-decoration: none;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .tournament-hero {
+      padding: 2rem 0;
+    }
+
+    .tournament-title {
+      font-size: 1.75rem;
+    }
+
+    .attendance-form {
+      padding: 1.5rem;
+    }
+
+    .stats-box {
+      padding: 1rem;
+    }
+
+    .meeting-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .contact-button {
+      align-self: stretch;
+      text-align: center;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
+<!-- Tournament Hero -->
+<section class="tournament-hero">
+  <div class="container">
+    <h1 class="tournament-title">{{ tournament.name }}</h1>
+    <div class="tournament-meta">
+      <span>{{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}</span>
+      <span>{{ tournament.city }}, {{ tournament.country }}</span>
+      <span>{{ tournament.event_type }} ({{ tournament.tour_type }})</span>
+    </div>
+  </div>
+</section>
+
 <div class="container">
-    <div class="tournament-header">
-        <h1 class="tournament-title">{{ tournament.name }}</h1>
-        <div class="tournament-meta">
-            <span class="tournament-dates">{{ tournament.start_date.strftime('%b %d') }} - {{ tournament.end_date.strftime('%b %d, %Y') }}</span>
-            <span class="tournament-location">{{ tournament.city }}, {{ tournament.country }}</span>
-            <span class="tournament-type">{{ tournament.event_type }} ({{ tournament.tour_type }})</span>
+  <!-- Tournament Information -->
+  {% if tournament.about or tournament.draw_url or tournament.schedule_url %}
+  <section class="section">
+    <div class="info-box">
+      <h3>Tournament Information
+        {% if current_user.is_admin %}
+        <a href="{{ url_for('admin.edit_tournament', tournament_id=tournament.id) }}" class="cta-button-secondary" style="float: right; font-size: 0.75rem; padding: 0.375rem 0.75rem;">Edit Info</a>
+        {% endif %}
+      </h3>
+      
+      {% if tournament.about %}
+      <p>{{ tournament.about }}</p>
+      {% endif %}
+
+      {% if tournament.draw_url or tournament.schedule_url %}
+      <div class="external-links">
+        {% if tournament.draw_url %}
+        <a href="{{ tournament.draw_url }}" target="_blank" class="external-link">
+          🔗 View Tournament Draw
+        </a>
+        {% endif %}
+        {% if tournament.schedule_url %}
+        <a href="{{ tournament.schedule_url }}" target="_blank" class="external-link">
+          📅 View Tournament Schedule
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Lanyard Success Message -->
+  {% if current_user.lanyard_ordered %}
+  <div class="info-box" style="background: #f0f9ff; border-color: #0284c7;">
+    <p style="color: #0c4a6e; margin: 0;">📦 Your lanyard is on its way!</p>
+  </div>
+  {% endif %}
+
+  <!-- Main Content Grid -->
+  <div class="two-column">
+    <!-- Left Column: Attendance -->
+    <div>
+      <section class="section">
+        <h2 class="section-title">Your Tournament Attendance</h2>
+        
+        <div class="attendance-form">
+          {% if user_attending %}
+          <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.id) }}">
+            <button type="submit" class="cta-button danger">
+              ❌ I'm no longer attending
+            </button>
+          </form>
+          {% else %}
+          <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.id) }}">
+            <button type="submit" class="cta-button">
+              ✅ I'm attending this tournament
+            </button>
+          </form>
+          {% endif %}
+
+          <div class="stats-alert">
+            <strong>{{ attending_count }}</strong> fan{% if attending_count != 1 %}s{% endif %} attending this tournament.
+            <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
+          </div>
+
+          {% if user_attending %}
+          <!-- Sessions Selection Form -->
+          <form method="POST" action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.slug) }}">
+            <div class="session-group">
+              <h4>Select the days and sessions you're attending:</h4>
+              
+              <div class="session-list">
+                {% for session in tournament.sessions %}
+                <div class="session-item">
+                  <input type="checkbox" name="sessions" id="session-{{ loop.index }}" 
+                         value="{{ session }}" {% if session in selected_sessions %}checked{% endif %}>
+                  <label for="session-{{ loop.index }}" class="session-label">
+                    {{ session }}
+                  </label>
+                  {% if session in session_stats %}
+                  <span class="session-count">
+                    {{ session_stats[session].attendees }} fan{% if session_stats[session].attendees != 1 %}s{% endif %}
+                  </span>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="meeting-preference">
+              <label>
+                <input type="checkbox" name="wants_to_meet" id="wants-to-meet" 
+                       {% if wants_to_meet %}checked{% endif %}>
+                👋 I'm open to meeting up with other fans
+              </label>
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+              <button type="submit" class="cta-button">
+                Save Preferences
+              </button>
+              {% if not current_user.lanyard_ordered %}
+              <a href="{{ url_for('user.order_lanyard') }}" class="cta-button-secondary">
+                Order Free Lanyard
+              </a>
+              {% endif %}
+            </div>
+          </form>
+          {% endif %}
         </div>
+      </section>
     </div>
 
-    <!-- Tournament Links Section -->
-    {% if tournament.about or tournament.draw_url or tournament.schedule_url %}
-    <div class="card mt-4 mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="card-title h5 mb-0">Tournament Information</h3>
-            {% if current_user.is_admin %}
-            <a href="{{ url_for('admin.edit_tournament', tournament_id=tournament.id) }}" class="btn btn-sm btn-outline-primary">Edit Info</a>
-            {% endif %}
+    <!-- Right Column: Stats & Meeting List -->
+    <div>
+      <!-- Stats -->
+      <div class="stats-box">
+        <h3>Tournament Stats</h3>
+        <div class="stat-item">
+          <div class="stat-label">Total Fans Attending</div>
+          <div class="stat-value">{{ attending_count }}</div>
         </div>
-        <div class="card-body">
-            {% if tournament.about %}
-            <div class="mb-3">
-                <h4 class="h6">About This Tournament</h4>
-                <div class="tournament-description">{{ tournament.about }}</div>
-            </div>
-            {% endif %}
-
-            {% if tournament.draw_url or tournament.schedule_url %}
-            <div class="tournament-links">
-                <h4 class="h6">Tournament Links</h4>
-                <ul class="list-unstyled">
-                    {% if tournament.draw_url %}
-                    <li class="mb-2">
-                        <a href="{{ tournament.draw_url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                            <i data-feather="link" class="icon-sm mr-1"></i> View Tournament Draw
-                        </a>
-                    </li>
-                    {% endif %}
-
-                    {% if tournament.schedule_url %}
-                    <li>
-                        <a href="{{ tournament.schedule_url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
-                            <i data-feather="calendar" class="icon-sm mr-1"></i> View Tournament Schedule
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-            {% endif %}
+        <div class="stat-item">
+          <div class="stat-label">Fans Open to Meeting</div>
+          <div class="stat-value">{{ meeting_count }}</div>
         </div>
+      </div>
+
+      <!-- Who's Open to Meeting -->
+      {% if user_open_to_meet and raised_hands %}
+      <div class="meeting-list">
+        <h3>Who's Open to Meeting</h3>
+        {% for person in raised_hands %}
+          {% if person.user_id != current_user.id %}
+          <div class="meeting-item">
+            <div class="meeting-person">
+              <div class="meeting-name">{{ person.name }}</div>
+              <div class="meeting-session">{{ person.session }}</div>
+            </div>
+            <a href="mailto:{{ person.email }}" class="contact-button">
+              Contact
+            </a>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
-
-    <div class="row mt-4">
-        <div class="col-md-8">
-            {% if current_user.lanyard_ordered %}
-            <div class="alert alert-success mb-4">
-                <i data-feather="package" class="icon-sm"></i> Your lanyard is on its way!
-            </div>
-            {% endif %}
-            <!-- Tournament Attendance Section -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title h5 mb-0">Your Tournament Attendance</h3>
-                </div>
-                <div class="card-body">
-                    {% if user_attending %}
-                    <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.id) }}">
-                        <button type="submit" class="btn btn-danger mb-3">
-                            <i data-feather="x-circle" class="icon-sm"></i> ❌ I'm no longer attending
-                        </button>
-                    </form>
-                    {% else %}
-                    <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.id) }}">
-                        <button type="submit" class="btn btn-success mb-3">
-                            <i data-feather="check-circle" class="icon-sm"></i> ✅ I'm attending this tournament
-                        </button>
-                    </form>
-                    {% endif %}
-
-                    <div class="alert alert-info small">
-                        <i data-feather="info" class="icon-sm"></i> 
-                        <strong>{{ attending_count }}</strong> fan{% if attending_count != 1 %}s{% endif %} attending this tournament.
-                        <strong>{{ meeting_count }}</strong> fan{% if meeting_count != 1 %}s{% endif %} open to meeting.
-                    </div>
-
-                    {% if user_attending %}
-                    <!-- Sessions Selection Form -->
-                    <form method="POST" action="{{ url_for('tournaments.update_sessions', tournament_slug=tournament.slug) }}" class="mt-4">
-                        <h4 class="h6 mb-3">Select the days and sessions you're attending:</h4>
-
-                        <div class="session-grid">
-                            {% for session in tournament.sessions %}
-                            <div class="form-check mb-3 session-item">
-                                <div class="d-flex align-items-center">
-                                    <input class="form-check-input" type="checkbox" name="sessions" id="session-{{ loop.index }}" 
-                                        value="{{ session }}" {% if session in selected_sessions %}checked{% endif %}>
-                                    <label class="form-check-label ml-2" for="session-{{ loop.index }}">
-                                        {{ session }}
-                                    </label>
-                                    
-                                    {% if session in session_stats %}
-                                    <span class="badge badge-success ml-2" title="Other fans attending this session">
-                                        {{ session_stats[session].attendees }} fan{% if session_stats[session].attendees != 1 %}s{% endif %}
-                                    </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-
-                        <div class="form-group mt-4">
-                            <label class="font-weight-bold">Are you open to meeting other fans?</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="wants_to_meet" id="wants-to-meet" 
-                                   {% if wants_to_meet %}checked{% endif %}>
-                                <label class="form-check-label" for="wants-to-meet">
-                                    👋 I'm open to meeting up with other fans
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group mt-4">
-                            <button type="submit" class="btn btn-success">
-                                <i data-feather="save" class="icon-sm"></i> Save Preferences
-                            </button>
-
-                            {% if not current_user.lanyard_ordered %}
-                            <a href="{{ url_for('user.order_lanyard') }}" class="btn btn-outline-success ml-2">
-                                <i data-feather="tag" class="icon-sm"></i> Order Free Lanyard
-                            </a>
-                            {% endif %}
-                        </div>
-                    </form>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4">
-            <!-- Stats Card -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3 class="card-title h5 mb-0">Tournament Stats</h3>
-                </div>
-                <div class="card-body">
-                    <div class="stat-item">
-                        <div class="stat-label">Total Fans Attending</div>
-                        <div class="stat-value">{{ attending_count }}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Fans Open to Meeting</div>
-                        <div class="stat-value">{{ meeting_count }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Who's Going Card (only visible if user is attending and open to meeting) -->
-            {% if user_open_to_meet and raised_hands %}
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title h5 mb-0">Who's Open to Meeting</h3>
-                </div>
-                <div class="card-body p-0">
-                    <ul class="list-group list-group-flush">
-                        {% for person in raised_hands %}
-                            {% if person.user_id != current_user.id %}
-                            <li class="list-group-item">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="font-weight-bold">{{ person.name }}</div>
-                                        <div class="small text-muted">{{ person.session }}</div>
-                                    </div>
-                                    <a href="mailto:{{ person.email }}" class="btn btn-sm btn-outline-primary">
-                                        <i data-feather="mail" class="icon-xs"></i>
-                                    </a>
-                                </div>
-                            </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
+  </div>
 </div>
 {% endblock %}

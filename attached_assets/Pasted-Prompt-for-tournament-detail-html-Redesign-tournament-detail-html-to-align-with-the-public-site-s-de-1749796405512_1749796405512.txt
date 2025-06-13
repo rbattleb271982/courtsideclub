@@ -1,0 +1,47 @@
+Prompt for tournament_detail.html
+Redesign tournament_detail.html to align with the public site's design system.
+Follow these instructions and do not checkpoint unless I explicitly say so:
+Remove all Bootstrap usage (row, col-*, card, btn-success, etc.).
+Use a .container for page width and layout, with .features-grid or .section for structure.
+Apply public font system: 'Crimson Text' for titles, 'Inter' for body.
+Replace buttons with .cta-button styling (no .btn-*).
+Show tournament details (tournament.name, dates, etc.) in a hero-style block matching public layout.
+For session selection, use stacked checkboxes grouped by day — styled like public forms.
+Use a form submission with “Save Preferences” button at the bottom.
+Display “Who’s Open to Meeting” list using a responsive grid (avatars + names if applicable).
+Remove any inline styles or hardcoded Bootstrap classes.
+Eliminate JSON-LD schema from template (move elsewhere if needed).
+Let me review before checkpointing.
+✅ STEP 3: Prompt for order_lanyard.html
+Refactor order_lanyard.html to match the public site's layout and styling.
+Follow the instructions and do not checkpoint unless I explicitly say so:
+Remove all Bootstrap grid and form classes.
+Use .container and mobile-first layout structure from public pages.
+Style form inputs using public design — no inline styles or embedded CSS.
+Use 'Inter' for labels and inputs.
+Replace alerts and banners with styled info blocks using public green background or soft borders.
+Replace button with .cta-button.
+Make sure fields are pre-filled from current_user, and dropdowns use Jinja (states).
+Remove any hardcoded US dropdown if not needed.
+Pause after render. I will tell you when to checkpoint.
+✅ STEP 4: Prompt for profile.html (new version, not legacy)
+Redesign user/profile.html to align with the public site's design system.
+Follow these rules and do not checkpoint unless I say so:
+Remove all Bootstrap grid and form classes — replace with public .container, .form-section, or .features-grid.
+Use 'Inter' and 'Crimson Text' fonts.
+Style toggle switches or checkboxes using public styles — no green sliders or custom JS unless absolutely needed.
+Use .cta-button styles for all form actions.
+Render full name fields and dropdowns using clean spacing and mobile-first layout.
+For past tournaments autocomplete: leave the JS functionality, but clean the layout and spacing to match the rest of the site.
+Remove all inline styles and non-design-system elements.
+Include spacing/padding that mirrors .features sections from public pages.
+Show me the full page output — I’ll confirm before checkpoint.
+✅ STEP 5: Prompt for qr_code.html
+Refactor qr_code.html to match the public site layout and design.
+Please follow these steps and do not checkpoint unless I explicitly confirm:
+Use .container and center the QR code with padding/margin from public CTA or hero patterns.
+Apply 'Inter' font for all text.
+Display a headline using 'Crimson Text' that says “Show this QR at the tournament” or similar.
+Center-align the QR code and optionally add a .cta-button for "Copy Link" or "Share QR" if the feature is live.
+Remove any Bootstrap classes or inline styles.
+Hold the checkpoint until I review the result.
