@@ -145,6 +145,10 @@
     background: white;
   }
 
+  .tournaments-table thead {
+    background: transparent;
+  }
+
   .tournaments-table th {
     padding: 0.75rem;
     text-align: left;
@@ -161,7 +165,7 @@
   }
 
   .tournaments-table tbody tr:hover {
-    background: #f9fafb;
+    background: transparent;
   }
 
   .tournament-name-cell {
@@ -327,13 +331,13 @@
             </thead>
             <tbody>
               {% for tournament in tournaments %}
-              <tr class="tournament-row" data-name="{{ tournament.name|lower }}" data-surface="{{ tournament.surface|lower if tournament.surface else '' }}" data-attendance="{{ tournament.attendee_count or 0 }}">
+              <tr class="tournament-row" data-tournament-name="{{ tournament.name|lower }}" data-tournament-type="{{ tournament.tour_type or '' }}" data-attendance="{{ tournament.attendee_count or 0 }}">
                 <td data-label="Tournament" class="tournament-name-cell">
                   <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
                     {{ tournament.name }}
                   </a>
                   <div class="tournament-location-cell">
-                    {{ tournament.city }}, {{ tournament.country }}
+                    {{ tournament.location }}
                   </div>
                   {% if tournament.surface %}
                     <div class="tournament-surface-cell">{{ tournament.surface }}</div>
@@ -373,10 +377,10 @@ function filterTournaments() {
     let hasVisibleRows = false;
 
     rows.forEach(row => {
-      const name = row.dataset.name;
-      const surface = row.dataset.surface;
+      const name = row.dataset.tournamentName;
+      const type = row.dataset.tournamentType;
       const matchesSearch = !searchTerm || name.includes(searchTerm);
-      const matchesSurface = !surfaceFilter || surface === surfaceFilter;
+      const matchesSurface = !surfaceFilter || type.toLowerCase() === surfaceFilter;
 
       if (matchesSearch && matchesSurface) {
         row.style.display = '';
@@ -414,7 +418,7 @@ function sortTournaments() {
     rows.sort((a, b) => {
       switch (sortValue) {
         case 'name':
-          return a.dataset.name.localeCompare(b.dataset.name);
+          return a.dataset.tournamentName.localeCompare(b.dataset.tournamentName);
         case 'attendance':
           return parseInt(b.dataset.attendance) - parseInt(a.dataset.attendance);
         default: // 'date'
