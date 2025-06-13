@@ -3,11 +3,48 @@
 
 {% block head %}
 <style>
+/* Page Background */
+body {
+  background: #FBFAFB !important;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+}
+
+/* Profile Cards */
+.card {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.card-header h2 {
+  font-family: 'Crimson Text', Georgia, serif;
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  border-left: 3px solid #2c5e2e;
+  padding-left: 1rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
 /* Tournament Search Styling */
 .tournament-search-container {
-  background: #f8f8f6;
+  background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
 }
@@ -16,7 +53,7 @@
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #171717;
+  color: #1f2937;
   margin-bottom: 1rem;
 }
 
@@ -30,26 +67,27 @@
   flex: 1;
 }
 
-.search-btn {
+.search-btn, .btn-primary {
   padding: 0.75rem 1rem;
   background: #2c5e2e;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-weight: 600;
 }
 
-.search-btn:hover {
+.search-btn:hover, .btn-primary:hover {
   background: #224823;
 }
 
 .search-results {
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   background: white;
   display: none;
   margin-bottom: 1rem;
@@ -80,6 +118,7 @@
   font-size: 0.75rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-weight: 500;
 }
 
 .add-btn:hover {
@@ -92,17 +131,19 @@
   margin-bottom: 0.75rem;
 }
 
+/* Tournament Tags - Homepage Style */
 .tournament-tag {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: white;
-  border: 1px solid #2c5e2e;
+  background: #f0f0ec;
+  border: none;
   border-radius: 20px;
-  padding: 0.375rem 0.75rem;
+  padding: 0.25rem 0.75rem;
   margin: 0.25rem;
   font-size: 0.875rem;
-  color: #2c5e2e;
+  color: #374151;
+  font-weight: 500;
 }
 
 .remove-icon {
@@ -120,6 +161,51 @@
   color: #dc2626;
 }
 
+/* Invite Section */
+.alert-light {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  opacity: 1 !important;
+  padding: 1.5rem !important;
+}
+
+.alert-light .btn-outline-primary {
+  background: #2c5e2e;
+  border-color: #2c5e2e;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.alert-light .btn-outline-primary:hover {
+  background: #224823;
+  border-color: #224823;
+}
+
+/* Form Inputs */
+.form-control, .form-select {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #2c5e2e;
+  box-shadow: 0 0 0 3px rgba(44, 94, 46, 0.1);
+}
+
+/* Reduce Spacing */
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.py-5 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
 @media (max-width: 768px) {
   .search-input-group {
     flex-direction: column;
@@ -133,14 +219,18 @@
     width: 100%;
     justify-content: space-between;
   }
+  
+  .py-5 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container py-5">
-  <h1 class="mb-3" style="font-family: 'Crimson Text', Georgia, serif;">Your Profile</h1>
-  <p class="text-muted mb-4">Update your preferences and manage your CourtSide Club experience.</p>
+  <h1 class="mb-4" style="font-family: 'Crimson Text', Georgia, serif; color: #1f2937; font-size: 2rem; font-weight: bold;">Your Profile</h1>
   
   <form method="POST">
     {{ form.hidden_tag() }}

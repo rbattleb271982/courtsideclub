@@ -1,0 +1,50 @@
+Please update the Profile page (/profile) styling to match the same visual system used on the homepage and public pages. This includes adjusting color palette, section styling, button treatment, and tag backgrounds to ensure consistency across the logged-in experience.
+✅ 1. Remove Heavy Green Header Blocks
+❌ Do not use large solid green bars as section headers.
+✅ Instead:
+Use white background sections
+Section titles should use:
+Font: Crimson Text
+Color: #1f2937
+Font size: 1.5rem–2rem, bold
+Optionally, add a 1–2px green underline or left border for visual grouping, but keep it light.
+✅ 2. Standardize Button Colors
+All primary buttons (e.g. Save My Profile, Invite via Text, Clear) should use the homepage CTA green.
+Element	Color	Use For
+Primary button bg	#2c5e2e	Save, Invite, Add, Clear
+Primary button hover	#224823	Hover/focus state
+Primary button text	#ffffff	Always white
+Muted button text	#374151	For inline muted sections
+✅ 3. Fix Background Colors
+Section	Background	Notes
+Page background	#FBFAFB	Consistent with public pages
+Form sections (cards)	#ffffff	Each form section container
+Tag backgrounds (selected tournaments)	#f0f0ec	Soft tag backgrounds
+Search result items	#ffffff	Should float cleanly on white
+✅ 4. Tag & Search UI
+Selected tournaments should be styled like the homepage badge/tags:
+Background: #f0f0ec
+Text color: #374151
+Rounded corners (large)
+Padding: 0.25rem 0.75rem
+Remove any boxy or hard edges
+✅ 5. Invite Section
+The “Invite a Friend” section currently appears faded.
+✅ It should have full opacity
+Padding: 1.5rem
+Background: #f0f0ec or #ffffff
+Text styling should match homepage sections (Inter, #1f2937)
+✅ 6. Spacing Fixes
+Reduce excessive vertical spacing between sections
+Add consistent margin between:
+Bucket List and Invite
+Invite and Save My Profile
+Maintain mobile spacing rhythm (stacked padding, no > 3rem gaps)
+📋 Summary
+Remove green blocks and use light, modern section styling
+Use homepage color palette exactly:
+Green CTA: #2c5e2e
+Background: #FBFAFB
+Text: #1f2937 for headers, #374151 for body
+Card/Tag background: #f0f0ec
+Apply spacing, tag, and button styling to match homepage

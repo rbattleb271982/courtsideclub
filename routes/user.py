@@ -960,7 +960,7 @@ def my_tournaments():
     soonest_tournament = None
     
     # Only show lanyard reminder if user is attending tournaments but hasn't selected sessions properly
-    if not current_user.lanyard_ordered:
+    if not getattr(current_user, 'lanyard_ordered', False):
         # Check for users attending tournaments but missing proper session selections
         incomplete_tournaments = []
         for ut in user_tournaments:
