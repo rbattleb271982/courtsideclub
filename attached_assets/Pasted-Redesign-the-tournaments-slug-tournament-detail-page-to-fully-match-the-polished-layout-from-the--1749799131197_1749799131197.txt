@@ -1,0 +1,58 @@
+Redesign the /tournaments/<slug> tournament detail page to fully match the polished layout from the new v0 version. This is a complete replacement of the existing template and structure.
+✅ Template Layout Instructions
+Replace the current Jinja/HTML layout with a new structure that:
+1. Tournament Header Block (Top)
+Display:
+Tournament name, dates, location, category (e.g. "WTA 250")
+Stats badges:
+{{ attending_count }} fans attending
+{{ meeting_count }} open to meeting
+Buttons:
+“Official Tournament Site” (link to tournament.official_url)
+“Fan History” (dropdown or section lower on the page)
+Use serif fonts for title (Crimson Text), and styled badges using brand colors:
+Green: #669127
+Gold: #EDB418
+Cream: #FBFAFB
+2. Two-Column Layout (Desktop), Stacked (Mobile)
+Left Column (lg:col-span-4) → Attendance status buttons:
+“I’m Attending” (green, selected)
+“Maybe Attending” (gray)
+“Not Attending” (red)
+Update UserTournament.attending and session logic accordingly
+Right Column (lg:col-span-8) → Session selector grouped by day:
+Each day: header (e.g., “Jun 09 (Day 1)”)
+Each session: pill-style button with session name, time, and X attending
+Use checkboxes or toggles to allow multiple session selection
+Selected sessions save to UserTournament.session_label (comma-separated)
+Make sessions disabled if user has chosen “Not Attending.”
+3. Sticky Save Bar (Bottom)
+Add a sticky bar (mobile) or fixed card (desktop) at bottom with:
+Checkbox: “I’m open to meeting other fans” (UserTournament.open_to_meet)
+Dynamic text: “You’ve selected 3 sessions” (if any)
+Button: “Save My Selections”
+On click, update UserTournament and show temporary success state (e.g., “Preferences Saved! ✓”)
+4. Members Attending Grid
+Show 8 placeholder cards of members attending (query users who marked attending=True)
+Each card shows:
+Avatar (initials or placeholder)
+“Attending X sessions”
+Badge: “Open to meeting” if open_to_meet=True
+Do not link to member profiles
+Do not show usernames or PII
+5. Fan History Section
+Title: “Fan History”
+Subtext: “Fans attending this tournament have also been to…”
+Logic:
+For each user attending this tournament, query their other UserTournament entries with attending=True
+Aggregate and display the most common 3–5 tournament names (excluding current one)
+Format: simple list or pill badges (no links)
+🧪 Final Test Criteria:
+Load /tournaments/<slug> and confirm:
+Layout is mobile-first and responsive on desktop
+Attending/Maybe/Not toggle works
+Session toggles work and persist
+Save button updates status and shows success feedback
+Stats and fan history are accurate
+No broken links or user identity exposure
+Do not finish until this entire layout is fully implemented and functional. Test all form behavior. Use real test users if possible. No checkpoints unless absolutely necessary.

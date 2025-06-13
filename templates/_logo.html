@@ -1,4 +1,4 @@
-<a href="{{ url_for('main.public_home') }}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+<a href="{% if current_user.is_authenticated %}{{ url_for('user.my_tournaments') }}{% else %}{{ url_for('main.public_home') }}{% endif %}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
   <div class="logo-icon">
     <span>C</span>
   </div>

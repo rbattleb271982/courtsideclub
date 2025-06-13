@@ -9,6 +9,7 @@
         <a href="{{ url_for('user.my_tournaments') }}" class="nav-link">My Tournaments</a>
         <a href="{{ url_for('user.browse_tournaments') }}" class="nav-link">Browse</a>
         <a href="{{ url_for('main.blog') }}" class="nav-link">Stories</a>
+        <a href="{{ url_for('main.faqs') }}" class="nav-link">Faqs</a>
         {% if current_user.is_admin %}
           <a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a>
         {% endif %}
@@ -46,6 +47,7 @@
           <a href="{{ url_for('user.my_tournaments') }}" class="mobile-nav-link">My Tournaments</a>
           <a href="{{ url_for('user.browse_tournaments') }}" class="mobile-nav-link">Browse Tournaments</a>
           <a href="{{ url_for('main.blog') }}" class="mobile-nav-link">Stories</a>
+          <a href="{{ url_for('main.faqs') }}" class="mobile-nav-link">Faqs</a>
           <a href="{{ url_for('user.lanyard') }}" class="mobile-nav-link">Order Lanyard</a>
           {% if current_user.is_admin %}
             <a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin Dashboard</a>
