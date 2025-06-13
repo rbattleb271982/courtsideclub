@@ -366,54 +366,7 @@
   {% block head %}{% endblock %}
 </head>
 <body>
-  <!-- Site Header -->
-  <header class="site-header">
-    <div class="header-container">
-      <div class="logo-container">
-        <a href="{{ url_for('main.public_home') }}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-          <div class="logo-icon">
-            <span>C</span>
-          </div>
-          <span class="logo-text">CourtSide Club</span>
-        </a>
-      </div>
-      <nav class="nav-links">
-        <a href="{{ url_for('main.public_tournaments') }}" class="nav-link">Tournaments</a>
-        <a href="{{ url_for('main.community') }}" class="nav-link">Community</a>
-        <a href="{{ url_for('main.blog') }}" class="nav-link">Stories</a>
-        <a href="{{ url_for('main.about') }}" class="nav-link">About</a>
-        <a href="{{ url_for('main.faqs') }}" class="nav-link">Faqs</a>
-      </nav>
-      <div class="header-buttons">
-        <a href="{{ url_for('auth.login') }}" class="btn-sign-in">Sign In</a>
-        <a href="{{ url_for('auth.signup') }}" class="btn-join-club">Join Club</a>
-        <button class="mobile-menu-btn" id="mobile-menu-toggle">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <line x1="4" y1="12" x2="20" y2="12"></line>
-            <line x1="4" y1="18" x2="20" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Mobile Menu Panel -->
-    <div id="mobile-menu" class="mobile-menu">
-      <div class="mobile-menu-content">
-        <nav class="mobile-nav-links">
-          <a href="{{ url_for('main.public_tournaments') }}" class="mobile-nav-link">Tournaments</a>
-          <a href="{{ url_for('main.community') }}" class="mobile-nav-link">Community</a>
-          <a href="{{ url_for('main.blog') }}" class="mobile-nav-link">Stories</a>
-          <a href="{{ url_for('main.about') }}" class="mobile-nav-link">About</a>
-          <a href="{{ url_for('main.faqs') }}" class="mobile-nav-link">Faqs</a>
-        </nav>
-        <div class="mobile-auth-buttons">
-          <a href="{{ url_for('auth.login') }}" class="mobile-btn-sign-in">Sign In</a>
-          <a href="{{ url_for('auth.signup') }}" class="mobile-btn-join-club">Join Club</a>
-        </div>
-      </div>
-    </div>
-  </header>
+  {% include '_navbar.html' %}
 
   <!-- Main Content -->
   <main>

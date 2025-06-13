@@ -7,7 +7,7 @@
     <title>{% block title %}CourtSide Club{% endblock %}</title>
 
     <!-- Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
 
     <!-- Bootstrap CSS and JS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -28,80 +28,85 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <header class="mobile-header">
-      <div class="nav-container" style="display: flex; justify-content: space-between; align-items: center;">
-        <div class="logo"><a href="{{ url_for('main.public_home') }}" style="text-decoration: none; color: inherit;">CourtSide Club</a></div>
-        <nav id="mobile-menu" class="mobile-menu">
-          {% if current_user.is_authenticated %}
-            {% if current_user.is_admin %}
-              <a href="{{ url_for('admin.admin_dashboard') }}">Admin Dashboard</a>
-              <a href="{{ url_for('admin_agents.agents_dashboard') }}">AI Agents</a>
-              <a href="{{ url_for('admin.list_tournaments') }}">Manage Tournaments</a>
-              <a href="{{ url_for('admin.lanyard_fulfillment') }}">Lanyards</a>
-              <a href="{{ url_for('admin.view_events') }}">Event Log</a>
-            {% endif %}
-            <a href="{{ url_for('user.my_tournaments') }}">My Tournaments</a>
-            <a href="{{ url_for('user.browse_tournaments') }}">Browse Tournaments</a>
-            <a href="/blog">Blog</a>
-            <a href="{{ url_for('user.lanyard') }}">Order Lanyard</a>
-            <a href="{{ url_for('user.profile') }}">Profile</a>
-            <a href="{{ url_for('auth.logout') }}">Log Out</a>
-          {% else %}
-            <a href="/blog">Blog</a>
-            <a href="{{ url_for('auth.signup') }}">Register</a>
-            <a href="{{ url_for('auth.login') }}">Login</a>
-          {% endif %}
-        </nav>
-        <button class="menu-toggle" onclick="toggleMenu(event)">☰</button>
-      </div>
-    </header>
-
-    <!-- Flash Messages -->
-    <div class="container mt-3">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
+    {% include '_navbar.html' %}
 
     <!-- Main Content -->
-    <main class="container py-5">
+    <main style="margin-top: 4rem;">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div style="padding: 1rem; max-width: 1280px; margin: 0 auto;">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" style="margin-bottom: 1rem;">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
         {% block content %}{% endblock %}
     </main>
 
-    <footer style="padding: 1rem; text-align: center; font-size: 0.9rem; color: #888;">
+    <footer style="padding: 2rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280; border-top: 1px solid #e5e7eb; margin-top: 3rem;">
         &copy; {{ current_year }} CourtSide Club. All rights reserved.
     </footer>
 
     {% block scripts %}{% endblock %}
     
     <script>
-      function toggleMenu(event) {
-        event.stopPropagation(); // prevent click from bubbling
-        const menu = document.getElementById('mobile-menu');
-        const isOpen = menu.style.display === 'flex';
-        menu.style.display = isOpen ? 'none' : 'flex';
-      }
-
-      document.addEventListener('click', function(event) {
-        const menu = document.getElementById('mobile-menu');
-        const toggle = document.querySelector('.menu-toggle');
-        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
-          menu.style.display = 'none';
+      document.addEventListener('DOMContentLoaded', function() {
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (menuToggle && mobileMenu) {
+          menuToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            mobileMenu.classList.toggle('active');
+          });
         }
-      });
 
-      // Ensure the menu is hidden on load for mobile, visible on desktop
-      document.addEventListener('DOMContentLoaded', function () {
-        const menu = document.getElementById('mobile-menu');
-        if (window.innerWidth < 768) {
-          menu.style.display = 'none';
-        }
+        // Close mobile menu when clicking on links
+        const mobileLinks = document.querySelectorAll('.mobile-nav-link, .mobile-btn-sign-in, .mobile-btn-join-club');
+        mobileLinks.forEach(link => {
+          link.addEventListener('click', function() {
+            if (mobileMenu) {
+              mobileMenu.classList.remove('active');
+            }
+          });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+          const mobileMenuBtn = document.querySelector('#mobile-menu-toggle');
+          
+          if (mobileMenu && !mobileMenu.contains(event.target) && mobileMenuBtn && !mobileMenuBtn.contains(event.target)) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+
+        // Close menu on window resize if desktop
+        window.addEventListener('resize', function() {
+          if (window.innerWidth >= 768 && mobileMenu) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', function(event) {
+          if (event.key === 'Escape' && mobileMenu) {
+            mobileMenu.classList.remove('active');
+          }
+        });
+
+        // Close mobile menu on scroll
+        window.addEventListener('scroll', function() {
+          if (mobileMenu && mobileMenu.classList.contains('active')) {
+            mobileMenu.classList.remove('active');
+          }
+        });
       });
     </script>
 </body>

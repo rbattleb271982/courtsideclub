@@ -1,0 +1,75 @@
+<!-- Site Header -->
+<header class="site-header">
+  <div class="header-container">
+    <div class="logo-container">
+      {% include '_logo.html' %}
+    </div>
+    <nav class="nav-links">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('user.my_tournaments') }}" class="nav-link">My Tournaments</a>
+        <a href="{{ url_for('user.browse_tournaments') }}" class="nav-link">Browse</a>
+        <a href="{{ url_for('main.blog') }}" class="nav-link">Stories</a>
+        {% if current_user.is_admin %}
+          <a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a>
+        {% endif %}
+      {% else %}
+        <a href="{{ url_for('main.public_tournaments') }}" class="nav-link">Tournaments</a>
+        <a href="{{ url_for('main.community') }}" class="nav-link">Community</a>
+        <a href="{{ url_for('main.blog') }}" class="nav-link">Stories</a>
+        <a href="{{ url_for('main.about') }}" class="nav-link">About</a>
+        <a href="{{ url_for('main.faqs') }}" class="nav-link">Faqs</a>
+      {% endif %}
+    </nav>
+    <div class="header-buttons">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('user.profile') }}" class="btn-sign-in">Profile</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn-join-club">Log Out</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn-sign-in">Sign In</a>
+        <a href="{{ url_for('auth.signup') }}" class="btn-join-club">Join Club</a>
+      {% endif %}
+      <button class="mobile-menu-btn" id="mobile-menu-toggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Panel -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-content">
+      <nav class="mobile-nav-links">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('user.my_tournaments') }}" class="mobile-nav-link">My Tournaments</a>
+          <a href="{{ url_for('user.browse_tournaments') }}" class="mobile-nav-link">Browse Tournaments</a>
+          <a href="{{ url_for('main.blog') }}" class="mobile-nav-link">Stories</a>
+          <a href="{{ url_for('user.lanyard') }}" class="mobile-nav-link">Order Lanyard</a>
+          {% if current_user.is_admin %}
+            <a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin Dashboard</a>
+            <a href="{{ url_for('admin_agents.agents_dashboard') }}" class="mobile-nav-link">AI Agents</a>
+            <a href="{{ url_for('admin.list_tournaments') }}" class="mobile-nav-link">Manage Tournaments</a>
+            <a href="{{ url_for('admin.lanyard_fulfillment') }}" class="mobile-nav-link">Lanyards</a>
+          {% endif %}
+        {% else %}
+          <a href="{{ url_for('main.public_tournaments') }}" class="mobile-nav-link">Tournaments</a>
+          <a href="{{ url_for('main.community') }}" class="mobile-nav-link">Community</a>
+          <a href="{{ url_for('main.blog') }}" class="mobile-nav-link">Stories</a>
+          <a href="{{ url_for('main.about') }}" class="mobile-nav-link">About</a>
+          <a href="{{ url_for('main.faqs') }}" class="mobile-nav-link">Faqs</a>
+        {% endif %}
+      </nav>
+      <div class="mobile-auth-buttons">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('user.profile') }}" class="mobile-btn-sign-in">Profile</a>
+          <a href="{{ url_for('auth.logout') }}" class="mobile-btn-join-club">Log Out</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}" class="mobile-btn-sign-in">Sign In</a>
+          <a href="{{ url_for('auth.signup') }}" class="mobile-btn-join-club">Join Club</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</header>

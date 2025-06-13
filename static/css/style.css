@@ -75,6 +75,250 @@ a:hover {
   --csc-blue: #318BE8;
 }
 
+/* Site Header Styles - Unified Navigation */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.header-container {
+  display: flex;
+  height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .header-container {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .header-container {
+    padding: 0 3rem;
+  }
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  border-radius: 0.375rem;
+  background: #4a6b4a;
+  padding: 0.375rem;
+}
+
+.logo-icon span {
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.logo-text {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: #171717;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: none;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #525252;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #3a5a3a;
+}
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-sign-in {
+  display: none;
+  color: #525252;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .btn-sign-in {
+    display: inline;
+  }
+}
+
+.btn-sign-in:hover {
+  color: #3a5a3a;
+}
+
+.btn-join-club {
+  display: none;
+  align-items: center;
+  background: #4a6b4a;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+@media (min-width: 768px) {
+  .btn-join-club {
+    display: inline-flex;
+  }
+}
+
+.btn-join-club:hover {
+  background: #3a5a3a;
+  color: white;
+}
+
+.mobile-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  color: #404040;
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-btn {
+    display: none;
+  }
+}
+
+/* Mobile Menu Panel */
+.mobile-menu {
+  position: fixed;
+  top: 4rem;
+  left: 0;
+  right: 0;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 50;
+  display: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.2s ease-in-out;
+}
+
+.mobile-menu.active {
+  display: block !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.mobile-menu-content {
+  padding: 1rem;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mobile-nav-link {
+  color: #525252;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f5f5f5;
+  transition: all 0.2s ease;
+}
+
+.mobile-nav-link:hover {
+  color: #3a5a3a;
+}
+
+.mobile-nav-link:last-child {
+  border-bottom: none;
+}
+
+.mobile-auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.mobile-btn-sign-in {
+  color: #525252;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 0;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.mobile-btn-sign-in:hover {
+  color: #3a5a3a;
+}
+
+.mobile-btn-join-club {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #4a6b4a;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 9999px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.mobile-btn-join-club:hover {
+  background: #3a5a3a;
+  color: white;
+}
+
 /* Consistent hero headline styling */
 .hero-title {
   font-family: 'Inter', sans-serif;
