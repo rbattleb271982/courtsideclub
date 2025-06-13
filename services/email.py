@@ -235,7 +235,7 @@ def send_morning_of_email(user_id, tournament_id, session_date, session_name, de
         return False
 
 def send_welcome_email(user_id):
-    """Send welcome email to new users"""
+    """Send welcome email to new users with branded design"""
     try:
         user = db.session.get(User, user_id)
         if not user:
@@ -247,42 +247,164 @@ def send_welcome_email(user_id):
             logger.info(f"User {user.email} has opted out of emails")
             return False
         
-        # Get upcoming tournaments
+        # Get upcoming Grand Slam and Masters 1000 tournaments only
         upcoming_tournaments = Tournament.query.filter(
-            Tournament.start_date >= datetime.date.today()
-        ).order_by(Tournament.start_date).limit(3).all()
+            Tournament.start_date >= datetime.date.today(),
+            Tournament.event_type.in_(['Grand Slam', 'Masters 1000'])
+        ).order_by(Tournament.start_date).limit(2).all()
         
-        tournament_html = ""
+        # Get user's first name with fallback
+        user_first_name = getattr(user, 'first_name', 'Member')
+        
+        # Generate tournament cards HTML
+        tournament_cards_html = ""
         if upcoming_tournaments:
-            tournament_lines = "".join([
-                f"<li>🎾 {t.name} – {t.start_date.strftime('%B %d')}</li>" 
-                for t in upcoming_tournaments
-            ])
-            tournament_html = f"<p>Some of the biggest tournaments coming up:</p><ul>{tournament_lines}</ul>"
+            for tournament in upcoming_tournaments:
+                # Count registered users for this tournament
+                registration_count = db.session.query(UserTournament).filter(
+                    UserTournament.tournament_id == tournament.id,
+                    UserTournament.attending == True
+                ).count()
+                
+                # Format date range
+                if tournament.start_date and tournament.end_date:
+                    if tournament.start_date.month == tournament.end_date.month:
+                        date_range = f"{tournament.start_date.strftime('%B %d')}-{tournament.end_date.strftime('%d, %Y')}"
+                    else:
+                        date_range = f"{tournament.start_date.strftime('%B %d')} - {tournament.end_date.strftime('%B %d, %Y')}"
+                else:
+                    date_range = tournament.start_date.strftime('%B %d, %Y') if tournament.start_date else "TBD"
+                
+                # Determine label and color
+                if tournament.event_type == 'Grand Slam':
+                    label = "Grand Slam"
+                    label_color = "#EDB418"
+                else:
+                    label = "Masters 1000"
+                    label_color = "#669127"
+                
+                tournament_cards_html += f"""
+                <div style="border: 1px solid {label_color}33; border-radius: 8px; padding: 22px; background-color: white; margin-bottom: 15px;">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+                    <div>
+                      <h3 style="font-family: 'Crimson Text', Georgia, serif; font-size: 20px; margin: 0 0 5px 0; font-weight: 600;">{tournament.name}</h3>
+                      <p style="margin: 0; font-size: 14px; color: #555;">{date_range}</p>
+                      <p style="margin: 0; font-size: 14px; color: #555;">{tournament.location}</p>
+                    </div>
+                    <div style="background-color: {label_color}; color: #171717; font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 600; white-space: nowrap;">
+                      {label}
+                    </div>
+                  </div>
+                  <p style="font-size: 14px; margin-top: 18px; color: #171717;">
+                    Join {registration_count}+ CourtSide Club members already registered
+                  </p>
+                </div>"""
         
+        # Get base URL from config
+        base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
+        
+        # Build the complete HTML email
         welcome_html = f"""
-        <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
+        <div style="max-width: 600px; margin: 0 auto; background-color: #FBFAFB; color: #171717; font-family: Inter, Arial, sans-serif; padding: 40px 30px;">
+          
+          <!-- Header -->
+          <div style="text-align: center; margin-bottom: 40px;">
+            <h1 style="font-family: 'Crimson Text', Georgia, serif; font-size: 32px; font-weight: 600; margin: 0 0 10px 0;">
+              Welcome to CourtSide Club
+            </h1>
+            <div style="height: 3px; width: 80px; background-color: #EDB418; margin: 0 auto 20px;"></div>
+            <p style="font-size: 16px; line-height: 1.5; margin: 0;">
+              You're now part of a discerning community that makes tennis more than just a spectator sport.
+            </p>
+          </div>
 
-        <p>Welcome to <strong>CourtSideClub</strong> – the community for tennis fans who want more than just a seat in the stands.</p>
+          <!-- Main Content -->
+          <div style="margin-bottom: 40px;">
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+              Hi {user_first_name},
+            </p>
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+              Welcome to CourtSide Club. We're thrilled you've joined our exclusive community of passionate tennis
+              enthusiasts. Get ready to transform your match-day experience from a seat in the stands to an immersive
+              connection with fellow fans who, like you, seek more from the world of tennis. Your membership opens the court
+              to unparalleled camaraderie and elevated tournament moments.
+            </p>
 
-        <p>Here's what you can do starting today:</p>
-        <ul>
-          <li>📍 Choose the tournaments you're attending</li>
-          <li>🤝 Raise your hand to meet other fans</li>
-          <li>🧢 Get your free lanyard to help you connect in person</li>
-        </ul>
+            <!-- Next Steps -->
+            <div style="background-color: white; padding: 30px; border-radius: 8px; margin-bottom: 30px; border: 1px solid rgba(237, 180, 24, 0.2);">
+              <h2 style="font-family: 'Crimson Text', Georgia, serif; font-size: 24px; margin-top: 0; margin-bottom: 25px; font-weight: 600;">
+                Your Next Steps to Connect
+              </h2>
 
-        {tournament_html}
+              <div style="display: flex; align-items: flex-start; margin-bottom: 25px;">
+                <div style="background-color: #669127; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 18px; flex-shrink: 0; border: 1px solid rgba(237, 180, 24, 0.3); font-weight: 700; font-size: 16px;">
+                  1
+                </div>
+                <div>
+                  <p style="margin: 0; font-size: 16px; font-weight: 600;">Choose Your Tournaments</p>
+                  <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">Select the events you'll be attending this season to unlock connections with other members.</p>
+                </div>
+              </div>
 
-        <p>Ready to dive in? <a href="{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login">Log in to pick your tournaments</a> and join the community.</p>
+              <div style="display: flex; align-items: flex-start; margin-bottom: 25px;">
+                <div style="background-color: #669127; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 18px; flex-shrink: 0; border: 1px solid rgba(237, 180, 24, 0.3); font-weight: 700; font-size: 16px;">
+                  2
+                </div>
+                <div>
+                  <p style="margin: 0; font-size: 16px; font-weight: 600;">Complete Your Profile</p>
+                  <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">Enhance your presence and discoverability within the club by sharing a bit more about your tennis journey.</p>
+                </div>
+              </div>
 
-        <p>Thanks for joining CourtSideClub — we're excited to have you with us!<br>
-        – The CourtSideClub Team</p>
+              <div style="display: flex; align-items: flex-start;">
+                <div style="background-color: #669127; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 18px; flex-shrink: 0; border: 1px solid rgba(237, 180, 24, 0.3); font-weight: 700; font-size: 16px;">
+                  3
+                </div>
+                <div>
+                  <p style="margin: 0; font-size: 16px; font-weight: 600;">Claim Your Free Member Lanyard</p>
+                  <p style="margin: 5px 0 0 0; font-size: 14px; color: #555;">Identify yourself as a valued member at events and access exclusive areas with your complimentary lanyard.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- CTA Button -->
+            <div style="text-align: center; margin: 35px 0;">
+              <a href="{base_url}/login" style="background-color: #669127; color: white; padding: 16px 32px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; letter-spacing: 0.3px;">
+                Log In to Get Started
+              </a>
+            </div>
+
+            <!-- Upcoming Tournaments -->"""
+        
+        # Add tournaments section if we have tournaments
+        if tournament_cards_html:
+            welcome_html += f"""
+            <div style="margin-top: 40px;">
+              <h2 style="font-family: 'Crimson Text', Georgia, serif; font-size: 24px; margin-bottom: 20px; font-weight: 600;">Upcoming Tournaments</h2>
+              {tournament_cards_html}
+            </div>"""
+        
+        welcome_html += """
+
+          </div>
+
+          <!-- Footer -->
+          <div style="text-align: center; border-top: 1px solid #E5E5E5; padding-top: 30px; margin-top: 40px; font-family: 'Crimson Text', Georgia, serif; font-size: 20px; font-style: italic; color: #171717;">
+            Tennis is better together.
+            <div style="font-size: 14px; color: #666; margin-top: 20px;">
+              <p>© 2024 CourtSide Club. All rights reserved.</p>
+              <p>
+                <a href="#" style="color: #669127; text-decoration: none; margin-right: 15px;">Privacy Policy</a>
+                <a href="#" style="color: #669127; text-decoration: none;">Unsubscribe</a>
+              </p>
+            </div>
+          </div>
+        </div>
         """
         
         return send_email(
             to_email=user.email,
-            subject="Welcome to CourtSideClub 🎾 Here's what's next",
+            subject="Welcome to CourtSide Club 🎾 Here's what's next",
             content_html=welcome_html
         )
         

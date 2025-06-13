@@ -151,6 +151,10 @@ def signup():
                 }
                 log_event(new_user.id, 'user_signup', event_data)
 
+                # Send welcome email
+                from services.email import send_welcome_email
+                send_welcome_email(new_user.id)
+
                 # Show welcome message
                 flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
                 

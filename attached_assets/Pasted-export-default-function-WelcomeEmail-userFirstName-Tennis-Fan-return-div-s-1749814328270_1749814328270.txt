@@ -1,0 +1,250 @@
+export default function WelcomeEmail({ userFirstName = "Tennis Fan" }) {
+  return (
+    <div
+      style={{
+        maxWidth: "600px",
+        margin: "0 auto",
+        backgroundColor: "#FBFAFB",
+        color: "#171717",
+        fontFamily: "Inter, Arial, sans-serif",
+        padding: "40px 30px",
+      }}
+    >
+      {/* Header */}
+      <div style={{ textAlign: "center", marginBottom: "40px" }}>
+        <h1
+          style={{
+            fontFamily: "Crimson Text, Georgia, serif",
+            fontSize: "32px",
+            fontWeight: "600",
+            margin: "0 0 10px 0",
+          }}
+        >
+          Welcome to CourtSide Club
+        </h1>
+        <div
+          style={{
+            height: "3px",
+            width: "80px",
+            backgroundColor: "#EDB418",
+            margin: "0 auto 20px",
+          }}
+        />
+        <p style={{ fontSize: "16px", lineHeight: "1.5", margin: 0 }}>
+          You're now part of a discerning community that makes tennis more than just a spectator sport.
+        </p>
+      </div>
+
+      {/* Main Content */}
+      <div style={{ marginBottom: "40px" }}>
+        <p style={{ fontSize: "16px", lineHeight: "1.6", marginBottom: "20px" }}>
+          Hi {userFirstName},
+        </p>
+        <p style={{ fontSize: "16px", lineHeight: "1.6", marginBottom: "30px" }}>
+          Welcome to CourtSide Club. We're thrilled you've joined our exclusive community of passionate tennis
+          enthusiasts. Get ready to transform your match-day experience from a seat in the stands to an immersive
+          connection with fellow fans who, like you, seek more from the world of tennis. Your membership opens the court
+          to unparalleled camaraderie and elevated tournament moments.
+        </p>
+
+        {/* Next Steps */}
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "30px",
+            borderRadius: "8px",
+            marginBottom: "30px",
+            border: "1px solid rgba(237, 180, 24, 0.2)",
+          }}
+        >
+          <h2
+            style={{
+              fontFamily: "Crimson Text, Georgia, serif",
+              fontSize: "24px",
+              marginTop: 0,
+              marginBottom: "25px",
+              fontWeight: "600",
+            }}
+          >
+            Your Next Steps to Connect
+          </h2>
+
+          {[{
+            number: 1,
+            title: "Choose Your Tournaments",
+            desc: "Select the events you'll be attending this season to unlock connections with other members."
+          }, {
+            number: 2,
+            title: "Complete Your Profile",
+            desc: "Enhance your presence and discoverability within the club by sharing a bit more about your tennis journey."
+          }, {
+            number: 3,
+            title: "Claim Your Free Member Lanyard",
+            desc: "Identify yourself as a valued member at events and access exclusive areas with your complimentary lanyard."
+          }].map(({ number, title, desc }) => (
+            <div
+              key={number}
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                marginBottom: number < 3 ? "25px" : 0,
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: "#669127",
+                  color: "white",
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginRight: "18px",
+                  flexShrink: 0,
+                  border: "1px solid rgba(237, 180, 24, 0.3)",
+                  fontWeight: "700",
+                  fontSize: "16px",
+                  userSelect: "none",
+                }}
+              >
+                {number}
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>{title}</p>
+                <p style={{ margin: "5px 0 0 0", fontSize: "14px", color: "#555" }}>{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Button */}
+        <div style={{ textAlign: "center", margin: "35px 0" }}>
+          <a
+            href="https://courtsideclub.com/login"
+            style={{
+              backgroundColor: "#669127",
+              color: "white",
+              padding: "16px 32px",
+              borderRadius: "4px",
+              textDecoration: "none",
+              fontWeight: "600",
+              fontSize: "16px",
+              display: "inline-block",
+              letterSpacing: "0.3px",
+            }}
+          >
+            Log In to Get Started
+          </a>
+        </div>
+
+        {/* Upcoming Tournaments */}
+        <div style={{ marginTop: "40px" }}>
+          <h2
+            style={{
+              fontFamily: "Crimson Text, Georgia, serif",
+              fontSize: "24px",
+              marginBottom: "20px",
+              fontWeight: "600",
+            }}
+          >
+            Upcoming Tournaments
+          </h2>
+
+          {[{
+            name: "Wimbledon",
+            dates: "July 1-14, 2025",
+            location: "London, UK",
+            label: "Grand Slam",
+            labelColor: "#EDB418",
+            registered: 120,
+          }, {
+            name: "Cincinnati Open",
+            dates: "August 11-18, 2025",
+            location: "Cincinnati, OH, USA",
+            label: "Masters 1000",
+            labelColor: "#669127",
+            registered: 85,
+          }].map(({ name, dates, location, label, labelColor, registered }) => (
+            <div
+              key={name}
+              style={{
+                border: `1px solid ${labelColor}33`,
+                borderRadius: "8px",
+                padding: "22px",
+                backgroundColor: "white",
+                marginBottom: "15px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  flexWrap: "wrap",
+                }}
+              >
+                <div>
+                  <h3
+                    style={{
+                      fontFamily: "Crimson Text, Georgia, serif",
+                      fontSize: "20px",
+                      margin: "0 0 5px 0",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {name}
+                  </h3>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>{dates}</p>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#555" }}>{location}</p>
+                </div>
+                <div
+                  style={{
+                    backgroundColor: labelColor,
+                    color: "#171717",
+                    fontSize: "12px",
+                    padding: "4px 12px",
+                    borderRadius: "20px",
+                    fontWeight: "600",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {label}
+                </div>
+              </div>
+              <p style={{ fontSize: "14px", marginTop: "18px", color: "#171717" }}>
+                Join {registered}+ CourtSide Club members already registered
+              </p>
+            </div>
+          ))}
+        </div>
+
+      {/* Footer */}
+      <div
+        style={{
+          textAlign: "center",
+          borderTop: "1px solid #E5E5E5",
+          paddingTop: "30px",
+          marginTop: "40px",
+          fontFamily: "Crimson Text, Georgia, serif",
+          fontSize: "20px",
+          fontStyle: "italic",
+          color: "#171717",
+        }}
+      >
+        Tennis is better together.
+        <div style={{ fontSize: "14px", color: "#666", marginTop: "20px" }}>
+          <p>© 2024 CourtSide Club. All rights reserved.</p>
+          <p>
+            <a href="#" style={{ color: "#669127", textDecoration: "none", marginRight: "15px" }}>
+              Privacy Policy
+            </a>
+            <a href="#" style={{ color: "#669127", textDecoration: "none" }}>
+              Unsubscribe
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
