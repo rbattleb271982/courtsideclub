@@ -1149,8 +1149,7 @@ def lanyard():
             country=request.form['country']
         )
 
-        # Update user lanyard_ordered status
-        current_user.lanyard_ordered = True
+        # Lanyard ordering functionality discontinued - no need to update user status
 
         # Save to database
         db.session.add(address)
@@ -1165,6 +1164,10 @@ def lanyard():
         flash("You're all set! See you at the tournament.", "success")
         return redirect(url_for('user.my_tournaments'))
 
+    # Check if user has an existing shipping address (indicates previous lanyard order)
+    existing_address = ShippingAddress.query.filter_by(user_id=current_user.id).first()
+    lanyard_ordered = existing_address is not None
+    
     return render_template('order_lanyard.html', 
                          states=sorted(STATE_ABBRS),
-                         lanyard_ordered=current_user.lanyard_ordered)
+                         lanyard_ordered=lanyard_ordered)
