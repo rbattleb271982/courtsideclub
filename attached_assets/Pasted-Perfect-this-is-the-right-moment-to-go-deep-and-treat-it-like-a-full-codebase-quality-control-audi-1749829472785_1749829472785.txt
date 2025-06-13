@@ -1,0 +1,60 @@
+Perfect — this is the right moment to go deep and treat it like a full codebase quality control audit. Below is a comprehensive Replit Agent prompt written in clear, directive language. This version includes HTML/CSS structure, database connectivity, agent triggers, route validity, empty field references, error detection, and more.
+✅ FULL REPLIT CODEBASE AUDIT PROMPT
+Please perform a complete internal audit of the application, covering the following areas in detail. This is not a visual check — focus on structure, logic, and data relationships. You should raise questions or flag discrepancies as needed.
+🔁 1. ROUTES & TEMPLATE CONNECTIONS
+Confirm that all route handlers in routes/ are correctly tied to templates in templates/
+Ensure there are no 404s or broken route references (e.g. /reset, /invite, etc.)
+Check that all url_for() calls resolve to defined routes
+Identify any orphaned templates not used by any route
+Flag any routes using render_template() with missing or inconsistent parameters
+🧠 2. AGENTS, EMAILS, AND JOB TRIGGERS
+Confirm that all AI agents, reminder jobs, and email triggers are reachable via route and function call
+Are the following routes implemented and working?
+/admin/agents/run/email_reminder
+/admin/agents/run/pre_tournament_reminder
+/admin/agents/run/post_event_followup
+/admin/agents/run/lanyard_reminder
+Do the SendGrid email functions reference expected fields (like user name, email, attending status)?
+Are any agents silently failing or unreachable due to missing data or logic?
+Are all email template references and SendGrid keys properly wired and not undefined?
+🗄️ 3. DATABASE STRUCTURE & FIELD USAGE
+Confirm that all fields referenced in templates (e.g. current_user.wishlist, session_label, lanyard_ordered) exist in the models
+Flag any fields being referenced that are undefined, always empty, or redundant
+Check that:
+User, Tournament, and UserTournament models are in sync with how templates expect them
+All foreign keys are properly joined (e.g. no broken user/tournament relationships)
+Are any fields unused or can be deprecated (e.g. legacy JSON fields replaced by relational data)?
+🧩 4. TEMPLATE + COMPONENT CONSISTENCY
+Check for duplicated HTML patterns that should be partials (e.g. tournament card, CTA button, nav bar)
+Compare public and private templates — is logic duplicated unnecessarily?
+Check that:
+Layout files (base.html, user_base.html, public_base.html) are being used consistently
+Button classes, padding, headings use site-wide styles
+🔐 5. CSRF, FORMS, AND SESSION HANDLING
+Confirm CSRF protection is properly implemented
+Are all forms using {{ csrf_token() }} and is Flask-WTF active?
+Is session persistence working reliably on login/signup?
+Are user input fields validated? Are errors handled gracefully?
+🔍 6. FRONTEND FUNCTIONALITY
+Are JS-driven components like tournament search or session selectors working without console errors?
+Are search and filter elements (e.g. on the Browse page) backed by live data and DOM updates?
+Are modals or toggles (like notification opt-ins) properly wired to backend updates?
+🧪 7. ERROR LOGGING & BROKEN REFERENCES
+Scan for:
+404s
+console.log or print debugging left in production
+undefined variables in templates
+mismatches between form names and backend processing
+Confirm all template blocks use {% if %} safety checks before referencing potentially null objects
+📦 8. PACKAGE / DEPENDENCY HEALTH
+Are all packages (e.g. Flask, SQLAlchemy, SendGrid) declared in requirements.txt?
+Are deprecated or unused imports in route files cleaned up?
+Is static/ folder organized (CSS, JS, assets) without unused files?
+🛂 9. AUTHENTICATION + USER ACCESS
+Are there any routes that should be protected (@login_required) but are not?
+Are admins properly redirected to the correct dashboards?
+Does logout destroy the session properly?
+✅ When finished:
+List any issues found, grouped by severity and type
+Ask clarifying questions for any assumptions or uncertainties
+Only use checkpoints if I say so
