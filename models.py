@@ -134,6 +134,11 @@ class Tournament(db.Model):
     
     user_registrations = relationship('UserTournament', back_populates='tournament')
     
+    @property
+    def location(self):
+        """Return formatted location string matching public site format"""
+        return f"{self.city}, {self.country}"
+    
     def __repr__(self):
         return f'<Tournament {self.name}>'
 
