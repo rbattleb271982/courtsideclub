@@ -1,0 +1,52 @@
+Enhance the logged-in version of the /browse tournaments page so users can directly mark their attendance status for each tournament without needing to visit the detail page first.
+✅ Changes to Make:
+1. Update Logged-In Tournament Card Template
+In the template used to render the tournament cards for logged-in users (likely browse_tournaments.html or similar):
+For each tournament card, add two buttons:
+“I’m Attending”
+“Maybe Attending”
+Example:
+{% if current_user.is_authenticated %}
+  <form method="POST" action="{{ url_for('user.mark_attendance', tournament_id=tournament.id) }}">
+    <input type="hidden" name="status" value="attending">
+    <button class="btn btn-green">I’m Attending</button>
+  </form>
+  <form method="POST" action="{{ url_for('user.mark_attendance', tournament_id=tournament.id) }}">
+    <input type="hidden" name="status" value="maybe">
+    <button class="btn btn-secondary">Maybe Attending</button>
+  </form>
+{% endif %}
+Style buttons to match existing CTA styles (rounded, mobile-friendly).
+2. Create or Update mark_attendance() Route
+In routes/user.py, add or confirm a route like:
+@user_bp.route('/tournaments/attend/<int:tournament_id>', methods=['POST'])
+@login_required
+def mark_attendance(tournament_id):
+    status = request.form.get('status')
+    tournament = Tournament.query.get_or_404(tournament_id)
+
+    user_tourney = UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament_id).first()
+
+    if not user_tourney:
+        user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament_id)
+
+    user_tourney.attending = (status == "attending")
+    user_tourney.session_label = ""  # reset for now until session is selected
+
+    db.session.add(user_tourney)
+    db.session.commit()
+
+    return redirect(url_for('tournaments.detail', slug=tournament.slug))
+3. On the Tournament Detail Page
+Ensure that the UserTournament record is queried and:
+Pre-selects “I’m Attending” or “Maybe Attending” based on prior choice
+Renders the session checkboxes normally
+Allows the user to continue as if they came through the full flow
+🧪 Test This:
+Log in as a test user
+On the /browse page, click “I’m Attending” for a tournament
+Confirm you are:
+✅ Redirected to the tournament detail page
+✅ Status preselected as “I’m Attending”
+✅ Able to choose sessions and proceed to order a lanyard
+Do not use checkpoints unless necessary. Fully test for both 'attending' and 'maybe' cases.

@@ -1100,14 +1100,19 @@ def lanyard():
 
     # Allow admins to bypass session check
     if not current_user.is_admin:
-        # Only allow access if user has selected at least one session and is marked as attending
-        attending_sessions = UserTournament.query.filter_by(
-            user_id=current_user.id,
-            attending=True
-        ).all()
-        has_session = any(ut.session_label and ut.session_label.strip() for ut in attending_sessions)
+        # Check if user has valid sessions using proper database query
+        has_valid_sessions = (
+            db.session.query(UserTournament)
+            .filter(
+                UserTournament.user_id == current_user.id,
+                UserTournament.attending == True,
+                UserTournament.session_label.isnot(None),
+                UserTournament.session_label != ""
+            )
+            .count() > 0
+        )
 
-        if not has_session:
+        if not has_valid_sessions:
             flash("You must select at least one tournament session before ordering a lanyard.", "warning")
             return redirect(url_for('user.my_tournaments'))
 
