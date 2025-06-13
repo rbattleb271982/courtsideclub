@@ -75,6 +75,77 @@ a:hover {
   --csc-blue: #318BE8;
 }
 
+/* === Mobile Spacing Optimizations Start === */
+/* Mobile-First Utility Classes for Consistent Spacing */
+@media (max-width: 767px) {
+  /* Padding Utilities */
+  .pt-mobile-xs { padding-top: 0.5rem !important; }
+  .pt-mobile-sm { padding-top: 1rem !important; }
+  .pt-mobile-md { padding-top: 1.5rem !important; }
+  .pt-mobile-lg { padding-top: 2rem !important; }
+  .pt-mobile-xl { padding-top: 2.5rem !important; }
+  .pt-mobile-hero { padding-top: 4rem !important; }
+  
+  .pb-mobile-xs { padding-bottom: 0.5rem !important; }
+  .pb-mobile-sm { padding-bottom: 1rem !important; }
+  .pb-mobile-md { padding-bottom: 1.5rem !important; }
+  .pb-mobile-lg { padding-bottom: 2rem !important; }
+  .pb-mobile-xl { padding-bottom: 2.5rem !important; }
+  
+  .p-mobile-xs { padding: 0.5rem !important; }
+  .p-mobile-sm { padding: 1rem !important; }
+  .p-mobile-md { padding: 1.25rem !important; }
+  .p-mobile-compact { padding: 0.75rem !important; }
+  
+  .px-mobile-sm { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .py-mobile-sm { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+  .py-mobile-md { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+  .py-mobile-lg { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+  
+  /* Margin Utilities */
+  .mt-mobile-xs { margin-top: 0.5rem !important; }
+  .mt-mobile-sm { margin-top: 1rem !important; }
+  .mt-mobile-md { margin-top: 1.5rem !important; }
+  
+  .mb-mobile-xs { margin-bottom: 0.5rem !important; }
+  .mb-mobile-sm { margin-bottom: 0.75rem !important; }
+  .mb-mobile-md { margin-bottom: 1rem !important; }
+  .mb-mobile-lg { margin-bottom: 1.25rem !important; }
+  .mb-mobile-xl { margin-bottom: 1.5rem !important; }
+  
+  .my-mobile-sm { margin-top: 0.75rem !important; margin-bottom: 0.75rem !important; }
+  .my-mobile-md { margin-top: 1rem !important; margin-bottom: 1rem !important; }
+  
+  /* Gap Utilities for Flexbox/Grid */
+  .gap-mobile-xs { gap: 0.5rem !important; }
+  .gap-mobile-sm { gap: 0.75rem !important; }
+  .gap-mobile-md { gap: 1rem !important; }
+  
+  /* Section-Specific Utilities */
+  .hero-mobile-compact {
+    padding: 2.5rem 1rem 2rem !important;
+    min-height: auto !important;
+  }
+  
+  .section-mobile-compact {
+    padding: 2rem 1rem !important;
+  }
+  
+  .card-mobile-compact {
+    margin-bottom: 1rem !important;
+    border-radius: 8px !important;
+  }
+  
+  .card-body-mobile-compact {
+    padding: 1rem !important;
+  }
+  
+  .card-header-mobile-compact {
+    padding: 1rem !important;
+  }
+}
+/* === End Mobile Spacing Optimizations === */
+
 /* Site Header Styles - Unified Navigation */
 .site-header {
   position: fixed;
