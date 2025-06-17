@@ -321,9 +321,9 @@ def login_success():
     """Re-establish session if cookies were blocked, then redirect to my-tournaments"""
     user_id = request.args.get('user_id')
     
-    # If already authenticated, proceed to redirect
+    # If already authenticated, redirect directly
     if current_user.is_authenticated:
-        return render_template("auth/login_success.html")
+        return redirect(url_for('user.my_tournaments'))
     
     # If not authenticated but have user_id, re-establish session
     if user_id:
@@ -337,7 +337,7 @@ def login_success():
                 session.permanent = True
                 
                 logging.info(f"Re-established session for user {user.email} via login-success")
-                return render_template("auth/login_success.html")
+                return redirect(url_for('user.my_tournaments'))
         except (ValueError, TypeError):
             pass
     
