@@ -3457,4 +3457,88 @@ h1.hero-text-shadow span {
   }
 }
 
+/* Rebuilt Tournament Detail Page Styles */
+.flash-message.success {
+  background-color: #dff6e2;
+  color: #1d632f;
+  border-left: 4px solid #4a6b4a;
+  max-width: 100%;
+}
+
+.flash-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+  max-width: 100%;
+}
+
+/* Mobile-first session selection styles */
+.mobile-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.session-option {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.session-option:hover {
+  background-color: #f8f9fa;
+}
+
+.session-option:last-child {
+  border-bottom: none;
+}
+
+.attendance-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .attendance-buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.attendance-btn {
+  min-height: 44px;
+  padding: 12px 24px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 2px solid #4a6b4a;
+  background: white;
+  color: #4a6b4a;
+  transition: all 0.2s ease;
+}
+
+.attendance-btn:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-1px);
+}
+
+.attendance-btn.btn-success {
+  background-color: #4a6b4a;
+  color: white;
+}
+
+.session-group-container {
+  background: white;
+  border: 1px solid #e9ecef;
+}
+
+.session-day-group {
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.session-day-group:last-child {
+  border-bottom: none;
+}
+
 

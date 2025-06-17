@@ -158,49 +158,21 @@ def tournament_detail(tournament_slug):
         flash("Your selections were saved.", "success")
         return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
     
-    # Get current user's tournament registration
-    user_tournament = UserTournament.query.filter_by(
-        user_id=current_user.id,
-        tournament_id=tournament.id
-    ).first()
+    # Generate tournament days structure for the template
+    from datetime import timedelta
     
-    # Get selected sessions for current user
-    selected_sessions = []
-    wants_to_meet = True  # Default to True - always pre-checked
-    user_attending = False
+    tournament_days = []
+    current_date = tournament.start_date
+    for day_num in range(1, (tournament.end_date - tournament.start_date).days + 2):
+        tournament_days.append({
+            "day_num": day_num,
+            "formatted": current_date.strftime("%A, %B %d"),
+            "date": current_date
+        })
+        current_date += timedelta(days=1)
     
-    print(f"DEBUG: user_tournament = {user_tournament}")
-    if user_tournament:
-        # Ensure attendance is properly set (might be None in some cases)
-        if user_tournament.attending is None:
-            user_tournament.attending = True
-            db.session.commit()
-            print("DEBUG: Fixed null attending value to True")
-        
-        user_attending = user_tournament.attending
-        wants_to_meet = user_tournament.wants_to_meet if user_tournament.wants_to_meet is not None else False
-        print(f"DEBUG: user_attending = {user_attending}, wants_to_meet = {wants_to_meet}")
-        print(f"DEBUG: tournament.sessions = {tournament.sessions}")
-        print(f"DEBUG: Will show session UI = {user_attending}")
-        if user_tournament.session_label:
-            selected_sessions = user_tournament.session_label.split(',')
-            print(f"DEBUG: selected_sessions = {selected_sessions}")
-    else:
-        # COMMENTED OUT: Action redirect logic - now handled by JavaScript
-        # attendance_action = request.args.get('action')
-        # if attendance_action in ['attending', 'maybe']:
-        #     print(f"DEBUG: Creating UserTournament record for {attendance_action} action")
-        #     user_tournament = UserTournament()
-        #     user_tournament.user_id = current_user.id
-        #     user_tournament.tournament_id = tournament.id
-        #     user_tournament.attending = (attendance_action == 'attending')
-        #     user_tournament.wants_to_meet = True  # Default to True
-        #     db.session.add(user_tournament)
-        #     db.session.commit()
-        #     
-        #     user_attending = user_tournament.attending
-        #     print(f"DEBUG: Created new UserTournament - user_attending = {user_attending}")
-        pass
+    # Get selected sessions for the template
+    selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
     
     # Get tournament stats using the shared helper function
     # Include current user to show accurate counts including themselves
