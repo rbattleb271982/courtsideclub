@@ -346,36 +346,21 @@ def tournament_detail(tournament_slug):
                 'attendees': 0  # Default count if no data
             }
     
-    # Calculate dates for each tournament day
-    # Generate tournament days based on actual sessions from database
-    import datetime as dt
-    tournament_days = []
+    # Calculate tournament_days using the correct format for session checkboxes
+    from datetime import timedelta
     
-    # Extract unique days from tournament sessions
-    if tournament.sessions:
-        unique_days = set()
-        for session in tournament.sessions:
-            # Extract day number from session string like "Day 1 - Day" or "Day 1 - Night"
-            if session.startswith('Day '):
-                try:
-                    day_part = session.split(' - ')[0]  # Gets "Day 1"
-                    day_num = int(day_part.replace('Day ', ''))  # Gets 1
-                    unique_days.add(day_num)
-                except (ValueError, IndexError):
-                    continue
-        
-        # Create tournament_days list from unique days
-        start_date = tournament.start_date
-        for day_num in sorted(unique_days):
-            day_date = start_date + dt.timedelta(days=day_num - 1)
-            tournament_days.append({
-                'day_num': str(day_num),
-                'date': day_date,
-                'formatted': day_date.strftime('%b %d')
-            })
-        
-        print(f"DEBUG: Created tournament_days structure with {len(tournament_days)} days")
-        print(f"DEBUG: tournament_days = {tournament_days}")
+    tournament_days = []
+    current_date = tournament.start_date
+    for day_num in range(1, (tournament.end_date - tournament.start_date).days + 2):
+        tournament_days.append({
+            "day_num": day_num,
+            "formatted": current_date.strftime("%A, %B %d"),
+            "date": current_date
+        })
+        current_date += timedelta(days=1)
+    
+    print(f"DEBUG: Created tournament_days structure with {len(tournament_days)} days")
+    print(f"DEBUG: tournament_days = {tournament_days}")
     
     # Check if sessions were just saved (from query param)
     session_saved = request.args.get('session_saved', '0') == '1'
