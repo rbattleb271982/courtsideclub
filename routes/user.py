@@ -411,12 +411,44 @@ def tournament_detail(tournament_slug):
         
         fan_history = [{'name': name} for name, count in other_tournaments]
     
-    return render_template('user/tournament_detail.html',
+    # Calculate tournament stats
+    stats = get_tournament_attendance_stats(tournament.id, include_current_user=True)
+    
+    # Calculate session counts
+    session_counts = {}
+    all_user_tournaments = UserTournament.query.filter_by(
+        tournament_id=tournament.id,
+        attending=True
+    ).all()
+    
+    for ut in all_user_tournaments:
+        if ut.session_label:
+            sessions = [s.strip() for s in ut.session_label.split(',') if s.strip()]
+            for session in sessions:
+                session_counts[session] = session_counts.get(session, 0) + 1
+    
+    # Calculate days until tournament
+    from datetime import date
+    days_until = (tournament.start_date - date.today()).days
+    
+    # Get shared history for template
+    shared_history = []
+    
+    return render_template('tournament_detail.html',
                          tournament=tournament,
                          tournament_days=tournament_days,
                          selected_sessions=selected_sessions,
                          user_tournament=user_tournament,
-                         wants_to_meet=user_tournament.wants_to_meet if user_tournament else True)
+                         wants_to_meet=user_tournament.wants_to_meet if user_tournament else True,
+                         is_attending=user_tournament.attendance_type == 'attending' if user_tournament else False,
+                         is_maybe=user_tournament.attendance_type == 'maybe' if user_tournament else False,
+                         is_not_attending=user_tournament.attendance_type == 'not_attending' if user_tournament else True,
+                         user_attending=user_tournament.attending if user_tournament else False,
+                         attending_count=stats['attending'],
+                         meeting_count=stats['meetup'],
+                         session_counts=session_counts,
+                         days_until=days_until,
+                         shared_history=shared_history)
 
 # Updated profile route to show user profile with past tournaments selection
 @user_bp.route('/add_wishlist', methods=['POST'])

@@ -1,0 +1,64 @@
+1. Authentication Flow
+Q: Should this route be private or public?
+✅ Answer:
+Private. The tournament detail page is meant for logged-in users only, as it includes:
+Editable form with session selections
+Personalized stats
+Meetup opt-in checkbox
+Required action:
+@user_bp.route('/tournaments/<slug>', methods=['GET', 'POST'])
+@login_required
+Note:
+The public-facing version of the tournament lives at /tournaments/<slug> under the main_bp route. Do not confuse the user-specific form view with the SEO/public view.
+🧮 2. Data Integrity
+Q: Which function: get_tournament_attendance_stats() or calculate_tournament_stats()?
+✅ Answer:
+Use whichever one is currently working and used elsewhere across the app, likely:
+from services.stats import get_tournament_attendance_stats
+Why:
+It returns a complete set of {attending_count, meeting_count, session_counts}
+Keeps consistency across admin, dashboard, /order_lanyard, etc.
+Preserve:
+The existing session counting method, unless it’s provably wrong or slow.
+🧩 3. Template Compatibility
+Q: Use shared_past_tournaments or shared_history?
+✅ Answer:
+Use shared_history — that’s what your JavaScript and collapsible toggle logic depends on.
+If your route previously had:
+shared_history = get_shared_tournaments(user_id=current_user.id)
+Keep that name for template + JS compatibility.
+Debug print statements:
+✅ Keep in local/dev environment
+❌ Strip from production unless you wrap with a logging helper (e.g. if app.debug:)
+⚙️ 4. Performance Considerations
+Q: Should I optimize shared history now?
+✅ Answer:
+No. For this live demo, preserve the exact current logic, even if it’s not perfectly optimized.
+Why:
+It's proven to work
+Refactoring now risks instability
+Optimization can happen post-demo
+Avoid:
+Unindexed subqueries
+IN clauses with large lists
+Unfiltered .all() calls without limits
+⚠️ 5. Error Handling
+Q1: What if the tournament doesn’t exist?
+✅ Answer:
+Use:
+tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+This shows a clean Flask 404 page — expected and safe.
+Q2: Failed form submission?
+✅ Answer:
+Stay on the page, show flash('Please select at least one session', 'error'), and preserve state. Do not redirect on failed save — it loses user input.
+✉️ 6. Flash Message Behavior
+Q: After successful POST, where should it redirect?
+✅ Answer:
+Stay on the same tournament page. It’s a self-contained loop:
+Shows success message
+Renders saved sessions
+Keeps user focused on the current event
+Redirecting to /my-tournaments adds unnecessary navigation.
+Current POST redirect:
+return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
+✅ This is correct.
