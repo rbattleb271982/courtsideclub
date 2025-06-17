@@ -194,12 +194,8 @@ def send_morning_of_email(user_id, tournament_id, session_date, session_name, de
         if hasattr(tournament, 'meetup_location') and hasattr(tournament, 'meetup_time') and tournament.meetup_location and tournament.meetup_time:
             meetup_info = f"<p>📍 <strong>Meet-up Spot:</strong> {tournament.meetup_location} at {tournament.meetup_time}</p>"
         
-        # Lanyard reminder (only if user has lanyard)
-        has_lanyard = getattr(user, 'lanyard_ordered', False)
-        if has_lanyard:
-            lanyard_msg = "<p>🟢 Don't forget your <strong>CourtSide Club</strong> lanyard so other members can find you!</p>"
-        else:
-            lanyard_msg = ""
+        # Lanyard reminder - functionality discontinued
+        lanyard_msg = ""
         
         morning_html = f"""
         <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>

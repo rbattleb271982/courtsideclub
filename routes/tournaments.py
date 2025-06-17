@@ -60,7 +60,7 @@ def list_tournaments():
             UserTournament.tournament_id == tournament.id,
             UserTournament.attending == True,
             UserTournament.user_id != current_user.id
-        ).join(User).filter_by(lanyard_ordered=True).count()
+        ).count()  # Lanyard functionality discontinued
         
         # Store consistent stats in the attendance_counts dictionary
         attendance_counts[tournament.id] = {
@@ -177,13 +177,7 @@ def list_tournaments():
     
     # Add lanyards count (not part of standard stats) - only count users with session selections
     other_users_filter = UserTournament.user_id != current_user.id if current_user.is_authenticated else True
-    stats['lanyards'] = UserTournament.query.filter(
-        UserTournament.tournament_id == tournament.id,
-        UserTournament.attending == True,
-        UserTournament.session_label.isnot(None),
-        UserTournament.session_label != '',
-        other_users_filter
-    ).join(User).filter_by(lanyard_ordered=True).count()
+    stats['lanyards'] = 0  # Lanyard functionality discontinued
     
     # Use the authenticated template for logged-in users
     attending_count = stats.get('attending', 0) 

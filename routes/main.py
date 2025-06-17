@@ -103,7 +103,7 @@ def public_tournament_detail(slug):
         stats = {
             'attending': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).count(),
             'meetup': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True, wants_to_meet=True).count(),
-            'lanyards': UserTournament.query.filter_by(tournament_id=tournament.id, attending=True).join(User).filter_by(lanyard_ordered=True).count()
+            'lanyards': 0  # Lanyard functionality discontinued
         }
         
         return render_template('tournament_detail.html',
