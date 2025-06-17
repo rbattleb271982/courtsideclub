@@ -946,18 +946,18 @@ def my_tournaments():
     soonest_tournament = None
     
     # Only show lanyard reminder if user is attending tournaments but hasn't selected sessions properly
-    if not getattr(current_user, 'lanyard_ordered', False):
-        # Check for users attending tournaments but missing proper session selections
-        incomplete_tournaments = []
-        for ut in user_tournaments:
-            if ut.attending and (not ut.session_label or ut.session_label.strip() == ''):
-                incomplete_tournaments.append(ut)
-        
-        if incomplete_tournaments:
-            show_lanyard_reminder = True
-            # Find soonest upcoming tournament for days_away calculation
-            soonest_tournament = min(incomplete_tournaments, key=lambda ut: ut.tournament.start_date)
-            days_away = (soonest_tournament.tournament.start_date - today).days
+    # Note: lanyard_ordered functionality discontinued, always check for incomplete tournaments
+    # Check for users attending tournaments but missing proper session selections
+    incomplete_tournaments = []
+    for ut in user_tournaments:
+        if ut.attending and (not ut.session_label or ut.session_label.strip() == ''):
+            incomplete_tournaments.append(ut)
+    
+    if incomplete_tournaments:
+        show_lanyard_reminder = True
+        # Find soonest upcoming tournament for days_away calculation
+        soonest_tournament = min(incomplete_tournaments, key=lambda ut: ut.tournament.start_date)
+        days_away = (soonest_tournament.tournament.start_date - today).days
 
     # Check if user needs profile reminder (no past tournaments AND no wishlist)
     show_profile_reminder = (
@@ -1151,8 +1151,8 @@ def lanyard():
 
     # Check if user has an existing shipping address (indicates previous lanyard order)
     existing_address = ShippingAddress.query.filter_by(user_id=current_user.id).first()
-    lanyard_ordered = existing_address is not None
+    has_existing_address = existing_address is not None
     
     return render_template('order_lanyard.html', 
                          states=sorted(STATE_ABBRS),
-                         lanyard_ordered=lanyard_ordered)
+                         has_existing_address=has_existing_address)
