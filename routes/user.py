@@ -300,12 +300,14 @@ def tournament_detail(tournament_slug):
                 'attendees': 0  # Default count if no data
             }
     
-    # Calculate tournament_days using the correct format for session checkboxes
+    # Calculate tournament_days with the correct structure including sessions
     from datetime import timedelta
     
     tournament_days = []
     current_date = tournament.start_date
-    for day_num in range(1, (tournament.end_date - tournament.start_date).days + 2):
+    duration = (tournament.end_date - tournament.start_date).days + 1
+    
+    for day_num in range(1, duration + 1):
         tournament_days.append({
             "day_num": day_num,
             "formatted": current_date.strftime("%A, %B %d"),
@@ -315,6 +317,7 @@ def tournament_detail(tournament_slug):
     
     print(f"DEBUG: Created tournament_days structure with {len(tournament_days)} days")
     print(f"DEBUG: tournament_days = {tournament_days}")
+    print(f"DEBUG: tournament.sessions = {tournament.sessions}")
     
     # Check if sessions were just saved (from query param)
     session_saved = request.args.get('session_saved', '0') == '1'
