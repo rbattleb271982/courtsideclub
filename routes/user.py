@@ -132,6 +132,11 @@ def tournament_detail(tournament_slug):
     # Get the tournament by slug
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     
+    # DEBUG: Check tournament sessions data
+    print("DEBUG sessions =", getattr(tournament, 'sessions', None))
+    print("DEBUG tournament.start_date =", tournament.start_date)
+    print("DEBUG tournament.end_date =", tournament.end_date)
+    
     # Get current user's tournament registration
     user_tournament = UserTournament.query.filter_by(
         user_id=current_user.id,
@@ -174,6 +179,10 @@ def tournament_detail(tournament_slug):
     
     # Get selected sessions for the template
     selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
+    
+    # DEBUG: Check tournament_days and selected_sessions
+    print("DEBUG tournament_days =", tournament_days)
+    print("DEBUG selected_sessions =", selected_sessions)
     
     # Get tournament stats using the shared helper function
     # Include current user to show accurate counts including themselves
