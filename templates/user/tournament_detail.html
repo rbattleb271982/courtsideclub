@@ -157,7 +157,7 @@
                 <div class="session-selection-ui" id="session-selection-ui" style="display: none;">
                     <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" id="session-form">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="status" id="attendance-status" value="">
+                        <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
                         <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
                         <div id="hiddenSessionInputs">
                             <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
