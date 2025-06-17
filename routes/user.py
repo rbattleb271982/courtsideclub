@@ -137,6 +137,18 @@ def tournament_detail(tournament_slug):
     print("DEBUG tournament.start_date =", tournament.start_date)
     print("DEBUG tournament.end_date =", tournament.end_date)
     
+    # Generate sessions if they don't exist
+    if not tournament.sessions or len(tournament.sessions) == 0:
+        print("Generating sessions for tournament...")
+        tournament_duration = (tournament.end_date - tournament.start_date).days + 1
+        default_sessions = []
+        for day in range(1, tournament_duration + 1):
+            default_sessions.append(f"Day {day} - Day")
+            default_sessions.append(f"Day {day} - Night")
+        tournament.sessions = default_sessions
+        db.session.commit()
+        print(f"Generated {len(default_sessions)} sessions:", default_sessions)
+    
     # Get current user's tournament registration
     user_tournament = UserTournament.query.filter_by(
         user_id=current_user.id,
@@ -307,15 +319,16 @@ def tournament_detail(tournament_slug):
     # Check if sessions were just saved (from query param)
     session_saved = request.args.get('session_saved', '0') == '1'
     
+    # Define user_attending for debugging and template
+    user_attending = user_tournament.attending if user_tournament else False
+    
     # CRITICAL DEBUG - CHECK TEMPLATE CONDITIONALS
     print("="*80)
     print("TEMPLATE CONDITIONAL DEBUG:")
     print(f"user_attending = {user_attending} (type: {type(user_attending)})")
-    print(f"user_attending evaluates to: {bool(user_attending)}")
     print(f"tournament.sessions = {tournament.sessions}")
     print(f"tournament_days length = {len(tournament_days) if tournament_days else 0}")
     print(f"session_counts = {session_counts}")
-    print(f"Template will show session UI: {bool(user_attending)}")
     if user_tournament:
         print(f"UserTournament exists: attending={user_tournament.attending}")
     else:
