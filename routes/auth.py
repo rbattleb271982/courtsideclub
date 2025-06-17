@@ -165,8 +165,8 @@ def signup():
                 session.modified = True
                 session.permanent = True
 
-                # Use same iframe-compatible flow as login
-                return redirect(url_for('auth.login_success', user_id=new_user.id))
+                # Redirect directly to My Tournaments - no intermediate redirect needed
+                return redirect(url_for('user.my_tournaments'))
             except Exception as e:
                 db.session.rollback()
                 logging.error(f"Error creating new user: {str(e)}", exc_info=True)
