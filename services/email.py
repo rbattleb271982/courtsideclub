@@ -84,12 +84,8 @@ def send_tournament_reminder_email(user_id, tournament_id, debug_email_override=
         else:
             meetup_msg = f"<p>Want to meet other fans? <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Update your preferences</a> to join the meetup.</p>"
         
-        # Lanyard message
-        has_lanyard = getattr(user, 'lanyard_ordered', False)
-        if has_lanyard:
-            lanyard_msg = "<p>🧢 <strong>Your lanyard is on its way</strong> — bring it with you to help fellow fans spot you!</p>"
-        else:
-            lanyard_msg = f"<p>🧢 <strong>Don't forget:</strong> your free lanyard is still waiting. <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Log in to claim yours</a> so it arrives before the tournament.</p>"
+        # Lanyard message - functionality discontinued
+        lanyard_msg = ""
         
         # Build schedule URL
         schedule_link = ""

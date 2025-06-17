@@ -93,7 +93,6 @@ def test_user_creation():
             last_name="User",
             name="Debug User",
             password_hash=generate_password_hash("password123"),
-            lanyard_ordered=False,
             notifications=True
         )
 
@@ -495,12 +494,8 @@ def send_tournament_reminder_debug(user_id=None, tournament_id=None):
         else:
             meetup_msg = f"<p>Want to meet other fans? <a href=\"https://courtsideclub.app/login\">Update your preferences</a> to join the meetup.</p>"
         
-        # Lanyard message
-        has_lanyard = getattr(user, 'lanyard_ordered', False)
-        if has_lanyard:
-            lanyard_msg = "<p>🎉 Your lanyard is on its way — bring it with you to help fellow fans spot you!</p>"
-        else:
-            lanyard_msg = f"<p>🧢 Don't forget — your free lanyard is still waiting. <a href=\"https://courtsideclub.app/login\">Log in to claim yours</a> so it arrives before the tournament!</p>"
+        # Lanyard message - functionality discontinued
+        lanyard_msg = ""
         
         # Build schedule URL
         schedule_link = ""
@@ -659,12 +654,8 @@ def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None
         if hasattr(tournament, 'meetup_location') and hasattr(tournament, 'meetup_time') and tournament.meetup_location and tournament.meetup_time:
             meetup_info = f"<p>📍 <strong>Meet-up Spot:</strong> {tournament.meetup_location} at {tournament.meetup_time}</p>"
         
-        # Lanyard reminder (only if user has lanyard)
-        has_lanyard = getattr(user, 'lanyard_ordered', False)
-        if has_lanyard:
-            lanyard_msg = "<p>🟢 Don't forget your <strong>CourtSide Club</strong> lanyard so other members can find you!</p>"
-        else:
-            lanyard_msg = ""
+        # Lanyard reminder - functionality discontinued
+        lanyard_msg = ""
         
         morning_html = f"""
         <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
