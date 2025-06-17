@@ -1,0 +1,118 @@
+Rebuild the tournament detail page to simplify and fully restore the session selection system using clean JavaScript and Flask logic. Follow all steps below. This replaces the current logic with a simplified structure that eliminates reload dependencies and state mismatches.
+✅ 1. Update Template: templates/user/tournament_detail.html
+Replace the attendance/session form area with this:
+<form method="POST" id="session-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
+
+  <div class="attendance-buttons">
+    <button id="attending-btn" type="button">I'm Attending</button>
+    <button id="maybe-btn" type="button">Maybe Attending</button>
+    <button id="not-attending-btn" type="button">Not Going</button>
+  </div>
+
+  <div id="session-selection-ui" style="display: none;">
+    {% for day in tournament_days %}
+      <div>
+        <strong>{{ day.formatted }}</strong><br>
+        {% for time in ['Day', 'Night'] %}
+          {% set label = "Day " ~ day.day_num|string ~ " - " ~ time %}
+          <label>
+            <input type="checkbox" name="sessions" value="{{ label }}"
+              {% if label in selected_sessions %}checked{% endif %}>
+            {{ label }}
+          </label><br>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <label>
+      <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
+      I'm open to meeting other fans
+    </label>
+
+    <button type="submit">Save My Selections</button>
+  </div>
+</form>
+✅ 2. Replace JavaScript: static/js/tournament-detail-simplified.js
+Clear and replace the file contents with:
+document.addEventListener("DOMContentLoaded", () => {
+  const statusInput = document.getElementById("attendance-status");
+  const sessionForm = document.getElementById("session-selection-ui");
+
+  const buttons = {
+    attending: document.getElementById("attending-btn"),
+    maybe: document.getElementById("maybe-btn"),
+    not_attending: document.getElementById("not-attending-btn"),
+  };
+
+  function updateUI(state) {
+    statusInput.value = state;
+    sessionForm.style.display = (state === 'attending' || state === 'maybe') ? 'block' : 'none';
+    Object.keys(buttons).forEach(key => {
+      buttons[key].classList.toggle("btn-success", key === state);
+    });
+  }
+
+  Object.entries(buttons).forEach(([key, btn]) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      updateUI(key);
+    });
+  });
+
+  updateUI(statusInput.value || 'not_attending');
+});
+✅ 3. Update Route: routes/user.py
+In the route for /tournaments/<slug>, use the following POST + GET logic:
+if request.method == 'POST':
+    attendance_type = request.form.get('status', 'not_attending')
+    selected_sessions = request.form.getlist('sessions')
+    wants_to_meet = request.form.get('wants_to_meet') == 'on'
+
+    if not user_tournament:
+        user_tournament = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
+        db.session.add(user_tournament)
+
+    user_tournament.attendance_type = attendance_type
+    user_tournament.attending = attendance_type in ['attending', 'maybe']
+    user_tournament.wants_to_meet = wants_to_meet
+    user_tournament.session_label = ','.join(selected_sessions)
+    db.session.commit()
+    flash("Your selections were saved.", "success")
+    return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
+Also confirm this is included in the GET logic:
+from datetime import timedelta
+
+tournament_days = []
+current_date = tournament.start_date
+for day_num in range(1, (tournament.end_date - tournament.start_date).days + 2):
+    tournament_days.append({
+        "day_num": day_num,
+        "formatted": current_date.strftime("%A, %B %d"),
+        "date": current_date
+    })
+    current_date += timedelta(days=1)
+
+selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
+And pass the following to the template:
+return render_template(
+    "user/tournament_detail.html",
+    tournament=tournament,
+    tournament_days=tournament_days,
+    selected_sessions=selected_sessions,
+    user_tournament=user_tournament,
+    wants_to_meet=user_tournament.wants_to_meet if user_tournament else True
+)
+✅ 4. Remove Old Logic
+Remove any action = request.args.get('action') handling — it is no longer needed
+Remove old button ID mismatches (btn-going, etc.)
+Do not use server logic to toggle visibility
+✅ 5. Final Testing Checklist
+ Buttons toggle form visibility without reload
+ Sessions appear correctly per day
+ Session selections are saved on form submit
+ Selections are pre-filled on reload
+ “Open to meeting” checkbox is saved
+ CSRF and redirects work
+ Fully mobile compatible

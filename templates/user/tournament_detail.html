@@ -104,28 +104,50 @@
                         </div>
                     </div>
                     {% endif %}
-                    <!-- Attendance Controls MOVED INTO MAIN CARD -->
-                    <div class="detail-item mt-3 attendance-container">
-                        <i data-feather="calendar-check" class="icon-sm"></i>
-                        <div class="w-100">
-                            {# Use attendance_type directly #}
-                            {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
-                            {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
+                    <!-- Simplified Session Selection Form -->
+                    <form method="POST" id="session-form">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
 
-                            <!-- JavaScript-Controlled Attendance Buttons -->
-                            <div class="attendance-buttons">
-                              <button id="attending-btn" class="btn py-1 {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn">
-                                <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
-                              </button>
-                              <button id="maybe-btn" class="btn py-1 {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn">
-                                <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
-                              </button>
-                              <button id="not-attending-btn" class="btn-clear text-danger small-text {% if not user_attending %}btn-success{% endif %}">
-                                Not Attending
-                              </button>
-                            </div>
+                      <div class="attendance-buttons">
+                        <button id="attending-btn" type="button" class="btn py-1 btn-outline-success hover-grow w-100 attendance-btn">
+                          <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
+                        </button>
+                        <button id="maybe-btn" type="button" class="btn py-1 btn-outline-success hover-grow w-100 attendance-btn">
+                          <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
+                        </button>
+                        <button id="not-attending-btn" type="button" class="btn-clear text-danger small-text">
+                          Not Attending
+                        </button>
+                      </div>
+
+                      <div id="session-selection-ui" style="display: none;">
+                        {% for day in tournament_days %}
+                          <div class="session-day-group mb-3">
+                            <strong>{{ day.formatted }}</strong><br>
+                            {% for time in ['Day', 'Night'] %}
+                              {% set label = "Day " ~ day.day_num|string ~ " - " ~ time %}
+                              <label class="session-option">
+                                <input type="checkbox" name="sessions" value="{{ label }}"
+                                  {% if label in selected_sessions %}checked{% endif %}>
+                                {{ label }}
+                              </label><br>
+                            {% endfor %}
+                          </div>
+                        {% endfor %}
+
+                        <div class="mt-3">
+                          <label>
+                            <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
+                            I'm open to meeting other fans
+                          </label>
                         </div>
-                    </div>
+
+                        <div class="mt-3">
+                          <button type="submit" class="btn btn-primary">Save My Selections</button>
+                        </div>
+                      </div>
+                    </form>
 
                     {% if tournament.about %}
                     <div class="tournament-description mt-4">
