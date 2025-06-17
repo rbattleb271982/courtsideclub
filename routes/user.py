@@ -122,12 +122,13 @@ def home():
         return redirect(url_for('auth.login'))
 
 # Tournament detail view specifically for logged-in users
-@user_bp.route('/tournament/<tournament_slug>', methods=['GET', 'POST'])
+@user_bp.route('/tournaments/<tournament_slug>', methods=['GET', 'POST'])
 @login_required
 def tournament_detail(tournament_slug):
     print("="*50)
     print(f"TOURNAMENT DETAIL ROUTE ACCESSED: {tournament_slug}")
     print("="*50)
+    print("ROUTE IS EXECUTING - CHECKING FOR ERRORS...")
     # Get the tournament by slug
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     
