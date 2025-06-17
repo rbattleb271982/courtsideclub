@@ -434,6 +434,19 @@ def tournament_detail(tournament_slug):
     # Get shared history for template
     shared_history = []
     
+    # DEBUG DUMP - Show runtime values
+    print('tournament_days:', len(tournament_days), tournament_days)
+    print('session_label:', user_tournament.session_label if user_tournament else None)
+    print('selected_sessions:', selected_sessions)
+    print('Template variables passed:')
+    print('tournament:', tournament.slug)
+    print('days_until:', (tournament.start_date - date.today()).days)
+    print('user_attending:', user_tournament.attending if user_tournament else None)
+    print('attendance_type:', user_tournament.attendance_type if user_tournament else None)
+    print('attending_count:', stats['attending'])
+    print('meeting_count:', stats['meetup'])
+    print('session_counts:', session_counts)
+    
     return render_template('tournament_detail.html',
                          tournament=tournament,
                          tournament_days=tournament_days,
