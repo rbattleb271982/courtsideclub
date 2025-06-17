@@ -131,72 +131,32 @@ def tournament_detail(tournament_slug):
     # Get the tournament by slug
     tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
     
+    # Get current user's tournament registration
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament.id
+    ).first()
+    
     # Process form submission for session selection
     if request.method == 'POST':
-        print(f"DEBUG: POST request received for tournament {tournament_slug}")
-        print(f"DEBUG: Form data: {dict(request.form)}")
-        
-        # Get selected sessions
+        attendance_type = request.form.get('status', 'not_attending')
         selected_sessions = request.form.getlist('sessions')
-        print(f"DEBUG: Selected sessions from form: {selected_sessions}")
-        
-        # Get wants_to_meet preference using v0 layout field name
-        open_to_meet_value = request.form.get('open_to_meet')
-        wants_to_meet = open_to_meet_value == 'on' if open_to_meet_value else False
-        print(f"DEBUG: open_to_meet checkbox value: {open_to_meet_value}, processed: {wants_to_meet}")
-        
-        # Get or create user tournament registration
-        user_tournament = UserTournament.query.filter_by(
-            user_id=current_user.id, 
-            tournament_id=tournament.id
-        ).first()
-        
+        wants_to_meet = request.form.get('wants_to_meet') == 'on'
+
         if not user_tournament:
-            # Create a new UserTournament record
             user_tournament = UserTournament()
             user_tournament.user_id = current_user.id
             user_tournament.tournament_id = tournament.id
             db.session.add(user_tournament)
-        
-        # Only mark as attending if they selected at least one session
-        if selected_sessions:
-            user_tournament.attending = True
-        else:
-            # If no sessions selected but form submitted, keep current attending status
-            # This allows users to update wants_to_meet without losing attendance status
-            if user_tournament.attending is None:
-                user_tournament.attending = False
-            
+
+        user_tournament.attendance_type = attendance_type
+        user_tournament.attending = attendance_type in ['attending', 'maybe']
         user_tournament.wants_to_meet = wants_to_meet
-        user_tournament.session_label = ','.join(selected_sessions) if selected_sessions else None
-        
-        print(f"DEBUG: About to save - session_label: '{user_tournament.session_label}'")
-        print(f"DEBUG: About to save - attending: {user_tournament.attending}")
-        print(f"DEBUG: About to save - wants_to_meet: {user_tournament.wants_to_meet}")
-        
-        # Log the event for tracking
-        event_data = {
-            'tournament_id': tournament.id,
-            'tournament_name': tournament.name,
-            'selected_sessions': selected_sessions,
-            'wants_to_meet': wants_to_meet,
-            'attending': user_tournament.attending,
-            'session_label_saved': user_tournament.session_label
-        }
-        log_event(current_user.id, 'tournament_session_update', event_data)
+        user_tournament.session_label = ','.join(selected_sessions)
         
         db.session.commit()
-        
-        # Verify the save worked
-        verification = UserTournament.query.filter_by(
-            user_id=current_user.id,
-            tournament_id=tournament.id
-        ).first()
-        print(f"DEBUG: After commit verification - session_label: '{verification.session_label if verification else 'NOT FOUND'}'")
-        print(f"DEBUG: After commit verification - attending: {verification.attending if verification else 'NOT FOUND'}")
-        
-        flash('Your tournament sessions have been saved.', 'success')
-        return redirect(url_for('user.my_tournaments'))
+        flash("Your selections were saved.", "success")
+        return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
     
     # Get current user's tournament registration
     user_tournament = UserTournament.query.filter_by(
@@ -479,24 +439,12 @@ def tournament_detail(tournament_slug):
         
         fan_history = [{'name': name} for name, count in other_tournaments]
     
-    return render_template('tournament_detail.html',
+    return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          tournament_days=tournament_days,
-                         user_tournament=user_tournament,
-                         stats=stats,
-                         attending_count=stats['attending'],
-                         meeting_count=stats['meetup'],
                          selected_sessions=selected_sessions,
-                         session_stats=session_stats,
-                         session_counts=session_counts,
-                         wants_to_meet=wants_to_meet,
-                         user_attending=user_attending,
-                         days_until=days_until,
-                         session_saved=session_saved,
-                         shared_past_tournaments=shared_past_tournaments,
-                         sorted_shared_tournaments=sorted_shared_tournaments,
-                         sample_members=sample_members,
-                         fan_history=fan_history)
+                         user_tournament=user_tournament,
+                         wants_to_meet=user_tournament.wants_to_meet if user_tournament else True)
 
 # Updated profile route to show user profile with past tournaments selection
 @user_bp.route('/add_wishlist', methods=['POST'])

@@ -104,47 +104,61 @@
                         </div>
                     </div>
                     {% endif %}
+
+                    <!-- Flash Messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        <div class="flash-message-block mb-3">
+                          {% for category, message in messages %}
+                            <div class="flash-message {{ category }} p-3 rounded shadow-sm">{{ message }}</div>
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                    {% endwith %}
+
                     <!-- Simplified Session Selection Form -->
-                    <form method="POST" id="session-form">
+                    <form method="POST" id="session-form" class="rounded shadow-sm p-4">
                       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                       <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
 
-                      <div class="attendance-buttons">
-                        <button id="attending-btn" type="button" class="btn py-1 btn-outline-success hover-grow w-100 attendance-btn">
+                      <div class="attendance-buttons gap-4">
+                        <button id="attending-btn" type="button" class="attendance-btn hover-grow btn-outline-success" style="min-height: 44px;">
                           <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
                         </button>
-                        <button id="maybe-btn" type="button" class="btn py-1 btn-outline-success hover-grow w-100 attendance-btn">
+                        <button id="maybe-btn" type="button" class="attendance-btn hover-grow btn-outline-success" style="min-height: 44px;">
                           <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
                         </button>
-                        <button id="not-attending-btn" type="button" class="btn-clear text-danger small-text">
-                          Not Attending
+                        <button id="not-attending-btn" type="button" class="attendance-btn hover-grow btn-outline-danger" style="min-height: 44px;">
+                          Not Going
                         </button>
                       </div>
 
-                      <div id="session-selection-ui" style="display: none;">
-                        {% for day in tournament_days %}
-                          <div class="session-day-group mb-3">
-                            <strong>{{ day.formatted }}</strong><br>
-                            {% for time in ['Day', 'Night'] %}
-                              {% set label = "Day " ~ day.day_num|string ~ " - " ~ time %}
-                              <label class="session-option">
-                                <input type="checkbox" name="sessions" value="{{ label }}"
-                                  {% if label in selected_sessions %}checked{% endif %}>
-                                {{ label }}
-                              </label><br>
-                            {% endfor %}
-                          </div>
-                        {% endfor %}
+                      <div id="session-selection-ui" style="display: none;" class="mt-4">
+                        <div class="session-group-container mobile-scroll rounded shadow-sm p-3">
+                          {% for day in tournament_days %}
+                            <div class="session-day-group mb-3">
+                              <strong>{{ day.formatted }}</strong><br>
+                              {% for time in ['Day', 'Night'] %}
+                                {% set label = "Day " ~ day.day_num|string ~ " - " ~ time %}
+                                <label class="session-option px-3" style="min-height: 44px; display: block;">
+                                  <input type="checkbox" name="sessions" value="{{ label }}"
+                                    {% if label in selected_sessions %}checked{% endif %}>
+                                  {{ label }}
+                                </label>
+                              {% endfor %}
+                            </div>
+                          {% endfor %}
+                        </div>
 
-                        <div class="mt-3">
-                          <label>
+                        <div class="mt-3 px-3">
+                          <label style="min-height: 44px; display: block;">
                             <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
                             I'm open to meeting other fans
                           </label>
                         </div>
 
-                        <div class="mt-3">
-                          <button type="submit" class="btn btn-primary">Save My Selections</button>
+                        <div class="mt-3 px-3">
+                          <button type="submit" class="cta-button w-100" style="min-height: 44px;">Save My Selections</button>
                         </div>
                       </div>
                     </form>
@@ -164,84 +178,7 @@
 
         </div>
         
-        <!-- Tournament sessions section - Moved below main content for vertical layout -->
-        {% set is_full_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
-        {% set is_attending = user_tournament and user_tournament.attending == True %}
-        {% set is_thinking = user_tournament and user_tournament.attendance_type == 'maybe' %}
-        {% set is_not_going = not user_tournament or user_tournament.attending == False %}
 
-        <div class="card mb-4" id="session-selection-card">
-            <div class="card-header">
-                <h3 class="card-title text-xl mb-0">Which Days Are You Going?</h3>
-            </div>
-            <div class="card-body">
-                <!-- Session Selection UI (initially hidden) -->
-                <div class="session-selection-ui" id="session-selection-ui" style="display: none;">
-                    <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" id="session-form">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
-                        <!-- REMOVED HIDDEN INPUTS: These were causing the problem by adding duplicate sessions -->
-                        <div id="hiddenSessionInputs">
-                            <!-- No preselected hidden inputs - we'll rely ONLY on the checkboxes -->
-                        </div>
-                        <!-- No hidden field for wants_to_meet - we use the visible checkbox instead -->
-                        
-                        <!-- Create session day groups with all tournament days -->
-                        <div class="session-groups">
-                            {% for day in tournament_days %}
-                            <div class="session-day-group">
-                                <div class="day-title">
-                                    {{ day.formatted }} (Day {{ day.day_num }})
-                                </div>
-
-                                <div class="session-container">
-                                    <!-- Day session block -->
-                                    {% set day_key = "Day " + day.day_num|string + " - Day" %}
-                                    <div class="session-block">
-                                        <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ day_key }}" {% if day_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Day Session</span>
-                                            <span class="check-icon check-icon-only">✓</span>
-                                        </label>
-                                        <div class="fan-count day-count">{{ session_counts.get(day_key, 0) }} attending</div>
-                                    </div>
-
-                                    <!-- Night session block -->
-                                    {% set night_key = "Day " + day.day_num|string + " - Night" %}
-                                    <div class="session-block">
-                                        <label class="session-checkbox">
-                                            <input type="checkbox" name="sessions" value="{{ night_key }}" {% if night_key in selected_sessions %}checked{% endif %} class="session-checkbox-input">
-                                            <span class="session-name">Night Session</span>
-                                            <span class="check-icon check-icon-only">✓</span>
-                                        </label>
-                                        <div class="fan-count night-count">{{ session_counts.get(night_key, 0) }} attending</div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-
-                        <!-- Want to meet checkbox -->
-                        <div class="mt-4 mb-2 text-center">
-                            <label>
-                              <input type="checkbox" name="wants_to_meet" {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}>
-                              I'm open to meeting other fans
-                            </label>
-                        </div>
-
-                        <!-- Static save button -->
-                        <div class="text-center mt-2 mb-3">
-                            <button type="submit" class="btn btn-primary" style="width: 100%; max-width: 300px;">Save My Selections</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Message for "Thinking About It" status - Now hidden for all attending users -->
-                <div class="thinking-message p-3 rounded bg-light text-center mt-3" id="thinking-message" style="display: none;">
-                    <p class="text-muted mb-0">When you decide to attend, you'll be able to select your specific sessions.</p>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 

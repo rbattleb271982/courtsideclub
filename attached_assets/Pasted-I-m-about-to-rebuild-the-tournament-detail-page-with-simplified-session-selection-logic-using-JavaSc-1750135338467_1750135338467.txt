@@ -1,0 +1,48 @@
+I’m about to rebuild the tournament detail page with simplified session selection logic using JavaScript and the design system. Before implementing, address all 6 of the following items. Also, note:
+This page is connected to logic on other routes like /order_lanyard, /my-tournaments, and profile or admin views — so updates here must preserve expected data structure and form submission behavior to avoid breaking downstream dependencies.
+✅ 1. Template Cleanup
+Remove all legacy session-selection code blocks in templates/user/tournament_detail.html
+This includes any “session card” or secondary checkbox areas and conditionals like {% if user_attending %} or action=attending
+Keep only a single form with buttons and checkboxes fully visible in the DOM (JS will control visibility)
+✅ 2. Route Template Path
+Confirm that the Flask route for /tournaments/<slug> uses:
+return render_template("user/tournament_detail.html", ...)
+No changes needed if it already points to templates/user/tournament_detail.html
+✅ 3. CSS Design System Classes
+Use the existing CSS class system from CourtSide Club:
+Buttons: attendance-btn, hover-grow, btn-success
+Layout: rounded, shadow-sm, cta-button, gap-4, mobile-scroll
+Do not replace these with generic styling — retain visual consistency
+Example button:
+<button id="attending-btn" class="attendance-btn hover-grow {% if is_attending %}btn-success{% endif %}">
+✅ 4. Flash Message Display
+Add this block if it doesn’t exist already near the top of the content:
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-message-block">
+      {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+Style .flash-message.success using the brand green with padding, rounded corners, and max-width for mobile
+✅ 5. Remove All Legacy Logic
+Completely remove request.args.get("action") checks from routes/user.py
+Remove any UserTournament auto-creation on GET — it must now be created on POST only
+Remove old JS references to btn-going, btn-maybe, etc.
+✅ 6. Mobile-Specific Layout Adjustments
+Wrap session checkboxes in a scrollable mobile-friendly container like:
+<div class="session-group-container mobile-scroll rounded shadow-sm">
+And define mobile-scroll as:
+.mobile-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+Ensure form spacing and button sizes follow mobile-first standards (e.g., min-height: 44px, tap target spacing, gap-4, px-3)
+✅ Cross-Page Dependencies to Maintain
+/order_lanyard depends on UserTournament.attending and session_label
+my_tournaments.html may use UserTournament.session_label for counts or display
+Admin pages and stats may count users with attending=True and non-empty sessions
+Do not change the structure of UserTournament.session_label or attending without ensuring other pages still work
