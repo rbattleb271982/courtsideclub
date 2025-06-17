@@ -1,14 +1,60 @@
-// Simplified JavaScript for tournament detail page
+// JavaScript for tournament detail page - session selection UI
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   // Initialize feather icons if available
   if (typeof feather !== 'undefined') {
     feather.replace();
   }
-  
-  // Initialize UI visibility based on attendance state
-  updateSessionUIVisibility();
-  
+
+  const attendingBtn = document.getElementById("attending-btn");
+  const maybeBtn = document.getElementById("maybe-btn");
+  const notAttendingBtn = document.getElementById("not-attending-btn");
+  const sessionForm = document.getElementById("session-selection-ui");
+  const attendanceInput = document.getElementById("attendance-status");
+
+  // Set initial state based on current attendance value
+  const currentAttendance = attendanceInput ? attendanceInput.value : '';
+  if (currentAttendance === 'attending') {
+    attendingBtn?.classList.add("btn-success");
+    sessionForm.style.display = "block";
+  } else if (currentAttendance === 'maybe') {
+    maybeBtn?.classList.add("btn-success");
+    sessionForm.style.display = "block";
+  } else {
+    notAttendingBtn?.classList.add("btn-success");
+    sessionForm.style.display = "none";
+  }
+
+  // Attending button click handler
+  attendingBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    attendanceInput.value = "attending";
+    sessionForm.style.display = "block";
+    attendingBtn.classList.add("btn-success");
+    maybeBtn.classList.remove("btn-success");
+    notAttendingBtn.classList.remove("btn-success");
+  });
+
+  // Maybe button click handler
+  maybeBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    attendanceInput.value = "maybe";
+    sessionForm.style.display = "block";
+    maybeBtn.classList.add("btn-success");
+    attendingBtn.classList.remove("btn-success");
+    notAttendingBtn.classList.remove("btn-success");
+  });
+
+  // Not attending button click handler
+  notAttendingBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    attendanceInput.value = "not_attending";
+    sessionForm.style.display = "none";
+    notAttendingBtn.classList.add("btn-success");
+    attendingBtn.classList.remove("btn-success");
+    maybeBtn.classList.remove("btn-success");
+  });
+
   // Auto-expand shared history section if accessed via anchor link
   if (window.location.hash === '#shared-history') {
     const tournamentList = document.getElementById('tournamentList');
@@ -20,55 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
       chevron.textContent = '▲';
     }
   }
-  
-  // Add event listener to the meeting toggle
-  const meetingToggle = document.getElementById('wants-to-meet-top');
-  const wantsToMeetHidden = document.getElementById('wants_to_meet_hidden');
-  
-  if (meetingToggle && wantsToMeetHidden) {
-    meetingToggle.addEventListener('change', function() {
-      wantsToMeetHidden.value = this.checked ? 'true' : 'false';
-    });
-  }
 });
-
-// Function to toggle the session UI based on attendance state
-function updateSessionUIVisibility() {
-  // Get attendance buttons
-  const goingBtn = document.getElementById('btn-going');
-  const thinkingBtn = document.getElementById('btn-thinking');
-  
-  // Get UI sections
-  const sessionSelectionUI = document.getElementById('session-selection-ui');
-  const sessionSelectionCard = document.getElementById('session-selection-card');
-  const meetingToggleContainer = document.getElementById('meeting-toggle-container');
-  const thinkingMessage = document.getElementById('thinking-message');
-  
-  // Determine current attendance state
-  const isAttending = goingBtn && goingBtn.classList.contains('btn-success');
-  const isMaybe = thinkingBtn && thinkingBtn.classList.contains('btn-success');
-  const isNotAttending = !isAttending && !isMaybe;
-  
-  // Update UI visibility based on attendance state
-  if (sessionSelectionCard) {
-    sessionSelectionCard.style.display = isNotAttending ? 'none' : 'block';
-  }
-  
-  if (sessionSelectionUI) {
-    // Show session UI for both attending and maybe attending users
-    sessionSelectionUI.style.display = (isAttending || isMaybe) ? 'block' : 'none';
-  }
-  
-  if (meetingToggleContainer) {
-    // Show meeting toggle for both attending and maybe attending users
-    meetingToggleContainer.style.display = (isAttending || isMaybe) ? 'block' : 'none';
-  }
-  
-  if (thinkingMessage) {
-    // Hide thinking message - we always show session selection UI now
-    thinkingMessage.style.display = 'none';
-  }
-}
 
 // Function to toggle the previous tournaments list
 function togglePreviousTournaments() {

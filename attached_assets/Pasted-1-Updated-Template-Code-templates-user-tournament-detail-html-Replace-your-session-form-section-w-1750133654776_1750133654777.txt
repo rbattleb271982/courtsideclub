@@ -1,0 +1,108 @@
+1. Updated Template Code (templates/user/tournament_detail.html)
+Replace your session form section with this version (preserving your styles + logic):
+<!-- Session Selection UI -->
+<div class="session-selection-ui" id="session-selection-ui" style="display: none;">
+  <form method="POST" action="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" id="session-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="status" id="attendance-status" value="attending">
+
+    <div class="session-groups">
+      {% for day in tournament_days %}
+      <div class="session-day-group">
+        <div class="day-title">{{ day.formatted }} (Day {{ day.day_num }})</div>
+
+        {% set day_key = "Day " ~ day.day_num|string ~ " - Day" %}
+        <label>
+          <input type="checkbox" name="sessions" value="{{ day_key }}"
+            {% if day_key in selected_sessions %}checked{% endif %}> {{ day_key }}
+        </label><br>
+
+        {% set night_key = "Day " ~ day.day_num|string ~ " - Night" %}
+        <label>
+          <input type="checkbox" name="sessions" value="{{ night_key }}"
+            {% if night_key in selected_sessions %}checked{% endif %}> {{ night_key }}
+        </label>
+      </div>
+      {% endfor %}
+    </div>
+
+    <label style="margin-top: 1rem; display: block;">
+      <input type="checkbox" name="wants_to_meet"
+        {% if wants_to_meet is not defined or wants_to_meet %}checked{% endif %}>
+      I'm open to meeting other fans
+    </label>
+
+    <button type="submit" class="cta-button">Save My Selections</button>
+  </form>
+</div>
+🧠 2. Backend Route (No changes needed, just confirming it works)
+In routes/user.py, your POST handler should already look like this:
+if request.method == 'POST':
+    selected_sessions = request.form.getlist('sessions')
+    wants_to_meet = request.form.get('wants_to_meet') == 'on'
+    status = request.form.get('status')
+
+    if not user_tournament:
+        user_tournament = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
+        db.session.add(user_tournament)
+
+    user_tournament.session_label = ','.join(selected_sessions)
+    user_tournament.attending = bool(selected_sessions)
+    user_tournament.wants_to_meet = wants_to_meet
+    db.session.commit()
+💾 3. UserTournament Model (confirm fields)
+class UserTournament(db.Model):
+    __tablename__ = 'user_tournament'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    tournament_id = db.Column(db.String(50), db.ForeignKey('tournaments.id'), nullable=False)
+
+    session_label = db.Column(db.Text)  # e.g. "Day 1 - Day,Day 2 - Night"
+    attending = db.Column(db.Boolean, default=False)
+    wants_to_meet = db.Column(db.Boolean, default=True)
+🧪 4. JavaScript (static/js/tournament-detail-simplified.js)
+You must include this logic to handle button click → reveal form:
+document.addEventListener("DOMContentLoaded", function () {
+  const goingBtn = document.getElementById("btn-going");
+  const maybeBtn = document.getElementById("btn-maybe");
+  const notGoingBtn = document.getElementById("btn-not");
+  const sessionForm = document.getElementById("session-selection-ui");
+  const attendanceInput = document.getElementById("attendance-status");
+
+  if (goingBtn && sessionForm) {
+    goingBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      goingBtn.classList.add("btn-success");
+      maybeBtn.classList.remove("btn-success");
+      notGoingBtn.classList.remove("btn-success");
+
+      attendanceInput.value = "attending";
+      sessionForm.style.display = "block";
+    });
+  }
+
+  if (notGoingBtn && sessionForm) {
+    notGoingBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      goingBtn.classList.remove("btn-success");
+      maybeBtn.classList.remove("btn-success");
+      notGoingBtn.classList.add("btn-success");
+
+      attendanceInput.value = "not_attending";
+      sessionForm.style.display = "none";
+    });
+  }
+
+  if (maybeBtn && sessionForm) {
+    maybeBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      maybeBtn.classList.add("btn-success");
+      goingBtn.classList.remove("btn-success");
+      notGoingBtn.classList.remove("btn-success");
+
+      attendanceInput.value = "maybe";
+      sessionForm.style.display = "block";
+    });
+  }
+});

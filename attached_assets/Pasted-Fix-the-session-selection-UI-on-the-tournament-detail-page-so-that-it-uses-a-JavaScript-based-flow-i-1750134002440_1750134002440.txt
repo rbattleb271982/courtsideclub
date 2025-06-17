@@ -1,0 +1,75 @@
+Fix the session selection UI on the tournament detail page so that it uses a JavaScript-based flow instead of server-side redirects. This used to work and should again. Follow these steps exactly:
+1. Replace Attendance Buttons in the Template
+In templates/user/tournament_detail.html, remove the current logic that conditionally shows links or buttons based on attendance. Replace it with this consistent structure:
+<div class="attendance-buttons">
+  <button id="attending-btn" class="{% if is_attending %}btn-success{% endif %}">I’m Attending</button>
+  <button id="maybe-btn" class="{% if is_maybe %}btn-success{% endif %}">Maybe Attending</button>
+  <button id="not-attending-btn" class="{% if not user_attending %}btn-success{% endif %}">Not Going</button>
+</div>
+These buttons should always be present in the DOM so the JavaScript can hook into them reliably.
+2. Update JavaScript
+In static/js/tournament-detail-simplified.js, replace the contents with the following code:
+document.addEventListener("DOMContentLoaded", function () {
+  const attendingBtn = document.getElementById("attending-btn");
+  const maybeBtn = document.getElementById("maybe-btn");
+  const notAttendingBtn = document.getElementById("not-attending-btn");
+  const sessionForm = document.getElementById("session-selection-ui");
+  const attendanceInput = document.getElementById("attendance-status");
+
+  const currentAttendance = attendanceInput ? attendanceInput.value : '';
+  if (currentAttendance === 'attending') {
+    attendingBtn?.classList.add("btn-success");
+    sessionForm.style.display = "block";
+  } else if (currentAttendance === 'maybe') {
+    maybeBtn?.classList.add("btn-success");
+    sessionForm.style.display = "block";
+  } else {
+    notAttendingBtn?.classList.add("btn-success");
+    sessionForm.style.display = "none";
+  }
+
+  attendingBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    attendanceInput.value = "attending";
+    sessionForm.style.display = "block";
+    attendingBtn.classList.add("btn-success");
+    maybeBtn.classList.remove("btn-success");
+    notAttendingBtn.classList.remove("btn-success");
+  });
+
+  maybeBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    attendanceInput.value = "maybe";
+    sessionForm.style.display = "block";
+    maybeBtn.classList.add("btn-success");
+    attendingBtn.classList.remove("btn-success");
+    notAttendingBtn.classList.remove("btn-success");
+  });
+
+  notAttendingBtn?.addEventListener("click", function (e) {
+    e.preventDefault();
+    attendanceInput.value = "not_attending";
+    sessionForm.style.display = "none";
+    notAttendingBtn.classList.add("btn-success");
+    attendingBtn.classList.remove("btn-success");
+    maybeBtn.classList.remove("btn-success");
+  });
+});
+3. Remove Action Redirect Logic from Route
+In the route handler for /tournaments/<slug> in routes/user.py, remove or disable any logic that checks for:
+action = request.args.get("action")
+and conditionally creates the UserTournament. This should now happen only on POST when the form is submitted.
+4. Ensure the Session Form Is Always Present
+Still in tournament_detail.html, make sure the session form HTML block:
+<div class="session-selection-ui" id="session-selection-ui" style="display: none;">
+is not wrapped in {% if user_attending %} or any other condition — it should always be rendered, and just hidden via inline style. Visibility is now fully controlled via JS.
+5. Keep CSRF Token Intact
+Confirm that this line is still inside the session form:
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+6. Do Not Use Checkpoints Unless Necessary
+Only use a checkpoint if something major breaks — otherwise commit normally and test the full user flow.
+✅ After Implementation, Fully Test:
+New user with no sessions clicks “I’m Attending” → session form shows immediately
+User selects sessions and clicks “Save” → form submits and reloads with sessions pre-selected
+Session form is visible on page load if user already selected sessions
+Changing attendance to “Not Going” hides the form

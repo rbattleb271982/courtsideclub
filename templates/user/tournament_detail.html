@@ -112,24 +112,15 @@
                             {% set is_attending = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'attending' %}
                             {% set is_maybe = user_tournament and user_tournament.attending == True and user_tournament.attendance_type == 'maybe' %}
 
-                            <!-- New Attendance Buttons for Session Selection -->
+                            <!-- JavaScript-Controlled Attendance Buttons -->
                             <div class="attendance-buttons">
-                              {% if not user_attending %}
-                              <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug, action='attending') }}" class="btn py-1 btn-outline-success hover-grow w-100 attendance-btn">
-                                <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
-                              </a>
-                              <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug, action='maybe') }}" class="btn py-1 btn-outline-success hover-grow w-100 attendance-btn">
-                                <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
-                              </a>
-                              {% else %}
-                              <button id="attending-btn" class="btn py-1 {% if is_attending %}btn-success selected{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="attending">
+                              <button id="attending-btn" class="btn py-1 {% if is_attending %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn">
                                 <i data-feather="check-circle" class="icon-sm"></i> I'm Attending
                               </button>
-                              <button id="maybe-btn" class="btn py-1 {% if is_maybe %}btn-success selected{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn" data-attendance="maybe">
+                              <button id="maybe-btn" class="btn py-1 {% if is_maybe %}btn-success{% else %}btn-outline-success{% endif %} hover-grow w-100 attendance-btn">
                                 <i data-feather="help-circle" class="icon-sm"></i> Maybe Attending
                               </button>
-                              {% endif %}
-                              <button id="not-attending-btn" class="btn-clear text-danger small-text" {% if is_not_going %}style="display: block;"{% else %}style="display: none;"{% endif %}>
+                              <button id="not-attending-btn" class="btn-clear text-danger small-text {% if not user_attending %}btn-success{% endif %}">
                                 Not Attending
                               </button>
                             </div>
