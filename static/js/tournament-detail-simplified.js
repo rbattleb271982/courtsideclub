@@ -1,6 +1,8 @@
 // Rebuilt tournament detail page JavaScript - simplified session selection
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("Tournament detail JS loaded");
+  
   // Initialize feather icons if available
   if (typeof feather !== 'undefined') {
     feather.replace();
@@ -8,6 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const statusInput = document.getElementById("attendance-status");
   const sessionForm = document.getElementById("session-selection-ui");
+  
+  console.log("Elements found:", {
+    statusInput: !!statusInput,
+    sessionForm: !!sessionForm
+  });
 
   const buttons = {
     attending: document.getElementById("attending-btn"),
@@ -16,8 +23,17 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function updateUI(state) {
+    console.log("updateUI called with state:", state);
     statusInput.value = state;
-    sessionForm.style.display = (state === 'attending' || state === 'maybe') ? 'block' : 'none';
+    
+    const shouldShow = (state === 'attending' || state === 'maybe');
+    console.log("Should show session form:", shouldShow);
+    
+    if (sessionForm) {
+      sessionForm.style.display = shouldShow ? 'block' : 'none';
+      console.log("Session form display set to:", sessionForm.style.display);
+    }
+    
     Object.keys(buttons).forEach(key => {
       buttons[key].classList.remove("btn-success");
       if (key === state) {
