@@ -249,7 +249,7 @@
 <div class="container">
   <h1 class="page-title">Order Your CourtSide Club Lanyard</h1>
   
-  {% if not lanyard_ordered and not no_sessions %}
+  {% if not has_existing_address and not no_sessions %}
   <div class="info-message">
     <p><strong>You've qualified for a free CourtSide Club lanyard.</strong> Just fill out your shipping info so we can get it to you before your next tournament.</p>
   </div>
@@ -263,7 +263,7 @@
         <a href="{{ url_for('tournaments.list_tournaments') }}" class="cta-button-secondary">View Tournaments</a>
       </div>
     </div>
-    {% elif lanyard_ordered %}
+    {% elif has_existing_address %}
     <div class="success-content">
       <div class="info-message alert-success">
         <p>✅ Your CourtSide Club lanyard has been ordered!</p>
