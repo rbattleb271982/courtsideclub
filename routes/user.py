@@ -128,20 +128,104 @@ def home():
         return redirect(url_for('auth.login'))
 
 # Tournament detail view specifically for logged-in users
-@user_bp.route('/tournaments/<tournament_slug>', methods=['GET', 'POST'])
+@user_bp.route('/tournaments/<slug>')
 @login_required
-def tournament_detail(tournament_slug):
-    print("="*50)
-    print(f"TOURNAMENT DETAIL ROUTE ACCESSED: {tournament_slug}")
-    print("="*50)
-    print("ROUTE IS EXECUTING - CHECKING FOR ERRORS...")
-    # Get the tournament by slug
-    tournament = Tournament.query.filter_by(slug=tournament_slug).first_or_404()
+def tournament_detail(slug):
+    from collections import Counter
+    tournament = Tournament.query.filter_by(slug=slug).first_or_404()
     
-    # DEBUG: Check tournament sessions data
-    print("DEBUG sessions =", getattr(tournament, 'sessions', None))
-    print("DEBUG tournament.start_date =", tournament.start_date)
-    print("DEBUG tournament.end_date =", tournament.end_date)
+    user_tournament = UserTournament.query.filter_by(
+        user_id=current_user.id,
+        tournament_id=tournament.id
+    ).first()
+    
+    is_attending = user_tournament.attending if user_tournament else False
+    is_maybe = (user_tournament.attendance_type == 'maybe') if user_tournament else False
+    selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
+    selected_sessions = [s.strip() for s in selected_sessions if s.strip()]
+    
+    tournament_days = generate_tournament_days(tournament.start_date, tournament.end_date)
+    session_labels = tournament.sessions or []
+
+    # Stats
+    stats = get_tournament_attendance_stats(tournament.id)
+    
+    # Session counts
+    user_sessions = (
+        db.session.query(UserTournament.session_label)
+        .filter_by(tournament_id=tournament.id)
+        .filter(UserTournament.attending == True)
+        .filter(UserTournament.session_label.isnot(None))
+        .filter(UserTournament.session_label != '')
+        .all()
+    )
+    all_labels = []
+    for ut in user_sessions:
+        if ut.session_label:
+            labels = [label.strip() for label in ut.session_label.split(',') if label.strip()]
+            all_labels.extend(labels)
+    session_counts = Counter(all_labels)
+
+    # Sample members
+    sample_members = []
+    attending_users = UserTournament.query.filter_by(
+        tournament_id=tournament.id, 
+        attending=True
+    ).join(User).limit(8).all()
+    for ut in attending_users:
+        user = ut.user
+        if user and not user.test_user:
+            session_count = len(ut.session_label.split(',')) if ut.session_label else 0
+            initials = f"{user.first_name[0].upper() if user.first_name else 'U'}{user.last_name[0].upper() if user.last_name else 'U'}"
+            display_name = f"{user.first_name} {user.last_name[0]}." if user.first_name and user.last_name else f"User {user.id}"
+            sample_members.append({
+                'initials': initials,
+                'display_name': display_name,
+                'session_count': session_count,
+                'open_to_meet': bool(ut.wants_to_meet)
+            })
+
+    # Shared tournament history
+    shared_history = []
+    user_past = db.session.query(Tournament.name).join(
+        UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+    ).filter(
+        UserPastTournament.user_id == current_user.id,
+        Tournament.id != tournament.id
+    ).all()
+    shared_past_tournaments = {name: 1 for name, in user_past}
+    other_attendees = db.session.query(UserTournament.user_id).filter(
+        UserTournament.tournament_id == tournament.id,
+        UserTournament.attending == True,
+        UserTournament.user_id != current_user.id
+    ).all()
+    other_ids = [u.user_id for u in other_attendees]
+    if other_ids:
+        other_past = db.session.query(
+            Tournament.name, db.func.count(UserPastTournament.user_id)
+        ).join(
+            UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+        ).filter(
+            UserPastTournament.user_id.in_(other_ids),
+            Tournament.id != tournament.id
+        ).group_by(Tournament.name).all()
+        for name, count in other_past:
+            shared_past_tournaments[name] = shared_past_tournaments.get(name, 0) + count
+    shared_history = sorted(shared_past_tournaments.items(), key=lambda x: x[1], reverse=True)[:5]
+
+    return render_template('user/tournament_detail.html',
+        tournament=tournament,
+        user_tournament=user_tournament,
+        is_attending=is_attending,
+        is_maybe=is_maybe,
+        selected_sessions=selected_sessions,
+        tournament_days=tournament_days,
+        session_labels=session_labels,
+        session_counts=session_counts,
+        sample_members=sample_members,
+        shared_history=shared_history,
+        stats=stats
+    )
     
     # REBUILD tournament.sessions if it's empty
     if not tournament.sessions or len(tournament.sessions) == 0:
