@@ -1,3 +1,10 @@
+Replit Agent Prompt — Clean Redesign of Tournament Detail Page (HTML only)
+Prompt:
+Replace the contents of `templates/user/tournament_detail.html` with the version below. This keeps all Flask/Jinja logic intact but restyles the layout to match the approved design for CourtSide Club.
+
+Do not change route names, form field names, or form methods — they are connected to backend logic. Only improve layout, CSS class usage, and content grouping.
+
+--- Paste begins below this line ---
 {% extends 'layout.html' %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
@@ -97,3 +104,6 @@
   {% endif %}
 </div>
 {% endblock %}
+--- Paste ends above this line ---
+
+Do not finish until you’ve fully tested the layout for all three attendance states, verified that sessions checkboxes reflect selected state correctly, and ensured no Flask route breaks. Use checkpoints sparingly.
