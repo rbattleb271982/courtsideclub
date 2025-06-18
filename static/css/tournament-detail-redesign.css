@@ -1,116 +1,154 @@
 .tournament-detail-wrapper {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  font-family: Inter, sans-serif;
-  color: #2b2b2b;
+  max-width: 700px !important;
+  margin: 0 auto !important;
+  padding: 2rem 1rem !important;
+  font-family: Inter, sans-serif !important;
+  color: #2b2b2b !important;
+  background: white !important;
 }
 
-.tournament-name {
-  font-family: 'Crimson Text', serif;
-  font-size: 2rem;
-  margin-bottom: 0.25rem;
+.tournament-detail-wrapper .tournament-name {
+  font-family: 'Crimson Text', serif !important;
+  font-size: 2rem !important;
+  margin-bottom: 0.25rem !important;
+  color: #4a5d2a !important;
+  text-align: center !important;
 }
 
-.tournament-meta,
-.tournament-stats {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 0.5rem;
+.tournament-detail-wrapper .tournament-meta,
+.tournament-detail-wrapper .tournament-stats {
+  font-size: 0.95rem !important;
+  color: #555 !important;
+  margin-bottom: 0.5rem !important;
+  text-align: center !important;
 }
 
-.tournament-link {
-  display: inline-block;
-  margin: 0.5rem 0 1.5rem 0;
-  color: #4a5d2a;
-  font-weight: 500;
-  text-decoration: none;
+.tournament-detail-wrapper .tournament-link {
+  display: inline-block !important;
+  margin: 0.5rem 0 1.5rem 0 !important;
+  color: #4a5d2a !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  text-align: center !important;
+  width: 100% !important;
 }
 
-.attendance-toggle-group {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  gap: 0.5rem;
+.tournament-detail-wrapper .attendance-toggle-group {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-bottom: 1.5rem !important;
+  gap: 0.5rem !important;
 }
 
-.attendance-toggle {
-  flex: 1;
-  padding: 0.75rem;
-  border: 1px solid #4a5d2a;
-  border-radius: 6px;
-  background: #fff;
-  cursor: pointer;
-  font-weight: 500;
+.tournament-detail-wrapper .attendance-toggle {
+  flex: 1 !important;
+  padding: 0.75rem !important;
+  border: 1px solid #4a5d2a !important;
+  border-radius: 6px !important;
+  background: #fff !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
 }
 
-.attendance-toggle.selected {
-  background: #4a5d2a;
-  color: #fff;
+.tournament-detail-wrapper .attendance-toggle.selected {
+  background: #4a5d2a !important;
+  color: #fff !important;
 }
 
-.session-day {
-  margin-bottom: 1rem;
+.tournament-detail-wrapper .session-day {
+  margin-bottom: 1rem !important;
 }
 
-.session-options {
-  display: flex;
-  gap: 1rem;
-  padding-left: 1rem;
+.tournament-detail-wrapper .session-options {
+  display: flex !important;
+  gap: 1rem !important;
+  padding-left: 1rem !important;
 }
 
-.session-options label {
-  font-size: 0.9rem;
-  color: #333;
+.tournament-detail-wrapper .session-options label {
+  font-size: 0.9rem !important;
+  color: #333 !important;
+  cursor: pointer !important;
 }
 
-.meetup-checkbox {
-  margin-top: 1rem;
-  font-size: 0.9rem;
+.tournament-detail-wrapper .meetup-checkbox {
+  margin-top: 1rem !important;
+  font-size: 0.9rem !important;
 }
 
-.save-button {
-  margin-top: 1.5rem;
-  width: 100%;
-  padding: 0.75rem;
-  font-weight: bold;
-  background: #4a5d2a;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.tournament-detail-wrapper .meetup-checkbox label {
+  cursor: pointer !important;
 }
 
-.chip-list {
-  margin-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.tournament-detail-wrapper .save-button {
+  margin-top: 1.5rem !important;
+  width: 100% !important;
+  padding: 0.75rem !important;
+  font-weight: bold !important;
+  background: #4a5d2a !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
 }
 
-.chip {
-  background: #e6ecd7;
-  color: #4a5d2a;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  font-size: 0.8rem;
+.tournament-detail-wrapper .save-button:hover {
+  background: #3d4f23 !important;
 }
 
-.fan-history {
-  margin-top: 2rem;
+.tournament-detail-wrapper .chip-list {
+  margin-top: 1rem !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
 }
 
-.fan-history h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
+.tournament-detail-wrapper .chip {
+  background: #e6ecd7 !important;
+  color: #4a5d2a !important;
+  padding: 0.3rem 0.75rem !important;
+  border-radius: 999px !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
 }
 
-.fan-history ul {
-  padding-left: 1rem;
-  font-size: 0.9rem;
+.tournament-detail-wrapper .fan-history {
+  margin-top: 2rem !important;
+  padding: 1rem !important;
+  background: #f8f9fa !important;
+  border-radius: 8px !important;
 }
 
-.fan-history li .count {
-  color: #888;
-  font-size: 0.85rem;
+.tournament-detail-wrapper .fan-history h3 {
+  font-size: 1.1rem !important;
+  margin-bottom: 0.5rem !important;
+  color: #4a5d2a !important;
+}
+
+.tournament-detail-wrapper .fan-history ul {
+  padding-left: 1rem !important;
+  font-size: 0.9rem !important;
+  margin: 0 !important;
+}
+
+.tournament-detail-wrapper .fan-history li .count {
+  color: #888 !important;
+  font-size: 0.85rem !important;
+}
+
+/* Override Bootstrap and global styles */
+.tournament-detail-wrapper .container {
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+.tournament-detail-wrapper .card,
+.tournament-detail-wrapper .card-body {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
 }
