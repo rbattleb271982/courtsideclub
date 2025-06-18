@@ -372,11 +372,17 @@ def unattend_tournament(tournament_slug):
     }
     log_event(current_user.id, 'unattend_tournament', event_data)
     
-    # Remove the user tournament registration
-    UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament.id).delete()
+    # Update the user tournament to "not attending" state
+    user_tournament = UserTournament.query.filter_by(user_id=current_user.id, tournament_id=tournament.id).first()
+    if user_tournament:
+        user_tournament.attending = False
+        user_tournament.session_label = ""
+        user_tournament.attendance_type = None
+        user_tournament.wants_to_meet = False
+    
     db.session.commit()
     
-    return redirect(url_for('user.browse_tournaments'))
+    return redirect(url_for('user.tournament_detail', slug=tournament_slug))
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/update', methods=['POST'])
@@ -597,21 +603,19 @@ def attend_tournament_new(tournament_slug):
         )
         db.session.add(user_tournament)
     
-    # Always mark as attending, but session handling differs by type
-    user_tournament.attending = True
+    # Set attendance based on type - maybe = not attending but has placeholder
+    if attendance_type == 'maybe':
+        user_tournament.attending = False
+        user_tournament.session_label = "placeholder"
+        flash('You are marked as "Maybe Attending" this tournament. You can still select specific sessions.', 'success')
+    else:
+        # For full attending
+        user_tournament.attending = True
+        user_tournament.session_label = "placeholder"
+        flash('Please select which sessions you\'ll attend.', 'info')
     
     # Set the attendance_type field
     user_tournament.attendance_type = attendance_type
-    
-    # Both "maybe" and "attending" types are for attending users
-    # We'll preserve any existing session selections
-    # The only difference is the message shown to the user
-    if attendance_type == 'maybe':
-        flash('You are marked as "Maybe Attending" this tournament. You can still select specific sessions.', 'success')
-    else:
-        # For full attending, we encourage session selection
-        if not user_tournament.session_label:
-            flash('Please select which sessions you\'ll attend.', 'info')
     
     # Log the event
     event_data = {
