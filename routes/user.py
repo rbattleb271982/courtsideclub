@@ -463,7 +463,7 @@ def tournament_detail(tournament_slug):
     print('meeting_count:', stats['meetup'])
     print('session_counts:', session_counts)
     
-    return render_template('tournament_detail.html',
+    return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          tournament_days=tournament_days,
                          selected_sessions=selected_sessions,

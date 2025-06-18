@@ -1,0 +1,38 @@
+# Step 1: Open routes/user.py
+# ✅ Confirm that the tournament detail route is pointing to the new template
+# It should look like:
+# return render_template('user/tournament_detail.html', ...)
+
+# If it's pointing to ANY other file (e.g. 'user/tournament_old.html', 'tournament_preview.html'), update it to:
+# return render_template('user/tournament_detail.html', ...)
+
+# Step 2: Open templates/user/tournament_detail.html
+# ✅ At the very top of the page, directly below {% block content %}, insert this temp test line:
+# <h1 style="color: red; text-align: center;">TEST RED HEADER</h1>
+# Then restart the app and refresh a tournament page in the browser.
+# If you do NOT see that red header — you are still viewing the old template or the wrong route.
+
+# Step 3: In the browser, open DevTools > Elements > Sources > Page HTML
+# ✅ Check that <link rel="stylesheet" href="/static/css/tournament-detail-redesign.css"> is present.
+# If not, fix the {% block head %} section in the template so it includes:
+# <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
+
+# Step 4: Open static/css/tournament-detail-redesign.css
+# ✅ Add this rule temporarily to test if the file is even being applied:
+# body { background: pink !important; }
+# Refresh the tournament detail page and confirm the background changes to pink.
+# If it does not — your CSS is not loading or is being overridden.
+# If needed, add !important to more selectors or move the CSS file link BELOW the main site style.css in templates/layout.html.
+
+# Step 5: Confirm that no other template is being rendered for tournament pages.
+# ✅ Search project-wide for other templates like tournament_old.html, tournament_view.html, tournament_preview.html
+# If any are being used for /tournaments/<slug>, refactor to use only templates/user/tournament_detail.html
+
+# Step 6: Once verified that:
+# - The template file is rendering
+# - The CSS is loading
+# - The JS is running
+# - The new layout is visible (centered layout, chips, session grid)
+# Remove the red <h1> test header.
+
+# Do not mark this checkpoint done until the redesign is visually and functionally confirmed in the browser.
