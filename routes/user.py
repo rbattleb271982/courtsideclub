@@ -129,7 +129,7 @@ def home():
 
 # Tournament detail view specifically for logged-in users
 @user_bp.route('/tournaments/<slug>')
-# @login_required  # Temporarily disabled for debugging
+@login_required
 def tournament_detail(slug):
     from collections import Counter
     tournament = Tournament.query.filter_by(slug=slug).first_or_404()
@@ -204,18 +204,24 @@ def tournament_detail(slug):
 
     # Shared tournament history
     shared_history = []
-    user_past = db.session.query(Tournament.name).join(
-        UserPastTournament, Tournament.id == UserPastTournament.tournament_id
-    ).filter(
-        UserPastTournament.user_id == current_user.id,
-        Tournament.id != tournament.id
-    ).all()
-    shared_past_tournaments = {name: 1 for name, in user_past}
-    other_attendees = db.session.query(UserTournament.user_id).filter(
-        UserTournament.tournament_id == tournament.id,
-        UserTournament.attending == True,
-        UserTournament.user_id != current_user.id
-    ).all()
+    shared_past_tournaments = {}
+    
+    if current_user.is_authenticated:
+        user_past = db.session.query(Tournament.name).join(
+            UserPastTournament, Tournament.id == UserPastTournament.tournament_id
+        ).filter(
+            UserPastTournament.user_id == current_user.id,
+            Tournament.id != tournament.id
+        ).all()
+        shared_past_tournaments = {name: 1 for name, in user_past}
+        
+        other_attendees = db.session.query(UserTournament.user_id).filter(
+            UserTournament.tournament_id == tournament.id,
+            UserTournament.attending == True,
+            UserTournament.user_id != current_user.id
+        ).all()
+    else:
+        other_attendees = []
     other_ids = [u.user_id for u in other_attendees]
     if other_ids:
         other_past = db.session.query(
@@ -230,18 +236,32 @@ def tournament_detail(slug):
             shared_past_tournaments[name] = shared_past_tournaments.get(name, 0) + count
     shared_history = sorted(shared_past_tournaments.items(), key=lambda x: x[1], reverse=True)[:5]
 
+    # Create form for CSRF protection
+    form = TournamentSelectionForm()
+    
+    # Calculate missing variables for template
+    is_not_attending = not is_attending and not is_maybe
+    wants_to_meet = user_tournament.wants_to_meet if user_tournament else False
+    attending_count = stats.get('attending', 0)
+    meeting_count = stats.get('meetup', 0)
+    
     return render_template('user/tournament_detail.html',
         tournament=tournament,
         user_tournament=user_tournament,
         is_attending=is_attending,
         is_maybe=is_maybe,
+        is_not_attending=is_not_attending,
         selected_sessions=selected_sessions,
         tournament_days=tournament_days,
         session_labels=session_labels,
         session_counts=session_counts,
         sample_members=sample_members,
         shared_history=shared_history,
-        stats=stats
+        stats=stats,
+        form=form,
+        wants_to_meet=wants_to_meet,
+        attending_count=attending_count,
+        meeting_count=meeting_count
     )
 
 

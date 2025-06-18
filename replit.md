@@ -117,6 +117,15 @@ CourtSide Club is a comprehensive web application for managing tennis tournament
 - **Caching Strategy**: Static asset and data caching
 - **Error Handling**: Comprehensive error logging and recovery
 
+## Recent Changes
+
+### June 18, 2025 - Tournament Detail Page Rebuild
+- Fixed route conflict between public and user tournament detail pages
+- Reordered blueprint registration to prioritize authenticated user routes
+- Successfully resolved `tournament_days length: 0` issue
+- Tournament detail page now properly generates 14 days for tournaments
+- Maintained all session selection and attendance functionality
+
 ## Changelog
 - June 13, 2025. Initial setup
 
