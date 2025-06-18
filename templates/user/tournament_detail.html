@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
 
 {% block head %}
@@ -7,17 +8,19 @@
 
 {% block content %}
 <div class="tournament-detail-wrapper">
-  <div class="tournament-header">
-    <div style="background: #fff0f0; padding: 1rem; border: 1px solid #f00; margin: 1rem 0;">
-      <h4 style="color: red;">Debug Info</h4>
-      <ul>
-        <li>is_attending: {{ is_attending }}</li>
-        <li>is_maybe: {{ is_maybe }}</li>
-        <li>tournament_days length: {{ tournament_days | length }}</li>
-        <li>selected_sessions: {{ selected_sessions }}</li>
-      </ul>
-    </div>
+  <!-- Debug Info -->
+  <div class="debug-info" style="background: #fee; border: 1px solid red; padding: 1rem; margin-bottom: 1rem;">
+    <strong>Debug Info</strong>
+    <ul>
+      <li>is_attending: {{ is_attending }}</li>
+      <li>is_maybe: {{ is_maybe }}</li>
+      <li>tournament_days length: {{ tournament_days | length }}</li>
+      <li>selected_sessions: {{ selected_sessions }}</li>
+      <li>official_link: {{ tournament.official_link }}</li>
+    </ul>
+  </div>
 
+  <div class="tournament-header">
     <h1 class="tournament-name">{{ tournament.name }}</h1>
     <p class="tournament-dates">
       {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}
@@ -25,67 +28,90 @@
       • {{ tournament.event_type }} • {{ tournament.tour_type }}
     </p>
     <div class="tournament-stats">
-      {% if is_attending %}attending{% elif is_maybe %}maybe attending{% else %}not attending{% endif %}
-      {% if wants_to_meet %} • open to meet{% endif %}
+      {{ attending_count }} attending • {{ meeting_count }} open to meet
     </div>
+
+    <!-- Official Tournament Link -->
+    {% if tournament.official_link %}
+      <p><a href="{{ tournament.official_link }}" target="_blank">Official Tournament Site</a></p>
+    {% endif %}
   </div>
 
   <form method="POST" class="tournament-form">
     {{ form.hidden_tag() }}
 
-    <div id="attendance-status" class="attendance-toggle-group">
-      <button type="submit" name="status" value="attending" class="toggle-btn {% if is_attending %}selected{% endif %}">I'm Attending</button>
-      <button type="submit" name="status" value="maybe" class="toggle-btn {% if is_maybe %}selected{% endif %}">Maybe Attending</button>
-      <button type="submit" name="status" value="not_attending" class="toggle-btn {% if is_not_attending %}selected{% endif %}">Not Attending</button>
+    <!-- Attendance Toggle Buttons -->
+    <div class="attendance-toggle-group">
+      <button type="button" class="toggle-btn {% if is_attending %}selected{% endif %}" data-status="attending">I'm Attending</button>
+      <button type="button" class="toggle-btn {% if is_maybe %}selected{% endif %}" data-status="maybe">Maybe Attending</button>
+      <button type="button" class="toggle-btn {% if is_not_attending %}selected{% endif %}" data-status="not_attending">Not Attending</button>
     </div>
+    <input type="hidden" name="status" id="status-input" value="{{ 'attending' if is_attending else 'maybe' if is_maybe else 'not_attending' }}">
 
-    <p style="color:red;">Debug Info:</p>
-    <ul>
-      <li>tournament_days length: {{ tournament_days | length }}</li>
-    </ul>
-
+    <!-- Session Selection -->
     {% if tournament_days %}
-      <div id="session-selection" class="session-selection">
-        {% for day in tournament_days %}
+    <div id="session-selection" class="session-selection" {% if not is_attending and not is_maybe %}style="display: none;"{% endif %}>
+      {% for day in tournament_days %}
         <div class="session-day-group">
-          <div class="session-day">{{ day.formatted }}</div>
-          <div class="session-options">
-            {% for time in ['Day', 'Night'] %}
-              {% set label = "Day " ~ day.day_num ~ " - " ~ time %}
-              <label class="session-option">
-                <input type="checkbox" name="sessions" value="{{ label }}" {% if label in selected_sessions %}checked{% endif %}>
-                {{ time }} Session
-              </label>
-            {% endfor %}
-          </div>
+          <strong>Day {{ day.day_num }} – {{ day.formatted }}</strong><br>
+          {% for time in ['Day', 'Night'] %}
+            {% set label = "Day " ~ day.day_num ~ " - " ~ time %}
+            <label class="session-option">
+              <input type="checkbox" name="sessions" value="{{ label }}"
+                {% if label in selected_sessions %}checked{% endif %}>
+              {{ time }} Session ({{ session_counts[label] if label in session_counts else 0 }} attending)
+            </label><br>
+          {% endfor %}
         </div>
+      {% endfor %}
+
+      <div class="meetup-toggle">
+        <label>
+          <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
+          I'm open to meeting other fans
+        </label>
+      </div>
+
+      <!-- Selected session chips -->
+      <div id="selected-session-chips" class="selected-sessions">
+        {% for session in selected_sessions %}
+          <span class="chip">{{ session }}</span>
         {% endfor %}
       </div>
+    </div>
     {% else %}
-      <div class="session-selection empty">No sessions available for this tournament.</div>
-    {% endif %}
-
-    <div class="meetup-toggle">
-      <label>
-        <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
-        I'm open to meeting other fans
-      </label>
-    </div>
-
-    {% if selected_sessions %}
-    <div id="selected-session-chips" class="selected-sessions">
-      {% for session in selected_sessions %}
-        <span class="chip">{{ session }}</span>
-      {% endfor %}
-    </div>
+    <div class="session-selection empty">No sessions available for this tournament.</div>
     {% endif %}
 
     <button type="submit" class="save-btn">Save My Selections</button>
   </form>
+
+  <!-- Sample Members Attending -->
+  {% if sample_members %}
+    <div class="fans-attending">
+      <h3>Fans Attending:</h3>
+      <ul>
+        {% for member in sample_members %}
+          <li>{{ member.display_name }} ({{ member.session_count }} sessions, {% if member.open_to_meet %}open to meet{% else %}private{% endif %})</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <!-- Shared History -->
+  {% if shared_history %}
+    <div class="shared-history">
+      <h3>Other tournaments these fans have attended:</h3>
+      <ul>
+        {% for name, count in shared_history %}
+          <li>{{ name }} ({{ count }} fans)</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/tournament-detail.js') }}"></script>
 {% endblock %}
-

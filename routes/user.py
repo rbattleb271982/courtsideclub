@@ -179,16 +179,83 @@ def tournament_detail(tournament_slug):
         flash("Your selections were saved.", "success")
         return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
     
-    # Generate tournament_days using helper
+    # Generate tournament_days using helper from start_date and end_date
     tournament_days = generate_tournament_days(tournament.start_date, tournament.end_date)
-    print(f"DEBUG: Generated tournament_days = {[d['formatted'] for d in tournament_days]}")
     
     # Get selected sessions for the template
     selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
+    selected_sessions = [s.strip() for s in selected_sessions if s.strip()]
     
-    # Additional debug info
-    print("Selected Sessions:", selected_sessions)
-    print("User Tournament Exists:", user_tournament is not None)
+    # Generate session_counts from UserTournament.session_label
+    from collections import Counter
+    user_sessions = (
+        db.session.query(UserTournament.session_label)
+        .filter_by(tournament_id=tournament.id)
+        .filter(UserTournament.attending == True)
+        .filter(UserTournament.session_label.isnot(None))
+        .filter(UserTournament.session_label != '')
+        .all()
+    )
+    
+    all_labels = []
+    for ut in user_sessions:
+        if ut.session_label:
+            labels = [label.strip() for label in ut.session_label.split(',') if label.strip()]
+            all_labels.extend(labels)
+    
+    session_counts = Counter(all_labels)
+    
+    # Get shared past tournaments from UserPastTournament and attendees' history
+    attending_users = UserTournament.query.filter_by(
+        tournament_id=tournament.id, 
+        attending=True
+    ).join(User).all()
+    
+    shared_past_tournaments = {}
+    for ut in attending_users:
+        user = ut.user
+        if user and not user.test_user:
+            past_tournaments = UserPastTournament.query.filter_by(user_id=user.id).all()
+            for pt in past_tournaments:
+                if pt.tournament and pt.tournament.name:
+                    name = pt.tournament.name
+                    shared_past_tournaments[name] = shared_past_tournaments.get(name, 0) + 1
+    
+    shared_history = sorted(shared_past_tournaments.items(), key=lambda x: x[1], reverse=True)[:5]
+    
+    # Generate sample members with initials and display name
+    sample_members = []
+    for ut in attending_users[:8]:
+        user = ut.user
+        if user and not user.test_user:
+            session_count = len(ut.session_label.split(',')) if ut.session_label else 0
+            first_initial = user.first_name[0].upper() if user.first_name else 'U'
+            last_initial = user.last_name[0].upper() if user.last_name else 'U'
+            initials = first_initial + last_initial
+            display_name = f"{user.first_name} {last_initial}." if user.first_name and user.last_name else f"User {user.id}"
+            
+            sample_members.append({
+                'initials': initials,
+                'display_name': display_name,
+                'session_count': session_count,
+                'open_to_meet': bool(ut.wants_to_meet)
+            })
+    
+    # Determine attendance status
+    is_attending = user_tournament and user_tournament.attendance_type == 'attending'
+    is_maybe = user_tournament and user_tournament.attendance_type == 'maybe'
+    is_not_attending = not user_tournament or user_tournament.attendance_type == 'not_attending'
+    wants_to_meet = user_tournament.wants_to_meet if user_tournament else False
+    
+    # Debug output for terminal and template
+    print(f"DEBUG: Generated tournament_days = {[d['formatted'] for d in tournament_days]}")
+    print(f"DEBUG: is_attending = {is_attending}")
+    print(f"DEBUG: is_maybe = {is_maybe}")
+    print(f"DEBUG: selected_sessions = {selected_sessions}")
+    print(f"DEBUG: session_counts = {dict(session_counts)}")
+    print(f"DEBUG: official_link = {getattr(tournament, 'official_link', None)}")
+    print(f"DEBUG: sample_members count = {len(sample_members)}")
+    print(f"DEBUG: shared_history count = {len(shared_history)}")
     
     # Get tournament stats using the shared helper function
     # Include current user to show accurate counts including themselves
@@ -468,16 +535,17 @@ def tournament_detail(tournament_slug):
                          tournament_days=tournament_days,
                          selected_sessions=selected_sessions,
                          user_tournament=user_tournament,
-                         wants_to_meet=user_tournament.wants_to_meet if user_tournament else True,
-                         is_attending=user_tournament.attendance_type == 'attending' if user_tournament else False,
-                         is_maybe=user_tournament.attendance_type == 'maybe' if user_tournament else False,
-                         is_not_attending=user_tournament.attendance_type == 'not_attending' if user_tournament else True,
+                         wants_to_meet=wants_to_meet,
+                         is_attending=is_attending,
+                         is_maybe=is_maybe,
+                         is_not_attending=is_not_attending,
                          user_attending=user_tournament.attending if user_tournament else False,
                          attending_count=stats['attending'],
                          meeting_count=stats['meetup'],
                          session_counts=session_counts,
                          days_until=days_until,
                          shared_history=shared_history,
+                         sample_members=sample_members,
                          form=form)
 
 # Updated profile route to show user profile with past tournaments selection

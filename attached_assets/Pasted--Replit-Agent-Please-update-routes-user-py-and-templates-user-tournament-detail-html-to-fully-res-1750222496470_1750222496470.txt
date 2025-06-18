@@ -1,0 +1,71 @@
+🔧 Replit Agent: Please update routes/user.py and templates/user/tournament_detail.html to fully restore the tournament detail page functionality based on the following scope. This rebuilds everything the user expects based on database fields.
+1. In routes/user.py — update the @user_bp.route('/tournaments/<tournament_slug>') function:
+Make sure it:
+Pulls start_date and end_date from the Tournament model
+Generates tournament_days using a helper inside the route (not from sessions)
+Generates session_counts using UserTournament.session_label
+Pulls shared_past_tournaments from UserPastTournament and attendees’ past history
+Passes tournament.official_link directly to the template
+Adds sample_members with initials and display name
+Prints all debug data in terminal and template
+2. In templates/user/tournament_detail.html:
+Show all debug output at the top:
+<div class="debug-info" style="background: #fee; border: 1px solid red; padding: 1rem; margin-bottom: 1rem;">
+  <strong>Debug Info</strong>
+  <ul>
+    <li>is_attending: {{ is_attending }}</li>
+    <li>is_maybe: {{ is_maybe }}</li>
+    <li>tournament_days length: {{ tournament_days | length }}</li>
+    <li>selected_sessions: {{ selected_sessions }}</li>
+    <li>official_link: {{ tournament.official_link }}</li>
+  </ul>
+</div>
+Render sessions by day using:
+{% for day in tournament_days %}
+  <div>
+    <strong>Day {{ day.day_num }} – {{ day.formatted }}</strong><br>
+    {% for time in ['Day', 'Night'] %}
+      {% set label = "Day " ~ day.day_num ~ " - " ~ time %}
+      <label>
+        <input type="checkbox" name="sessions" value="{{ label }}"
+          {% if label in selected_sessions %}checked{% endif %}>
+        {{ time }} Session ({{ session_counts[label] if label in session_counts else 0 }} attending)
+      </label><br>
+    {% endfor %}
+  </div>
+{% endfor %}
+Include this near the top to show the official link:
+{% if tournament.official_link %}
+  <p><a href="{{ tournament.official_link }}" target="_blank">Official Tournament Site</a></p>
+{% endif %}
+Show sample members attending:
+{% if sample_members %}
+  <div>
+    <h3>Fans Attending:</h3>
+    <ul>
+      {% for member in sample_members %}
+        <li>{{ member.display_name }} ({{ member.session_count }} sessions, {% if member.open_to_meet %}open to meet{% else %}private{% endif %})</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+Show shared history:
+{% if shared_history %}
+  <div>
+    <h3>Other tournaments these fans have attended:</h3>
+    <ul>
+      {% for name, count in shared_history %}
+        <li>{{ name }} ({{ count }} fans)</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+🔁 DO NOT FINISH UNTIL YOU HAVE FULLY TESTED:
+Sessions appear from start_date → end_date
+Attending + Maybe buttons update properly
+Sessions save to UserTournament.session_label
+tournament_days and session_counts appear in debug block
+All UI sections render without needing extra data
+No console errors, no 500s, no silent failures
+✅ Only use checkpoints if necessary.
+✅ Fix all broken or hidden sections at once.
