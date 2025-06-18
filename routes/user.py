@@ -142,8 +142,16 @@ def tournament_detail(slug):
             tournament_id=tournament.id
         ).first()
     
-    is_attending = user_tournament.attending if user_tournament else False
-    is_maybe = (user_tournament.attendance_type == 'maybe') if user_tournament else False
+    # Fix attendance logic - these should be mutually exclusive
+    if user_tournament:
+        is_attending = user_tournament.attending and user_tournament.session_label
+        is_maybe = not user_tournament.attending and user_tournament.session_label
+        is_not_attending = not user_tournament.attending and not user_tournament.session_label
+    else:
+        is_attending = False
+        is_maybe = False
+        is_not_attending = True
+    
     selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
     selected_sessions = [s.strip() for s in selected_sessions if s.strip()]
     
@@ -240,7 +248,6 @@ def tournament_detail(slug):
     form = TournamentSelectionForm()
     
     # Calculate missing variables for template
-    is_not_attending = not is_attending and not is_maybe
     wants_to_meet = user_tournament.wants_to_meet if user_tournament else False
     attending_count = stats.get('attending', 0)
     meeting_count = stats.get('meetup', 0)

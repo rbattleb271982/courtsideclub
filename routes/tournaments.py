@@ -340,12 +340,9 @@ def attend_tournament(tournament_slug):
         user_tourney = UserTournament(user_id=current_user.id, tournament_id=tournament.id)
         db.session.add(user_tourney)
     
-    # Important - mark this user as attending with explicit True
+    # Mark user as attending with placeholder session
     user_tourney.attending = True
-    
-    # No longer auto-select a default session
-    # User must explicitly choose their sessions
-    user_tourney.session_label = None
+    user_tourney.session_label = "placeholder"
 
     
     # Log the event

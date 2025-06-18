@@ -11,6 +11,7 @@ event_descriptions = {
 
     # 🎾 Tournament Engagement
     "attend_tournament": "User RSVP'd to a tournament",
+    "unattend_tournament": "User removed their attendance",
     "tournament_unattend": "User removed their attendance",
     "user_removed_attendance": "User completely backed out of a tournament",
     "session_selected": "User selected sessions for a tournament",
