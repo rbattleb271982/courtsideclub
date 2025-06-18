@@ -33,6 +33,40 @@
   width: 100% !important;
 }
 
+.tournament-detail-wrapper .tournament-official-link {
+  text-align: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.tournament-detail-wrapper .tournament-official-link a {
+  color: #4a5d2a !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid #4a5d2a !important;
+}
+
+.tournament-detail-wrapper .tournament-official-link a:hover {
+  opacity: 0.8 !important;
+}
+
+.tournament-detail-wrapper .session-hidden-message {
+  text-align: center !important;
+  padding: 2rem !important;
+  color: #666 !important;
+  font-style: italic !important;
+  background: #f9f9f9 !important;
+  border-radius: 8px !important;
+  margin: 1.5rem 0 !important;
+}
+
+.tournament-detail-wrapper .debug-info {
+  background: #fee !important;
+  padding: 1rem !important;
+  border: 1px solid red !important;
+  margin-bottom: 2rem !important;
+  border-radius: 4px !important;
+}
+
 .tournament-detail-wrapper .attendance-toggle-group {
   display: flex !important;
   justify-content: space-between !important;

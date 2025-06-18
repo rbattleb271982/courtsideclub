@@ -2,6 +2,7 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
 <div class="tournament-detail-wrapper">
+  {% if current_user.is_admin %}
   <div class="debug-info">
     <strong>Debug Info</strong>
     <ul>
@@ -12,9 +13,13 @@
       <li>official_link: {{ tournament.external_url }}</li>
     </ul>
   </div>
+  {% endif %}
 
   <div class="tournament-header">
     <h1 class="tournament-name">{{ tournament.name }}</h1>
+    {% if tournament.external_url %}
+    <p class="tournament-official-link"><a href="{{ tournament.external_url }}" target="_blank">Official Website</a></p>
+    {% endif %}
     <p class="tournament-meta">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }} • {{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</p>
     <p class="tournament-stats">{{ attending_count }} attending • {{ meeting_count }} open to meet</p>
     <div class="attendance-toggle-group">
@@ -34,7 +39,7 @@
     </div>
   </div>
 
-  {% if tournament_days %}
+  {% if tournament_days and (is_attending or is_maybe) %}
   <form method="POST" action="{{ url_for('tournaments.save_sessions', tournament_slug=tournament.slug) }}" class="session-form">
     {{ form.hidden_tag() }}
     <div class="session-section">
@@ -53,12 +58,14 @@
       {% endfor %}
     </div>
     <div class="meetup-checkbox">
-      <label><input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}> I'm open to meeting other fans</label>
+      <label><input type="checkbox" name="wants_to_meet" {% if wants_to_meet or (wants_to_meet is none and (is_attending or is_maybe)) %}checked{% endif %}> I'm open to meeting other fans</label>
     </div>
     <div class="form-save-section">
       <button type="submit" class="save-btn">Save My Selections</button>
     </div>
   </form>
+  {% elif tournament_days %}
+    <p class="session-hidden-message">Select "I'm Attending" or "Maybe Attending" to choose your sessions.</p>
   {% else %}
     <p>No sessions available for this tournament.</p>
   {% endif %}
@@ -87,10 +94,10 @@
 
   {% if shared_history %}
   <div class="shared-history">
-    <h4>You and others here have also attended:</h4>
+    <h4>Other tournaments fans have attended:</h4>
     <ul>
       {% for name, count in shared_history %}
-      <li>{{ name }} ({{ count }})</li>
+      <li>{{ name }} ({{ count }} fans)</li>
       {% endfor %}
     </ul>
   </div>
