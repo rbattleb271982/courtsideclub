@@ -119,12 +119,18 @@ CourtSide Club is a comprehensive web application for managing tennis tournament
 
 ## Recent Changes
 
-### June 18, 2025 - Tournament Detail Page Rebuild
+### June 18, 2025 - Tournament Detail Page Enhancement
 - Fixed route conflict between public and user tournament detail pages
 - Reordered blueprint registration to prioritize authenticated user routes
 - Successfully resolved `tournament_days length: 0` issue
 - Tournament detail page now properly generates 14 days for tournaments
-- Maintained all session selection and attendance functionality
+- **Session Visibility Logic**: Sessions now only show when user selects "Attending" or "Maybe Attending"
+- **Admin Debug Control**: Debug information only visible to admin users
+- **Default Checkbox Behavior**: "Open to meeting other fans" defaults to checked for attending users
+- **Official Website Integration**: Added official tournament website links under tournament names
+- **Enhanced User Experience**: Restored "Other tournaments fans have attended" section
+- **Database State Management**: Proper handling of attendance states (attending=True/False, session_label variations)
+- **CSS Improvements**: Added styling for session-hidden-message and tournament-official-link elements
 
 ## Changelog
 - June 13, 2025. Initial setup
