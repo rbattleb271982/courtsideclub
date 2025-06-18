@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Tournament, UserTournament, UserPastTournament, ShippingAddress, UserWishlistTournament
 from services.sendgrid_service import send_email
 from services.event_logger import log_event
+from helpers import generate_tournament_days
 import json
 import logging
 from datetime import datetime
@@ -178,16 +179,9 @@ def tournament_detail(tournament_slug):
         flash("Your selections were saved.", "success")
         return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
     
-    # Generate tournament days using helper function
-    from utils.tournament_helpers import generate_tournament_days
-    
+    # Generate tournament_days using helper
     tournament_days = generate_tournament_days(tournament.start_date, tournament.end_date)
-    
-    # Debug output
-    print(f"tournament_days length: {len(tournament_days)}")
-    print("Tournament Days:", [d['formatted'] for d in tournament_days])
-    print("Start Date:", tournament.start_date)
-    print("End Date:", tournament.end_date)
+    print(f"DEBUG: Generated tournament_days = {[d['formatted'] for d in tournament_days]}")
     
     # Get selected sessions for the template
     selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
