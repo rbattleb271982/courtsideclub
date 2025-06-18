@@ -7,73 +7,105 @@
 
 {% block content %}
 <div class="tournament-detail-wrapper">
-  <h1 class="tournament-name">{{ tournament.name }}</h1>
-  <p class="tournament-meta">
-    {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}<br>
-    {{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}
-  </p>
-  {% if tournament.external_url %}
+  <!-- Tournament Header -->
+  <div class="tournament-header">
+    <h1 class="tournament-name">{{ tournament.name }}</h1>
+    <div class="tournament-meta">
+      <span class="tournament-dates">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</span>
+      <span class="tournament-location">{{ tournament.city }}, {{ tournament.country }}</span>
+      <span class="tournament-type">{{ tournament.event_type }} • {{ tournament.tour_type }}</span>
+    </div>
+    {% if tournament.external_url %}
     <a href="{{ tournament.external_url }}" target="_blank" rel="noopener" class="tournament-link">Official Site →</a>
-  {% endif %}
+    {% endif %}
+  </div>
 
-  <p class="tournament-stats">
-    {{ attending_count }} attending • {{ meeting_count }} open to meet
-  </p>
+  <!-- Tournament Stats -->
+  <div class="tournament-stats">
+    <span class="stat-item">{{ attending_count }} attending</span>
+    <span class="stat-item">{{ meeting_count }} open to meet</span>
+  </div>
 
-  <form method="POST" id="session-form">
+  <!-- Main Form -->
+  <form method="POST" id="session-form" class="tournament-form">
     {{ form.hidden_tag() }}
     <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
 
+    <!-- Attendance Toggle Group -->
     <div class="attendance-toggle-group">
-      <button type="button" class="attendance-toggle {% if is_attending %}selected{% endif %}" data-status="attending">I'm Attending</button>
-      <button type="button" class="attendance-toggle {% if is_maybe %}selected{% endif %}" data-status="maybe">Maybe Attending</button>
-      <button type="button" class="attendance-toggle {% if is_not_attending %}selected{% endif %}" data-status="not_attending">Not Going</button>
+      <button type="button" class="attendance-toggle {% if is_attending %}selected{% endif %}" data-status="attending">
+        I'm Attending
+      </button>
+      <button type="button" class="attendance-toggle {% if is_maybe %}selected{% endif %}" data-status="maybe">
+        Maybe Attending
+      </button>
+      <button type="button" class="attendance-toggle {% if is_not_attending %}selected{% endif %}" data-status="not_attending">
+        Not Going
+      </button>
     </div>
 
-    <div id="session-selection" {% if not is_attending and not is_maybe %}style="display: none;"{% endif %}>
-      {% for day in tournament_days %}
+    <!-- Session Selection Area -->
+    <div id="session-selection" class="session-selection" {% if not is_attending and not is_maybe %}style="display: none;"{% endif %}>
+      
+      <!-- Session Grid -->
+      <div class="session-grid">
+        {% for day in tournament_days %}
         <div class="session-day">
-          <strong>{{ day.formatted }}</strong>
+          <div class="day-header">
+            <h3>{{ day.formatted }}</h3>
+          </div>
           <div class="session-options">
             {% for time in ['Day', 'Night'] %}
-              {% set label = "Day " ~ day.day_num|string ~ " - " ~ time %}
-              <label>
-                <input type="checkbox" name="sessions" value="{{ label }}" {% if label in selected_sessions %}checked{% endif %}>
-                {{ time }}
-              </label>
+            {% set session_id = "Day " ~ day.day_num|string ~ " - " ~ time %}
+            <label class="session-checkbox">
+              <input type="checkbox" name="sessions" value="{{ session_id }}" {% if session_id in selected_sessions %}checked{% endif %}>
+              <span class="checkbox-label">{{ time }}</span>
+            </label>
             {% endfor %}
           </div>
         </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
 
-      <div class="meetup-checkbox">
-        <label>
+      <!-- Meetup Preference -->
+      <div class="meetup-preference">
+        <label class="meetup-checkbox">
           <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
-          I'm open to meeting other fans
+          <span class="checkbox-label">I'm open to meeting other fans</span>
         </label>
       </div>
 
-      <div id="selected-session-chips" class="chip-list">
-        {% for s in selected_sessions %}
-          <span class="chip">{{ s }}</span>
-        {% endfor %}
+      <!-- Selected Session Chips -->
+      <div class="selected-session-chips">
+        <div class="chips-header">Your Selected Sessions:</div>
+        <div id="session-chips-container" class="chips-container">
+          {% for session in selected_sessions %}
+          <span class="session-chip">{{ session }}</span>
+          {% endfor %}
+        </div>
       </div>
     </div>
 
-    <button type="submit" class="save-button">Save My Selections</button>
+    <!-- Save Button -->
+    <div class="form-actions">
+      <button type="submit" class="save-button">Save My Selections</button>
+    </div>
   </form>
 
-  {% if sorted_shared_tournaments %}
-    <div class="fan-history">
-      <h3>Other tournaments fans have attended</h3>
-      <ul>
-        {% for name, count in sorted_shared_tournaments %}
-          <li>{{ name }} <span class="count">({{ count }})</span></li>
-        {% endfor %}
-      </ul>
+  <!-- Shared History Section -->
+  {% if shared_history %}
+  <div class="shared-history">
+    <h3>Other tournaments fans have attended</h3>
+    <div class="history-list">
+      {% for tournament_name, count in shared_history %}
+      <div class="history-item">
+        <span class="tournament-name">{{ tournament_name }}</span>
+        <span class="attendance-count">{{ count }} fan{{ 's' if count != 1 else '' }}</span>
+      </div>
+      {% endfor %}
     </div>
+  </div>
   {% endif %}
 </div>
-
 
 {% endblock %}
