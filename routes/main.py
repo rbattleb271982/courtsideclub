@@ -1,10 +1,15 @@
 from flask import Blueprint, render_template, abort, redirect, url_for, request, Response
+from flask_wtf import FlaskForm
 from models import Tournament, User, UserTournament, BlogPost
 import datetime
 import re
 from services.event_logger import log_event
 
 main_bp = Blueprint('main', __name__)
+
+# Simple form class for CSRF protection
+class TournamentSelectionForm(FlaskForm):
+    pass
 
 @main_bp.route('/')
 def public_home():
@@ -106,10 +111,14 @@ def public_tournament_detail(slug):
             'lanyards': 0  # Lanyard functionality discontinued
         }
         
+        # Create form for CSRF protection
+        form = TournamentSelectionForm()
+        
         return render_template('user/tournament_detail.html',
                             tournament=tournament,
                             user_tournament=user_tournament,
-                            stats=stats)
+                            stats=stats,
+                            form=form)
     
     # Public version for anonymous users
     attending_count = UserTournament.query.filter_by(

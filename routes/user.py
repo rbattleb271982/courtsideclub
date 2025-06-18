@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, session, jsonify
 from flask_login import login_required, current_user
+from flask_wtf import FlaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Tournament, UserTournament, UserPastTournament, ShippingAddress, UserWishlistTournament
 from services.sendgrid_service import send_email
@@ -10,6 +11,10 @@ from datetime import datetime
 
 # Initialize blueprint
 user_bp = Blueprint('user', __name__)
+
+# Simple form class for CSRF protection
+class TournamentSelectionForm(FlaskForm):
+    pass
 
 # Shared helper function for consistent attendance and meetup counts
 def get_tournament_attendance_stats(tournament_id, include_current_user=True):
@@ -463,6 +468,9 @@ def tournament_detail(tournament_slug):
     print('meeting_count:', stats['meetup'])
     print('session_counts:', session_counts)
     
+    # Create form for CSRF protection
+    form = TournamentSelectionForm()
+    
     return render_template('user/tournament_detail.html',
                          tournament=tournament,
                          tournament_days=tournament_days,
@@ -477,7 +485,8 @@ def tournament_detail(tournament_slug):
                          meeting_count=stats['meetup'],
                          session_counts=session_counts,
                          days_until=days_until,
-                         shared_history=shared_history)
+                         shared_history=shared_history,
+                         form=form)
 
 # Updated profile route to show user profile with past tournaments selection
 @user_bp.route('/add_wishlist', methods=['POST'])
