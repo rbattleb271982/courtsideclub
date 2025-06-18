@@ -252,6 +252,14 @@ def tournament_detail(slug):
     attending_count = stats.get('attending', 0)
     meeting_count = stats.get('meetup', 0)
     
+    # Create day_stats dictionary for session attendance counts
+    day_stats = {}
+    for day in tournament_days:
+        day_session_key = f"Day {day['day_num']} - Day"
+        night_session_key = f"Day {day['day_num']} - Night"
+        day_stats[day_session_key] = session_counts.get(day_session_key, 0)
+        day_stats[night_session_key] = session_counts.get(night_session_key, 0)
+    
     return render_template('user/tournament_detail.html',
         tournament=tournament,
         user_tournament=user_tournament,
@@ -262,6 +270,7 @@ def tournament_detail(slug):
         tournament_days=tournament_days,
         session_labels=session_labels,
         session_counts=session_counts,
+        day_stats=day_stats,
         sample_members=sample_members,
         shared_history=shared_history,
         stats=stats,

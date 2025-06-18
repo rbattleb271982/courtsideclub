@@ -1,3 +1,4 @@
+Replace templates/user/tournament_detail.html with the following:
 {% extends 'layout.html' %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
@@ -95,3 +96,26 @@
 
 </div>
 {% endblock %}
+Make sure these Flask variables are available from your route in routes/user.py:
+return render_template(
+    'user/tournament_detail.html',
+    tournament=tournament,
+    is_attending=is_attending,
+    is_maybe=is_maybe,
+    tournament_days=tournament_days,
+    selected_sessions=selected_sessions,
+    wants_to_meet=user_tournament.wants_to_meet if user_tournament else False,
+    attending_count=attending_count,
+    meeting_count=meeting_count,
+    sample_members=sample_members,
+    shared_history=shared_history,
+    day_stats=day_session_counts  # dictionary like {'Day 1 - Day': 3, ...}
+)
+✅ Replit Agent Final Instruction (add at end):
+Do not finish until you’ve fully tested that:
+Attendance toggle updates work and are mutually exclusive
+“Not Attending” hides session form and removes from My Tournaments
+Session checkboxes reflect stored selections and show attendance counts
+External links and shared history render if present
+Meet-up box is checked by default for attending/maybe
+Only use checkpoints if I say so.
