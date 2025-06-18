@@ -49,6 +49,13 @@
   opacity: 0.8 !important;
 }
 
+.tournament-detail-wrapper .tournament-links {
+  display: flex !important;
+  gap: 1rem !important;
+  justify-content: center !important;
+  margin-bottom: 0.5rem !important;
+}
+
 .tournament-detail-wrapper .session-hidden-message {
   text-align: center !important;
   padding: 2rem !important;
@@ -65,6 +72,13 @@
   border: 1px solid red !important;
   margin-bottom: 2rem !important;
   border-radius: 4px !important;
+}
+
+.tournament-detail-wrapper .session-day-title {
+  color: #4a5d2a !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
 }
 
 .tournament-detail-wrapper .attendance-toggle-group {

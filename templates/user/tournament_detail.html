@@ -5,9 +5,14 @@
 
   <div class="tournament-header">
     <h1 class="tournament-name">{{ tournament.name }}</h1>
-    {% if tournament.external_url %}
-    <p class="tournament-official-link"><a href="{{ tournament.external_url }}" target="_blank">Official Website</a></p>
-    {% endif %}
+    <div class="tournament-links">
+      {% if tournament.external_url %}
+      <p class="tournament-official-link"><a href="{{ tournament.external_url }}" target="_blank">Official Website</a></p>
+      {% endif %}
+      {% if tournament.draw_url %}
+      <p class="tournament-official-link"><a href="{{ tournament.draw_url }}" target="_blank">Draws</a></p>
+      {% endif %}
+    </div>
     <p class="tournament-meta">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }} • {{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</p>
     <p class="tournament-stats">{{ attending_count }} attending • {{ meeting_count }} open to meet</p>
 
@@ -61,11 +66,10 @@
     <p>No sessions available for this tournament.</p>
   {% endif %}
 
-  {% if tournament.draw_url or tournament.schedule_url %}
+  {% if tournament.schedule_url %}
   <div class="external-links">
     <h4>Useful Links</h4>
     <ul>
-      {% if tournament.draw_url %}<li><a href="{{ tournament.draw_url }}" target="_blank">Draws</a></li>{% endif %}
       {% if tournament.schedule_url %}<li><a href="{{ tournament.schedule_url }}" target="_blank">Schedule</a></li>{% endif %}
     </ul>
   </div>
