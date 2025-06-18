@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Wimbledon - CourtSide Club</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'bounce': 'bounce 1s infinite',
+            'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    .bg-clip-text {
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    
+    .text-transparent {
+      color: transparent;
+    }
+    
+    .backdrop-blur-sm {
+      backdrop-filter: blur(4px);
+    }
+    
+    .transform {
+      transform: translateZ(0);
+    }
+    
+    .hover\:scale-105:hover {
+      transform: scale(1.05);
+    }
+    
+    .group:hover .group-hover\:rotate-12 {
+      transform: rotate(12deg);
+    }
+    
+    .group:hover .group-hover\:scale-110 {
+      transform: scale(1.1);
+    }
+    
+    .group:hover .group-hover\:-translate-y-3 {
+      transform: translateY(-0.75rem);
+    }
+    
+    .group:hover .group-hover\:shadow-xl {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .animate-bounce {
+      animation: bounce 1s infinite;
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    .delay-500 {
+      animation-delay: 500ms;
+    }
+    
+    .delay-1000 {
+      animation-delay: 1000ms;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+      50% { transform: translateY(0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .5; }
+    }
+    
+    .blur-xl {
+      filter: blur(24px);
+    }
+    
+    .blur-2xl {
+      filter: blur(40px);
+    }
+    
+    /* Navigation styling */
+    .backdrop-blur-md {
+      backdrop-filter: blur(12px);
+    }
+    
+    /* Mobile menu styling */
+    .mobile-nav-link {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    /* Ensure homepage has proper spacing for fixed nav */
+    .min-h-screen {
+      padding-top: 0;
+    }
+    
+    /* Main content spacing adjustment */
+    .main-content {
+      margin-top: 0;
+    }
+    
+    /* Hide flash messages on dark pages */
+    .min-h-screen + .alert {
+      display: none;
+    }
+
+    /* Site Header Styles */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: white;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .header-container {
+      display: flex;
+      height: 4rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .header-container {
+        padding: 0 2rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .header-container {
+        padding: 0 3rem;
+      }
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-icon {
+      border-radius: 0.375rem;
+      background: #4a6b4a;
+      padding: 0.375rem;
+    }
+
+    .logo-icon span {
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .logo-text {
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 1.125rem;
+      letter-spacing: -0.025em;
+      color: #171717;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+    }
+
+    .nav-link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #525252;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+      color: #3a5a3a;
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-sign-in {
+      display: none;
+      color: #525252;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    @media (min-width: 768px) {
+      .btn-sign-in {
+        display: inline;
+      }
+    }
+
+    .btn-sign-in:hover {
+      color: #3a5a3a;
+    }
+
+    .btn-join-club {
+      display: none;
+      align-items: center;
+      background: #4a6b4a;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    @media (min-width: 768px) {
+      .btn-join-club {
+        display: inline-flex;
+      }
+    }
+
+    .btn-join-club:hover {
+      background: #3a5a3a;
+    }
+
+    .mobile-menu-btn {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      border: none;
+      padding: 0.5rem;
+      color: #404040;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+
+    /* Mobile Menu Panel */
+    .mobile-menu {
+      position: fixed;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      background: white;
+      border-bottom: 1px solid #e5e5e5;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      z-index: 50;
+      display: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .mobile-menu.active {
+      display: block !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+
+    .mobile-menu-content {
+      padding: 1rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .mobile-nav-link {
+      color: #525252;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f5f5f5;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav-link:hover {
+      color: #3a5a3a;
+    }
+
+    .mobile-nav-link:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-auth-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e5e5e5;
+    }
+
+    .mobile-btn-sign-in {
+      color: #525252;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 0.75rem 0;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-btn-sign-in:hover {
+      color: #3a5a3a;
+    }
+
+    .mobile-btn-join-club {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #4a6b4a;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .mobile-btn-join-club:hover {
+      background: #3a5a3a;
+    }
+  </style>
+  
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Crimson+Text:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #FFFFFF;
+    color: #171717;
+  }
+
+  .tournament-hero {
+    background: #F9FAF8;
+    padding: 2rem 1.5rem;
+  }
+
+  .container {
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    color: #4a5d2a;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    display: inline-block;
+  }
+
+  .back-link:hover {
+    color: #3d4b22;
+  }
+
+  .tournament-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .tournament-info h1 {
+    font-family: 'Crimson Text', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .meta span {
+    color: #4a5d2a;
+    font-weight: 500;
+  }
+
+  .tournament-info p {
+    color: #6b7280;
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+
+  .tournament-cta {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .tournament-cta h2 {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.5rem;
+  }
+
+  .tournament-cta p {
+    color: #6b7280;
+    margin-bottom: 1rem;
+  }
+
+  .tournament-cta p:last-of-type {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: #4a5d2a;
+    color: white;
+    margin-bottom: 0.75rem;
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    background: #3d4b22;
+    color: white;
+  }
+
+  .btn-outline {
+    border: 1px solid #d1d5db;
+    color: #374151;
+    width: 100%;
+  }
+
+  .btn-outline:hover {
+    background: #f9fafb;
+    color: #374151;
+  }
+
+  .articles-section {
+    padding: 4rem 1.5rem;
+    background: white;
+  }
+
+  .articles-section h2 {
+    font-family: 'Crimson Text', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.5rem;
+  }
+
+  .articles-section > p {
+    color: #6b7280;
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
+
+  .filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-box, .sort-dropdown {
+    padding: 0.75rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .search-box {
+    flex: 1;
+  }
+
+  .sort-dropdown {
+    min-width: 150px;
+  }
+
+  .category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .tag {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 1.5rem;
+    background: white;
+    color: #374151;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tag.active {
+    background: #4a5d2a;
+    color: white;
+    border-color: #4a5d2a;
+  }
+
+  .tag:hover {
+    border-color: #4a5d2a;
+  }
+
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .article-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .article-card.featured {
+    grid-column: span 2;
+    background: #f8f9fa;
+  }
+
+  .tag-featured {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #4a5d2a;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .article-card h3 {
+    font-family: 'Crimson Text', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #171717;
+    margin-bottom: 0.75rem;
+  }
+
+  .article-card p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .article-card .meta {
+    color: #9ca3af;
+    font-size: 0.875rem;
+  }
+
+  .load-more {
+    text-align: center;
+  }
+
+  .load-more p {
+    color: #6b7280;
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .tournament-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .tournament-info h1 {
+      font-size: 2rem;
+    }
+
+    .filters {
+      flex-direction: column;
+    }
+
+    .article-card.featured {
+      grid-column: span 1;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <!-- Site Header -->
+<header class="site-header">
+  <div class="header-container">
+    <div class="logo-container">
+      <a href="/" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+  <div class="logo-icon">
+    <span>C</span>
+  </div>
+  <span class="logo-text">CourtSide Club</span>
+</a>
+    </div>
+    <nav class="nav-links">
+      
+        <a href="/tournaments" class="nav-link">Tournaments</a>
+        <a href="/community" class="nav-link">Community</a>
+        <a href="/blog" class="nav-link">Stories</a>
+        <a href="/about" class="nav-link">About</a>
+        <a href="/faqs" class="nav-link">Faqs</a>
+      
+    </nav>
+    <div class="header-buttons">
+      
+        <a href="/login" class="btn-sign-in">Sign In</a>
+        <a href="/signup" class="btn-join-club">Join Club</a>
+      
+      <button class="mobile-menu-btn" id="mobile-menu-toggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Panel -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-content">
+      <nav class="mobile-nav-links">
+        
+          <a href="/tournaments" class="mobile-nav-link">Tournaments</a>
+          <a href="/community" class="mobile-nav-link">Community</a>
+          <a href="/blog" class="mobile-nav-link">Stories</a>
+          <a href="/about" class="mobile-nav-link">About</a>
+          <a href="/faqs" class="mobile-nav-link">Faqs</a>
+        
+      </nav>
+      <div class="mobile-auth-buttons">
+        
+          <a href="/login" class="mobile-btn-sign-in">Sign In</a>
+          <a href="/signup" class="mobile-btn-join-club">Join Club</a>
+        
+      </div>
+    </div>
+  </div>
+</header>
+
+  <!-- Main Content -->
+  <main>
+    
+<div class="tournament-hero">
+  <div class="container">
+    <a href="/tournaments" class="back-link">← Back to tournaments</a>
+    <div class="tournament-grid">
+      <div class="tournament-info">
+        <h1>Wimbledon</h1>
+        <div class="meta">
+          <span>📍 London, UK</span>
+          <span>📅 June 30 – July 13, 2025</span>
+        </div>
+        <p>
+          Join fellow tennis enthusiasts at one of the most exciting tournaments on the tour. Experience
+          world-class tennis and connect with other passionate fans who share your love for the game.
+        </p>
+      </div>
+      <div class="tournament-cta">
+        <h2>90 fans attending</h2>
+        <p>43 open to meet</p>
+        <p>Tennis is better together. Join CourtSide Club to connect with other fans.</p>
+        <a href="/signup" class="btn btn-primary">Join Club</a>
+        <a href="/login" class="btn btn-outline">Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="articles-section">
+  <div class="container">
+    <h2>Tournament Articles & Guides</h2>
+    <p>Everything you need to know about attending Wimbledon</p>
+
+    <!-- Filters -->
+    <div class="filters">
+      <input type="text" placeholder="Search articles..." class="search-box" />
+      <select class="sort-dropdown">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="popular">Most Popular</option>
+      </select>
+    </div>
+
+    <!-- Categories -->
+    <div class="category-tags">
+      <button class="tag active">All Articles (2)</button>
+      <button class="tag">Travel & Hotels (0)</button>
+      <button class="tag">Tournament Guide (0)</button>
+      <button class="tag">Player Insights (0)</button>
+      <button class="tag">Local Tips (0)</button>
+      <button class="tag">History (0)</button>
+      <button class="tag">Food & Dining (0)</button>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="articles-grid">
+      
+        
+          
+            <div class="article-card featured">
+              <div class="tag-featured">Featured</div>
+              <h3>Wimbledon First-Timer&#39;s Guide: Making the Most of The Championships</h3>
+              <p>Everything you need to know for your first visit to Wimbledon, from queue strategies to dress codes and the famous strawberries.</p>
+              <div class="meta">By CourtSide Club · June 12, 2025</div>
+            </div>
+          
+        
+          
+            <div class="article-card">
+              <h3>Welcome to CourtSide Club at Wimbledon</h3>
+              <p>Welcome to CourtSide Club at Wimbledon!
+
+We&#39;re thrilled you&#39;re thinking about attending Wimbledon. CourtSide Club was cr...</p>
+              <div class="meta">By CourtSide Club · June 12, 2025</div>
+            </div>
+          
+        
+      
+    </div>
+
+    <div class="load-more">
+      <a href="/blog" class="btn btn-outline">View All Articles</a>
+      <p>Showing 2 articles</p>
+    </div>
+  </div>
+</div>
+
+  </main>
+
+  
+    
+  
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mobile menu toggle
+      const menuToggle = document.getElementById('mobile-menu-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      console.log('DOM loaded, menuToggle:', menuToggle);
+      console.log('DOM loaded, mobileMenu:', mobileMenu);
+      
+      if (menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Menu toggle clicked');
+          mobileMenu.classList.toggle('active');
+          console.log('Menu classes after toggle:', mobileMenu.className);
+        });
+      }
+
+      // Close mobile menu when clicking on links
+      const mobileLinks = document.querySelectorAll('.mobile-nav-link, .mobile-btn-sign-in, .mobile-btn-join-club');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          mobileMenu.classList.remove('active');
+        });
+      });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', function(event) {
+        const mobileMenuBtn = document.querySelector('#mobile-menu-toggle');
+        
+        if (mobileMenu && !mobileMenu.contains(event.target) && !mobileMenuBtn.contains(event.target)) {
+          mobileMenu.classList.remove('active');
+        }
+      });
+
+      // Close menu on window resize if desktop
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768 && mobileMenu) {
+          mobileMenu.classList.remove('active');
+        }
+      });
+
+      // Close menu on escape key
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && mobileMenu) {
+          mobileMenu.classList.remove('active');
+        }
+      });
+
+      // Close mobile menu on scroll
+      window.addEventListener('scroll', function() {
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+          mobileMenu.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
