@@ -20,10 +20,16 @@
 
   <!-- Attendance Options -->
   <div class="attendance-buttons">
-    <form method="POST" action="">
+    <form method="POST" action="{{ url_for('tournaments.mark_attending', tournament_slug=tournament.slug) }}">
       {{ form.hidden_tag() }}
       <button type="submit" name="attendance" value="attending" class="btn {% if is_attending %}selected{% endif %}">I'm Attending</button>
+    </form>
+    <form method="POST" action="{{ url_for('tournaments.mark_maybe', tournament_slug=tournament.slug) }}">
+      {{ form.hidden_tag() }}
       <button type="submit" name="attendance" value="maybe" class="btn {% if is_maybe %}selected{% endif %}">Maybe Attending</button>
+    </form>
+    <form method="POST" action="{{ url_for('tournaments.unattend', tournament_slug=tournament.slug) }}">
+      {{ form.hidden_tag() }}
       <button type="submit" name="attendance" value="not_attending" class="btn {% if not is_attending and not is_maybe %}selected{% endif %}">Not Attending</button>
     </form>
   </div>
