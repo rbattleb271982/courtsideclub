@@ -228,7 +228,6 @@ def tournament_detail(slug):
     )
 
 
-# Add wishlist route for tournament bucket list functionality
 @user_bp.route('/add_wishlist', methods=['POST'])
 @login_required
 def add_wishlist():
