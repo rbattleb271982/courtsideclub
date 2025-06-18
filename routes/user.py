@@ -178,25 +178,34 @@ def tournament_detail(tournament_slug):
         flash("Your selections were saved.", "success")
         return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
     
-    # Generate tournament days structure for the template
+    # STEP 1: Generate tournament days structure using start and end dates
     from datetime import timedelta
     
     tournament_days = []
-    current_date = tournament.start_date
-    for day_num in range(1, (tournament.end_date - tournament.start_date).days + 2):
-        tournament_days.append({
-            "day_num": day_num,
-            "formatted": current_date.strftime("%A, %B %d"),
-            "date": current_date
-        })
-        current_date += timedelta(days=1)
+    if tournament.start_date and tournament.end_date:
+        current_date = tournament.start_date
+        day_num = 1
+        while current_date <= tournament.end_date:
+            tournament_days.append({
+                'day_num': day_num,
+                'date': current_date,
+                'formatted': current_date.strftime('%A, %B %d')
+            })
+            current_date += timedelta(days=1)
+            day_num += 1
+    
+    # STEP 2: Print debug output to terminal
+    print("Tournament Days:", [d['formatted'] for d in tournament_days])
+    print("Start Date:", tournament.start_date)
+    print("End Date:", tournament.end_date)
+    print("Total Days:", len(tournament_days))
     
     # Get selected sessions for the template
     selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []
     
-    # DEBUG: Check tournament_days and selected_sessions
-    print("DEBUG tournament_days =", tournament_days)
-    print("DEBUG selected_sessions =", selected_sessions)
+    # Additional debug info
+    print("Selected Sessions:", selected_sessions)
+    print("User Tournament Exists:", user_tournament is not None)
     
     # Get tournament stats using the shared helper function
     # Include current user to show accurate counts including themselves
