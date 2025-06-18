@@ -178,27 +178,16 @@ def tournament_detail(tournament_slug):
         flash("Your selections were saved.", "success")
         return redirect(url_for('user.tournament_detail', tournament_slug=tournament.slug))
     
-    # STEP 1: Generate tournament days structure using start and end dates
-    from datetime import timedelta
+    # Generate tournament days using helper function
+    from utils.tournament_helpers import generate_tournament_days
     
-    tournament_days = []
-    if tournament.start_date and tournament.end_date:
-        current_date = tournament.start_date
-        day_num = 1
-        while current_date <= tournament.end_date:
-            tournament_days.append({
-                'day_num': day_num,
-                'date': current_date,
-                'formatted': current_date.strftime('%A, %B %d')
-            })
-            current_date += timedelta(days=1)
-            day_num += 1
+    tournament_days = generate_tournament_days(tournament.start_date, tournament.end_date)
     
-    # STEP 2: Print debug output to terminal
+    # Debug output
+    print(f"tournament_days length: {len(tournament_days)}")
     print("Tournament Days:", [d['formatted'] for d in tournament_days])
     print("Start Date:", tournament.start_date)
     print("End Date:", tournament.end_date)
-    print("Total Days:", len(tournament_days))
     
     # Get selected sessions for the template
     selected_sessions = user_tournament.session_label.split(',') if user_tournament and user_tournament.session_label else []

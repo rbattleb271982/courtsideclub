@@ -8,6 +8,16 @@
 {% block content %}
 <div class="tournament-detail-wrapper">
   <div class="tournament-header">
+    <div style="background: #fff0f0; padding: 1rem; border: 1px solid #f00; margin: 1rem 0;">
+      <h4 style="color: red;">Debug Info</h4>
+      <ul>
+        <li>is_attending: {{ is_attending }}</li>
+        <li>is_maybe: {{ is_maybe }}</li>
+        <li>tournament_days length: {{ tournament_days | length }}</li>
+        <li>selected_sessions: {{ selected_sessions }}</li>
+      </ul>
+    </div>
+
     <h1 class="tournament-name">{{ tournament.name }}</h1>
     <p class="tournament-dates">
       {{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}
@@ -29,13 +39,12 @@
       <button type="submit" name="status" value="not_attending" class="toggle-btn {% if is_not_attending %}selected{% endif %}">Not Attending</button>
     </div>
 
-    {% if is_attending or is_maybe %}
     <p style="color:red;">Debug Info:</p>
     <ul>
       <li>tournament_days length: {{ tournament_days | length }}</li>
-      <li>selected_sessions: {{ selected_sessions }}</li>
     </ul>
-      {% if tournament_days %}
+
+    {% if tournament_days %}
       <div id="session-selection" class="session-selection">
         {% for day in tournament_days %}
         <div class="session-day-group">
@@ -52,9 +61,8 @@
         </div>
         {% endfor %}
       </div>
-      {% else %}
-        <div class="session-selection empty">No sessions available for this tournament.</div>
-      {% endif %}
+    {% else %}
+      <div class="session-selection empty">No sessions available for this tournament.</div>
     {% endif %}
 
     <div class="meetup-toggle">
