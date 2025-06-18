@@ -1,0 +1,239 @@
+TASK: Replace the current logged-in tournament detail page (/tournaments/<slug>) with the new redesigned layout that matches the React-based mockup. This is a full redesign but must preserve all logic from the Flask backend.
+1. Update Template File:
+File: templates/user/tournament_detail.html
+Replace ALL CONTENT with this updated version:
+{% extends "layout.html" %}
+{% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
+<script src="{{ url_for('static', filename='js/tournament-detail.js') }}" defer></script>
+{% endblock %}
+{% block content %}
+<div class="tournament-detail-wrapper">
+  <form method="POST" class="tournament-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
+
+    <!-- Tournament Header -->
+    <div class="tournament-info-header">
+      <h1 class="tournament-title">{{ tournament.name }}</h1>
+      <div class="tournament-meta">
+        <div class="meta-dates">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }}</div>
+        <div class="meta-location">{{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }}</div>
+        {% if tournament.external_url %}
+          <div class="meta-link"><a href="{{ tournament.external_url }}" target="_blank">Official Site →</a></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Attendance Selection -->
+    <div class="attendance-control">
+      <button type="button" class="attendance-toggle {% if is_attending %}selected{% endif %}" onclick="setAttendance('attending')">I'm Attending</button>
+      <button type="button" class="attendance-toggle {% if is_maybe %}selected{% endif %}" onclick="setAttendance('maybe')">Maybe</button>
+      <button type="button" class="attendance-toggle {% if is_not_attending %}selected{% endif %}" onclick="setAttendance('not_attending')">Not Going</button>
+    </div>
+
+    <!-- Sessions -->
+    {% if tournament_days %}
+      <div id="session-section" {% if is_not_attending %}style="display:none;"{% endif %}>
+        {% for day in tournament_days %}
+          <div class="session-day-group">
+            <div class="day-header">Day {{ day.day_num }} – {{ day.formatted }}</div>
+            <div class="session-pair">
+              {% for label in ['Day', 'Night'] %}
+                {% set session = "Day " ~ day.day_num|string ~ " - " ~ label %}
+                <label class="session-box">
+                  <input type="checkbox" name="sessions" value="{{ session }}" {% if session in selected_sessions %}checked{% endif %}>
+                  <span>{{ label }} Session</span>
+                  <span class="session-count">{{ session_counts[session] if session in session_counts else 0 }} attending</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+
+        <!-- Meeting Preference -->
+        <label class="meetup-checkbox">
+          <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
+          I'm open to meeting other fans
+        </label>
+
+        <!-- Summary -->
+        {% if selected_sessions %}
+          <div class="selection-summary">
+            <strong>Your Selection</strong>
+            <p>{{ selected_sessions | length }} session{{ '' if selected_sessions|length == 1 else 's' }} selected{% if wants_to_meet %} • Open to meeting fans{% endif %}</p>
+            <div class="chips">
+              {% for session in selected_sessions %}
+                <span class="chip">{{ session.replace("Day ", "D").replace(" - ", " ") }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Save Button -->
+    <button type="submit" class="cta-button">Save My Selection</button>
+  </form>
+</div>
+{% endblock %}
+2. Add New Styles:
+File: static/css/tournament-detail-redesign.css
+Create this file with:
+.tournament-detail-wrapper {
+  padding: 2rem 1rem;
+  max-width: 700px;
+  margin: auto;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+}
+
+.tournament-info-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tournament-title {
+  font-family: 'Crimson Text', serif;
+  font-size: 1.75rem;
+  color: #4a5d2a;
+}
+
+.tournament-meta {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.meta-link a {
+  color: #4a5d2a;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.attendance-control {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin: 1.5rem 0;
+}
+
+.attendance-toggle {
+  flex: 1;
+  padding: 0.75rem;
+  background: white;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.attendance-toggle.selected {
+  background: #4a5d2a;
+  color: white;
+  border-color: #4a5d2a;
+}
+
+.session-day-group {
+  margin-bottom: 1.5rem;
+}
+
+.day-header {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.session-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.session-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.session-box input {
+  margin-right: 0.75rem;
+}
+
+.session-count {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.meetup-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.selection-summary {
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  background: #4a5d2a;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.cta-button {
+  width: 100%;
+  background: #4a5d2a;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background: #3d4f23;
+}
+3. Update JavaScript
+File: static/js/tournament-detail.js
+Create or update to include:
+function setAttendance(type) {
+  document.getElementById('attendance-status').value = type;
+
+  document.querySelectorAll('.attendance-toggle').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  if (type === 'attending') {
+    document.querySelectorAll('.attendance-toggle')[0].classList.add('selected');
+  } else if (type === 'maybe') {
+    document.querySelectorAll('.attendance-toggle')[1].classList.add('selected');
+  } else {
+    document.querySelectorAll('.attendance-toggle')[2].classList.add('selected');
+  }
+
+  const sessionSection = document.getElementById('session-section');
+  if (sessionSection) {
+    sessionSection.style.display = type === 'not_attending' ? 'none' : 'block';
+  }
+}

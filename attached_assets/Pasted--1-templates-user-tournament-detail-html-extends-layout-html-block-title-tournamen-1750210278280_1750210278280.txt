@@ -1,10 +1,10 @@
+✅ 1. templates/user/tournament_detail.html
 {% extends "layout.html" %}
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
 <script src="{{ url_for('static', filename='js/tournament-detail.js') }}" defer></script>
 {% endblock %}
-
 {% block content %}
 <div class="tournament-detail-wrapper">
   <h1 class="tournament-name">{{ tournament.name }}</h1>
@@ -74,6 +74,160 @@
     </div>
   {% endif %}
 </div>
-
-
 {% endblock %}
+✅ 2. static/css/tournament-detail-redesign.css
+.tournament-detail-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: Inter, sans-serif;
+  color: #2b2b2b;
+}
+
+.tournament-name {
+  font-family: 'Crimson Text', serif;
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.tournament-meta,
+.tournament-stats {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.tournament-link {
+  display: inline-block;
+  margin: 0.5rem 0 1.5rem 0;
+  color: #4a5d2a;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.attendance-toggle-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 0.5rem;
+}
+
+.attendance-toggle {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #4a5d2a;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.attendance-toggle.selected {
+  background: #4a5d2a;
+  color: #fff;
+}
+
+.session-day {
+  margin-bottom: 1rem;
+}
+
+.session-options {
+  display: flex;
+  gap: 1rem;
+  padding-left: 1rem;
+}
+
+.session-options label {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.meetup-checkbox {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.save-button {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  font-weight: bold;
+  background: #4a5d2a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.chip-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  background: #e6ecd7;
+  color: #4a5d2a;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.fan-history {
+  margin-top: 2rem;
+}
+
+.fan-history h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.fan-history ul {
+  padding-left: 1rem;
+  font-size: 0.9rem;
+}
+
+.fan-history li .count {
+  color: #888;
+  font-size: 0.85rem;
+}
+✅ 3. static/js/tournament-detail.js
+document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.attendance-toggle');
+  const statusInput = document.getElementById('attendance-status');
+  const sessionUI = document.getElementById('session-selection');
+  const checkboxes = document.querySelectorAll('input[type="checkbox"][name="sessions"]');
+  const chipList = document.getElementById('selected-session-chips');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      const status = btn.dataset.status;
+      statusInput.value = status;
+
+      if (status === 'attending' || status === 'maybe') {
+        sessionUI.style.display = 'block';
+      } else {
+        sessionUI.style.display = 'none';
+      }
+    });
+  });
+
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      const selected = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+
+      chipList.innerHTML = '';
+      selected.forEach(label => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.textContent = label;
+        chipList.appendChild(chip);
+      });
+    });
+  });
+});
