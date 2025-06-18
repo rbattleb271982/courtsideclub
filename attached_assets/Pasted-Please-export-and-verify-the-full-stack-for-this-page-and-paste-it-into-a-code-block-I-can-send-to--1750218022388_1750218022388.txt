@@ -1,0 +1,49 @@
+Please export and verify the full stack for this page, and paste it into a code block I can send to ChatGPT. Be precise.
+🔁 ROUTE + BACKEND CONTEXT
+From routes/user.py:
+Full contents of tournament_detail() function (including POST handling, tournament_days, session_label processing, CSRF form logic, stats, and anything passed to render_template)
+Confirm if any variables in the template are not being passed from the route
+Also confirm whether TournamentSelectionForm is being instantiated and passed correctly
+From forms.py or wherever forms live:
+Definition of TournamentSelectionForm (even if it's just a CSRF form)
+Confirm that CSRF protection is enabled and functional sitewide
+🧠 MODELS + SESSION DATA
+From models.py:
+Tournament model (show start_date, end_date, sessions)
+UserTournament model (especially session_label, attending, attendance_type, wants_to_meet)
+User model (if anything is used in tournament_detail route)
+From anywhere else:
+Helper functions used in tournament_detail() (e.g. get_tournament_attendance_stats())
+Context processors that might affect this route
+📄 TEMPLATE FILES
+I need all relevant template files involved in rendering this route:
+templates/user/tournament_detail.html — full contents
+templates/layout.html — full layout, especially {% block head %} and {% block scripts %}
+Any includes/macros/partials used in tournament_detail.html
+Any flash logic blocks
+Confirm whether the content block is rendering as expected
+💅 STATIC FILES
+Send full contents of:
+static/css/tournament-detail-redesign.css
+static/js/tournament-detail.js
+Confirm style.css is being loaded
+Confirm that all new files are loading in the browser (no 404s or errors)
+Also: Are there conflicting styles between style.css and tournament-detail-redesign.css? I need to know the order they load in the <head>.
+🔗 LINKING + ROUTING
+Please confirm that:
+/tournaments/<slug> links on the Browse Tournaments and My Tournaments pages use the correct route: url_for('user.tournament_detail', tournament_slug=...)
+No references remain to templates/tournament_detail.html
+No blueprint conflicts or double-mapped routes are involved
+🛑 ERROR EXAMPLES
+Paste in:
+Any full console error you're seeing in Replit or the browser (e.g. 'form' is undefined, CSRF errors, JS errors)
+Screenshots of the broken UI state (already shared via ChatGPT)
+Output of print(tournament.start_date, tournament.end_date) from the route
+✅ Once you give me all of the above, ChatGPT will:
+Diagnose exactly why sessions aren't rendering
+Confirm why layout is broken
+Ensure CSRF works
+Fix template HTML properly
+Ensure new CSS and JS are fully wired
+Give you a clean, working version of the redesigned page
+Please export all code/files into a Replit-friendly format I can copy into ChatGPT. Don’t just say “it’s working” — I need to see full contents to verify everything connects. Let's get this DONE.

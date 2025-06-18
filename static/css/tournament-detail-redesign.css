@@ -40,7 +40,7 @@
   gap: 0.5rem !important;
 }
 
-.tournament-detail-wrapper .attendance-toggle {
+.tournament-detail-wrapper .toggle-btn {
   flex: 1 !important;
   padding: 0.75rem !important;
   border: 1px solid #4a5d2a !important;
@@ -49,11 +49,21 @@
   cursor: pointer !important;
   font-weight: 500 !important;
   font-size: 0.9rem !important;
+  color: #4a5d2a !important;
+  transition: all 0.2s ease !important;
 }
 
-.tournament-detail-wrapper .attendance-toggle.selected {
+.tournament-detail-wrapper .toggle-btn.selected {
   background: #4a5d2a !important;
   color: #fff !important;
+}
+
+.tournament-detail-wrapper .toggle-btn:hover {
+  background: #f0f4e8 !important;
+}
+
+.tournament-detail-wrapper .toggle-btn.selected:hover {
+  background: #3d4f23 !important;
 }
 
 .tournament-detail-wrapper .session-day {
@@ -81,7 +91,7 @@
   cursor: pointer !important;
 }
 
-.tournament-detail-wrapper .save-button {
+.tournament-detail-wrapper .save-btn {
   margin-top: 1.5rem !important;
   width: 100% !important;
   padding: 0.75rem !important;
@@ -94,8 +104,15 @@
   font-size: 1rem !important;
 }
 
-.tournament-detail-wrapper .save-button:hover {
+.tournament-detail-wrapper .save-btn:hover {
   background: #3d4f23 !important;
+}
+
+.tournament-detail-wrapper .selected-sessions {
+  margin-top: 1rem !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
 }
 
 .tournament-detail-wrapper .chip-list {
@@ -151,4 +168,20 @@
   padding: 0 !important;
   margin: 0 !important;
   box-shadow: none !important;
+}
+.save-btn {
+  background-color: #4a5d2a;
+  color: white;
+  padding: 14px 28px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.save-btn:hover {
+  background-color: #3a4c1e;
 }

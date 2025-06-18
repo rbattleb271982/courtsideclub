@@ -1,0 +1,35 @@
+Replit Prompt: Fix Tournament Detail Page Interactivity (All 4 Steps)
+Please make the following comprehensive updates to `templates/user/tournament_detail.html` to fully restore the redesigned tournament detail page functionality:
+
+---
+
+✅ **Step 1: Verify `tournament_days` block exists and shows sessions**
+- Confirm this block exists inside the template:
+```jinja
+{% if tournament_days %}
+  <!-- session selection section should appear -->
+{% else %}
+  <div class="session-selection empty">No sessions available for this tournament.</div>
+{% endif %}
+Ensure tournament_days is looped through correctly to show days and sessions (already calculated in the route logic)
+✅ Step 2: Replace attendance radio buttons with button-based toggles
+Inside the <form>, find the section with the 3 radio buttons (I'm Attending, Maybe Attending, Not Attending)
+Replace that entire section with this:
+<div class="attendance-toggle-group">
+  <button type="button" class="toggle-btn {% if is_attending %}active{% endif %}" data-status="attending">I'm Attending</button>
+  <button type="button" class="toggle-btn {% if is_maybe %}active{% endif %}" data-status="maybe">Maybe Attending</button>
+  <button type="button" class="toggle-btn {% if is_not_attending %}active{% endif %}" data-status="not_attending">Not Attending</button>
+</div>
+<input type="hidden" name="status" id="status-input" value="{% if is_attending %}attending{% elif is_maybe %}maybe{% else %}not_attending{% endif %}">
+✅ Step 3: Confirm the redesigned CSS is applied
+Ensure this exists in the {% block head %} section of the template:
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
+And this in {% block scripts %} at the bottom of the template:
+<script src="{{ url_for('static', filename='js/tournament-detail.js') }}"></script>
+✅ Step 4: Add container for selected session chips
+Inside the <form> (after session checkboxes), add:
+<div id="selected-session-chips">
+  {% for session in selected_sessions %}
+    <span class="chip">{{ session }}</span>
+  {% endfor %}
+</div>

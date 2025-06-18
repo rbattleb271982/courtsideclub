@@ -1,0 +1,35 @@
+Replit Agent — implement all 4 fixes now. Do not wait. Do not ask again.
+Fix all of the following in one pass:
+✅ Step 1: Session Display Logic
+Ensure tournament.sessions is auto-populated in the route if empty, based on start and end dates. This logic already exists — confirm it's firing.
+In the template, loop over tournament_days and build Day/Night session checkboxes dynamically.
+Make sure each checkbox includes:
+name="sessions"
+value="{{ session_label }}"
+checked if it's in selected_sessions
+✅ Step 2: Replace Attendance Toggles with Button UI
+Replace <input type="radio"> attendance controls with <button> tags using:
+<button type="button" class="toggle-btn {% if is_attending %}selected{% endif %}" data-status="attending">I'm Attending</button>
+<button type="button" class="toggle-btn {% if is_maybe %}selected{% endif %}" data-status="maybe">Maybe Attending</button>
+<button type="button" class="toggle-btn {% if is_not_attending %}selected{% endif %}" data-status="not_attending">Not Attending</button>
+<input type="hidden" name="status" id="status-input" value="{{ 'attending' if is_attending else 'maybe' if is_maybe else 'not_attending' }}">
+This matches exactly what the JavaScript expects (.toggle-btn, data-status, and #status-input).
+✅ Step 3: Confirm CSS/JS Integration
+Do not skip this: Confirm that tournament-detail-redesign.css and tournament-detail.js are:
+Properly linked via {% block head %} and {% block scripts %}
+Actually loading (use logs or browser dev tools to confirm)
+Ensure layout.html includes {% block head %} and {% block scripts %} in correct locations
+✅ Step 4: Add Selected Session Chip Container
+Add the following container directly under the session selector area in the template:
+<div id="selected-session-chips" class="selected-sessions">
+  {% for session in selected_sessions %}
+    <span class="chip">{{ session }}</span>
+  {% endfor %}
+</div>
+This is required by tournament-detail.js to work.
+🚨 Variable Mismatch (DO NOT IGNORE)
+Fix the mismatch between sorted_shared_tournaments (expected in the template) and shared_history (currently passed in the route).
+Either rename the variable passed in the route or update the template to match — choose one so they align.
+🧪 After Changes:
+Load /tournaments/<slug> as a logged-in user.
+Confirm: session selection is interactive, attendance buttons toggle and save, and selected session chips render dynamically.
