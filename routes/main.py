@@ -106,7 +106,7 @@ def public_tournament_detail(slug):
             'lanyards': 0  # Lanyard functionality discontinued
         }
         
-        return render_template('tournament_detail.html',
+        return render_template('user/tournament_detail.html',
                             tournament=tournament,
                             user_tournament=user_tournament,
                             stats=stats)
