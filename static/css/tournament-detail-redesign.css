@@ -179,6 +179,28 @@
   font-weight: 500 !important;
 }
 
+.tournament-detail-wrapper .member-connections {
+  margin-bottom: 2rem !important;
+  padding: 1.5rem !important;
+  background-color: #f8faf8 !important;
+  border-radius: 8px !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.tournament-detail-wrapper .member-connections h4 {
+  color: #4a5d2a !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.tournament-detail-wrapper .member-connections p {
+  color: #6b7280 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+  margin-bottom: 0 !important;
+}
+
 .tournament-detail-wrapper .fan-history {
   margin-top: 2rem !important;
   padding: 1rem !important;

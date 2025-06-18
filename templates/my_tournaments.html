@@ -417,13 +417,7 @@
                     <div class="tournament-dates">{{ ut.tournament.start_date.strftime('%b %d') }} – {{ ut.tournament.end_date.strftime('%b %d, %Y') }}</div>
                     <div class="tournament-location">{{ ut.tournament.city }}, {{ ut.tournament.country }}</div>
                     
-                    <div class="attendance-status">
-                        {% if ut.attending %}
-                        <span class="status-tag attending">You're attending</span>
-                        {% else %}
-                        <span class="status-tag maybe">Maybe attending</span>
-                        {% endif %}
-                    </div>
+
                     
                     <div class="tournament-stats">
                         <div class="stat-item">{{ stats[ut.tournament.id].attending }} people attending</div>
