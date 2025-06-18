@@ -1,0 +1,49 @@
+✅ Please export all code and files related to the entire logged-in tournament flow, not just the individual tournament detail page. This includes all pages that link to, load data for, or change user attendance/session preferences for a tournament.
+🔁 ROUTES AND BACKEND (FULL VIEW FLOW)
+routes/user.py (entire file) — includes /tournaments/<slug>, /my-tournaments, and POST handlers
+routes/tournaments.py (entire file) — includes list view (/tournaments)
+routes/main.py — check for /tournaments/<slug> (public version) or shared logic
+app.py — include any lines where user_bp, main_bp, tournaments_bp, or other relevant Blueprints are registered
+🧠 MODELS, CONTEXT, AND SERVICES
+models.py — include full definitions for:
+Tournament
+User
+UserTournament
+Any related models like UserPastTournament if relevant
+Any helper modules or context processors that:
+Load session data
+Calculate attending_count, meeting_count, or session_label logic
+Provide global user context or stats
+🧩 TEMPLATES (ALL RELATED VIEWS)
+Tournament Detail
+templates/user/tournament_detail.html ✅ NEW REDESIGN
+templates/tournament_detail.html (if it still exists, confirm whether obsolete)
+Tournament List and Links
+templates/user/my_tournaments.html
+templates/public/tournaments.html
+templates/components/tournament_card.html (or any reusable tournament blocks)
+Lanyard Flow
+templates/user/order_lanyard.html
+Any templates that show tournament attendance confirmations or session summaries
+Base/Layout
+templates/layout.html — confirm proper includes for CSS/JS and csrf_token
+Any shared macros or includes used across pages (e.g. _form.html, _tournament_row.html)
+⚠️ Confirm this CSRF token fix is applied inside tournament_detail.html:
+{{ form.hidden_tag() }}
+— this prevents the “CSRF token is missing” error during form POST.
+💅 STATIC FILES
+static/css/tournament-detail-redesign.css — main redesign styles
+static/css/style.css — global styles (check for conflicts or overrides)
+static/js/tournament-detail.js — handles attendance toggle + session chip behavior
+Any other static files used in related pages (e.g. JS for filtering or buttons on /my-tournaments)
+🔗 TOURNAMENT LINK SOURCES
+Please confirm any template that renders <a> links to /tournaments/<slug> uses the correct route:
+url_for('user.tournament_detail', tournament_slug=tournament.slug)
+and not the deprecated:
+url_for('main.public_tournament_detail', slug=...)
+url_for('tournaments.view_tournament', slug=...)
+Export these:
+my_tournaments.html
+tournaments.html
+any component partials or card blocks
+I need this to trace every interaction point from browse → detail → lanyard → confirmation, including the state passed via UserTournament, session chips, and CSRF-protected forms. We’ll ensure 100% of the experience uses the redesigned page and compatible logic.
