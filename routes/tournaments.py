@@ -360,7 +360,7 @@ def attend_tournament(tournament_slug):
     db.session.commit()
     
     flash('Please select which sessions you\'ll attend.', 'info')
-    return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
+    return redirect(url_for('user.tournament_detail', slug=tournament_slug))
 
 
 @tournaments_bp.route('/tournaments/<tournament_slug>/unattend', methods=['POST'])
@@ -439,7 +439,7 @@ def update_sessions(tournament_slug):
     else:
         flash('Your selections were saved, but you will not be marked as attending until you select at least one session.', 'warning')
 
-    return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
+    return redirect(url_for('user.tournament_detail', slug=tournament_slug))
 
 @tournaments_bp.route("/tournaments/<tournament_slug>/save_sessions", methods=['POST'])
 @login_required
@@ -628,7 +628,7 @@ def attend_tournament_new(tournament_slug):
     db.session.commit()
     
     # Redirect to tournament detail page with the appropriate attendance type
-    return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
+    return redirect(url_for('user.tournament_detail', slug=tournament_slug))
 
 @tournaments_bp.route("/tournaments/<tournament_slug>/attending", methods=['POST'])
 @login_required
@@ -682,9 +682,9 @@ def mark_attending(tournament_slug):
 
     # Redirect back with session_saved parameter for lanyard button display when there are sessions
     if selected_sessions:
-        return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug, session_saved=1))
+        return redirect(url_for('user.tournament_detail', slug=tournament_slug, session_saved=1))
     else:
-        return redirect(url_for('user.tournament_detail', tournament_slug=tournament_slug))
+        return redirect(url_for('user.tournament_detail', slug=tournament_slug))
 
 @tournaments_bp.route("/tournaments/public/<slug>")
 def public_tournament_page(slug):

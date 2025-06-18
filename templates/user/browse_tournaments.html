@@ -357,7 +357,7 @@
                     data-tournament-type="{{ tournament.tour_type or '' }}"
                     data-attendance="{{ tournament.attendee_count or 0 }}">
                   <td data-label="Tournament" class="tournament-name-cell">
-                    <a href="{{ url_for('user.tournament_detail', tournament_slug=tournament.slug) }}" class="tournament-name-link">
+                    <a href="{{ url_for('user.tournament_detail', slug=tournament.slug) }}" class="tournament-name-link">
                       {{ tournament.name }}
                     </a>
                     <div class="tournament-location-cell">

@@ -364,7 +364,7 @@
                 {% for ut in tournaments %}
                 <div class="tournament-card">
                     <div class="tournament-name">
-                        <a href="{{ url_for('user.tournament_detail', tournament_slug=ut.tournament.slug) }}">{{ ut.tournament.name }}</a>
+                        <a href="{{ url_for('user.tournament_detail', slug=ut.tournament.slug) }}">{{ ut.tournament.name }}</a>
                     </div>
                     <div class="tournament-dates">{{ ut.tournament.start_date.strftime('%b %d') }} – {{ ut.tournament.end_date.strftime('%b %d, %Y') }}</div>
                     <div class="tournament-attending">
