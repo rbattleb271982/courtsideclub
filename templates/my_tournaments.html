@@ -79,6 +79,9 @@
     padding: 1.5rem;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
 
   .tournament-card:hover {
@@ -107,20 +110,65 @@
   .tournament-dates {
     font-size: 0.875rem;
     color: #6b7280;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 
-  .tournament-attending {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  .tournament-location {
     font-size: 0.875rem;
     color: #6b7280;
+    margin-bottom: 1rem;
   }
 
-  .attending-count {
+  .attendance-status {
+    margin-bottom: 1rem;
+  }
+
+  .status-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-tag.attending {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+
+  .status-tag.maybe {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+  .tournament-stats {
+    margin-bottom: 1rem;
+  }
+
+  .stat-item {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+  }
+
+  .card-link {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .card-link a {
+    font-size: 0.875rem;
     color: #4a6b4a;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .card-link a:hover {
+    color: #3a5a3a;
+    text-decoration: underline;
   }
 
   /* Message Boxes */
@@ -364,12 +412,26 @@
                 {% for ut in tournaments %}
                 <div class="tournament-card">
                     <div class="tournament-name">
-                        <a href="{{ url_for('user.tournament_detail', slug=ut.tournament.slug) }}">{{ ut.tournament.name }}</a>
+                        {{ ut.tournament.name }}
                     </div>
                     <div class="tournament-dates">{{ ut.tournament.start_date.strftime('%b %d') }} – {{ ut.tournament.end_date.strftime('%b %d, %Y') }}</div>
-                    <div class="tournament-attending">
-                        <span class="attending-count">{{ stats[ut.tournament.id].attending }}</span>
-                        <span class="attending-label">attending</span>
+                    <div class="tournament-location">{{ ut.tournament.city }}, {{ ut.tournament.country }}</div>
+                    
+                    <div class="attendance-status">
+                        {% if ut.attending %}
+                        <span class="status-tag attending">You're attending</span>
+                        {% else %}
+                        <span class="status-tag maybe">Maybe attending</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="tournament-stats">
+                        <div class="stat-item">{{ stats[ut.tournament.id].attending }} people attending</div>
+                        <div class="stat-item">{{ stats[ut.tournament.id].meetup }} open to meet up</div>
+                    </div>
+                    
+                    <div class="card-link">
+                        <a href="{{ url_for('tournaments.detail', slug=ut.tournament.slug) }}">See where fans have been →</a>
                     </div>
                 </div>
                 {% endfor %}
