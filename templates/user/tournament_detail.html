@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-
 {% block title %}{{ tournament.name }} - CourtSide Club{% endblock %}
 
 {% block head %}
@@ -16,74 +15,69 @@
       • {{ tournament.event_type }} • {{ tournament.tour_type }}
     </p>
     <div class="tournament-stats">
-      {{ attending_count }} attending • {{ meeting_count }} open to meet
+      {% if is_attending %}attending{% elif is_maybe %}maybe attending{% else %}not attending{% endif %}
+      {% if wants_to_meet %} • open to meet{% endif %}
     </div>
   </div>
 
   <form method="POST" class="tournament-form">
     {{ form.hidden_tag() }}
 
-    <!-- Step 2: Button-based attendance toggles -->
-    <div class="attendance-toggle-group">
-      <button type="button" class="toggle-btn {% if is_attending %}selected{% endif %}" data-status="attending">I'm Attending</button>
-      <button type="button" class="toggle-btn {% if is_maybe %}selected{% endif %}" data-status="maybe">Maybe Attending</button>
-      <button type="button" class="toggle-btn {% if is_not_attending %}selected{% endif %}" data-status="not_attending">Not Attending</button>
+    <div id="attendance-status" class="attendance-toggle-group">
+      <button type="submit" name="status" value="attending" class="toggle-btn {% if is_attending %}selected{% endif %}">I'm Attending</button>
+      <button type="submit" name="status" value="maybe" class="toggle-btn {% if is_maybe %}selected{% endif %}">Maybe Attending</button>
+      <button type="submit" name="status" value="not_attending" class="toggle-btn {% if is_not_attending %}selected{% endif %}">Not Attending</button>
     </div>
-    <input type="hidden" name="status" id="status-input" value="{{ 'attending' if is_attending else 'maybe' if is_maybe else 'not_attending' }}">
 
-    <!-- Step 1: Session display logic with tournament_days -->
-    {% if tournament_days %}
-    <div id="session-selection" class="session-selection" {% if not is_attending and not is_maybe %}style="display: none;"{% endif %}>
-      {% for day in tournament_days %}
+    {% if is_attending or is_maybe %}
+    <p style="color:red;">Debug Info:</p>
+    <ul>
+      <li>tournament_days length: {{ tournament_days | length }}</li>
+      <li>selected_sessions: {{ selected_sessions }}</li>
+    </ul>
+      {% if tournament_days %}
+      <div id="session-selection" class="session-selection">
+        {% for day in tournament_days %}
         <div class="session-day-group">
           <div class="session-day">{{ day.formatted }}</div>
           <div class="session-options">
             {% for time in ['Day', 'Night'] %}
-              {% set session_label = "Day " ~ day.day_num|string ~ " - " ~ time %}
+              {% set label = "Day " ~ day.day_num ~ " - " ~ time %}
               <label class="session-option">
-                <input type="checkbox" name="sessions" value="{{ session_label }}" {% if session_label in selected_sessions %}checked{% endif %}>
-                {{ time }}
+                <input type="checkbox" name="sessions" value="{{ label }}" {% if label in selected_sessions %}checked{% endif %}>
+                {{ time }} Session
               </label>
             {% endfor %}
           </div>
         </div>
-      {% endfor %}
-
-      <div class="meetup-toggle">
-        <label>
-          <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
-          I'm open to meeting other fans
-        </label>
-      </div>
-
-      <!-- Step 4: Selected session chip container -->
-      <div id="selected-session-chips" class="selected-sessions">
-        {% for session in selected_sessions %}
-          <span class="chip">{{ session }}</span>
         {% endfor %}
       </div>
+      {% else %}
+        <div class="session-selection empty">No sessions available for this tournament.</div>
+      {% endif %}
+    {% endif %}
+
+    <div class="meetup-toggle">
+      <label>
+        <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}>
+        I'm open to meeting other fans
+      </label>
     </div>
-    {% else %}
-    <div class="session-selection empty">No sessions available for this tournament.</div>
+
+    {% if selected_sessions %}
+    <div id="selected-session-chips" class="selected-sessions">
+      {% for session in selected_sessions %}
+        <span class="chip">{{ session }}</span>
+      {% endfor %}
+    </div>
     {% endif %}
 
     <button type="submit" class="save-btn">Save My Selections</button>
   </form>
-
-  <!-- Fixed variable name for shared tournaments -->
-  {% if shared_history %}
-  <div class="fan-history">
-    <h4>Other tournaments fans have attended:</h4>
-    <ul>
-      {% for name, count in shared_history %}
-        <li>{{ name }} <span class="fan-count">({{ count }})</span></li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/tournament-detail.js') }}"></script>
 {% endblock %}
+
