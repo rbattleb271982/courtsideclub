@@ -3,7 +3,7 @@ from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf import CSRFProtect
 import logging
 from models import db, User, load_user, Tournament
 import datetime
@@ -48,7 +48,8 @@ def log_response_info(response):
 app.config.from_object('config.Config')
 
 # Initialize CSRF protection
-csrf = CSRFProtect(app)
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 # Set the remember me cookie duration to 30 days
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(days=30)

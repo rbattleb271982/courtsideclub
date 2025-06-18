@@ -21,7 +21,7 @@
   </p>
 
   <form method="POST" id="session-form">
-    {{ csrf_token() }}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <input type="hidden" name="status" id="attendance-status" value="{{ user_tournament.attendance_type if user_tournament else 'not_attending' }}">
 
     <div class="attendance-toggle-group">
