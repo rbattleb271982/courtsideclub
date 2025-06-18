@@ -1,7 +1,9 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<div class="tournament-detail-container">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tournament-detail-redesign.css') }}">
+
+<div class="tournament-detail-wrapper">
   <!-- Debug Info (dev only) -->
   <div style="background: #fee; padding: 1rem; border: 1px solid red; margin-bottom: 2rem;">
     <strong>Debug Info</strong>
@@ -14,24 +16,24 @@
     </ul>
   </div>
 
-  <h2 class="tournament-title">{{ tournament.name }}</h2>
-  <p class="tournament-subtitle">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }} • {{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</p>
-  <p>{{ attending_count }} attending • {{ meeting_count }} open to meet</p>
+  <h1 class="tournament-name">{{ tournament.name }}</h1>
+  <p class="tournament-meta">{{ tournament.start_date.strftime('%b %d') }} – {{ tournament.end_date.strftime('%b %d, %Y') }} • {{ tournament.city }}, {{ tournament.country }} • {{ tournament.event_type }} • {{ tournament.tour_type }}</p>
+  <p class="tournament-stats">{{ attending_count }} attending • {{ meeting_count }} open to meet</p>
 
   <!-- Attendance Options -->
-  <div class="attendance-buttons">
+  <div class="attendance-toggle-group">
     <form method="POST" action="{{ url_for('tournaments.attend_tournament', tournament_slug=tournament.slug) }}">
       {{ form.hidden_tag() }}
-      <button type="submit" name="attendance" value="attending" class="btn {% if is_attending %}selected{% endif %}">I'm Attending</button>
+      <button type="submit" name="attendance" value="attending" class="toggle-btn {% if is_attending %}selected{% endif %}">I'm Attending</button>
     </form>
     <form method="POST" action="{{ url_for('tournaments.attend_tournament_new', tournament_slug=tournament.slug) }}">
       {{ form.hidden_tag() }}
       <input type="hidden" name="attendance_type" value="maybe">
-      <button type="submit" name="attendance" value="maybe" class="btn {% if is_maybe %}selected{% endif %}">Maybe Attending</button>
+      <button type="submit" name="attendance" value="maybe" class="toggle-btn {% if is_maybe %}selected{% endif %}">Maybe Attending</button>
     </form>
     <form method="POST" action="{{ url_for('tournaments.unattend_tournament', tournament_slug=tournament.slug) }}">
       {{ form.hidden_tag() }}
-      <button type="submit" name="attendance" value="not_attending" class="btn {% if not is_attending and not is_maybe %}selected{% endif %}">Not Attending</button>
+      <button type="submit" name="attendance" value="not_attending" class="toggle-btn {% if not is_attending and not is_maybe %}selected{% endif %}">Not Attending</button>
     </form>
   </div>
 
@@ -42,9 +44,9 @@
     <div class="session-selection">
       <h3>Select Sessions</h3>
       {% for day in tournament_days %}
-      <div class="day-block">
+      <div class="session-day">
         <strong>Day {{ day.day_num }} ({{ day.formatted }})</strong>
-        <div class="checkbox-row">
+        <div class="session-options">
           <label><input type="checkbox" name="sessions" value="Day {{ day.day_num }} - Day" {% if 'Day ' ~ day.day_num ~ ' - Day' in selected_sessions %}checked{% endif %}> Day</label>
           <label><input type="checkbox" name="sessions" value="Day {{ day.day_num }} - Night" {% if 'Day ' ~ day.day_num ~ ' - Night' in selected_sessions %}checked{% endif %}> Night</label>
         </div>
@@ -52,11 +54,11 @@
       {% endfor %}
     </div>
 
-    <label style="margin-top: 1rem; display: block;">
-      <input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}> I'm open to meeting other fans
-    </label>
+    <div class="meetup-checkbox">
+      <label><input type="checkbox" name="wants_to_meet" {% if wants_to_meet %}checked{% endif %}> I'm open to meeting other fans</label>
+    </div>
 
-    <button type="submit" class="btn save-btn">Save My Selections</button>
+    <button type="submit" class="save-btn">Save My Selections</button>
   </form>
   {% else %}
     <p>No sessions available for this tournament.</p>
