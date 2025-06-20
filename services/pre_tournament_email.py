@@ -356,7 +356,7 @@ def generate_email_html_template(user_first_name, tournament_name, sessions, mee
             <div class="footer-links">
               <a href="{base_url}/privacy">Privacy Policy</a> | <a href="{base_url}/unsubscribe">Unsubscribe</a>
             </div>
-            <div style="font-size: 12px; margin-top: 8px;">© 2025 CourtSide Club. All rights reserved.</div>
+            <div style="font-size: 12px; margin-top: 8px;">© 2025 Let'CourtSide. All rights reserved.</div>
           </div>
         </div>
     </body>

@@ -118,9 +118,9 @@ def send_tournament_reminder_email(user_id, tournament_id, debug_email_override=
 
         <p>Need to make a change? <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Log in to update your sessions or raise your hand</a>.</p>
 
-        <p>Thanks for being part of <strong>CourtSide Club</strong> — we can't wait to see you there!</p>
+        <p>Thanks for being part of <strong>Let'CourtSide</strong> — we can't wait to see you there!</p>
 
-        <p style="color:#666;">– The CourtSide Club Team</p>
+        <p style="color:#666;">– The Let'CourtSide Team</p>
         """
         
         return send_email(
@@ -213,7 +213,7 @@ def send_morning_of_email(user_id, tournament_id, session_date, session_name, de
 
         <p>☀️ Soak up the vibe, say hey to fellow members, and enjoy your day courtside. The energy is real.</p>
 
-        <p>– The CourtSide Club Team</p>
+        <p>– The Let'CourtSide Team</p>
         """
         
         return send_email(
@@ -288,7 +288,7 @@ def send_welcome_email(user_id):
                     </div>
                   </div>
                   <p style="font-size: 14px; margin-top: 18px; color: #171717;">
-                    Join {registration_count}+ CourtSide Club members already registered
+                    Join {registration_count}+ Let'CourtSide members already registered
                   </p>
                 </div>"""
         
@@ -302,7 +302,7 @@ def send_welcome_email(user_id):
           <!-- Header -->
           <div style="text-align: center; margin-bottom: 40px;">
             <h1 style="font-family: 'Crimson Text', Georgia, serif; font-size: 32px; font-weight: 600; margin: 0 0 10px 0;">
-              Welcome to CourtSide Club
+              Welcome to Let'CourtSide
             </h1>
             <div style="height: 3px; width: 80px; background-color: #EDB418; margin: 0 auto 20px;"></div>
             <p style="font-size: 16px; line-height: 1.5; margin: 0;">
@@ -316,7 +316,7 @@ def send_welcome_email(user_id):
               Hi {user_first_name},
             </p>
             <p style="font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
-              Welcome to CourtSide Club. We're thrilled you've joined our exclusive community of passionate tennis
+              Welcome to Let'CourtSide. We're thrilled you've joined our exclusive community of passionate tennis
               enthusiasts. Get ready to transform your match-day experience from a seat in the stands to an immersive
               connection with fellow fans who, like you, seek more from the world of tennis. Your membership opens the court
               to unparalleled camaraderie and elevated tournament moments.
