@@ -168,7 +168,7 @@ def generate_pre_tournament_email_html(user_id, tournament_id):
         schedule_url = getattr(tournament, 'schedule_url', '#') or '#'
         
         # Base URL for links
-        base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
+        base_url = current_app.config.get('BASE_URL', 'https://letcourtside.com')
         
         # Generate HTML using the React component structure
         html = generate_email_html_template(

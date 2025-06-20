@@ -82,7 +82,7 @@ def send_tournament_reminder_email(user_id, tournament_id, debug_email_override=
         if user_tournament.open_to_meet:
             meetup_msg = "<p>👋 Great news — you're set to meet other fans at the tournament! We'll send you final details about meeting spots soon.</p>"
         else:
-            meetup_msg = f"<p>Want to meet other fans? <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Update your preferences</a> to join the meetup.</p>"
+            meetup_msg = f"<p>Want to meet other fans? <a href=\"{current_app.config.get('BASE_URL', 'https://letcourtside.com')}/login\">Update your preferences</a> to join the meetup.</p>"
         
         # Lanyard message - functionality discontinued
         lanyard_msg = ""
@@ -116,7 +116,7 @@ def send_tournament_reminder_email(user_id, tournament_id, debug_email_override=
 
         <hr style="border:none; border-top:1px solid #ddd;">
 
-        <p>Need to make a change? <a href=\"{current_app.config.get('BASE_URL', 'https://courtsideclub.app')}/login\">Log in to update your sessions or raise your hand</a>.</p>
+        <p>Need to make a change? <a href=\"{current_app.config.get('BASE_URL', 'https://letcourtside.com')}/login\">Log in to update your sessions or raise your hand</a>.</p>
 
         <p>Thanks for being part of <strong>Let'CourtSide</strong> — we can't wait to see you there!</p>
 
@@ -209,7 +209,7 @@ def send_morning_of_email(user_id, tournament_id, session_date, session_name, de
 
         {lanyard_msg}
 
-        <p>📸 Tag your meetups on Instagram <strong>@courtsideclub</strong> — we love seeing CSC in the wild!</p>
+        <p>📸 Tag your meetups on Instagram <strong>@letcourtside</strong> — we love seeing CSC in the wild!</p>
 
         <p>☀️ Soak up the vibe, say hey to fellow members, and enjoy your day courtside. The energy is real.</p>
 
