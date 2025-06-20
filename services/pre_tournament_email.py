@@ -197,7 +197,7 @@ def generate_email_html_template(user_first_name, tournament_name, sessions, mee
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Your CourtSide Club Tournament Starts Soon</title>
+        <title>Your Let'CourtSide Tournament Starts Soon</title>
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
           body {{
@@ -325,8 +325,8 @@ def generate_email_html_template(user_first_name, tournament_name, sessions, mee
     </head>
     <body>
         <div class="container">
-          <h1>CourtSide Club</h1>
-          <h2>Almost time — your CourtSide Club tournament starts soon</h2>
+          <h1>Let'CourtSide</h1>
+          <h2>Almost time — your Let'CourtSide tournament starts soon</h2>
           <p>Hi {user_first_name},</p>
           <p>Your visit to <strong>{tournament_name}</strong> is just around the corner. We're excited to help you connect with fellow tennis enthusiasts and make the most of your match day.</p>
           

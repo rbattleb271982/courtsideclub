@@ -70,7 +70,7 @@ def login():
 
                 # Show welcome message if user hasn't seen it before
                 if not user.welcome_seen:
-                    flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
+                    flash("Welcome to Let'CourtSide! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
                     user.welcome_seen = True
                     db.session.commit()
 
@@ -158,7 +158,7 @@ def signup():
                 send_welcome_email(new_user.id)
 
                 # Show welcome message
-                flash("Welcome to CourtSide Club! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
+                flash("Welcome to Let'CourtSide! 🎾 You can now choose which tournaments you're attending and let other fans know you're open to meeting. Head to the Tournaments page to get started.", "success")
                 
                 # Set session flags
                 session['show_welcome'] = True

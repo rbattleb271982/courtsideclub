@@ -19,7 +19,7 @@ def send_email(to_email, subject, content_html, content_text=None):
         int or None: Status code if email was sent successfully, None otherwise
     """
     # Use verified Gmail address with display name to improve delivery
-    from_email = ('richardbattlebaxter@gmail.com', 'CourtSide Club')
+    from_email = ('richardbattlebaxter@gmail.com', "Let'CourtSide")
 
     # Generate plain text content from HTML if not provided
     if not content_text:
