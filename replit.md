@@ -119,6 +119,14 @@ CourtSide Club is a comprehensive web application for managing tennis tournament
 
 ## Recent Changes
 
+### June 20, 2025 - Comprehensive Rebranding to Let'CourtSide
+- Completed systematic rebranding from "CourtSide Club" to "Let'CourtSide" across all user-facing content
+- Updated email templates in services/email.py and services/pre_tournament_email.py with new brand name
+- Modified HTML page titles in all template files (register.html, public templates, user templates)
+- Ensured proper curly apostrophe (') usage throughout brand name
+- Maintained technical identifiers, URLs, and domains unchanged per rebranding scope
+- Brand consistency now maintained across welcome emails, tournament reminders, and password reset flows
+
 ### June 18, 2025 - Tournament Detail Page Enhancement
 - Fixed route conflict between public and user tournament detail pages
 - Reordered blueprint registration to prioritize authenticated user routes
