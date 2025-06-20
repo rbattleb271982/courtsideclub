@@ -760,7 +760,7 @@ def send_welcome_email_debug(user_id=None):
         welcome_html = f"""
         <p>Hi {getattr(user, 'first_name', 'Tennis Fan')},</p>
 
-        <p>Welcome to <strong>CourtSideClub</strong> – the community for tennis fans who want more than just a seat in the stands.</p>
+        <p>Welcome to <strong>LetCourtSide</strong> – the community for tennis fans who want more than just a seat in the stands.</p>
 
         <p>Here's what you can do starting today:</p>
         <ul>
@@ -771,15 +771,15 @@ def send_welcome_email_debug(user_id=None):
 
         {tournament_html}
 
-        <p>Ready to dive in? <a href="https://courtsideclub.app/login">Log in to pick your tournaments</a> and join the community.</p>
+        <p>Ready to dive in? <a href="https://letcourtside.com/login">Log in to pick your tournaments</a> and join the community.</p>
 
-        <p>Thanks for joining CourtSideClub — we're excited to have you with us!<br>
-        – The CourtSideClub Team</p>
+        <p>Thanks for joining LetCourtSide — we're excited to have you with us!<br>
+        – The LetCourtSide Team</p>
         """
         
         success = send_email(
             to_email="richardbattlebaxter@gmail.com",
-            subject="Welcome to CourtSideClub 🎾 Here's what's next",
+            subject="Welcome to LetCourtSide 🎾 Here's what's next",
             content_html=welcome_html
         )
         

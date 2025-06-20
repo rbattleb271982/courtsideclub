@@ -1,7 +1,7 @@
 {
   "pre_tournament_reminder": {
     "subject": "\ud83c\udfbe Your CourtSide Club match day is almost here!",
-    "body": "Hey {{ user.first_name }},<br><br>Just a heads-up \u2014 your visit to {{ tournament_name }} is coming up!<br><br>\u2705 Don't forget your lanyard<br>\u2705 Check your session selections<br>\u2705 Invite a friend if they're coming too<br><br>\ud83d\udc49 <a href='https://courtsideclub.com/login'>courtsideclub.com/login</a><br><br>Want tips, guides, and fan updates? <a href='https://courtsideclub.com/blog'>Visit the Blog →</a><br><br>Have a great time \u2014<br>The Lounge is Courtside."
+    "body": "Hey {{ user.first_name }},<br><br>Just a heads-up \u2014 your visit to {{ tournament_name }} is coming up!<br><br>\u2705 Don't forget your lanyard<br>\u2705 Check your session selections<br>\u2705 Invite a friend if they're coming too<br><br>\ud83d\udc49 <a href='https://letcourtside.com/login'>courtsideclub.com/login</a><br><br>Want tips, guides, and fan updates? <a href='https://courtsideclub.com/blog'>Visit the Blog →</a><br><br>Have a great time \u2014<br>The Lounge is Courtside."
   },
   "lanyard_reminder": {
     "subject": "\ud83c\udfbe Updated lanyard reminder subject",
