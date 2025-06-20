@@ -213,7 +213,7 @@ def send_welcome_email(user_id):
     welcome_email_html = f"""
     <p>Hi {user_name},</p>
 
-    <p>Welcome to <strong>CourtSideClub</strong> – the community for tennis fans who want more than just a seat in the stands.</p>
+    <p>Welcome to <strong>LetCourtSide</strong> – the community for tennis fans who want more than just a seat in the stands.</p>
 
     <p>Here's what you can do starting today:</p>
     <ul>
@@ -233,7 +233,7 @@ def send_welcome_email(user_id):
 
     send_email(
         to_email="richardbattlebaxter@gmail.com",
-        subject="Welcome to CourtSideClub 🎾 Here's what's next",
+        subject="Welcome to LetCourtSide 🎾 Here's what's next",
         content_html=welcome_email_html
     )
 
@@ -320,8 +320,8 @@ def send_reminder(user_id, tournament_slug):
 
     <p>Need to make a change? You can <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">log into your account</a> anytime to update your session or raise your hand.</p>
 
-    <p>Thanks for being part of CourtSideClub — we can't wait to see you there!<br>
-    – The CourtSideClub Team</p>
+    <p>Thanks for being part of LetCourtSide — we can't wait to see you there!<br>
+    – The LetCourtSide Team</p>
     """
 
     send_email(
@@ -343,7 +343,7 @@ def send_test_email():
     test_email = "richardbattlebaxter@gmail.com"
     
     # Get FROM_EMAIL from config
-    from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
+    from_email = current_app.config.get('FROM_EMAIL', 'noreply@letcourtside.com')
     
     # Check if SendGrid API key is available
     api_key = os.environ.get('SENDGRID_API_KEY')
@@ -492,7 +492,7 @@ def send_tournament_reminder_debug(user_id=None, tournament_id=None):
         if user_tournament.open_to_meet:
             meetup_msg = "<p>👋 Great news — you're set to meet other fans at the tournament! We'll send you final details about meeting spots soon.</p>"
         else:
-            meetup_msg = f"<p>Want to meet other fans? <a href=\"https://courtsideclub.app/login\">Update your preferences</a> to join the meetup.</p>"
+            meetup_msg = f"<p>Want to meet other fans? <a href=\"https://letcourtside.com/login\">Update your preferences</a> to join the meetup.</p>"
         
         # Lanyard message - functionality discontinued
         lanyard_msg = ""
@@ -517,10 +517,10 @@ def send_tournament_reminder_debug(user_id=None, tournament_id=None):
 
         <p>🎒 Pro tip: bring sunscreen, a refillable water bottle, and your lanyard. The courtside energy is real — stay ready.</p>
 
-        <p>Need to make a change? You can <a href=\"https://courtsideclub.app/login\">log into your account</a> anytime to update your session or raise your hand.</p>
+        <p>Need to make a change? You can <a href=\"https://letcourtside.com/login\">log into your account</a> anytime to update your session or raise your hand.</p>
 
-        <p>Thanks for being part of CourtSideClub — we can't wait to see you there!<br>
-        – The CourtSideClub Team</p>
+        <p>Thanks for being part of LetCourtSide — we can't wait to see you there!<br>
+        – The LetCourtSide Team</p>
         """
         
         # Send directly to your email
@@ -669,11 +669,11 @@ def send_morning_email_debug(user_id=None, tournament_id=None, session_date=None
 
         {lanyard_msg}
 
-        <p>📸 Tag your meetups on Instagram <strong>@courtsideclub</strong> — we love seeing CSC in the wild!</p>
+        <p>📸 Tag your meetups on Instagram <strong>@letcourtside</strong> — we love seeing CSC in the wild!</p>
 
         <p>☀️ Soak up the vibe, say hey to fellow members, and enjoy your day courtside. The energy is real.</p>
 
-        <p>– The CourtSide Club Team</p>
+        <p>– The LetCourtSide Team</p>
         """
         
         success = send_email(
