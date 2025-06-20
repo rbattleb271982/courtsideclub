@@ -156,13 +156,13 @@ def test_email(email=None):
 
     # Get FROM_EMAIL from config
     from flask import current_app
-    from_email = current_app.config.get('FROM_EMAIL', 'noreply@courtsideclub.app')
+    from_email = current_app.config.get('FROM_EMAIL', 'noreply@letcourtside.com')
 
     # Send the email
     status_code = send_email(
         to_email=recipient_email,
-        subject='CourtSideClub Test Email',
-        content_html='<p>This is a test email from CourtSideClub 🎾</p>'
+        subject='LetCourtSide Test Email',
+        content_html='<p>This is a test email from LetCourtSide 🎾</p>'
     )
 
     # Prepare the result message
@@ -227,8 +227,8 @@ def send_welcome_email(user_id):
 
     <p>Ready to dive in? <a href="https://bafb033d-26a4-47de-b4d6-96666ed788fe-00-2cbmkxn1203ip.kirk.replit.dev/login">Log in to pick your tournaments</a> and join the community.</p>
 
-    <p>Thanks for joining CourtSideClub — we're excited to have you with us!<br>
-    – The CourtSideClub Team</p>
+    <p>Thanks for joining LetCourtSide — we're excited to have you with us!<br>
+    – The LetCourtSide Team</p>
     """
 
     send_email(
