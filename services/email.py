@@ -384,7 +384,7 @@ def send_welcome_email(user_id):
           <div style="text-align: center; border-top: 1px solid #E5E5E5; padding-top: 30px; margin-top: 40px; font-family: 'Crimson Text', Georgia, serif; font-size: 20px; font-style: italic; color: #171717;">
             Tennis is better together.
             <div style="font-size: 14px; color: #666; margin-top: 20px;">
-              <p>© 2024 CourtSide Club. All rights reserved.</p>
+              <p>© 2024 Let'CourtSide. All rights reserved.</p>
               <p>
                 <a href="#" style="color: #669127; text-decoration: none; margin-right: 15px;">Privacy Policy</a>
                 <a href="#" style="color: #669127; text-decoration: none;">Unsubscribe</a>
@@ -396,7 +396,7 @@ def send_welcome_email(user_id):
         
         return send_email(
             to_email=user.email,
-            subject="Welcome to CourtSide Club 🎾 Here's what's next",
+            subject="Welcome to Let'CourtSide 🎾 Here's what's next",
             content_html=welcome_html
         )
         
@@ -551,7 +551,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>CourtSide Club - Post-Tournament Follow-Up</title>
+          <title>Let'CourtSide - Post-Tournament Follow-Up</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
           </style>
@@ -559,7 +559,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
         <body style="margin: 0; padding: 0; background-color: #FBFAFB; font-family: 'Inter', Arial, sans-serif; color: #464C3F;">
           <!-- Preview Text -->
           <div style="display: none; max-height: 0px; overflow: hidden;">
-            Thanks for attending {tournament.name}! See what's coming up next at CourtSide Club.
+            Thanks for attending {tournament.name}! See what's coming up next at Let'CourtSide.
           </div>
           
           <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 0 auto;">
