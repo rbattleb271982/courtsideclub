@@ -119,13 +119,18 @@ CourtSide Club is a comprehensive web application for managing tennis tournament
 
 ## Recent Changes
 
-### June 20, 2025 - Comprehensive Rebranding to Let'CourtSide
-- Completed systematic rebranding from "CourtSide Club" to "Let'CourtSide" across all user-facing content
-- Updated email templates in services/email.py and services/pre_tournament_email.py with new brand name
-- Modified HTML page titles in all template files (register.html, public templates, user templates)
-- Ensured proper curly apostrophe (') usage throughout brand name
-- Maintained technical identifiers, URLs, and domains unchanged per rebranding scope
-- Brand consistency now maintained across welcome emails, tournament reminders, and password reset flows
+### June 20, 2025 - Complete Rebranding to Let'CourtSide
+- **User-Facing Rebranding Complete**: Systematically updated "CourtSide Club" to "Let'CourtSide" across all user-facing content
+- **Backend Identifier Rebranding Complete**: Updated all backend-safe identifiers from courtsideclub to letcourtside
+- **Email System Updated**: All email templates in services/email.py and services/pre_tournament_email.py now use new brand name
+- **HTML Templates Updated**: Modified page titles across all template files (register.html, public templates, user templates)
+- **Configuration Updates**: Updated config.py with new email addresses (@letcourtside.com) and base URLs (https://letcourtside.com)
+- **Debug Routes Updated**: Updated routes/debug.py with new backend identifiers and social media handles (@letcourtside)
+- **Email Templates Updated**: config/email_templates.json now uses letcourtside.com URLs and new brand name
+- **Social Media Links**: Updated Instagram, Twitter, and Facebook handles to @letcourtside across all templates
+- **Test Data Updated**: Updated create_qa_test_users.py with new domain for test email addresses
+- **Brand Consistency**: Proper curly apostrophe (') usage maintained throughout Let'CourtSide brand name
+- **Technical Preservation**: Core technical identifiers, database schemas, and internal logic preserved during rebranding
 
 ### June 18, 2025 - Tournament Detail Page Enhancement
 - Fixed route conflict between public and user tournament detail pages

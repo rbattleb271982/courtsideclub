@@ -293,7 +293,7 @@ def send_welcome_email(user_id):
                 </div>"""
         
         # Get base URL from config
-        base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
+        base_url = current_app.config.get('BASE_URL', 'https://letcourtside.com')
         
         # Build the complete HTML email
         welcome_html = f"""
@@ -540,7 +540,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
             </tr>""")
         
         # Get base URL from config
-        base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
+        base_url = current_app.config.get('BASE_URL', 'https://letcourtside.com')
         
         # Get user's first name with fallback
         user_first_name = getattr(user, 'first_name', 'Tennis Fan')
@@ -624,7 +624,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
                         <tr>
                           <!-- Instagram Icon -->
                           <td style="padding: 0 10px;">
-                            <a href="https://instagram.com/courtsideclub" target="_blank" style="text-decoration: none;">
+                            <a href="https://instagram.com/letcourtside" target="_blank" style="text-decoration: none;">
                               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M12 2.163C15.204 2.163 15.584 2.175 16.85 2.233C20.102 2.381 21.621 3.924 21.769 7.152C21.827 8.417 21.838 8.797 21.838 12.001C21.838 15.206 21.826 15.585 21.769 16.85C21.62 20.075 20.105 21.621 16.85 21.769C15.584 21.827 15.206 21.839 12 21.839C8.796 21.839 8.416 21.827 7.151 21.769C3.891 21.62 2.38 20.07 2.232 16.849C2.174 15.584 2.162 15.205 2.162 12C2.162 8.796 2.175 8.417 2.232 7.151C2.381 3.924 3.896 2.38 7.151 2.232C8.417 2.175 8.796 2.163 12 2.163ZM12 5.838C8.597 5.838 5.838 8.597 5.838 12S8.597 18.163 12 18.163S18.162 15.404 18.162 12S15.403 5.838 12 5.838ZM19.846 5.595C19.846 4.761 19.173 4.088 18.339 4.088C17.505 4.088 16.832 4.761 16.832 5.595C16.832 6.429 17.505 7.102 18.339 7.102C19.173 7.102 19.846 6.429 19.846 5.595ZM12 7.379C13.97 7.379 15.621 9.03 15.621 11C15.621 12.97 13.97 14.621 12 14.621C10.03 14.621 8.379 12.97 8.379 11C8.379 9.03 10.03 7.379 12 7.379Z" fill="#669127"/>
                               </svg>
@@ -633,7 +633,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
                           
                           <!-- Twitter/X Icon -->
                           <td style="padding: 0 10px;">
-                            <a href="https://x.com/courtsideclub" target="_blank" style="text-decoration: none;">
+                            <a href="https://x.com/letcourtside" target="_blank" style="text-decoration: none;">
                               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M18.901 1.153H22.581L14.541 10.301L24 22.846H16.594L10.794 15.264L4.156 22.846H0.474L9.074 13.059L0 1.153H7.594L12.837 8.026L18.901 1.153ZM17.61 20.644H19.649L6.486 3.239H4.298L17.61 20.644Z" fill="#669127"/>
                               </svg>
@@ -642,7 +642,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
                           
                           <!-- Facebook Icon -->
                           <td style="padding: 0 10px;">
-                            <a href="https://facebook.com/courtsideclub" target="_blank" style="text-decoration: none;">
+                            <a href="https://facebook.com/letcourtside" target="_blank" style="text-decoration: none;">
                               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 17.9895 4.3882 22.954 10.125 23.8542V15.4688H7.07812V12H10.125V9.35625C10.125 6.34875 11.9166 4.6875 14.6576 4.6875C15.9701 4.6875 17.3438 4.92188 17.3438 4.92188V7.875H15.8306C14.34 7.875 13.875 8.80008 13.875 9.75V12H17.2031L16.6711 15.4688H13.875V23.8542C19.6118 22.954 24 17.9895 24 12Z" fill="#669127"/>
                               </svg>
@@ -703,7 +703,7 @@ def send_password_reset_email(to_email, first_name, reset_url):
     """
     try:
         # Get base URL from config
-        base_url = current_app.config.get('BASE_URL', 'https://courtsideclub.app')
+        base_url = current_app.config.get('BASE_URL', 'https://letcourtside.com')
         
         password_reset_html = f"""
         <!DOCTYPE html>

@@ -213,7 +213,7 @@ def create_test_users():
             # Generate random user data
             first_name = random.choice(first_names)
             last_name = random.choice(last_names)
-            email = f"qa_random{i+1}@courtsideclub.test"
+            email = f"qa_random{i+1}@letcourtside.test"
             
             # Create basic user
             user = User(
