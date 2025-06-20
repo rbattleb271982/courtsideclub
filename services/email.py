@@ -566,7 +566,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
             <tr>
               <td style="padding: 40px 30px 30px 30px; text-align: center;">
                 <!-- Header -->
-                <h1 style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-size: 36px; font-weight: 600; color: #464C3F;">CourtSide Club</h1>
+                <h1 style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-size: 36px; font-weight: 600; color: #464C3F;">Let'CourtSide</h1>
                 <div style="height: 2px; background-color: #EDB418; width: 80px; margin: 15px auto 30px;"></div>
                 
                 <!-- Greeting & Main Message -->
@@ -719,14 +719,14 @@ def send_password_reset_email(to_email, first_name, reset_url):
         <body style="margin: 0; padding: 0; background-color: #FBFAFB; font-family: 'Inter', Arial, sans-serif; color: #464C3F;">
           <!-- Preview Text -->
           <div style="display: none; max-height: 0px; overflow: hidden;">
-            Reset your CourtSide Club password securely
+            Reset your Let'CourtSide password securely
           </div>
           
           <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="100%" style="max-width: 600px; margin: 0 auto;">
             <tr>
               <td style="padding: 40px 30px 30px 30px; text-align: center;">
                 <!-- Header -->
-                <h1 style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-size: 36px; font-weight: 600; color: #464C3F;">CourtSide Club</h1>
+                <h1 style="margin: 0; font-family: 'Crimson Text', Georgia, serif; font-size: 36px; font-weight: 600; color: #464C3F;">Let'CourtSide</h1>
                 <div style="height: 2px; background-color: #EDB418; width: 80px; margin: 15px auto 30px;"></div>
                 
                 <!-- Main Content -->
