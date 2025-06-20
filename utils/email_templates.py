@@ -29,8 +29,8 @@ def load_email_template(template_name):
         if template_name not in templates:
             logger.warning(f"Template '{template_name}' not found, using default")
             return {
-                'subject': f'Let'CourtSide Notification',
-                'body': 'Hey {{ user.first_name }},<br><br>This is a notification from Let'CourtSide.<br><br>—<br>The Lounge is Courtside.'
+                'subject': "Let'CourtSide Notification",
+                'body': "Hey {{ user.first_name }},<br><br>This is a notification from Let'CourtSide.<br><br>—<br>The Lounge is Courtside."
             }
             
         return templates[template_name]
@@ -38,8 +38,8 @@ def load_email_template(template_name):
     except Exception as e:
         logger.error(f"Error loading email template '{template_name}': {str(e)}")
         return {
-            'subject': f'Let'CourtSide Notification',
-            'body': 'Hey {{ user.first_name }},<br><br>This is a notification from Let'CourtSide.<br><br>—<br>The Lounge is Courtside.'
+            'subject': "Let'CourtSide Notification",
+            'body': "Hey {{ user.first_name }},<br><br>This is a notification from Let'CourtSide.<br><br>—<br>The Lounge is Courtside."
         }
 
 def render_template(template_text, **kwargs):
