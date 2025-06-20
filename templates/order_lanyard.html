@@ -247,11 +247,11 @@
 
 {% block content %}
 <div class="container">
-  <h1 class="page-title">Order Your CourtSide Club Lanyard</h1>
+  <h1 class="page-title">Order Your Let'CourtSide Lanyard</h1>
   
   {% if not has_existing_address and not no_sessions %}
   <div class="info-message">
-    <p><strong>You've qualified for a free CourtSide Club lanyard.</strong> Just fill out your shipping info so we can get it to you before your next tournament.</p>
+    <p><strong>You've qualified for a free Let'CourtSide lanyard.</strong> Just fill out your shipping info so we can get it to you before your next tournament.</p>
   </div>
   {% endif %}
 
@@ -266,16 +266,16 @@
     {% elif has_existing_address %}
     <div class="success-content">
       <div class="info-message alert-success">
-        <p>✅ Your CourtSide Club lanyard has been ordered!</p>
+        <p>✅ Your Let'CourtSide lanyard has been ordered!</p>
       </div>
       <h3>Order Confirmed</h3>
-      <p>Thank you for your order. Your lanyard will be shipped soon and should arrive in 5-7 business days. Wear it proudly at tournaments to connect with other CourtSide Club members!</p>
+      <p>Thank you for your order. Your lanyard will be shipped soon and should arrive in 5-7 business days. Wear it proudly at tournaments to connect with other Let'CourtSide members!</p>
       <a href="{{ url_for('user.my_tournaments') }}" class="cta-button-secondary">Back to My Tournaments</a>
     </div>
     {% else %}
     <div class="lanyard-intro">
       <p>
-        The CourtSide Club lanyard is more than just something to wear — it's a simple way to find your people. Whether you're going solo or with friends, spotting someone else wearing a lanyard means you're not alone. It's a quiet invitation to say hello, cheer together, or just share the moment. <strong>The lanyard will be shipped directly to you.</strong>
+        The Let'CourtSide lanyard is more than just something to wear — it's a simple way to find your people. Whether you're going solo or with friends, spotting someone else wearing a lanyard means you're not alone. It's a quiet invitation to say hello, cheer together, or just share the moment. <strong>The lanyard will be shipped directly to you.</strong>
       </p>
     </div>
 
@@ -331,7 +331,7 @@
       </div>
 
       <div class="info-message alert-success">
-        <p><strong>Note:</strong> Your lanyard is completely free for CourtSide Club members who have selected tournament sessions!</p>
+        <p><strong>Note:</strong> Your lanyard is completely free for Let'CourtSide members who have selected tournament sessions!</p>
       </div>
 
       <button type="submit" class="cta-button">Order Lanyard</button>

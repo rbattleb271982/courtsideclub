@@ -1,5 +1,5 @@
 {
-  "system_name": "CourtSide Club AI Agents",
+  "system_name": "Let'CourtSide AI Agents",
   "description": "Automated agent system for tennis tournament attendance management",
   "total_agents": 7,
   "last_updated": "2025-06-11",
@@ -176,8 +176,8 @@
   },
   
   "future_vision": {
-    "title": "What's Next for CourtSide Club",
-    "description": "CourtSide Club is just getting started. In the future, we're building toward a members-club-style experience — like the ones you see at tournaments — but for fans.",
+    "title": "What's Next for Let'CourtSide",
+    "description": "Let'CourtSide is just getting started. In the future, we're building toward a members-club-style experience — like the ones you see at tournaments — but for fans.",
     "member_benefits": [
       "Priority access to meet-ups",
       "Easy tools to plan your tournament trips",

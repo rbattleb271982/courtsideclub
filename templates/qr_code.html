@@ -212,14 +212,14 @@
   <div class="qr-section">
     <h1 class="qr-title">Show this QR at the tournament</h1>
     <p class="qr-description">
-      Show this code to other CourtSide Club members to instantly connect and share contact information.
+      Show this code to other Let'CourtSide members to instantly connect and share contact information.
     </p>
 
     {% if qr_code_data %}
     <div class="qr-container">
       <img src="data:image/png;base64,{{ qr_code_data }}" alt="QR Code" class="qr-code" width="200" height="200">
       <p class="qr-info">
-        This QR code contains your CourtSide Club profile link
+        This QR code contains your Let'CourtSide profile link
       </p>
       
       <div>
@@ -255,8 +255,8 @@
 function shareQR() {
   if (navigator.share) {
     navigator.share({
-      title: 'My CourtSide Club Profile',
-      text: 'Connect with me on CourtSide Club!',
+      title: 'My Let'CourtSide Profile',
+      text: 'Connect with me on Let'CourtSide!',
       url: '{{ profile_url if profile_url else url_for("user.profile", _external=True) }}'
     }).catch(console.error);
   } else {

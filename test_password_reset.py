@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for CourtSide Club Password Reset System
+Test script for Let'CourtSide Password Reset System
 
 This script demonstrates the complete password reset functionality,
 including token generation, email sending, and password confirmation.
@@ -17,7 +17,7 @@ def test_password_reset_system():
     """Test the complete password reset system"""
     
     with app.app_context():
-        print("🎾 CourtSide Club Password Reset System Test")
+        print("🎾 Let'CourtSide Password Reset System Test")
         print("=" * 50)
         
         # Test email address
@@ -62,7 +62,7 @@ def test_password_reset_system():
         print("\n🎯 Test Results:")
         print("- Token generation: ✅ Working")
         print("- URL generation: ✅ Working") 
-        print("- Email template: ✅ Premium CourtSide Club design")
+        print("- Email template: ✅ Premium Let'CourtSide design")
         print("- Security: ✅ 1-hour expiration, secure salt")
         
         print("\n📋 Next Steps:")

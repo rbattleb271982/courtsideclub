@@ -2,7 +2,7 @@
 Post-Event Follow-Up Agent
 
 This agent automatically sends thank-you emails to users who attended tournaments
-that ended yesterday, including stats about total CourtSide Club attendance.
+that ended yesterday, including stats about total Let'CourtSide attendance.
 """
 
 import os

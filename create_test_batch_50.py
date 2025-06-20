@@ -1,5 +1,5 @@
 """
-Create 50 realistic test users for CourtSide Club as a test batch
+Create 50 realistic test users for Let'CourtSide as a test batch
 
 Each user will have:
 - Realistic names and email formats

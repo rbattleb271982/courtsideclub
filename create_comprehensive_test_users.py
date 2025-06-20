@@ -1,5 +1,5 @@
 """
-Create 150 test users with comprehensive variation for CourtSide Club
+Create 150 test users with comprehensive variation for Let'CourtSide
 - Profile variations: complete, skipped, resumed
 - Tournament attendance: 1-4 tournaments, some in next 9 days, some with none
 - Session selections: day only, night only, both, or none

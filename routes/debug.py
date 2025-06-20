@@ -353,10 +353,10 @@ def send_test_email():
     try:
         success = send_email(
             to_email=test_email,
-            subject='CourtSide Club - Debug Test Email',
+            subject="Let'CourtSide - Debug Test Email",
             content_html='''
             <h2>Debug Test Email</h2>
-            <p>This is a test email from the CourtSide Club debug system.</p>
+            <p>This is a test email from the Let'CourtSide debug system.</p>
             <p><strong>Purpose:</strong> Testing SendGrid email functionality</p>
             <p><strong>Timestamp:</strong> {}</p>
             <p>If you received this email, the SendGrid integration is working correctly!</p>
@@ -933,7 +933,7 @@ def seed_real_blogs():
     created_count = 0
 
     for t in tournaments:
-        title = f"Welcome to CourtSide Club at {t.name}"
+        title = f"Welcome to Let'CourtSide at {t.name}"
         slug = f"welcome-{t.slug}"
         
         # Check if blog post already exists
@@ -942,9 +942,9 @@ def seed_real_blogs():
             continue
             
         content = textwrap.dedent(f"""
-            Welcome to CourtSide Club at {t.name}!
+            Welcome to Let'CourtSide at {t.name}!
 
-            We're thrilled you're thinking about attending {t.name}. CourtSide Club was created to make your tennis experience more social, memorable, and fun — whether you're traveling solo or meeting up with friends.
+            We're thrilled you're thinking about attending {t.name}. Let'CourtSide was created to make your tennis experience more social, memorable, and fun — whether you're traveling solo or meeting up with friends.
 
             By joining, you'll be able to:
             - See who else is attending {t.name}
@@ -956,7 +956,7 @@ def seed_real_blogs():
 
             Want to be part of it? Just mark your attendance, order your lanyard, and we'll see you there.
 
-            — The CourtSide Club Team
+            — The Let'CourtSide Team
         """).strip()
 
         blog = BlogPost(

@@ -1,5 +1,5 @@
 """
-Create 50 test users with realistic variation for CourtSide Club
+Create 50 test users with realistic variation for Let'CourtSide
 - Some have complete profiles, some partial
 - Each user attending 3-6 different tournaments
 - Random session selections

@@ -1,7 +1,7 @@
-# CourtSide Club AI Agents System Summary
+# Let'CourtSide AI Agents System Summary
 
 ## System Overview
-CourtSide Club utilizes 6 AI-powered automation agents to manage user communications, content generation, and administrative operations for tennis tournament attendance management.
+Let'CourtSide utilizes 6 AI-powered automation agents to manage user communications, content generation, and administrative operations for tennis tournament attendance management.
 
 ## Agent Inventory
 
@@ -75,9 +75,9 @@ CourtSide Club utilizes 6 AI-powered automation agents to manage user communicat
 
 <div align="center">
 
-## What's Next for CourtSide Club
+## What's Next for Let'CourtSide
 
-CourtSide Club is just getting started.
+Let'CourtSide is just getting started.
 
 In the future, we're building toward a members-club-style experience — like the ones you see at tournaments — but for fans.
 

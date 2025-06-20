@@ -578,9 +578,9 @@ def send_post_tournament_followup_email(user_id, tournament_id):
                   </tr>
                   <tr>
                     <td style="padding: 0; text-align: left;">
-                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">Thank you for being part of CourtSide Club at {tournament.name}. We hope you had an unforgettable experience connecting with fellow tennis enthusiasts.</p>
+                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">Thank you for being part of Let'CourtSide at {tournament.name}. We hope you had an unforgettable experience connecting with fellow tennis enthusiasts.</p>
                       
-                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">You weren't the only one — over <strong>{total_attendees} CourtSide Club members</strong> went too!</p>
+                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">You weren't the only one — over <strong>{total_attendees} Let'CourtSide members</strong> went too!</p>
                       
                       <p style="margin: 0 0 30px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">Already thinking about your next event? We'd love to have you back.</p>
                     </td>
@@ -618,7 +618,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
                 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 30px 0;">
                   <tr>
                     <td style="text-align: center; padding-bottom: 20px;">
-                      <p style="margin: 0 0 15px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; color: #464C3F;">Stay connected! Follow CourtSide Club for exclusive content and live updates.</p>
+                      <p style="margin: 0 0 15px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; color: #464C3F;">Stay connected! Follow Let'CourtSide for exclusive content and live updates.</p>
                       
                       <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto;">
                         <tr>
@@ -671,7 +671,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
                   </tr>
                   <tr>
                     <td style="text-align: center;">
-                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 12px; color: rgba(70, 76, 63, 0.8);">© 2025 CourtSide Club</p>
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 12px; color: rgba(70, 76, 63, 0.8);">© 2025 Let'CourtSide</p>
                     </td>
                   </tr>
                 </table>
@@ -694,7 +694,7 @@ def send_post_tournament_followup_email(user_id, tournament_id):
 
 def send_password_reset_email(to_email, first_name, reset_url):
     """
-    Send password reset email with premium CourtSide Club branding
+    Send password reset email with premium Let'CourtSide branding
     
     Args:
         to_email: Recipient email address
@@ -711,7 +711,7 @@ def send_password_reset_email(to_email, first_name, reset_url):
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Reset Your CourtSide Club Password</title>
+          <title>Reset Your Let'CourtSide Password</title>
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap');
           </style>
@@ -743,7 +743,7 @@ def send_password_reset_email(to_email, first_name, reset_url):
                   </tr>
                   <tr>
                     <td style="padding: 20px 0; text-align: left;">
-                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">We received a request to reset your CourtSide Club password. Click the button below to create a new password:</p>
+                      <p style="margin: 0 0 20px 0; font-family: 'Inter', Arial, sans-serif; font-size: 16px; line-height: 1.6; color: #464C3F;">We received a request to reset your Let'CourtSide password. Click the button below to create a new password:</p>
                     </td>
                   </tr>
                 </table>
@@ -806,7 +806,7 @@ def send_password_reset_email(to_email, first_name, reset_url):
                   </tr>
                   <tr>
                     <td style="text-align: center;">
-                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 12px; color: rgba(70, 76, 63, 0.8);">© 2025 CourtSide Club</p>
+                      <p style="margin: 0; font-family: 'Inter', Arial, sans-serif; font-size: 12px; color: rgba(70, 76, 63, 0.8);">© 2025 Let'CourtSide</p>
                     </td>
                   </tr>
                 </table>
@@ -819,7 +819,7 @@ def send_password_reset_email(to_email, first_name, reset_url):
         
         return send_email(
             to_email="richardbattlebaxter@gmail.com",  # Override for testing
-            subject="Reset your CourtSide Club password",
+            subject="Reset your Let'CourtSide password",
             content_html=password_reset_html
         )
         

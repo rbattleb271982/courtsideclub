@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}AI Agent Control Panel - CourtSide Club Admin{% endblock %}
+{% block title %}AI Agent Control Panel - Let'CourtSide Admin{% endblock %}
 
 {% block content %}
 <style>
@@ -267,7 +267,7 @@
         <div class="card-body">
           <p>Sends a thank-you email 1 day after a user's tournament ends — includes attendance stats and encourages future participation.</p>
           <p><strong>📅 Target:</strong> Users who attended tournaments that ended yesterday<br>
-          <strong>📊 Includes total CourtSide Club attendance numbers</strong></p>
+          <strong>📊 Includes total Let'CourtSide attendance numbers</strong></p>
           
           <div class="agent-actions">
             <a href="{{ url_for('admin_agents.edit_agent_email', agent_name='post_event_followup') }}" class="btn btn-outline-primary w-100 mb-2">

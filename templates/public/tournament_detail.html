@@ -294,7 +294,7 @@
       <div class="tournament-cta">
         <h2>{{ attending_count }} fans attending</h2>
         <p>{{ meeting_count }} open to meet</p>
-        <p>Tennis is better together. Join CourtSide Club to connect with other fans.</p>
+        <p>Tennis is better together. Join Let'CourtSide to connect with other fans.</p>
         <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Join Club</a>
         <a href="{{ url_for('auth.login') }}" class="btn btn-outline">Login</a>
       </div>
@@ -337,13 +337,13 @@
               <div class="tag-featured">Featured</div>
               <h3>{{ post.title }}</h3>
               <p>{{ post.summary or post.content[:150] + '...' if post.content|length > 150 else post.content }}</p>
-              <div class="meta">By CourtSide Club · {{ post.created_at.strftime('%B %d, %Y') }}</div>
+              <div class="meta">By Let'CourtSide · {{ post.created_at.strftime('%B %d, %Y') }}</div>
             </div>
           {% else %}
             <div class="article-card">
               <h3>{{ post.title }}</h3>
               <p>{{ post.summary or post.content[:100] + '...' if post.content|length > 100 else post.content }}</p>
-              <div class="meta">By CourtSide Club · {{ post.created_at.strftime('%B %d, %Y') }}</div>
+              <div class="meta">By Let'CourtSide · {{ post.created_at.strftime('%B %d, %Y') }}</div>
             </div>
           {% endif %}
         {% endfor %}
@@ -352,19 +352,19 @@
           <div class="tag-featured">Featured</div>
           <h3>Complete Guide to {{ tournament.name }} 2025</h3>
           <p>Everything you need to know about attending this year's tournament, from tickets to schedules and the best viewing spots.</p>
-          <div class="meta">By CourtSide Club · June 12, 2025</div>
+          <div class="meta">By Let'CourtSide · June 12, 2025</div>
         </div>
         
         <div class="article-card">
           <h3>Best Hotels Near the Tournament Venue</h3>
           <p>Top accommodation options within walking distance of the courts, from luxury resorts to budget-friendly stays.</p>
-          <div class="meta">By CourtSide Club · June 10, 2025</div>
+          <div class="meta">By Let'CourtSide · June 10, 2025</div>
         </div>
         
         <div class="article-card">
           <h3>Getting to {{ tournament.city }}: Travel Tips</h3>
           <p>Essential transportation information including flights, local transport, and the best routes to the venue.</p>
-          <div class="meta">By CourtSide Club · June 8, 2025</div>
+          <div class="meta">By Let'CourtSide · June 8, 2025</div>
         </div>
       {% endif %}
     </div>

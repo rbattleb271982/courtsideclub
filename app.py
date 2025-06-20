@@ -325,7 +325,7 @@ def iframe_test():
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Iframe Test - CourtSide Club</title>
+        <title>Iframe Test - Let'CourtSide</title>
         <style>
             body { font-family: Arial, sans-serif; padding: 20px; }
             .status { padding: 10px; margin: 10px 0; border-radius: 5px; }

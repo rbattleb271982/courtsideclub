@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quick script to reset login credentials for CourtSide Club
+Quick script to reset login credentials for Let'CourtSide
 This will help you get back into your account if you're locked out
 """
 
@@ -11,7 +11,7 @@ from models import User
 
 def reset_user_login():
     with app.app_context():
-        print("=== CourtSide Club Login Reset ===")
+        print("=== Let'CourtSide Login Reset ===")
         
         # Show existing users
         users = User.query.all()

@@ -1,5 +1,5 @@
 """
-Create 500 realistic test users for CourtSide Club
+Create 500 realistic test users for Let'CourtSide
 
 Each user will have:
 - Unique email and name

@@ -1,8 +1,8 @@
-# CourtSide Club - Tennis Tournament Attendance Management Platform
+# Let'CourtSide - Tennis Tournament Attendance Management Platform
 
 ## Overview
 
-CourtSide Club is a comprehensive web application for managing tennis tournament attendance, built with Flask and PostgreSQL. The platform enables users to discover, register for, and coordinate attendance at tennis tournaments worldwide, with features for session selection, fan meetups, and lanyard merchandise fulfillment.
+Let'CourtSide is a comprehensive web application for managing tennis tournament attendance, built with Flask and PostgreSQL. The platform enables users to discover, register for, and coordinate attendance at tennis tournaments worldwide, with features for session selection, fan meetups, and lanyard merchandise fulfillment.
 
 ## System Architecture
 
@@ -120,7 +120,7 @@ CourtSide Club is a comprehensive web application for managing tennis tournament
 ## Recent Changes
 
 ### June 20, 2025 - Complete Rebranding to Let'CourtSide
-- **User-Facing Rebranding Complete**: Systematically updated "CourtSide Club" to "Let'CourtSide" across all user-facing content
+- **User-Facing Rebranding Complete**: Systematically updated "Let'CourtSide" to "Let'CourtSide" across all user-facing content
 - **Backend Identifier Rebranding Complete**: Updated all backend-safe identifiers from courtsideclub to letcourtside
 - **Email System Updated**: All email templates in services/email.py and services/pre_tournament_email.py now use new brand name
 - **HTML Templates Updated**: Modified page titles across all template files (register.html, public templates, user templates)
